@@ -1,6 +1,4 @@
-﻿<cfinclude template="include_globalfunctions.cfm">
-
-<cfapplication name="jrgm"
+﻿<cfapplication name="jrgm"
 ClientManagement="No"
 SessionManagement="Yes"
 SessionTimeout="#CreateTimeSpan(0,14,0,0)#"
