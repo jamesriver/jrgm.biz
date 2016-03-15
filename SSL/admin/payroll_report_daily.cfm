@@ -2,14 +2,14 @@
 <CFIF IsDefined("url.work_date")>
   <cfset todayDate = #url.work_date#>
   <cfelse>
-  <cfset todayDate = dateformatnow()>
+  <cfset todayDate = Now()>
 </CFIF>
  
 <cfset Now_Time = Now()>
 <cfset somedate = todayDate>
-<cfset yesterday = datetimeformatadd("d",-1,somedate)>
-<cfset tomorrow = datetimeformatadd("d",1,somedate)>
-<cfset today = datetimeformatadd("d",0,somedate)>
+<cfset yesterday = dateadd("d",-1,somedate)>
+<cfset tomorrow = dateadd("d",1,somedate)>
+<cfset today = dateadd("d",0,somedate)>
 
 <!------------------- Get in progress time ---------------------->
 <cfquery name="calculate_time" datasource="jrgm">
