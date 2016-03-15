@@ -151,7 +151,7 @@ table.sortable tbody td {
     <td align="center">3946</td>
         <td nowrap="nowrap">Equipment</td>
         <td align="left" >A-14</td>
-<td align="left"><a href="https://www.jrgm.biz/ssl/admin/inventory_edit.cfm?ID=3925">AERATOR - 3PT HITCH E-8 42</a><a href="inventory_edit.cfm?ID=#ID#"></a></td>
+<td align="left"><a href="/ssl/admin/inventory_edit.cfm?ID=3925">AERATOR - 3PT HITCH E-8 42</a><a href="inventory_edit.cfm?ID=#ID#"></a></td>
     <td align="left" >Red</td>
     <td align="left">123456</td>    
 
@@ -167,7 +167,7 @@ table.sortable tbody td {
     <td align="center">3947</td>
     <td nowrap="nowrap">Equipment</td>
     <td align="left" >S-12</td>
-    <td align="left" ><a href="https://www.jrgm.biz/ssl/admin/inventory_edit.cfm?ID=3929">REDMAX CHAINSAW G3100T</a></td>
+    <td align="left" ><a href="/ssl/admin/inventory_edit.cfm?ID=3929">REDMAX CHAINSAW G3100T</a></td>
     <td align="left" >Yellow</td>
     <td align="left">987654</td>
     <td align="center">2010</td>
@@ -181,7 +181,7 @@ table.sortable tbody td {
     <td align="center">3948</td>
     <td nowrap="nowrap">Equipment</td>
     <td align="left" >S-23</td>
-    <td align="left" ><a href="https://www.jrgm.biz/ssl/admin/inventory_edit.cfm?ID=3930">CIRCULAR SAW</a></td>
+    <td align="left" ><a href="/ssl/admin/inventory_edit.cfm?ID=3930">CIRCULAR SAW</a></td>
     <td align="left" >Green</td>
     <td align="left">234567</td>
     <td align="center">2008</td>
@@ -195,7 +195,7 @@ table.sortable tbody td {
     <td align="center">3949</td>
     <td nowrap="nowrap">Equipment</td>
     <td align="left" >E-55</td>
-    <td align="left" ><a href="https://www.jrgm.biz/ssl/admin/inventory_edit.cfm?ID=3934">JOHN DEERE EDGER WALK</a></td>
+    <td align="left" ><a href="/ssl/admin/inventory_edit.cfm?ID=3934">JOHN DEERE EDGER WALK</a></td>
     <td align="left" >Red</td>
     <td align="left">876543</td>
     <td align="center">2009</td>
@@ -209,7 +209,7 @@ table.sortable tbody td {
     <td align="center">3950</td>
     <td nowrap="nowrap">Equipment</td>
     <td align="left" >H-01</td>
-    <td align="left" ><a href="https://www.jrgm.biz/ssl/admin/inventory_edit.cfm?ID=3936">WOODS- 3PT HITCH PL-60</a></td>
+    <td align="left" ><a href="/ssl/admin/inventory_edit.cfm?ID=3936">WOODS- 3PT HITCH PL-60</a></td>
     <td align="left" >Red</td>
     <td align="left">345678</td>
     <td align="center">2013</td>
@@ -223,7 +223,7 @@ table.sortable tbody td {
     <td align="center">3951</td>
     <td nowrap="nowrap">Equipment</td>
     <td align="left" >G-67</td>
-    <td align="left" ><a href="https://www.jrgm.biz/ssl/admin/inventory_edit.cfm?ID=3965">VERMEER STUMP GRINDER SC252</a></td>
+    <td align="left" ><a href="/ssl/admin/inventory_edit.cfm?ID=3965">VERMEER STUMP GRINDER SC252</a></td>
     <td align="left" >Green</td>
     <td align="left">765432</td>
     <td align="center">2013</td>

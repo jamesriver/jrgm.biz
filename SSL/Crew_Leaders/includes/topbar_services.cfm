@@ -14,18 +14,18 @@ SELECT t1.*, t2.service_name FROM job_services_clock AS T1 INNER JOIN services_l
           <ul class="dropdown-menuts">
            <!---  <cfif get_todays_jobs.recordcount GT 0> --->
               <cfoutput query="get_todays_jobs">
-                <li><a href="https://www.jrgm.biz/ssl/crew_leaders/job_list.cfm?Job_ID=#Job_ID#&work_date=#todayDate#">#event_name#</a></li>
+                <li><a href="/ssl/crew_leaders/job_list.cfm?Job_ID=#Job_ID#&work_date=#todayDate#">#event_name#</a></li>
               </cfoutput>
              <!---  <cfelse> --->
-              <li><cfoutput><a href="https://www.jrgm.biz/ssl/crew_leaders/default.cfm?Job_ID=9999&work_date=#todayDate#"></cfoutput> 
+              <li><cfoutput><a href="/ssl/crew_leaders/default.cfm?Job_ID=9999&work_date=#todayDate#"></cfoutput>
                 See All Branch Jobs</a> </li>
           <!---   </cfif> --->
           </ul>
         </div></td>
-        <td align="right"><a href="https://www.jrgm.biz/ssl/crew_leaders/daily_sheet.cfm" class="formsb">Daily Sheet</a>
-          <!--  <a href="https://www.jrgm.biz/ssl/crew_leaders/forms.cfm" class="formsb">Forms</a>
+        <td align="right"><a href="/ssl/crew_leaders/daily_sheet.cfm" class="formsb">Daily Sheet</a>
+          <!--  <a href="/ssl/crew_leaders/forms.cfm" class="formsb">Forms</a>
 -->
-          <a  href="https://www.jrgm.biz/ssl/crew_leaders/default.cfm"class="formsb">Home</a> <a  href="http://www.jrgm.biz/index.cfm"class="formsb">Log Out</a> </td>
+          <a  href="/ssl/crew_leaders/default.cfm"class="formsb">Home</a> <a  href="http://www.jrgm.biz/index.cfm"class="formsb">Log Out</a> </td>
         <td><img src="images/clear.gif" width="10" height="1" /></td>
         <!---   <td><div id="google_translate_element"></div><script type="text/javascript">
 function googleTranslateElementInit() {

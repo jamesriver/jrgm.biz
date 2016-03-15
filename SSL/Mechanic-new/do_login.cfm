@@ -31,19 +31,19 @@ FROM APP_employee_passwords
   <cfif url.schedchoice  EQ 'crews'>
     <html>
     <head>
-    <META HTTP-EQUIV="Refresh" CONTENT="1;URL=https://www.jrgm.biz/ssl/scheduler/scheduler.html">
+    <META HTTP-EQUIV="Refresh" CONTENT="1;URL=/ssl/scheduler/scheduler.html">
     </head>
     </html>
     <cfelse>
     <html>
     <head>
-    <META HTTP-EQUIV="Refresh" CONTENT="1;URL=https://www.jrgm.biz/ssl/scheduler/schedulerevents.html">
+    <META HTTP-EQUIV="Refresh" CONTENT="1;URL=/ssl/scheduler/schedulerevents.html">
     </head>
     </html>
   </cfif>
   <!--- <cfif url.schedchoice  EQ 'crews'>
-<cflocation   url="https://www.jrgm.biz/ssl/scheduler/scheduler.html"   addtoken="no"  >
+<cflocation   url="/ssl/scheduler/scheduler.html"   addtoken="no"  >
 <cfelse>
-<cflocation   url="https://www.jrgm.biz/ssl/scheduler/schedulerevents.html"   addtoken="no"  >
+<cflocation   url="/ssl/scheduler/schedulerevents.html"   addtoken="no"  >
 </cfif> --->
 </cfif>

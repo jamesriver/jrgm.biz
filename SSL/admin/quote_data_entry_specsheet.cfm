@@ -384,7 +384,7 @@ FROM         quote_notes  WHERE  opportunity_id = #url.id# AND  opportunity_id_o
         <li><strike>Exclude 0 hours/ 0 times service rows</strike></li>
         <li>Show hours per occurence/ not total hours</li>
         <li>Production Primary Contacts, may need to get these from Insightly</li>
-        <li><strike>On https://www.jrgm.biz/ssl/quoting-new/quote_data_entry_print.cfm&nbsp;-Exclude 0 hours/ 0 times service rows</strike></li>
+        <li><strike>On /ssl/quoting-new/quote_data_entry_print.cfm&nbsp;-Exclude 0 hours/ 0 times service rows</strike></li>
       </ol>
       <p><br />
     </p>

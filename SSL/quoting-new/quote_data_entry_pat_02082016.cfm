@@ -6299,7 +6299,7 @@ FROM         quote_notes WHERE  opportunity_id = #url.id# AND  opportunity_id_or
         </tr>
         <tr>
           <td valign="top"><p> Ben: Is Billing Contact Info done like this? <br />
-              https://www.jrgm.biz/ssl/admin/project_Edit_Project_Information.cfm?ProjectID=J3769-316</p></td>
+              /ssl/admin/project_Edit_Project_Information.cfm?ProjectID=J3769-316</p></td>
         </tr>
       </tbody>
     </table>

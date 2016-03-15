@@ -281,7 +281,7 @@ SELECT * FROM equipment_history WHERE ID = #new_ID#
 <!---     
     <cfdump  var="#damagepix2#"> --->
     
-              <td colspan="4" class="dstableno"><cfoutput query="damagepix2" ><a href="https://www.jrgm.biz/ssl/admin/damagepix/#damagepix.name#">#damagepix.name#</a><br />
+              <td colspan="4" class="dstableno"><cfoutput query="damagepix2" ><a href="/ssl/admin/damagepix/#damagepix.name#">#damagepix.name#</a><br />
 </cfoutput></td>
               </tr>
          </table>

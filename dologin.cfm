@@ -112,29 +112,29 @@ WHERE Employee_ID = #SESSION.userid#
 <cfset SESSION.supervisor_id = get_supervisor_id.supervisor_id>
 
  <cfif SESSION.access_role EQ 1>
-<cflocation   url="https://www.jrgm.biz/ssl/supervisors-new/index.cfm"   addtoken="no"  >
+<cflocation   url="/ssl/supervisors-new/index.cfm"   addtoken="no"  >
 <cfelseif SESSION.access_role EQ 2>
-<cflocation   url="https://www.jrgm.biz/"   addtoken="no"  >
+<cflocation   url="/"   addtoken="no"  >
 <cfelseif SESSION.access_role EQ 6>
-<cflocation   url="https://www.jrgm.biz/ssl/itech-new/index.cfm"   addtoken="no"  >
+<cflocation   url="/ssl/itech-new/index.cfm"   addtoken="no"  >
 <cfelseif SESSION.access_role EQ 7>
-<cflocation   url="https://www.jrgm.biz/ssl/stech-new/index.cfm"   addtoken="no"  >
+<cflocation   url="/ssl/stech-new/index.cfm"   addtoken="no"  >
  <cfelseif SESSION.access_role EQ 8>
-<cflocation   url="https://www.jrgm.biz/ssl/mechanic-new/index.cfm"   addtoken="no"  >
+<cflocation   url="/ssl/mechanic-new/index.cfm"   addtoken="no"  >
 <cfelseif SESSION.access_role EQ 9>
-<cflocation   url="https://www.jrgm.biz/ssl/branch-new/index.cfm"   addtoken="no"  >
+<cflocation   url="/ssl/branch-new/index.cfm"   addtoken="no"  >
 <cfelseif SESSION.access_role EQ 10>
-<cflocation url="https://www.jrgm.biz/ssl/regional-new/index.cfm"  addtoken="no"  >
+<cflocation url="/ssl/regional-new/index.cfm"  addtoken="no"  >
 <cfelseif SESSION.access_role EQ 95 >
-<cflocation   url="https://www.jrgm.biz/ssl/admin/bgarrett.cfm"   addtoken="no"  >
+<cflocation   url="/ssl/admin/bgarrett.cfm"   addtoken="no"  >
 <cfelseif SESSION.access_role EQ 96 >
-<cflocation   url="https://www.jrgm.biz/ssl/admin/payroll/payrollbetty.cfm"   addtoken="no"  >
+<cflocation   url="/ssl/admin/payroll/payrollbetty.cfm"   addtoken="no"  >
 <cfelseif SESSION.access_role EQ 97 >
-<cflocation   url="https://www.jrgm.biz/ssl/quoting-new/default.cfm"   addtoken="no"  >
+<cflocation   url="/ssl/quoting-new/default.cfm"   addtoken="no"  >
 <cfelseif SESSION.access_role EQ 98 >
-<cflocation   url="https://www.jrgm.biz/ssl/regional_admin-new/index.cfm"   addtoken="no"  >
+<cflocation   url="/ssl/regional_admin-new/index.cfm"   addtoken="no"  >
 <cfelseif SESSION.access_role EQ 99>
-<cflocation   url="https://www.jrgm.biz/ssl/admin/default.cfm"   addtoken="no"  >
+<cflocation   url="/ssl/admin/default.cfm"   addtoken="no"  >
 </cfif>
 <!--- <cfelseif  username EQ 'un' AND password EQ 'pw'  >
  <cflocation url="index.cfm?pw=yes">
@@ -142,45 +142,45 @@ WHERE Employee_ID = #SESSION.userid#
  <cfset SESSION.loginid = 1>
  <cfset SESSION.userid = "9999">
  <cfset SESSION.screenname = "JRGM Admin">
- <cflocation url="https://www.jrgm.biz/ssl/admin/default.cfm">
+ <cflocation url="/ssl/admin/default.cfm">
  <cfelseif  username EQ 'crewleader' AND password EQ 'jrgm'  >
- <cflocation url="https://www.jrgm.biz/ssl/crew_leaders/services.htm?pw=yes">
+ <cflocation url="/ssl/crew_leaders/services.htm?pw=yes">
  <cfelseif  username EQ '3' AND password EQ '3'  >
  <cfset SESSION.loginid = 1>
  <cfset SESSION.ADP = 1>
  <cfset SESSION.userid = "admin">
  <cfset SESSION.screenname = "JRGM Admin">
- <cflocation url="https://www.jrgm.biz/ssl/admin/pat_new.cfm">
+ <cflocation url="/ssl/admin/pat_new.cfm">
  <cfelseif  username EQ 'p' AND password EQ 'p'  >
  <cfset SESSION.loginid = 1>
  <cfset SESSION.userid = "admin">
  <cfset SESSION.screenname = "JRGM Admin">
- <cflocation url="https://www.jrgm.biz/ssl/admin/pat.cfm">
+ <cflocation url="/ssl/admin/pat.cfm">
  <cfelseif  username EQ 'mcandler' AND password EQ 'jrgm'  >
  <cfset SESSION.loginid = 1>
  <cfset SESSION.userid = "admin">
  <cfset SESSION.screenname = "Maria Candler">
- <cflocation url="https://www.jrgm.biz/ssl/admin/maria.cfm">
+ <cflocation url="/ssl/admin/maria.cfm">
  <cfelseif  username EQ 'jknight' AND password EQ 'jrgm'  >
  <cfset SESSION.loginid = 1>
  <cfset SESSION.userid = "admin">
  <cfset SESSION.screenname = "Jason Knight">
- <cflocation url="https://www.jrgm.biz/ssl/admin/maria.cfm">
+ <cflocation url="/ssl/admin/maria.cfm">
  <cfelseif  username EQ 'bgarrett' AND password EQ 'jrgm'  >
  <cfset SESSION.loginid = 1>
  <cfset SESSION.userid = "admin">
  <cfset SESSION.screenname = "Bruce Garrett">
- <cflocation url="https://www.jrgm.biz/ssl/admin/bgarrett.cfm">
+ <cflocation url="/ssl/admin/bgarrett.cfm">
  <cfelseif  username EQ 'cwilliams' AND password EQ 'jrgm'  >
  <cfset SESSION.loginid = 1>
  <cfset SESSION.userid = "admin">
  <cfset SESSION.screenname = "Christy Williams">
- <cflocation url="https://www.jrgm.biz/ssl/admin/cwilliams.cfm">
+ <cflocation url="/ssl/admin/cwilliams.cfm">
  <cfelseif  username EQ 'ip' AND password EQ 'ip'  >
  <cfset SESSION.loginid = 1>
  <cfset SESSION.userid = "admin">
  <cfset SESSION.screenname = "JRGM Admin">
- <cflocation url="https://www.jrgm.biz/ssl/admin/patip.cfm">--->
+ <cflocation url="/ssl/admin/patip.cfm">--->
  <cfelse>
  <cflocation url="http://www.jrgm.biz/index.cfm?message=invalid">
 </cfif>

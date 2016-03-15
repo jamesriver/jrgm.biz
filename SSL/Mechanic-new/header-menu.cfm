@@ -17,7 +17,7 @@
         </li>
         <li class="clearfix"><a href="forms.cfm"><span class="glyphicon glyphicons-more-items new-added"></span> Forms</a> </li>
         <cfif SESSION.userid EQ 1002>
-          <li class="clearfix"><a href="https://www.jrgm.biz/ssl/admin/default.cfm"  target="_blank"><span class="glyphicon glyphicons-more-items new-added"></span> Admin</a></li>
+          <li class="clearfix"><a href="/ssl/admin/default.cfm"  target="_blank"><span class="glyphicon glyphicons-more-items new-added"></span> Admin</a></li>
         </cfif>
       </ul>
     </div>

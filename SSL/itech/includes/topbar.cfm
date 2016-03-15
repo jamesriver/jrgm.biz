@@ -3,10 +3,10 @@
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
        <td class="jobbutton">
-        <a href="https://www.jrgm.biz/ssl/itech/dailysheet_select.cfm"><img src="images/icon_dailysheet.png" width="60" height="60"  class="icons"/></a>
-            <cfoutput><a href="https://www.jrgm.biz/ssl/itech/inventory_list.cfm"><img src="images/icon_inventory.png" width="60" height="60" alt="Inventory" class="icons" /></a></cfoutput>
-             <cfoutput><a href="https://www.jrgm.biz/ssl/itech/directory.cfm"><img src="images/directory_icon.png" width="60" height="60" alt="Inventory" class="icons" /></a></cfoutput>
-                     <a href="https://www.jrgm.biz/ssl/itech/forms.cfm"><img src="images/icon_forms.png" width="60" height="60" alt="Forms" class="icons" /></a>
+        <a href="/ssl/itech/dailysheet_select.cfm"><img src="images/icon_dailysheet.png" width="60" height="60"  class="icons"/></a>
+            <cfoutput><a href="/ssl/itech/inventory_list.cfm"><img src="images/icon_inventory.png" width="60" height="60" alt="Inventory" class="icons" /></a></cfoutput>
+             <cfoutput><a href="/ssl/itech/directory.cfm"><img src="images/directory_icon.png" width="60" height="60" alt="Inventory" class="icons" /></a></cfoutput>
+                     <a href="/ssl/itech/forms.cfm"><img src="images/icon_forms.png" width="60" height="60" alt="Forms" class="icons" /></a>
         </td>
 
         <td align="right">

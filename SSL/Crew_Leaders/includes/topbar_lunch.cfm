@@ -18,7 +18,7 @@ ORDER by start_date,event_name
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr>
       <td class="jobbutton"><!--- <a href="" class="formsb">Job List</a> ---></td>
-        <td><a href="https://www.jrgm.biz/ssl/crew_leaders/lunchin.cfm?mylunchlist=<cfoutput>#mylunchlist#</cfoutput>" class="lunchb">End Lunch</a></td>
+        <td><a href="/ssl/crew_leaders/lunchin.cfm?mylunchlist=<cfoutput>#mylunchlist#</cfoutput>" class="lunchb">End Lunch</a></td>
     <td align="right"><!--- <a href="" class="formsb">Daily Sheet</a> --->
        
         <!--- <a  href="" class="formsb">Home</a> <a  href=""class="formsb">Log Out</a> ---> </td>

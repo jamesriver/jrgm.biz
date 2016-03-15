@@ -32,7 +32,7 @@ FROM APP_employee_passwords
     <html>
     <head>
     <cfoutput>
-      <meta http-equiv="Refresh" content="1;URL=https://www.jrgm.biz/ssl/scheduler/scheduler-new.html">
+      <meta http-equiv="Refresh" content="1;URL=/ssl/scheduler/scheduler-new.html">
     </cfoutput>
     </head>
     </html>
@@ -40,7 +40,7 @@ FROM APP_employee_passwords
     <html>
     <head> 
      <cfoutput>
-    <META HTTP-EQUIV="Refresh" CONTENT="1;URL=https://www.jrgm.biz/ssl/scheduler/schedulerevents-new.html">
+    <META HTTP-EQUIV="Refresh" CONTENT="1;URL=/ssl/scheduler/schedulerevents-new.html">
  </cfoutput>
      </head>
     </html>

@@ -6459,7 +6459,7 @@ SESSION.gross_profit_calculated
         </tr>
         <tr>
           <td valign="top"><p> Ben: Is Billing Contact Info done like this? <br />
-              https://www.jrgm.biz/ssl/admin/project_Edit_Project_Information.cfm?ProjectID=J3769-316</p>
+              /ssl/admin/project_Edit_Project_Information.cfm?ProjectID=J3769-316</p>
             <p>&nbsp;</p></td>
         </tr>
       </tbody>

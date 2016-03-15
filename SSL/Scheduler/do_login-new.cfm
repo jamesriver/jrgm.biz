@@ -36,7 +36,7 @@ FROM APP_employee_passwords
   <cfif url.schedchoice  EQ 'home' AND employee_position_ID EQ 9 >
     <html>
     <head>
-    <META HTTP-EQUIV="Refresh" CONTENT="1;URL=https://www.jrgm.biz/ssl/branch-new/index.cfm">
+    <META HTTP-EQUIV="Refresh" CONTENT="1;URL=/ssl/branch-new/index.cfm">
     </head>
     </html>
    </cfif>
@@ -44,7 +44,7 @@ FROM APP_employee_passwords
      <cfif url.schedchoice  EQ 'payroll' AND employee_position_ID EQ 9 >
     <html>
     <head>
-    <META HTTP-EQUIV="Refresh" CONTENT="1;URL=https://www.jrgm.biz/ssl/branch-new/payroll_main.cfm">
+    <META HTTP-EQUIV="Refresh" CONTENT="1;URL=/ssl/branch-new/payroll_main.cfm">
     </head>
     </html>
    </cfif>
@@ -52,7 +52,7 @@ FROM APP_employee_passwords
      <cfif url.schedchoice  EQ 'dailysheet' AND employee_position_ID EQ 9 >
     <html>
     <head>
-    <META HTTP-EQUIV="Refresh" CONTENT="1;URL=https://www.jrgm.biz/ssl/branch-new/dailysheet_select.cfm">
+    <META HTTP-EQUIV="Refresh" CONTENT="1;URL=/ssl/branch-new/dailysheet_select.cfm">
     </head>
     </html>
    </cfif>
@@ -60,7 +60,7 @@ FROM APP_employee_passwords
      <cfif url.schedchoice  EQ 'inventory' AND employee_position_ID EQ 9 >
     <html>
     <head>
-    <META HTTP-EQUIV="Refresh" CONTENT="1;URL=https://www.jrgm.biz/ssl/branch-new/inventory_list.cfm">
+    <META HTTP-EQUIV="Refresh" CONTENT="1;URL=/ssl/branch-new/inventory_list.cfm">
     </head>
     </html>
    </cfif>
@@ -68,7 +68,7 @@ FROM APP_employee_passwords
     <cfif url.schedchoice  EQ 'directory' AND employee_position_ID EQ 9 >
     <html>
     <head>
-    <META HTTP-EQUIV="Refresh" CONTENT="1;URL=https://www.jrgm.biz/ssl/branch-new/directory.cfm">
+    <META HTTP-EQUIV="Refresh" CONTENT="1;URL=/ssl/branch-new/directory.cfm">
     </head>
     </html>
    </cfif>
@@ -78,7 +78,7 @@ FROM APP_employee_passwords
      <cfif url.schedchoice  EQ 'home' AND employee_position_ID EQ 1 >
     <html>
     <head>
-    <META HTTP-EQUIV="Refresh" CONTENT="1;URL=https://www.jrgm.biz/ssl/supervisors-new/index.cfm">
+    <META HTTP-EQUIV="Refresh" CONTENT="1;URL=/ssl/supervisors-new/index.cfm">
     </head>
     </html>
    </cfif>
@@ -86,7 +86,7 @@ FROM APP_employee_passwords
      <cfif url.schedchoice  EQ 'payroll' AND employee_position_ID EQ 1 >
     <html>
     <head>
-    <META HTTP-EQUIV="Refresh" CONTENT="1;URL=https://www.jrgm.biz/ssl/supervisors-new/payroll_main.cfm">
+    <META HTTP-EQUIV="Refresh" CONTENT="1;URL=/ssl/supervisors-new/payroll_main.cfm">
     </head>
     </html>
    </cfif>
@@ -94,7 +94,7 @@ FROM APP_employee_passwords
      <cfif url.schedchoice  EQ 'dailysheet' AND employee_position_ID EQ 1 >
     <html>
     <head>
-    <META HTTP-EQUIV="Refresh" CONTENT="1;URL=https://www.jrgm.biz/ssl/supervisors-new/dailysheet_select.cfm">
+    <META HTTP-EQUIV="Refresh" CONTENT="1;URL=/ssl/supervisors-new/dailysheet_select.cfm">
     </head>
     </html>
    </cfif>
@@ -102,7 +102,7 @@ FROM APP_employee_passwords
       <cfif url.schedchoice  EQ 'inventory' AND employee_position_ID EQ 1 >
     <html>
     <head>
-    <META HTTP-EQUIV="Refresh" CONTENT="1;URL=https://www.jrgm.biz/ssl/supervisors-new/inventory_list.cfm">
+    <META HTTP-EQUIV="Refresh" CONTENT="1;URL=/ssl/supervisors-new/inventory_list.cfm">
     </head>
     </html>
    </cfif>
@@ -110,7 +110,7 @@ FROM APP_employee_passwords
     <cfif url.schedchoice  EQ 'directory' AND employee_position_ID EQ 1 >
     <html>
     <head>
-    <META HTTP-EQUIV="Refresh" CONTENT="1;URL=https://www.jrgm.biz/ssl/supervisors-new/directory.cfm">
+    <META HTTP-EQUIV="Refresh" CONTENT="1;URL=/ssl/supervisors-new/directory.cfm">
     </head>
     </html>
    </cfif>

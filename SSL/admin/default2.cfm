@@ -82,7 +82,7 @@ font:13px "Arial",san-serif;
     <td valign="top"><div class="subheader">Payroll</div>
     <div class="dashboardHeader">Ben</div>
            <ul class="dashboard">
-          <li><a href="https://www.jrgm.biz/ssl/admin/payroll/payrollbetty.cfm">Ben Payroll Screen</a></li>
+          <li><a href="/ssl/admin/payroll/payrollbetty.cfm">Ben Payroll Screen</a></li>
           <li><a href="payroll/payroll_unapproved.cfm">Unapproved Payroll</a></li>
           <li><a href="dailysheet_add.cfm">Add a Daily Sheet</a></li>
           <li><a href="payroll/pto_add.cfm">Add PTO Time</a></li>

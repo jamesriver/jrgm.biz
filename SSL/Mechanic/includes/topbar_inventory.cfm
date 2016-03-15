@@ -15,7 +15,7 @@
             <!---  <li><a href="dailysheet_create.cfm">Create a Daily Sheet</a></li> --->
           </ul>
         </div>
-        <cfoutput><a href="https://www.jrgm.biz/ssl/scheduler/schedulerevents.html"><img src="images/icon_jobs.png" width="60" height="60" alt="Jobs" class="icons" /></a></cfoutput> <cfoutput><a href="https://www.jrgm.biz/ssl/scheduler/scheduler.html"><img src="images/icon_crews.png" width="60" height="60" alt="Crews" class="icons" /></a></cfoutput> <cfoutput><a href="https://www.jrgm.biz/ssl/branch/inventory.cfm"><img src="images/icon_inventory.png" width="60" height="60" alt="Crews" class="icons" /></a></cfoutput> </td>
+        <cfoutput><a href="/ssl/scheduler/schedulerevents.html"><img src="images/icon_jobs.png" width="60" height="60" alt="Jobs" class="icons" /></a></cfoutput> <cfoutput><a href="/ssl/scheduler/scheduler.html"><img src="images/icon_crews.png" width="60" height="60" alt="Crews" class="icons" /></a></cfoutput> <cfoutput><a href="/ssl/branch/inventory.cfm"><img src="images/icon_inventory.png" width="60" height="60" alt="Crews" class="icons" /></a></cfoutput> </td>
       <!-- .btn-group -->
       <td align="right"><!--<a href="http://www.jrgm.biz/supervisors/proposal.cfm" class="btn btn-primary">Proposal Maker</a><a href="http://www.jrgm.biz/supervisors/forms.cfm" class="btn btn-primary">Forms</a> -->
         <a href="default.cfm"><img src="images/icon_home.png" alt="Home" width="60" height="60" class="icons" /></a> <a href="http://www.jrgm.biz/index.cfm"><img src="images/icon_logout.png" alt="Logout" width="60" height="60" class="icons" /></a> </td>

@@ -167,12 +167,12 @@ input[type=submit], input[type=submit]:hover {
   <cfinclude template="header-menu-pat.cfm">
   <table width="100%" cellpadding="5">
     <tr  bgcolor="#BCDAF3">
-      <td width="50" height="25" align="center" nowrap="nowrap"><strong><a href="https://www.jrgm.biz/ssl/admin/payroll_main.cfm">Payroll</a></strong></td>
-      <td width="100" height="25" align="center" nowrap="nowrap"><strong><a href="https://www.jrgm.biz/ssl/admin/daily_sheet_listing.cfm">Daily Sheet</a></strong></td>
-   <!---   <td align="center"><strong><a href="https://www.jrgm.biz/ssl/admin/scheduler_select.cfm">Log In</a></strong></td>--->
-      <td width="100" height="25" align="center" nowrap="nowrap"><strong><a href="https://www.jrgm.biz/ssl/admin/scheduler_select-new.cfm">Log In New</a></strong></td>
-      <td width="100" height="25" align="center" nowrap="nowrap"><strong><a href="https://www.jrgm.biz/ssl/admin/inventory.cfm">Equipment</a></strong></td>
-      <td width="100" height="25" align="center" nowrap="nowrap"><strong><a href="https://www.jrgm.biz/ssl/admin/directory.cfm">Directory</a></strong></td>
+      <td width="50" height="25" align="center" nowrap="nowrap"><strong><a href="/ssl/admin/payroll_main.cfm">Payroll</a></strong></td>
+      <td width="100" height="25" align="center" nowrap="nowrap"><strong><a href="/ssl/admin/daily_sheet_listing.cfm">Daily Sheet</a></strong></td>
+   <!---   <td align="center"><strong><a href="/ssl/admin/scheduler_select.cfm">Log In</a></strong></td>--->
+      <td width="100" height="25" align="center" nowrap="nowrap"><strong><a href="/ssl/admin/scheduler_select-new.cfm">Log In New</a></strong></td>
+      <td width="100" height="25" align="center" nowrap="nowrap"><strong><a href="/ssl/admin/inventory.cfm">Equipment</a></strong></td>
+      <td width="100" height="25" align="center" nowrap="nowrap"><strong><a href="/ssl/admin/directory.cfm">Directory</a></strong></td>
         <td width="50%">&nbsp; </td>
     </tr>
   </table>
@@ -310,7 +310,7 @@ WHERE Employee_ID =#get_branch_employees.Employee_ID#
             </cfif></td>
           <td nowrap="nowrap">Max Export Date - <cfoutput>#DateFormat(max_employees.max_export_date_emp, "mm/dd/yyyy")#</cfoutput>&nbsp;<br />
             (app_employees) Last Employee Added from ADP</td>
-          <td nowrap="nowrap"><a href="https://www.jrgm.biz/ssl/admin/inventory.cfm">Equipment Status</a></td>
+          <td nowrap="nowrap"><a href="/ssl/admin/inventory.cfm">Equipment Status</a></td>
           <td  nowrap="nowrap"><a href="payroll/payrollBetty.cfm">Neil Payroll Screen</a></td>
         </tr>
         <tr>

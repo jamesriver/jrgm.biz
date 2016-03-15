@@ -32,7 +32,7 @@
           <cfif  IsDefined("Session.USERID")  AND Session.USERID NEQ  '3298' >
       <p class="dstable_cl"><a href="payroll_report_daily.cfm">Daily Employee Payroll Report</a></p>
       <p class="dstable_cl"><a href="payroll_view_employee.cfm"> Employee Payroll Report</a></p>
-      <p class="dstable_cl"><a href="https://www.jrgm.biz/ssl/admin/payroll/payrollbetty.cfm">Ben Payroll Main Screen</a></p>
+      <p class="dstable_cl"><a href="/ssl/admin/payroll/payrollbetty.cfm">Ben Payroll Main Screen</a></p>
       <p>&nbsp;</p>
       </cfif>
     </div>
