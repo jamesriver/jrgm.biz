@@ -273,9 +273,9 @@ input {
                 <td nowrap="nowrap">Project Name</td>
                 <td width="300" nowrap="nowrap">
                     <cfif is_admin EQ 1>
-                        <input name="projectname" type="text" style="width: 100%" value="<cfoutput>#projectname#</cfoutput>">
+                        <input name="projectname" type="text" style="width: 100%" value="#projectname#">
                     <cfelse>
-                        <input name="projectname" type="hidden" value="<cfoutput>#projectname#</cfoutput>"><cfoutput>#projectname#</cfoutput>
+                        <input name="projectname" type="hidden" value="#projectname#">#projectname#
                     </cfif>
                 </td>
                 <td nowrap="nowrap">Active Quote</td>
@@ -284,7 +284,7 @@ input {
                     <cfif IsDefined('last_quote.ID')>
                         <input type="hidden" name="last_quote_id" value="#last_quote.ID#">
                         Created: #DateFormat(last_quote.date_created, "mm/dd/yyyy")#, Last Updated: #DateFormat(last_quote.date_updated, "mm/dd/yyyy")#<br />
-                        $<cfoutput>#last_quote.adjusted_contract_price#</cfoutput> (<cfoutput>#last_quote.contract_installments#</cfoutput> installments / year)&nbsp;
+                        $#last_quote.adjusted_contract_price# (#last_quote.contract_installments# installments / year)&nbsp;
                         <a href="javascript:updateQuote()">Change Link</a>
                         <a href="/ssl/quoting-new/quote_data_entry.cfm?ID=#last_quote.opportunity_id#" target="_blank"><input type="button" value="View/Edit Quote"></a>
                     <cfelse>
@@ -305,7 +305,7 @@ input {
                 <td>
                     <cfif IsDefined('intacct_project.billto_company_name')>
                         <input name="billto_company_name" type="hidden"  value="#intacct_project.billto_company_name#"   />
-                        <cfoutput>#intacct_project.billto_company_name#</cfoutput>
+                        #intacct_project.billto_company_name#
                     <cfelse>
                         <input name="billto_company_name" type="text"  value="#get_project_info.billto_company_name#"   />
                     </cfif>
@@ -330,7 +330,7 @@ input {
                 <td>
                     <cfif IsDefined('intacct_project.billing_contact_name')>
                         <input name="billing_contact_name" type="hidden"  value="#intacct_project.billing_contact_name#"   />
-                        <cfoutput>#intacct_project.billing_contact_name#</cfoutput>
+                        #intacct_project.billing_contact_name#
                     <cfelse>
                         <input name="billing_contact_name" type="text"  value="#get_project_info.billing_contact_name#"   />
                     </cfif>
@@ -355,12 +355,12 @@ input {
                             <cfif UCASE(get_project_info.Status) EQ statuses[i][1]>
                               <cfset value = ' selected="selected"'>
                             </cfif>
-                            <option value="<cfoutput>#statuses[i][1]#</cfoutput>"<cfoutput>#value#</cfoutput>> <cfoutput>#statuses[i][2]#</cfoutput> </option>
+                            <option value="#statuses[i][1]#"#value#> #statuses[i][2]# </option>
                           </cfloop>
                         </select>
                     <cfelse>
                         <input type="hidden" name="Status" value="#get_project_info.Status#">
-                        <cfoutput>#get_project_info.Status#</cfoutput>
+                        #get_project_info.Status#
                     </cfif>
                     <cfif IsDefined('intacct_project.project_status')>
                          | <font color="##0000AA">#intacct_project.project_status#</font>
@@ -370,7 +370,7 @@ input {
                 <td>
                     <cfif IsDefined('intacct_project.billing_contact_phone')>
                         <input name="billing_contact_phone" type="hidden"  value="#intacct_project.billing_contact_phone#"   />
-                        <cfoutput>#intacct_project.billing_contact_phone#</cfoutput>
+                        #intacct_project.billing_contact_phone#
                     <cfelse>
                         <input name="billing_contact_phone" type="text"  value="#get_project_info.billing_contact_phone#"   />
                     </cfif>
@@ -385,7 +385,7 @@ input {
                 <td colspan="2" nowrap="nowrap">
                     <cfif is_admin EQ 1>
                         Check off if this project will NOT be renewed
-                        <input type="checkbox" name="project_status_checkbox" id="project_status_checkbox"  align="left"<cfoutput>#project_status_checkbox_selected#</cfoutput>/>
+                        <input type="checkbox" name="project_status_checkbox" id="project_status_checkbox"  align="left"#project_status_checkbox_selected#/>
                     <cfelse>
                         <cfif project_status_checkbox_selected neq ''>
                             This project will currently NOT be renewed
@@ -395,14 +395,14 @@ input {
                         </cfif>
                     </cfif>
                     <cfif project_status_checkbox_selected neq '' AND IsDefined('intacct_project.intacct_projects_past_enddate')>
-                        <cfoutput>#intacct_project.intacct_projects_past_enddate#</cfoutput>
+                        #intacct_project.intacct_projects_past_enddate#
                     </cfif>
                 </td>
                 <td nowrap="nowrap">Billing Contact Email Address</td>
                 <td>
                     <cfif IsDefined('intacct_project.billing_contact_email_address')>
                         <input name="billing_contact_email_address" type="hidden"  value="#intacct_project.billing_contact_email_address#"   />
-                        <cfoutput>#intacct_project.billing_contact_email_address#</cfoutput>
+                        #intacct_project.billing_contact_email_address#
                     <cfelse>
                         <input name="billing_contact_email_address" type="text"  value="#get_project_info.billing_contact_email_address#"   />
                     </cfif>
@@ -429,7 +429,7 @@ input {
                       <cfif UCASE(get_project_info.project_type) EQ project_types[i][1]>
                         <cfset value = ' selected="selected"'>
                       </cfif>
-                      <option value="<cfoutput>#project_types[i][1]#</cfoutput>"<cfoutput>#value#</cfoutput>> <cfoutput>#project_types[i][2]#</cfoutput> </option>
+                      <option value="#project_types[i][1]#"#value#> #project_types[i][2]# </option>
                     </cfloop>
                   </select></td>
                 <td nowrap="nowrap">&nbsp;</td>
@@ -456,11 +456,11 @@ input {
                 <td>
                       <cfif IsDefined('intacct_project.contract_installments')>
                           <input name="contract_installments" type="hidden"  value="#intacct_project.contract_installments#"   />
-                          <cfoutput>#intacct_project.contract_installments#</cfoutput>
+                          #intacct_project.contract_installments#
                       <cfelse>
                           <cfif IsDefined('last_quote.ID')>
                               <input name="contract_installments" type="hidden"  value="#last_quote.contract_installments#"   />
-                              <cfoutput>#last_quote.contract_installments#</cfoutput>
+                              #last_quote.contract_installments#
                           <cfelse>
                               <select name="contract_installments"    >
                                 <option value="12" <cfif get_project_info.contract_installments EQ '12'> selected="selected"</cfif>>12</option>
