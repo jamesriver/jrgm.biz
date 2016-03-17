@@ -494,7 +494,7 @@ i.mysize {
                     </cfloop>
                 </tr>
             </cfloop>
-            <tr bgcolor="#EDF3F8">
+            <tr bgcolor="##EDF3F8">
                 <cfloop from="1" to="#arrayLen(quote_column_headers)#" index="i">
                         <cfset current_column = quote_column_headers[i]>
                         <cfif current_column.ID EQ 1 OR current_column.ID EQ 2>
