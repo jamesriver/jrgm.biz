@@ -198,7 +198,7 @@ SELECT  DISTINCT ds_date FROM app_daily_sheets   ORDER by ds_date DESC
   <cfquery name="get_daily_sheets" datasource="jrgm"   >
 SELECT  DISTINCT employee_ID FROM app_employee_payroll_clock   WHERE ds_date = '#form.DateRequested#'
  </cfquery>
-
+<cfif get_daily_sheets.recordcount GT 0>
 
 <CFSET myliste ="">
 <cfloop query="get_daily_sheets">
@@ -338,6 +338,7 @@ SELECT Sum(time_worked_current) AS  minutes_worked_day_inprogress FROM  get_all_
           
           </table>  </cfoutput>
           
+</cfif>
         <!---   <cfoutput>#todayDate#</cfoutput> --->
  </div></div></div>
 <br />
