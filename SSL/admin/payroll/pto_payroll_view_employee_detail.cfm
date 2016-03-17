@@ -74,7 +74,7 @@
           </tr>
         </thead>
         <tbody>  
-        
+     
 <cfquery name="get_employee_pto_time" datasource="jrgm" >
 SELECT     ID, employee_id, branch_code, userid, pto_hours, date_entered, pto_date
 FROM         payroll_pto   WHERE  

@@ -2,14 +2,16 @@
 <CFIF IsDefined("url.work_date")>
   <cfset todayDate = #url.work_date#>
   <cfelse>
-  <cfset todayDate = dateformatnow()>
+  <cfset todayDate = Now()>
 </CFIF>
  
 <cfset Now_Time = Now()>
 <cfset somedate = todayDate>
-<cfset yesterday = datetimeformatadd("d",-1,somedate)>
-<cfset tomorrow = datetimeformatadd("d",1,somedate)>
-<cfset today = datetimeformatadd("d",0,somedate)>
+<cfset yesterday = dateadd("d",-1,somedate)>
+<cfset tomorrow = dateadd("d",1,somedate)>
+<cfset today = dateadd("d",0,somedate)>
+<!---<cfoutput>#todayDate#</cfoutput>--->
+
 
 <!------------------- Get in progress time ---------------------->
 <cfquery name="calculate_time" datasource="jrgm">
@@ -162,8 +164,8 @@ table.sortable tbody td {
 <cfinclude template="includes/subbar.cfm">
   <cfinclude template="includes/topbar.cfm">
    <!--centre content goes here -->
-  <div class="centrecontent_inner">
-
+  <div class="centrecontent_inner"> 
+     
      <cfparam name="Form.DateRequested" default="#DateFormat(Now(), "mm/dd/yyyy")#">
     <!---  <CFSET DateRequested = #DateFormat(Now(), "mm/dd/yyyy")#> --->
        <form action="payroll_report_daily.cfm" method="post">
@@ -197,18 +199,19 @@ SELECT  DISTINCT ds_date FROM app_daily_sheets   ORDER by ds_date DESC
 SELECT  DISTINCT employee_ID FROM app_employee_payroll_clock   WHERE ds_date = '#form.DateRequested#'
  </cfquery>
 
+
 <CFSET myliste ="">
 <cfloop query="get_daily_sheets">
   <cfset myListe = ListAppend(myliste,Employee_ID)>
 </cfloop>
-<cfif ListLen(myListe) EQ 0>
-    <cfabort>
-</cfif>
+
+ 
  
    <cfquery name="get_number_daily_sheets" datasource="jrgm"   >
 SELECT  DISTINCT ID FROM app_daily_sheets   WHERE ds_date = '#DateRequested#'
  </cfquery>
-
+ 
+ 
    <strong><cfoutput>  <span class="arialfont">#get_daily_sheets.recordcount# </span></cfoutput><span class="arialfont"> employees working on <cfoutput>  #get_number_daily_sheets.recordcount#</cfoutput> crews on <cfoutput>  #DateFormat(form.DATEREQUESTED, "mm/dd/yyyy")#</cfoutput> as of <cfoutput>#TimeFormat(Now_Time, "hh:mm tt")#</cfoutput></span></span></strong><br />
      <br />
 <!---   <cfoutput><span class="arialfont">#get_daily_sheets.recordcount#</span></cfoutput><span class="arialfont"> Employees working <cfoutput>  #DateFormat(form.DATEREQUESTED, "mm/dd/yyyy")#</cfoutput></span><br /> --->
@@ -225,14 +228,14 @@ SELECT  DISTINCT ID FROM app_daily_sheets   WHERE ds_date = '#DateRequested#'
               <td align="center" class="dstable_header">End</td>
               <td align="center" class="dstable_header">Total  (H:M)</td>
             </tr>
-
             <cfquery name="get_employees_for_today" datasource="jrgm">
 			SELECT DISTINCT [Employee ID] As employee_id,[Name FirstLast] AS employee_name, position,branch  FROM APP_employees
 			WHERE [Employee ID] IN 
 			(#myListe# ) 
  			 ORDER by [Employee ID] ASC
 			</cfquery>
-
+            
+            
              <cfquery name="get_all_employee_time_for_period" datasource="jrgm"      >
 	SELECT  in_out_status,time_worked_current,time_worked ,ds_date,ds_id,Employee_ID,ID,time_In, time_Out FROM  app_employee_payroll_clock 
  WHERE Employee_ID  IN (#myListe#)

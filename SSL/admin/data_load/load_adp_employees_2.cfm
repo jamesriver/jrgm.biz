@@ -1,17 +1,28 @@
-<cfquery name="make_copy"   datasource="jrgm">
+<!---<cfquery name="make_copy"   datasource="jrgm">
 SELECT * INTO Delete_this_employees_backup  FROM app_employees
 </cfquery>
 <cfquery name="drop_test" datasource="JRGM" >
 DROP TABLE app_employees_test_backup;
+</cfquery>--->
+
+<cfquery name="make_copy"   datasource="jrgm">
+SELECT * INTO Delete_this_employees_backup  FROM app_employees
 </cfquery>
+<cfquery name="make_copy"   datasource="jrgm">
+SELECT * INTO Delete_this_crews_backup  FROM app_crews
+</cfquery>
+<cfquery name="drop_test" datasource="JRGM" >
+DROP TABLE app_employees_test_backup;
+</cfquery>
+
 <!--- <cfabort> --->
-<cfquery name="get_max_emp_id" datasource="JRGM" >
+<!---<cfquery name="get_max_emp_id" datasource="JRGM" >
  SELECT  MAX([Employee ID]) AS maxfilenumber FROM app_employees    WHERE [Employee ID] < 9993
-  </cfquery>
+  </cfquery>--->
 <!--- <cfoutput>#get_max_emp_id.maxfilenumber#</cfoutput>
  <cfabort> --->
-<CFSET   maxfilenumber = #get_max_emp_id.maxfilenumber#>
-<CFSET checkdate = '01/10/2016'>
+<!---<CFSET   maxfilenumber = #get_max_emp_id.maxfilenumber#>--->
+<CFSET checkdate = '02/10/2016'>
 <!doctype html>
 <html>
 <head>
@@ -81,7 +92,6 @@ varchar
 "
 
 ) >
-
 <cfset temp = QueryAddRow(orderquery, #size#)>
 <cfloop index="i" from = "1" to = "#size#">
   <cfset  QuerySetCell(orderquery, "FIRST_NAME",mydoc.rowset.ROW[i].FIRST_NAME.XmlText, i)>
@@ -119,11 +129,21 @@ varchar
   </cfif>
   <cfset  QuerySetCell(orderquery, "CUSTOM_AREA_2",mydoc.rowset.ROW[i].CUSTOM_AREA_2.XmlText, i)>
 </cfloop>
-<!--- <cfdump var=#orderquery#> --->
+<!--- <cfdump var=#orderquery#> ---> 
+<!---Modified this query 3/16/2016--->
+
+<cfquery name="get_all_employees_in_app_employees" datasource="JRGM" >
+ SELECT  [Employee ID] AS employee_ID FROM app_employees    <!---WHERE [Employee ID] < 9993--->
+  </cfquery>
+<CFSET mylist ="0">
+<cfloop query="get_all_employees_in_app_employees">
+  <cfset myList = ListAppend(mylist,employee_ID)>
+</cfloop>
 <cfquery name="get_all_records"   dbtype="query"  >
- SELECT * FROM orderquery WHERE FILE_NUMBER > #maxfilenumber#
+ SELECT * FROM orderquery WHERE FILE_NUMBER NOT IN (#myList#)  <!---#maxfilenumber#--->
  </cfquery>
-<cfdump var="#get_all_records#">
+<!---<cfdump var="#get_all_records#">
+<cfabort>--->
 <cfloop query="get_all_records">
   <cfparam name="FILE_NUMBER" default="0">
   <cfparam name="branchid" default="00">
@@ -212,9 +232,9 @@ varchar
   WHERE  ID =#get_all_CL_records.ID#
   </cfquery>
 </cfloop>
-<!---  <cfabort>  --->
-<!-----------------  This is the end of step 1 ---------------------->
-<!-----------------  This is the end of step 1 ---------------------->
+<!---  <cfabort>  ---> 
+<!-----------------  This is the end of step 1 ----------------------> 
+<!-----------------  This is the end of step 1 ----------------------> 
 <!-----------------  This is the end of step 1 ---------------------->
 <cfquery name="get_modified_records"   datasource="jrgm" >
   SELECT [Employee ID] AS employee_id, branch,active_record,[Name FirstLast] AS employee_name,employee_rehire_date,fww,regular_pay_rate FROM app_employees_test 
@@ -242,13 +262,13 @@ varchar
     <cfoutput> I need to insert this employee (#employee_name#) (#employee_id#) into the app_employees_db</cfoutput><br>
   </cfif>
 </cfloop>
-<!-----------------  This is the end of step 2 ---------------------->
-<!-----------------   This is the end of step 2 ---------------------->
+<!-----------------  This is the end of step 2 ----------------------> 
+<!-----------------   This is the end of step 2 ----------------------> 
 <!-----------------    This is the end of step 2 ---------------------->
 <cfquery name="getrecords_Inactivate"   datasource="jrgm">
 SELECT [Employee ID] AS empid,  [Name FirstLast] AS empname,branch
 FROM app_employees
-WHERE active_record = 1 AND  [Employee ID] < 6000 AND   [Employee ID]  NOT IN (SELECT [Employee ID] FROM app_employees_test)
+WHERE active_record = 1 AND  [Employee ID] < 9500 AND   [Employee ID]  NOT IN (SELECT [Employee ID] FROM app_employees_test)
 ORDER by branch
 </cfquery>
 <br>
@@ -263,17 +283,15 @@ WHERE [Employee ID] = #getrecords_Inactivate.empid#
 DELETE FROM app_crews
 WHERE employee_id = #getrecords_Inactivate.empid#
 </cfquery>
-  <!--- Do this Inactivate Password  --->
-  <!--- Do this Check for Crew_leader_id and supervisor_id in APP_CREWS --->
+  <!--- Do this Inactivate Password  ---> 
+  <!--- Do this Check for Crew_leader_id and supervisor_id in APP_CREWS ---> 
   <cfoutput>(#getrecords_Inactivate.empname#) (#getrecords_Inactivate.empid#) have been inactivated in app_employees table</cfoutput><br>
 </cfloop>
-<!-----------------  This is the end of step 3 ---------------------->
-<!-----------------    This is the end of step 3 ---------------------->
-<!-----------------    This is the end of step 3 ---------------------->
+<!-----------------  This is the end of step 3 ----------------------> 
+<!-----------------    This is the end of step 3 ----------------------> 
+<!-----------------    This is the end of step 3 ----------------------> 
 Data Updated
 <cfabort>
- 
 DONE!
 </body>
 </html>
- 

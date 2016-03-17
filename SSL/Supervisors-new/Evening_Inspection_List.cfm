@@ -10,7 +10,7 @@
 <cfset recur = dateadd("d",50,somedate)>
 <cfset todayDate_dow = DayOfWeek(todayDate)>
 <cfset todayDate_button = DateFormat(Now(),"mmm-dd-yyyy")>
-<cfquery name="get_all_employee_info" datasource="jrgm"  >
+<!---<cfquery name="get_all_employee_info" datasource="jrgm"  >
 SELECT   [Employee ID] AS employee_ID,[Name FirstLast] AS fullname, first_name ,  last_name,branch     
 FROM app_employees 
 </cfquery>
@@ -21,6 +21,36 @@ SELECT Crew_Leader_ID FROM
 APP_daily_sheets WHERE  supervisor_id =#session.userid#  
 </cfquery>
 
+<CFSET mylist2 ="0">
+<cfloop query="get_clid_branch_ds">
+  <cfset myList2= ListAppend(mylist2,Crew_Leader_ID)>
+</cfloop>
+--->
+
+<cfquery name="get_all_employee_info" datasource="jrgm"  >
+SELECT   [Employee ID] AS employee_ID,[Name FirstLast] AS fullname, first_name ,  last_name,branch     
+FROM app_employees 
+</cfquery>
+<cfquery name="get_BM_Name" datasource="jrgm">
+SELECT [Employee ID] AS Employee_ID,position,Last_name AS Employee_Name FROM 
+APP_employees WHERE [Employee ID] ='#SESSION.userid#' 
+</cfquery>
+<cfquery name="get_supers" datasource="jrgm">
+SELECT [Employee ID] AS Employee_ID,position,[Name FirstLast] AS Employee_Name FROM 
+APP_employees WHERE Branch = '#session.branch#'
+</cfquery>
+<!--- <cfdump  var="#get_crew_leaders#"> --->
+<CFSET mylist ="0">
+<cfloop query="get_supers">
+  <cfset myList = ListAppend(mylist,Employee_ID)>
+</cfloop>
+
+<!--- get clid formds --->
+
+<cfquery name="get_clid_branch_ds" datasource="jrgm">
+SELECT Crew_Leader_ID FROM 
+APP_daily_sheets WHERE supervisor_id IN (#mylist#)
+</cfquery>
 <CFSET mylist2 ="0">
 <cfloop query="get_clid_branch_ds">
   <cfset myList2= ListAppend(mylist2,Crew_Leader_ID)>
@@ -70,7 +100,6 @@ APP_daily_sheets WHERE  supervisor_id =#session.userid#
 <!-- DOC: Apply "page-header-menu-fixed" class to set the mega menu fixed  -->
 <!-- DOC: Apply "page-header-top-fixed" class to set the top menu fixed  -->
 
-
 <body>
 <!-- BEGIN HEADER SECTION  -->
 <div class="page-header">
@@ -85,10 +114,27 @@ APP_daily_sheets WHERE  supervisor_id =#session.userid#
   <div class="page-head">
     <div class="container-fluid"> 
       <!-- BEGIN PAGE TITLE -->
-     <cfquery name="get_evening_inspections" datasource="jrgm">
+      <cfif SESSION.branch EQ 'Richmond' >
+        <CFSET branchcode =10>
+        <cfelseif SESSION.branch EQ 'Portsmouth' >
+        <CFSET branchcode =20>
+        <cfelseif SESSION.branch EQ 'Charlottesville' >
+        <CFSET branchcode =30>
+        <cfelseif SESSION.branch EQ 'Williamsburg' >
+        <CFSET branchcode =70>
+        <cfelseif SESSION.branch EQ 'Chesterfield' >
+        <CFSET branchcode =80>
+        <cfelseif SESSION.branch EQ 'Newport News' >
+        <CFSET branchcode =90>
+        <cfelseif SESSION.branch EQ 'Test' >
+        <CFSET branchcode =100>
+        <cfelse>
+        <CFSET branchcode =0>
+      </cfif>
+      <cfquery name="get_evening_inspections" datasource="jrgm" maxrows="2000">
 SELECT      Inspection_ID, Crew_LeaderID, Inspection_Date, Inspection_Type, Problem, Created_By, Created_On, Current_Mileage, vehicleSatisfactory, 
                       InspectionMode
-FROM     app_Inspection_Master  WHERE Inspection_Type ='Evening'   AND  Crew_LeaderID IN  (#myList2#)
+FROM     app_Inspection_Master  WHERE Inspection_Type ='Evening'   AND  branch_code = #branchcode#
 order by  Inspection_Date DESC, Inspection_ID DESC
  </cfquery>
       <div class="page-title">
@@ -99,7 +145,7 @@ order by  Inspection_Date DESC, Inspection_ID DESC
       <div class="page-toolbar">
         <ul class="page-breadcrumb breadcrumb">
           <li> <a href="index.cfm">Home</a><i class="fa fa-circle"></i> </li>
-         <!---  <li><i class="fa fa-circle"></i> </li> --->
+          <!---  <li><i class="fa fa-circle"></i> </li> --->
           <li class="active">End of Day Inspection Form List</li>
         </ul>
       </div>
@@ -116,41 +162,39 @@ order by  Inspection_Date DESC, Inspection_ID DESC
         <div class="col-md-12"> 
           
           <!-- BEGIN ACCORDION PORTLET-->
-					<div class="portlet">
-						<div class="portlet-body">
-		<table class="table table-striped table-hover" id="sample_5">
-    <thead>
-          <tr>
-            <th align="left">ID</th>
-            <th align="left">Date</th>
-            <th align="left">Branch</th>
-            <th align="left">Supervisor</th>
-            <th align="left">Crew Leader</th>
-            <th align="left">View</th>
-          </tr>
-        </thead>
-    <tbody>
-          <cfoutput  query="get_evening_inspections"  >
-            <tr>
-              <td><a href="Evening_Inspection_Form.cfm?Inspection_ID=#Inspection_ID#">#Inspection_ID#</a></td>
-              <td nowrap="nowrap">#dateformat(Inspection_Date,"mm/dd/yy")#</td>
-              <cfquery name="get_branch_employees_cache"   dbtype="query">
+          <div class="portlet">
+            <div class="portlet-body">
+              <table class="table table-striped table-hover" id="sample_5">
+                <thead>
+                  <tr>
+                    <th align="left">ID</th>
+                    <th align="left">Date</th>
+                    <th align="left">Branch</th>
+                    <!--- <th align="left">Supervisor</th>--->
+                    <th align="left">Crew Leader</th>
+                    <th align="left">View</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <cfoutput  query="get_evening_inspections"  >
+                    <tr>
+                      <td><a href="Evening_Inspection_Form.cfm?Inspection_ID=#Inspection_ID#">#Inspection_ID#</a></td>
+                      <td nowrap="nowrap">#dateformat(Inspection_Date,"mm/dd/yy")#</td>
+                      <cfquery name="get_branch_employees_cache"   dbtype="query">
 SELECT   fullname,branch  FROM get_all_employee_info
 WHERE  employee_ID =  #Crew_LeaderID# 
  </cfquery>
-              <td align="left">#get_branch_employees_cache.branch#</td>
-             <td>#SESSION.screenname#</td>
-              <td align="left">#get_branch_employees_cache.fullname#</td>
-              <td><a href="Evening_Inspection_Form.cfm?Inspection_ID=#Inspection_ID#" >View</a></td>
-            </tr>
-          </cfoutput>
-        </tbody>
-      </table>
-																			
-							
-						</div>
-					</div>
-					<!-- END ACCORDION PORTLET-->
+                      <td align="left">#get_branch_employees_cache.branch#</td>
+                      <!--- <td>#SESSION.screenname#</td>--->
+                      <td align="left">#get_branch_employees_cache.fullname#</td>
+                      <td><a href="Evening_Inspection_Form.cfm?Inspection_ID=#Inspection_ID#" >View</a></td>
+                    </tr>
+                  </cfoutput>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!-- END ACCORDION PORTLET--> 
           
         </div>
       </div>
@@ -173,30 +217,30 @@ WHERE  employee_ID =  #Crew_LeaderID#
 <script src="assets/global/plugins/respond.min.js"></script>
 <script src="assets/global/plugins/excanvas.min.js"></script> 
 <![endif]--> 
-<script src="assets/global/plugins/jquery.min.js" type="text/javascript"></script>
-<script src="assets/global/plugins/jquery-migrate.min.js" type="text/javascript"></script>
-<!-- IMPORTANT! Load jquery-ui.min.js before bootstrap.min.js to fix bootstrap tooltip conflict with jquery ui tooltip -->
-<script src="assets/global/plugins/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
-<script src="assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
-<script src="assets/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js" type="text/javascript"></script>
-<script src="assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
-<script src="assets/global/plugins/jquery.cokie.min.js" type="text/javascript"></script>
-<script src="assets/global/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
-<!-- END CORE PLUGINS -->
-<!-- BEGIN PAGE LEVEL PLUGINS -->
-<script type="text/javascript" src="assets/global/plugins/select2/select2.min.js"></script>
-<script type="text/javascript" src="assets/global/plugins/datatables/media/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="assets/global/plugins/datatables/extensions/TableTools/js/dataTables.tableTools.min.js"></script>
-<script type="text/javascript" src="assets/global/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js"></script>
-<script type="text/javascript" src="assets/global/plugins/datatables/extensions/Scroller/js/dataTables.scroller.min.js"></script>
-<script type="text/javascript" src="assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.js"></script>
-<!-- END PAGE LEVEL PLUGINS -->
-<!-- BEGIN PAGE LEVEL SCRIPTS -->
-<script src="assets/global/scripts/metronic.js" type="text/javascript"></script>
-<script src="assets/admin/layout3/scripts/layout.js" type="text/javascript"></script>
-<script src="assets/admin/layout3/scripts/demo.js" type="text/javascript"></script>
-<script src="assets/admin/pages/scripts/table-advanced.js"></script>
-<script src="assets/admin/pages/scripts/dropdown-header-menu.js"></script>
+<script src="assets/global/plugins/jquery.min.js" type="text/javascript"></script> 
+<script src="assets/global/plugins/jquery-migrate.min.js" type="text/javascript"></script> 
+<!-- IMPORTANT! Load jquery-ui.min.js before bootstrap.min.js to fix bootstrap tooltip conflict with jquery ui tooltip --> 
+<script src="assets/global/plugins/jquery-ui/jquery-ui.min.js" type="text/javascript"></script> 
+<script src="assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script> 
+<script src="assets/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js" type="text/javascript"></script> 
+<script src="assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script> 
+<script src="assets/global/plugins/jquery.cokie.min.js" type="text/javascript"></script> 
+<script src="assets/global/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script> 
+<!-- END CORE PLUGINS --> 
+<!-- BEGIN PAGE LEVEL PLUGINS --> 
+<script type="text/javascript" src="assets/global/plugins/select2/select2.min.js"></script> 
+<script type="text/javascript" src="assets/global/plugins/datatables/media/js/jquery.dataTables.min.js"></script> 
+<script type="text/javascript" src="assets/global/plugins/datatables/extensions/TableTools/js/dataTables.tableTools.min.js"></script> 
+<script type="text/javascript" src="assets/global/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js"></script> 
+<script type="text/javascript" src="assets/global/plugins/datatables/extensions/Scroller/js/dataTables.scroller.min.js"></script> 
+<script type="text/javascript" src="assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.js"></script> 
+<!-- END PAGE LEVEL PLUGINS --> 
+<!-- BEGIN PAGE LEVEL SCRIPTS --> 
+<script src="assets/global/scripts/metronic.js" type="text/javascript"></script> 
+<script src="assets/admin/layout3/scripts/layout.js" type="text/javascript"></script> 
+<script src="assets/admin/layout3/scripts/demo.js" type="text/javascript"></script> 
+<script src="assets/admin/pages/scripts/table-advanced.js"></script> 
+<script src="assets/admin/pages/scripts/dropdown-header-menu.js"></script> 
 <script>
 jQuery(document).ready(function() {    
  

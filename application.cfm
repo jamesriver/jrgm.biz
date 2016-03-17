@@ -1,6 +1,4 @@
-﻿<cfinclude template="include_globalfunctions.cfm">
-
-<cfapplication name="jrgm"
+﻿<cfapplication name="jrgm"
 ClientManagement="No"
 SessionManagement="Yes"
 SessionTimeout="#CreateTimeSpan(0,14,0,0)#"
@@ -111,14 +109,24 @@ SetClientCookies="Yes">
 <CFSET APPLICATION.pay_period_week2_date ='02/27/2016'>--->
 
 
-<CFSET APPLICATION.blockdate ='02/27/2016'>
+<!---<CFSET APPLICATION.blockdate ='02/27/2016'>
 <CFSET APPLICATION.pay_period_week1 =97>
 <CFSET APPLICATION.pay_period_week2 =98>
 <CFSET APPLICATION.pay_period_number =49>
 <CFSET APPLICATION.week1_date_available ='03/05/2016'>
 <CFSET APPLICATION.week2_date_available ='03/12/2016'>
 <CFSET APPLICATION.pay_period_week1_date ='03/05/2016'>
-<CFSET APPLICATION.pay_period_week2_date ='03/12/2016'>
+<CFSET APPLICATION.pay_period_week2_date ='03/12/2016'>--->
+
+
+<CFSET APPLICATION.blockdate ='03/12/2016'>
+<CFSET APPLICATION.pay_period_week1 =99>
+<CFSET APPLICATION.pay_period_week2 =100>
+<CFSET APPLICATION.pay_period_number =50>
+<CFSET APPLICATION.week1_date_available ='03/19/2016'>
+<CFSET APPLICATION.week2_date_available ='03/26/2016'>
+<CFSET APPLICATION.pay_period_week1_date ='03/19/2016'>
+<CFSET APPLICATION.pay_period_week2_date ='03/26/2016'>
 <!--- This ENDS  info is for the current pay period  for ALL non Betty--->
 
 <!--- 
@@ -130,4 +138,3 @@ SetClientCookies="Yes">
 <CFSET pay_period_week = "46"> 
  </cfif> 
   --->
-
