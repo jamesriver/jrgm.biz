@@ -44,7 +44,7 @@ ORDER by start_date,event_name
          <cfif job_id EQ "9999">  <li class="jlbar_header">All Branch Jobs</li> <cfelse> <li class="jlbar_header">Todays Jobs</li></cfif>
               <cfoutput query="get_todays_jobs"> 
 			 
-                <li><a href="https://www.jrgm.biz/ssl/crew_leaders/job_list.cfm?Job_ID=#Job_ID#&work_date=#todayDate#" target="_top">#event_name#</a></li>
+                <li><a href="/ssl/crew_leaders/job_list.cfm?Job_ID=#Job_ID#&work_date=#todayDate#" target="_top">#event_name#</a></li>
               </cfoutput>
            
               <li><cfoutput><a href="dl.cfm?Job_ID=9999&work_date=#todayDate#"></cfoutput> 

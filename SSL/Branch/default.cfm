@@ -765,7 +765,7 @@ SELECT   jobname FROM get_all_jobs_info WHERE  jobid  = '#get_job_notes.job_id#'
             </div></td>
         </tr>
       </table><br /><br />
-      <a href="https://www.jrgm.biz/ssl/branch-new/index.cfm">New ></a>
+      <a href="/ssl/branch-new/index.cfm">New ></a>
     </div>
   </div>
   <!-- to clear footer -->

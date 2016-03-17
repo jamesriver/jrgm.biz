@@ -108,13 +108,13 @@ FROM APP_employee_passwords
   <cfif url.schedchoice  EQ 'crews'>
     <html>
     <head>
-    <META HTTP-EQUIV="Refresh" CONTENT="1;URL=https://www.jrgm.biz/ssl/scheduler/scheduler-new.html">
+    <META HTTP-EQUIV="Refresh" CONTENT="1;URL=/ssl/scheduler/scheduler-new.html">
     </head>
     </html>
     <cfelse>
     <html>
     <head>
-    <META HTTP-EQUIV="Refresh" CONTENT="1;URL=https://www.jrgm.biz/ssl/scheduler/schedulerevents-new.html">
+    <META HTTP-EQUIV="Refresh" CONTENT="1;URL=/ssl/scheduler/schedulerevents-new.html">
     </head>
     </html>
   </cfif>

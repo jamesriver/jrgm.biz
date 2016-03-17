@@ -113,7 +113,7 @@ $(document).ready(function() {
                   <br>
                   <a href="quote_create_from_opportunity.cfm">Create Quote From Insightly Opportunity</a> <br>
                   <br>
-                  <a href="https://www.jrgm.biz/ssl/admin/project_list.cfm" target="_blank">Project List / Manage Project Information</a> <br>
+                  <a href="/ssl/admin/project_list.cfm" target="_blank">Project List / Manage Project Information</a> <br>
                    <br>
                   <a href="../admin/default.cfm" target="_blank">Admin</a><br></p></td>
             </tr>

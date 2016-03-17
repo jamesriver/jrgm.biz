@@ -3,7 +3,7 @@
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr>
       <td class="jobbutton"> 
- 	<!--- <a href="https://www.jrgm.biz/ssl/quoting/inventory_list.cfm"><img src="images/icon_inventory.png" width="60" height="60" alt="Inventory" class="icons" /></a> --->
+ 	<!--- <a href="/ssl/quoting/inventory_list.cfm"><img src="images/icon_inventory.png" width="60" height="60" alt="Inventory" class="icons" /></a> --->
     	 
          </td>
       <!-- .btn-group -->

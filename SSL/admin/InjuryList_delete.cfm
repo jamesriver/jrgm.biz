@@ -12,14 +12,14 @@ DELETE  FROM Form_InjuryReport WHERE   IR_ID  = #url.ID#
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>James River Grounds Management</title>
 <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;target-densitydpi=low-dpi;"/>
-<link href="https://www.jrgm.biz/ssl/admin/css/styles.css" rel="stylesheet" type="text/css" />
-<link href="https://www.jrgm.biz/ssl/admin/css/buttons.css" rel="stylesheet" type="text/css" />
-<link href="https://www.jrgm.biz/ssl/admin/css/bootstrap.css" rel="stylesheet" />
-<link href="https://www.jrgm.biz/ssl/admin/css/accordion-a/accordion-a.css" rel="stylesheet" />
-<link href="https://www.jrgm.biz/ssl/admin/css/accordion-a/themes/minimal.css" rel="stylesheet" />
+<link href="/ssl/admin/css/styles.css" rel="stylesheet" type="text/css" />
+<link href="/ssl/admin/css/buttons.css" rel="stylesheet" type="text/css" />
+<link href="/ssl/admin/css/bootstrap.css" rel="stylesheet" />
+<link href="/ssl/admin/css/accordion-a/accordion-a.css" rel="stylesheet" />
+<link href="/ssl/admin/css/accordion-a/themes/minimal.css" rel="stylesheet" />
 <link rel="stylesheet" media="only screen and (max-device-width: 1024px)" href="css/ipad.css" type="text/css" />
-<script src="https://www.jrgm.biz/ssl/admin/js/sorttable.js"></script>
-<script src="https://www.jrgm.biz/ssl/admin/js/sorttable_v1.js"></script>
+<script src="/ssl/admin/js/sorttable.js"></script>
+<script src="/ssl/admin/js/sorttable_v1.js"></script>
 <!--[if lt IE 9]>
     <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
@@ -125,10 +125,10 @@ table.sortable tbody td {
 <div class="subbar">
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr>
-      <td width="57"><a href="https://www.jrgm.biz/ssl/admindefault.cfm"><img src="../images/logosm.png" width="57" height="36" alt="James River Grounds Management" /></a></td>
+      <td width="57"><a href="/ssl/admindefault.cfm"><img src="../images/logosm.png" width="57" height="36" alt="James River Grounds Management" /></a></td>
       <td class="subbartxt">Welcome: JRGM Admin</td>
-      <td width="42"><!--<a href="supervisors/setting.cfm" class="first"><img src="https://www.jrgm.biz/ssl/admin/images/icon_settings.png" width="42" height="36" alt="Settings" /></a>--></td>
-      <td width="20"><img src="https://www.jrgm.biz/ssl/admin/images/clear.gif" width="20" height="2" alt="" /></td>
+      <td width="42"><!--<a href="supervisors/setting.cfm" class="first"><img src="/ssl/admin/images/icon_settings.png" width="42" height="36" alt="Settings" /></a>--></td>
+      <td width="20"><img src="/ssl/admin/images/clear.gif" width="20" height="2" alt="" /></td>
     </tr>
   </table>
 </div>
@@ -138,11 +138,11 @@ table.sortable tbody td {
     <tr>
       <td class="jobbutton">
         
-        <a href=""><img src="https://www.jrgm.biz/ssl/admin/images/icon_payroll.png"  width="60" height="60"  class="icons"/></a> <a href="https://www.jrgm.biz/ssl/admin/daily_sheet_listing.cfm"><img src="https://www.jrgm.biz/ssl/admin/images/icon_dailysheet.png" width="60" height="60"  class="icons"/></a> <a href="https://www.jrgm.biz/ssl/admin/scheduler_select.cfm"><img src="https://www.jrgm.biz/ssl/admin/images/icon_jobs.png" width="60" height="60" alt="Jobs" class="icons" /></a> <a href="https://www.jrgm.biz/ssl/admin/scheduler_select.cfm"><img src="https://www.jrgm.biz/ssl/admin/images/icon_crews.png" width="60" height="60" alt="Crews" class="icons" /></a> 
-        <a href="https://www.jrgm.biz/ssl/admin/inventory.cfm"><img src="https://www.jrgm.biz/ssl/admin/images/icon_inventory.png" width="60" height="60" alt="Crews" class="icons" /></a>
-        <a href="https://www.jrgm.biz/ssl/admin/directory.cfm"><img src="https://www.jrgm.biz/ssl/admin/images/directory_icon.png" width="60" height="60" alt="Crews" class="icons" /></a>
-         <a href="forms.cfm"><img src="https://www.jrgm.biz/ssl/admin/images/icon_forms.png" width="60" height="60" alt="Forms" /></a></td> </td>
-      <td align="right"><a href="https://www.jrgm.biz/ssl/admin/default.cfm"><img src="https://www.jrgm.biz/ssl/admin/images/icon_home.png" alt="Home" width="60" height="60" class="icons" /></a> <a href="https://www.jrgm.biz/ssl/admin/index.cfm"><img src="https://www.jrgm.biz/ssl/admin/images/icon_logout.png" alt="Logout" width="60" height="60" class="icons" /></a> </td>
+        <a href=""><img src="/ssl/admin/images/icon_payroll.png"  width="60" height="60"  class="icons"/></a> <a href="/ssl/admin/daily_sheet_listing.cfm"><img src="/ssl/admin/images/icon_dailysheet.png" width="60" height="60"  class="icons"/></a> <a href="/ssl/admin/scheduler_select.cfm"><img src="/ssl/admin/images/icon_jobs.png" width="60" height="60" alt="Jobs" class="icons" /></a> <a href="/ssl/admin/scheduler_select.cfm"><img src="/ssl/admin/images/icon_crews.png" width="60" height="60" alt="Crews" class="icons" /></a>
+        <a href="/ssl/admin/inventory.cfm"><img src="/ssl/admin/images/icon_inventory.png" width="60" height="60" alt="Crews" class="icons" /></a>
+        <a href="/ssl/admin/directory.cfm"><img src="/ssl/admin/images/directory_icon.png" width="60" height="60" alt="Crews" class="icons" /></a>
+         <a href="forms.cfm"><img src="/ssl/admin/images/icon_forms.png" width="60" height="60" alt="Forms" /></a></td> </td>
+      <td align="right"><a href="/ssl/admin/default.cfm"><img src="/ssl/admin/images/icon_home.png" alt="Home" width="60" height="60" class="icons" /></a> <a href="/ssl/admin/index.cfm"><img src="/ssl/admin/images/icon_logout.png" alt="Logout" width="60" height="60" class="icons" /></a> </td>
     </tr>
   </table>
 </div>
@@ -174,10 +174,10 @@ table.sortable tbody td {
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
 <!-- // <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap.min.js"></script> -->
 <script scr="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/js/bootstrap.min.js"></script>
-<script src="https://www.jrgm.biz/ssl/admin/js/twitter-bootstrap-hover-dropdown.js"></script>
+<script src="/ssl/admin/js/twitter-bootstrap-hover-dropdown.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-<script src="https://www.jrgm.biz/ssl/admin/js/jquery-ui-1.8.20.custom.min.js"></script>
-<script src="https://www.jrgm.biz/ssl/admin/js/jquery.accordion-a-1.1.min.js"></script>
+<script src="/ssl/admin/js/jquery-ui-1.8.20.custom.min.js"></script>
+<script src="/ssl/admin/js/jquery.accordion-a-1.1.min.js"></script>
 <script>
 	$(document).ready(function() {
 		
@@ -185,7 +185,7 @@ table.sortable tbody td {
 	});
 	</script>
     
-     <script src="https://www.jrgm.biz/ssl/admin/js/jquery.pageslide.min.js"></script>
+     <script src="/ssl/admin/js/jquery.pageslide.min.js"></script>
     <script>
         /* Default pageslide, moves to the right */
         //$(".first").pageslide();
@@ -194,6 +194,6 @@ table.sortable tbody td {
         //$(".second").pageslide({ direction: "left", modal: true });
     </script>
 <script scr="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/js/bootstrap.min.js"></script>
-<script src="https://www.jrgm.biz/ssl/admin/js/twitter-bootstrap-hover-dropdown.js"></script>
+<script src="/ssl/admin/js/twitter-bootstrap-hover-dropdown.js"></script>
 </body>
 </html>

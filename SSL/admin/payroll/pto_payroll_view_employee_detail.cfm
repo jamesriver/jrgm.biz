@@ -74,11 +74,18 @@
           </tr>
         </thead>
         <tbody>  
-     
+        
+<!---cfoutput>
+SELECT     ID, employee_id, branch_code, userid, pto_hours, date_entered, pto_date
+FROM         payroll_pto   WHERE  
+        (payroll_pto.pto_date > #dateadd('d', 0, app_payroll_periods_c .pay_period_start)# AND payroll_pto.pto_date < #pay_period_end_week_plusoneC#)
+order by  pto_date asc
+</cfoutput> 
+<cfabort--->
 <cfquery name="get_employee_pto_time" datasource="jrgm" >
 SELECT     ID, employee_id, branch_code, userid, pto_hours, date_entered, pto_date
 FROM         payroll_pto   WHERE  
-        (payroll_pto.pto_date > #app_payroll_periods_c .pay_period_start# AND payroll_pto.pto_date < #pay_period_end_week_plusoneC#)
+        (payroll_pto.pto_date > #dateadd('d', 0, app_payroll_periods_c .pay_period_start)# AND payroll_pto.pto_date < #pay_period_end_week_plusoneC#)
 order by  pto_date asc
 </cfquery> 
 

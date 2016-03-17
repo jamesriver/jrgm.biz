@@ -18,11 +18,15 @@
 </cfif>
 
 <cfset isauthorized=1>
-<cftry>
+<cfif IsDefined('form.forceerror')>
     <cfinclude template="apiprocessor/#form.method#.cfm">
-    <cfcatch>
-        <cfif IsDefined('url.test')>
-            <cfoutput>COULD NOT RESOLVE #form.method#: #cfcatch.message#</cfoutput>
-        </cfif>
-    </cfcatch>
-</cftry>
+<cfelse>
+    <cftry>
+        <cfinclude template="apiprocessor/#form.method#.cfm">
+        <cfcatch>
+            <cfif IsDefined('url.test')>
+                <cfoutput>COULD NOT RESOLVE #form.method#: #cfcatch.message#</cfoutput>
+            </cfif>
+        </cfcatch>
+    </cftry>
+</cfif>

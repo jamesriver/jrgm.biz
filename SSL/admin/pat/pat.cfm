@@ -189,12 +189,12 @@ table.sortable span.sortarrow {
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
          <td width="100"><img src="images/clear.gif" width="20" height="2" alt="" /></td>
-        <td class="subbartxt"><a href="https://www.jrgm.biz/ssl/admin/payroll_main.cfm">Payroll</a></td>
-        <td class="subbartxt"  nowrap="nowrap"><a href="https://www.jrgm.biz/ssl/admin/daily_sheet_listing.cfm">Daily Sheet</a> </td>
-        <td class="subbartxt"  nowrap="nowrap" ><a href="https://www.jrgm.biz/ssl/admin/scheduler_select.cfm">Log In</a></td>
-         <td class="subbartxt"  ><a href="https://www.jrgm.biz/ssl/admin/inventory.cfm">Equipment</a></td>
-        <td class="subbartxt" ><a href="https://www.jrgm.biz/ssl/admin/directory.cfm">Directory</a></td>
-        <td class="subbartxt"  ><a href="https://www.jrgm.biz/ssl/admin/default.cfm">Home</a></td>
+        <td class="subbartxt"><a href="/ssl/admin/payroll_main.cfm">Payroll</a></td>
+        <td class="subbartxt"  nowrap="nowrap"><a href="/ssl/admin/daily_sheet_listing.cfm">Daily Sheet</a> </td>
+        <td class="subbartxt"  nowrap="nowrap" ><a href="/ssl/admin/scheduler_select.cfm">Log In</a></td>
+         <td class="subbartxt"  ><a href="/ssl/admin/inventory.cfm">Equipment</a></td>
+        <td class="subbartxt" ><a href="/ssl/admin/directory.cfm">Directory</a></td>
+        <td class="subbartxt"  ><a href="/ssl/admin/default.cfm">Home</a></td>
         <td class="subbartxt" ><a href="https://www.jrgm.biz">Log Out</a></td>
         <td class="subbartxt"  width="100"></td>
       </tr>
@@ -277,7 +277,7 @@ SELECT first_name,last_name,branch,position, [Ph Cell] AS cellphonep, [Employee 
           <td nowrap="nowrap"><a href="data_load/load_adp_employees_1.cfm">Load ADP  Data-1</a></td>
           <td nowrap="nowrap">Emp  Max Date - <cfoutput>#DateFormat(max_employees.maxemployees, "mm/dd/yyyy")#</cfoutput>&nbsp;&nbsp; &nbsp;<br />
             -(app_employees )</td>
-          <td nowrap="nowrap"><a href="https://www.jrgm.biz/ssl/admin/inventory.cfm">Equipment Status</a></td>
+          <td nowrap="nowrap"><a href="/ssl/admin/inventory.cfm">Equipment Status</a></td>
           <td  nowrap="nowrap"><a href="payroll_manager.cfm">Payroll Manager</a> </td>
         </tr>
         <cfdirectory

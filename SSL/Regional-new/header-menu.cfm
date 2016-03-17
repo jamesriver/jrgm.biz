@@ -66,7 +66,7 @@
             <li> <a href="Weekly_Equipment_Maintenance_List.cfm">Weekly Equipment Maintenance Forms</a></li>
           </ul>
         </li>
-        <li class="clearfix"><a href="https://www.jrgm.biz/ssl/admin/default.cfm"  target="_blank"><span class="glyphicon glyphicons-more-items new-added"></span> Admin </a></li>
+        <li class="clearfix"><a href="/ssl/admin/default.cfm"  target="_blank"><span class="glyphicon glyphicons-more-items new-added"></span> Admin </a></li>
       </ul>
     </div>
   </div>

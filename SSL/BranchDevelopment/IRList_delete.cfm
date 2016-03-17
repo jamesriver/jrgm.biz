@@ -12,14 +12,14 @@ DELETE  FROM Form_IncidentReport WHERE   IR_ID  = #url.ID#
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>James River Grounds Management</title>
 <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;target-densitydpi=low-dpi;"/>
-<link href="https://www.jrgm.biz/ssl/branch/css/styles.css" rel="stylesheet" type="text/css" />
-<link href="https://www.jrgm.biz/ssl/branch/css/buttons.css" rel="stylesheet" type="text/css" />
-<link href="https://www.jrgm.biz/ssl/branch/css/bootstrap.css" rel="stylesheet" />
-<link href="https://www.jrgm.biz/ssl/branch/css/accordion-a/accordion-a.css" rel="stylesheet" />
-<link href="https://www.jrgm.biz/ssl/branch/css/accordion-a/themes/minimal.css" rel="stylesheet" />
+<link href="/ssl/branch/css/styles.css" rel="stylesheet" type="text/css" />
+<link href="/ssl/branch/css/buttons.css" rel="stylesheet" type="text/css" />
+<link href="/ssl/branch/css/bootstrap.css" rel="stylesheet" />
+<link href="/ssl/branch/css/accordion-a/accordion-a.css" rel="stylesheet" />
+<link href="/ssl/branch/css/accordion-a/themes/minimal.css" rel="stylesheet" />
 <link rel="stylesheet" media="only screen and (max-device-width: 1024px)" href="css/ipad.css" type="text/css" />
-<script src="https://www.jrgm.biz/ssl/branch/js/sorttable.js"></script>
-<script src="https://www.jrgm.biz/ssl/branch/js/sorttable_v1.js"></script>
+<script src="/ssl/branch/js/sorttable.js"></script>
+<script src="/ssl/branch/js/sorttable_v1.js"></script>
 <!--[if lt IE 9]>
     <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
@@ -152,10 +152,10 @@ table.sortable tbody td {
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
 <!-- // <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap.min.js"></script> -->
 <script scr="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/js/bootstrap.min.js"></script>
-<script src="https://www.jrgm.biz/ssl/branch/js/twitter-bootstrap-hover-dropdown.js"></script>
+<script src="/ssl/branch/js/twitter-bootstrap-hover-dropdown.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-<script src="https://www.jrgm.biz/ssl/branch/js/jquery-ui-1.8.20.custom.min.js"></script>
-<script src="https://www.jrgm.biz/ssl/branch/js/jquery.accordion-a-1.1.min.js"></script>
+<script src="/ssl/branch/js/jquery-ui-1.8.20.custom.min.js"></script>
+<script src="/ssl/branch/js/jquery.accordion-a-1.1.min.js"></script>
 <script>
 	$(document).ready(function() {
 		
@@ -163,7 +163,7 @@ table.sortable tbody td {
 	});
 	</script>
     
-     <script src="https://www.jrgm.biz/ssl/branch/js/jquery.pageslide.min.js"></script>
+     <script src="/ssl/branch/js/jquery.pageslide.min.js"></script>
     <script>
         /* Default pageslide, moves to the right */
         //$(".first").pageslide();
@@ -172,6 +172,6 @@ table.sortable tbody td {
         //$(".second").pageslide({ direction: "left", modal: true });
     </script>
 <script scr="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/js/bootstrap.min.js"></script>
-<script src="https://www.jrgm.biz/ssl/branch/js/twitter-bootstrap-hover-dropdown.js"></script>
+<script src="/ssl/branch/js/twitter-bootstrap-hover-dropdown.js"></script>
 </body>
 </html>
