@@ -206,10 +206,10 @@ SELECT  [Employee ID] as employee_id, [Name FirstLast] AS CL_Name FROM app_emplo
               <td>#DateFormat(project_end_date, "mm/dd/yyyy")#</td>
               <td><div align="right">#total_project_value#</div></td>
               <td><div align="left">
-                <textarea oninput="changeValue('renewal_lead', #wklocid#, this)" <cfif renewal_lead_red EQ 1><cfoutput>style="color: ##AA0000"</cfoutput></cfif>>#renewal_lead#</textarea>
+                <textarea oninput="changeValue('renewal_lead', #wklocid#, this)" <cfif renewal_lead_red EQ 1>style="color: ##AA0000"</cfif>>#renewal_lead#</textarea>
               </div></td>
               <td>
-                <textarea oninput="changeValue('increase_requested', #wklocid#, this)" <cfif increase_requested_red EQ 1><cfoutput>style="color: ##AA0000"</cfoutput></cfif>>#increase_requested#</textarea>
+                <textarea oninput="changeValue('increase_requested', #wklocid#, this)" <cfif increase_requested_red EQ 1>style="color: ##AA0000"</cfif>>#increase_requested#</textarea>
               </td>
               <td>
               <cfif is_admin EQ 1>
@@ -219,7 +219,7 @@ SELECT  [Employee ID] as employee_id, [Name FirstLast] AS CL_Name FROM app_emplo
                               </cfif>
               </td>
               <td>
-                <textarea oninput="changeValue('renewal_notes', #wklocid#, this)" <cfif renewal_notes_red EQ 1><cfoutput>style="color: ##AA0000"</cfoutput></cfif>>#renewal_notes#</textarea>
+                <textarea oninput="changeValue('renewal_notes', #wklocid#, this)" <cfif renewal_notes_red EQ 1>style="color: ##AA0000"</cfif>>#renewal_notes#</textarea>
               </td>
               <td  align="center">
                 <cfif is_admin EQ 1>
