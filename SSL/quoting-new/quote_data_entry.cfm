@@ -359,7 +359,7 @@ i.mysize {
             </tr>
             <tr>
               <td>Quote Status : </td>
-              <td>                
+              <td>
                 #UCASE(opportunity_state)#
               </td>
               <td>&nbsp;</td>
@@ -413,7 +413,9 @@ i.mysize {
                 <select name="Job_ID">
                     <option value="0">[ Create a new one when quote is approved ]</option>
                     <cfloop from="1" to="#arrayLen(active_jobs)#" index="i">
-                        <option value="#active_jobs[i][1]#"<cfif get_quote_start.job_id EQ active_jobs[i][1]> selected</cfif>>#active_jobs[i][2]#<cfif LCase(active_jobs[i][3]) NEQ 'in progress'> (#active_jobs[i][3]#)</cfif></option>                        
+                        <cfoutput>
+                            <option value="#active_jobs[i][1]#"<cfif get_quote_start.job_id EQ active_jobs[i][1]> selected</cfif>>#active_jobs[i][2]#<cfif LCase(active_jobs[i][3]) NEQ 'in progress'> (#active_jobs[i][3]#)</cfif></option>
+                        </cfoutput>
                     </cfloop>
                 </select>
               </td>
@@ -422,7 +424,6 @@ i.mysize {
         </cfoutput></div>
 
 <!--- BEGIN OUTPUT --->
-<cfoutput>
   <table width="98%" border="0" cellspacing="0" cellpadding="0"
   <cfif get_quote_start.quote_approved EQ 1>
       style="pointer-events: none"
@@ -441,13 +442,14 @@ i.mysize {
            </tr>
             <tr bgcolor="#EDF3F8">
                 <cfloop from="1" to="#arrayLen(quote_column_headers)#" index="i">
-                    <th align="#quote_column_headers[i].column_displayalign#">#quote_column_headers[i].column_name#</th>
+                    <th align="<cfoutput>#quote_column_headers[i].column_displayalign#</cfoutput>"><cfoutput>#quote_column_headers[i].column_name#</cfoutput></th>
                     <cfif i EQ 9>
                         <th align="left">Formula</th>
                     </cfif>
                 </cfloop>
             </tr>
           </thead>
+          <cfoutput>
           <tbody>
             <tr>
                 <td align="right" colspan="#(total_columns+3)#"><!--i>Profit Margin must be greater than 50%</i--></td>
@@ -466,10 +468,8 @@ i.mysize {
                         <cfif current_row.row_active EQ 1>
                             <td align="#quote_column_headers[i].column_displayalign#">
                                 <cfif current_column.ID EQ 20>
-                                    
-                                        <span class="column#current_column.ID#" id="row#current_row.ID#">#current_row.row_defaultvalue#</span>
-                                        <input class="column#current_column.ID# #current_row.quote_services_field# subtotal#current_row.row_order# totaltype_#current_row.row_totaltype#" type="hidden" id="#current_row.quote_services_field#" name="#current_row.quote_services_field#">
-                                    
+                                    <span class="column#current_column.ID#" id="row#current_row.ID#">#current_row.row_defaultvalue#</span>
+                                    <input class="column#current_column.ID# #current_row.quote_services_field# subtotal#current_row.row_order# totaltype_#current_row.row_totaltype#" type="hidden" id="#current_row.quote_services_field#" name="#current_row.quote_services_field#">
                                 <cfelse>
                                     <cfif current_row.quote_services_field NEQ ''>
                                         <cfif (current_column.column_editable EQ 1 AND (current_column.ID NEQ 18 OR current_row.row_defaultvalue NEQ 40)) OR (current_row.row_order GT 55 AND (current_column.ID EQ 1 OR current_column.ID EQ 3 OR current_column.ID EQ 4 OR current_column.ID EQ 6))>
@@ -538,8 +538,7 @@ i.mysize {
                         </cfif>
                     </th>
                 </cfloop>
-            </tr>
-            
+            </tr>            
             <tr>
                 <td align="right" colspan="#total_columns#">&nbsp;</td>
                 <td align="right" colspan="4"><a href="quote_notes.cfm?opportunity_id_original=#url.id#&opportunity_id=#url.id#&note_type=5"><i class="fa fa-file-text mysize font-blue">&nbsp;Note</i></a>&nbsp;&nbsp;&nbsp; <strong>Contract Adjustment</strong></td>
@@ -570,14 +569,13 @@ i.mysize {
                   <span class="adjusted_contract_price_formatted" style="font-weight: bold" /></span>
                 </td>
             </tr>
-            
+            </cfoutput>
             <input type="hidden" id="total_contract_price" name="total_contract_price">
           </tbody>
         </table>
       </td>
     </tr>
   </table>
-</cfoutput>
 
   <cfinclude template="../quoting-new/include_js_quote_data_entry_calculations.cfm">
 <!--- END OUTPUT --->
