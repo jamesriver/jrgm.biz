@@ -68,13 +68,13 @@ ORDER by ID DESC
         <ul class="dashboard">
           <!--- <li><a href="select_branch_j.cfm">Job Labor &amp; Materials Detail Report</a></li>
                 <li><a href="select_branch_j3.cfm">Job Labor &amp; Materials Report by Job (excel)</a></li> --->
-          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=csv_projectassignments');">Project Assignments Report (CSV)</a></li>
-          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=csv_labormaterials');">Labor & Materials Combined Report (CSV)</a></li>
-          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=csv_labor');">Labor Report (CSV)</a></li>
-          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=csv_materials');">Materials Report (CSV)</a></li>
-          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=csv_snowremoval');">Snow Removal (CSV)</a></li>
-          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=csv_snowremoval&nocostrates=1');">Snow Removal - No Cost Rates (CSV)</a></li>
-          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=view_jobcost');">Job Cost Report</a></li>
+          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?AWS=1&EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=csv_projectassignments');">Project Assignments Report (CSV)</a></li>
+          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?AWS=1&EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=csv_labormaterials');">Labor & Materials Combined Report (CSV)</a></li>
+          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?AWS=1&EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=csv_labor');">Labor Report (CSV)</a></li>
+          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?AWS=1&EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=csv_materials');">Materials Report (CSV)</a></li>
+          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?AWS=1&EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=csv_snowremoval');">Snow Removal (CSV)</a></li>
+          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?AWS=1&EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=csv_snowremoval&nocostrates=1');">Snow Removal - No Cost Rates (CSV)</a></li>
+          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?AWS=1&EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=view_jobcost');">Job Cost Report</a></li>
           <!--- <li><a href="select_branch_j4.cfm">Job Labor &amp; Materials Report by Branch (excel)</a></li>--->
           
         </ul></td>
@@ -85,19 +85,19 @@ ORDER by ID DESC
         <ul class="dashboard">
           <!--- <li><a href="select_branch_j.cfm">Job Labor &amp; Materials Detail Report</a></li>
               <li><a href="select_branch_j3.cfm">Job Labor &amp; Materials Report by Job (excel)</a></li> --->
-          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=csv_projectassignments');">Project Assignments Report (CSV)</a></li>
-          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=csv_labormaterials');">Labor & Materials Combined Report (CSV)</a></li>
-          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=csv_labor');">Labor Report (CSV)</a></li>
-          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=csv_materials');">Materials Report (CSV)</a></li>
-          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=csv_snowremoval');">Snow Removal (CSV)</a></li>
-          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=csv_snowremoval&nocostrates=1');">Snow Removal - No Cost Rates (CSV)</a></li>
-          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=view_jobcost');">Job Cost Report</a></li>
+          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?AWS=1&EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=csv_projectassignments');">Project Assignments Report (CSV)</a></li>
+          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?AWS=1&EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=csv_labormaterials');">Labor & Materials Combined Report (CSV)</a></li>
+          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?AWS=1&EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=csv_labor');">Labor Report (CSV)</a></li>
+          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?AWS=1&EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=csv_materials');">Materials Report (CSV)</a></li>
+          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?AWS=1&EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=csv_snowremoval');">Snow Removal (CSV)</a></li>
+          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?AWS=1&EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=csv_snowremoval&nocostrates=1');">Snow Removal - No Cost Rates (CSV)</a></li>
+          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?AWS=1&EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=view_jobcost');">Job Cost Report</a></li>
           <!--- <li><a href="select_branch_j4.cfm">Job Labor &amp; Materials Report by Branch (excel)</a></li>--->
           
         </ul>
         <div class="dashboardHeader">Daily Sheet Reports</div>
         <ul class="dashboard">
-          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=csv_dailysheettimecompare');">Daily Sheet Time Compare Report (CSV)</a></li>
+          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?AWS=1&EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=csv_dailysheettimecompare');">Daily Sheet Time Compare Report (CSV)</a></li>
           <li><a href="daily_sheet_listing_time_compare.cfm">Daily Sheet Time Compare</a></li>
           <li><a href="report_signout_questions_hours.cfm">Daily Sheet Sign Out Question Hours</a></li>
           <li><a href="report_signout_questions_injury.cfm">Daily Sheet Sign Out Question Injury</a></li>
