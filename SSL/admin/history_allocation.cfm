@@ -1,3 +1,13 @@
+<!---Make sure equipment ID exists--->
+<cfif IsDefined("url.ID") >
+  <cfquery name="does_id_exist" datasource="jrgm">
+SELECT  ID  FROM equipment WHERE    ID =#url.ID#
+</cfquery>
+  <cfif does_id_exist.recordcount EQ 0>
+This Equipment ID does not exist in the JRGM equipment tables. <a href="javascript: history.go(-1)">Please Go Back</a>.
+    <cfabort>
+  </cfif>
+</cfif>
 <cfif IsDefined("form.repair")>
   <cfquery name="update_eq_table" datasource="jrgm"  >
 UPDATE equipment SET  initial_diagnosis = '#form.initial_diagnosis#' , inventory_status =#form.inventory_status#
@@ -70,8 +80,8 @@ WHERE branch = '#SESSION.branch#'  AND    active_record = 1
 
 <cfquery name="get_allocated_employee" datasource="jrgm"  >
 SELECT first_name,last_name,branch,position,[Employee ID] As employee_id,  [Name FirstLast] AS fullname  FROM APP_employees
-WHERE<!---  branch = '#SESSION.branch#'  AND   --->  active_record = 1 AND     [Employee ID]  = #crew_assignment_last#
- ORDER by  Last_name ASC,first_name ASC
+WHERE active_record = 1  AND [Employee ID]  = #crew_assignment_last# 
+ ORDER by  Last_name ASC, first_name ASC
 </cfquery>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -519,6 +529,7 @@ order by  inspection_date DESC
         <td>
       </tr>
       </td>
+      
       </tr>
       
     </table>

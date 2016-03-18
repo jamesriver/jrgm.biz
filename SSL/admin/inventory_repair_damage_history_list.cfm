@@ -12,7 +12,7 @@
 <cfset todayDate_button = DateFormat(Now(),"mmm-dd-yyyy")>
 
 
- <CFSET next = (#ID#+1)>
+<!--- <CFSET next = (#ID#+1)>--->
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -121,7 +121,7 @@ order by id desc
              </tr> 
        <cfelse>
           <cfoutput query="get_this_equipment_history_r"> <tr>
-              <td class="dstable"><a href="repairLog.cfm?ID=#ID#">#get_this_equipment_history_r.ID#</a></td>
+              <td class="dstable"><a href="repairLog_view.cfm?ID=#ID#&EQUIPMENTID=#Equipment_ID#">#get_this_equipment_history_r.ID#</a></td>
               <td class="dstable">#DateFormat(get_this_equipment_history_r.acceptdate, "mm/dd/yyyy")#</td>
                <td class="dstable">#get_this_equipment_history_r.repair_description#</td>
             </tr>
