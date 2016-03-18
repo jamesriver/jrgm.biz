@@ -20,43 +20,43 @@ ORDER by  ID ASC
 <cfset todayDate_button = DateFormat(Now(),"mmm-dd-yyyy")>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>James River Grounds Management</title>
-<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;target-densitydpi=low-dpi;"/>
-<link href="css/styles.css" rel="stylesheet" type="text/css" />
-<link href="css/buttons.css" rel="stylesheet" type="text/css" />
-<link href="css/bootstrap.css" rel="stylesheet" />
-<link href="css/accordion-a/accordion-a.css" rel="stylesheet" />
-<link href="css/accordion-a/themes/minimal.css" rel="stylesheet" />
-<link rel="stylesheet" media="only screen and (max-device-width: 1024px)" href="css/ipad.css" type="text/css" />
-<script src="js/sorttable.js"></script>
-<script src="js/sorttable_v1.js"></script>
-<!--[if lt IE 9]>
+ <head>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+ <title>James River Grounds Management</title>
+ <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;target-densitydpi=low-dpi;"/>
+ <link href="css/styles.css" rel="stylesheet" type="text/css" />
+ <link href="css/buttons.css" rel="stylesheet" type="text/css" />
+ <link href="css/bootstrap.css" rel="stylesheet" />
+ <link href="css/accordion-a/accordion-a.css" rel="stylesheet" />
+ <link href="css/accordion-a/themes/minimal.css" rel="stylesheet" />
+ <link rel="stylesheet" media="only screen and (max-device-width: 1024px)" href="css/ipad.css" type="text/css" />
+ <script src="js/sorttable.js"></script>
+ <script src="js/sorttable_v1.js"></script>
+ <!--[if lt IE 9]>
     <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
-<style>
+ <style>
 .arialfont {
 	font: normal .9em Arial, Helvetica, sans-serif;
 }
 .alertbox {
-	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #d17e85), color-stop(1, #b92723) );
-	background:-moz-linear-gradient( center top, #d17e85 5%, #b92723 100% );
+	background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #d17e85), color-stop(1, #b92723) );
+	background: -moz-linear-gradient( center top, #d17e85 5%, #b92723 100% );
  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#d17e85', endColorstr='#b92723');
-	background-color:#F3F3F3;
-	-moz-border-radius:10px;
-	-webkit-border-radius:10px;
-	border-radius:10px;
-	border:1px solid #4a0c0d;
-	display:inline-block;
-	color:#FFFFFF;
-	font-family:arial;
-	font-size:14px;
-	font-weight:bold;
-	padding:5px 5px;
-	margin-top:4px;
-	text-decoration:none;
-	text-shadow:1px 1px 0px #000000;
+	background-color: #F3F3F3;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+	border: 1px solid #4a0c0d;
+	display: inline-block;
+	color: #FFFFFF;
+	font-family: arial;
+	font-size: 14px;
+	font-weight: bold;
+	padding: 5px 5px;
+	margin-top: 4px;
+	text-decoration: none;
+	text-shadow: 1px 1px 0px #000000;
 }
 table.sortable tbody td {
 	padding: 8px;
@@ -73,165 +73,164 @@ table.sortable tbody td {
  border-bottom: 1px solid #c0c0c0;
 }
 .eqbutton {
-	-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
-	-webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
-	box-shadow:inset 0px 1px 0px 0px #ffffff;
-	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #f9f9f9), color-stop(1, #e9e9e9) );
-	background:-moz-linear-gradient( center top, #f9f9f9 5%, #e9e9e9 100% );
+	-moz-box-shadow: inset 0px 1px 0px 0px #ffffff;
+	-webkit-box-shadow: inset 0px 1px 0px 0px #ffffff;
+	box-shadow: inset 0px 1px 0px 0px #ffffff;
+	background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #f9f9f9), color-stop(1, #e9e9e9) );
+	background: -moz-linear-gradient( center top, #f9f9f9 5%, #e9e9e9 100% );
  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f9f9f9', endColorstr='#e9e9e9');
-	background-color:#f9f9f9;
-	-webkit-border-top-left-radius:32px;
-	-moz-border-radius-topleft:32px;
-	border-top-left-radius:32px;
-	-webkit-border-top-right-radius:32px;
-	-moz-border-radius-topright:32px;
-	border-top-right-radius:32px;
-	-webkit-border-bottom-right-radius:32px;
-	-moz-border-radius-bottomright:32px;
-	border-bottom-right-radius:32px;
-	-webkit-border-bottom-left-radius:32px;
-	-moz-border-radius-bottomleft:32px;
-	border-bottom-left-radius:32px;
-	text-indent:9px;
-	border:1px solid #dcdcdc;
-	display:inline-block;
-	color:#07482f;
-	font-family:Arial;
-	font-size:15px;
-	font-weight:bold;
-	font-style:normal;
-	height:40px;
-	line-height:40px;
-	width:168px;
-	text-decoration:none;
-	text-align:center;
-	text-shadow:1px 1px 0px #ffffff;
+	background-color: #f9f9f9;
+	-webkit-border-top-left-radius: 32px;
+	-moz-border-radius-topleft: 32px;
+	border-top-left-radius: 32px;
+	-webkit-border-top-right-radius: 32px;
+	-moz-border-radius-topright: 32px;
+	border-top-right-radius: 32px;
+	-webkit-border-bottom-right-radius: 32px;
+	-moz-border-radius-bottomright: 32px;
+	border-bottom-right-radius: 32px;
+	-webkit-border-bottom-left-radius: 32px;
+	-moz-border-radius-bottomleft: 32px;
+	border-bottom-left-radius: 32px;
+	text-indent: 9px;
+	border: 1px solid #dcdcdc;
+	display: inline-block;
+	color: #07482f;
+	font-family: Arial;
+	font-size: 15px;
+	font-weight: bold;
+	font-style: normal;
+	height: 40px;
+	line-height: 40px;
+	width: 168px;
+	text-decoration: none;
+	text-align: center;
+	text-shadow: 1px 1px 0px #ffffff;
 }
 .eqbutton:hover {
-	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #e9e9e9), color-stop(1, #f9f9f9) );
-	background:-moz-linear-gradient( center top, #e9e9e9 5%, #f9f9f9 100% );
+	background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #e9e9e9), color-stop(1, #f9f9f9) );
+	background: -moz-linear-gradient( center top, #e9e9e9 5%, #f9f9f9 100% );
  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#e9e9e9', endColorstr='#f9f9f9');
-	background-color:#e9e9e9;
+	background-color: #e9e9e9;
 }
 .eqbutton:active {
-	position:relative;
-	top:1px;
+	position: relative;
+	top: 1px;
 }
-
 table.sortable {
-	background:#FFF;
+	background: #FFF;
 	border: 1px solid #c0c0c0;
 	border-bottom: none;
 }
 table.sortable thead {
 	padding: 8px;
 	background-color: #cde3fc;
-	color:#000;
+	color: #000;
 	cursor: default;
 	font: bold .9em Arial, Helvetica, sans-serif;
-	}
+}
 table.sortable thead th {
 	padding: 10px;
 	background-color: #cde3fc;
 	color: 000;
 	font: bold .9em Arial, Helvetica, sans-serif;
 }
- </style>
-</head>
-<body>
+</style>
+ </head>
+ <body>
 <div id="outerfull">
-  <div id="centrecontent">
+   <div id="centrecontent">
     <cfinclude template="includes/subbar.cfm">
     <cfinclude template="includes/topbar.cfm">
     <!--centre content goes here -->
     <div class="centrecontent_inner">
-      <form action="inventory_list.cfm" method="post">
+       <form action="inventory_list.cfm" method="post">
         <table width="100%" border="1" cellspacing="0" cellpadding="7"  bgcolor="#FFFFFF" bordercolor="#07482f"  bordercolorlight="White">
-          <tr>
+           <tr>
             <td bgcolor="#F2F7F5"><input type="text" name="criteria"  size="50"/>
-              &nbsp;
-              <input type="submit"  class="eqbutton" value="Search Equipment" />
-            </td>
+               &nbsp;
+               <input type="submit"  class="eqbutton" value="Search Equipment" /></td>
           </tr>
-        </table>
+         </table>
       </form>
-      <br />
-      <div class="header">Equipment In Repair List-<cfoutput>#getequipment.recordcount#</cfoutput> Records</div>
-      <table class="sortable" width="100%" border="0" cellspacing="0" cellpadding="0"  >
+       <br />
+       <div class="header">Equipment In Repair List-<cfoutput>#getequipment.recordcount#</cfoutput> Records</div>
+       <table class="sortable" width="100%" border="0" cellspacing="0" cellpadding="0"  >
         <thead>
-          <tr>
+           <tr>
             <th align="center">ID</th>
             <th align="left">Category</th>
             <th width="75" align="left">Equip. ID</th>
             <th width="250" align="left">Product Name</th>
-             <th align="left">Serial Number</th>
-             <th align="center" nowrap="nowrap">Purchase Date</th>
-             <th align="left">Branch</th>
+            <th align="left">Serial Number</th>
+            <th align="center" nowrap="nowrap">Purchase Date</th>
+            <th align="left">Branch</th>
             <th width="150" align="left">Description</th>
             <th width="75" align="left" nowrap="nowrap">Location</th>
             <th width="75" align="center" nowrap="nowrap">Status</th>
             <th width="75" align="right" nowrap="nowrap">ETTR</th>
             <th width="75" align="right" nowrap="nowrap">Date In</th>
           </tr>
-        </thead>
+         </thead>
         <tbody>
-          <cfoutput query="getequipment">
+           <cfoutput query="getequipment">
             <tr>
-              <td align="center">#ID#</td>
-              <td nowrap="nowrap">#Category#</td>
-              <td width="75" align="left" ><a href="inventory_repair_damage_history_list.cfm">#Equipment_ID#</a></td>
-              <td align="left"  width="250" ><a href="inventory_edit.cfm?ID=#ID#">#Product_Name#</a></td>
+               <td align="center">#ID#</td>
+               <td nowrap="nowrap">#Category#</td>
+               <td width="75" align="left" ><a href="inventory_repair_damage_history_list.cfm?ID=#getequipment.ID#">#Equipment_ID#</a></td>
+               <td align="left"  width="250" ><a href="inventory_edit.cfm?ID=#ID#">#Product_Name#</a></td>
                <td align="left">#Serial_Number#</td>
                <td align="center">&nbsp;</td>
                <td nowrap="nowrap">#Branch_name#</td>
-              <td width="150" align="left">#product_Description#</td>
-              <td width="75" align="right">&nbsp;</td>
-              <td width="75" align="center"><cfif inventory_status EQ 1>
-                Active
-                <cfelseif inventory_status EQ 2>
-				Pending Repair
-                <cfelseif inventory_status EQ 3>
-				In Repair
-                <cfelseif inventory_status EQ 0>
-				Inactive
-            <cfelseif inventory_status EQ 5>
-				Completed Repair
-				<cfelse>Active
-                </cfif> </td>
-              <td width="75" align="right">&nbsp;</td>
-              <td width="75" align="right">&nbsp;</td>
-            </tr>
+               <td width="150" align="left">#product_Description#</td>
+               <td width="75" align="right">&nbsp;</td>
+               <td width="75" align="center"><cfif inventory_status EQ 1>
+                   Active
+                   <cfelseif inventory_status EQ 2>
+                   Pending Repair
+                   <cfelseif inventory_status EQ 3>
+                   In Repair
+                   <cfelseif inventory_status EQ 0>
+                   Inactive
+                   <cfelseif inventory_status EQ 5>
+                   Completed Repair
+                   <cfelse>
+                   Active
+                 </cfif></td>
+               <td width="75" align="right">&nbsp;</td>
+               <td width="75" align="right">&nbsp;</td>
+             </tr>
           </cfoutput>
-        </tbody>
+         </tbody>
       </table>
-      <br />
-      <br />
-    </div>
+       <br />
+       <br />
+     </div>
   </div>
-  <!-- to clear footer -->
-</div>
-<!-- end outer div --><script src="http://code.jquery.com/jquery-latest.min.js"></script>
-<!-- // <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap.min.js"></script> -->
-<script scr="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/js/bootstrap.min.js"></script>
-<script src="js/twitter-bootstrap-hover-dropdown.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-<script src="js/jquery-ui-1.8.20.custom.min.js"></script>
-<script src="js/jquery.accordion-a-1.1.min.js"></script>
+   <!-- to clear footer --> 
+ </div>
+<!-- end outer div --><script src="http://code.jquery.com/jquery-latest.min.js"></script> 
+<!-- // <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap.min.js"></script> --> 
+<script scr="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/js/bootstrap.min.js"></script> 
+<script src="js/twitter-bootstrap-hover-dropdown.js"></script> 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script> 
+<script src="js/jquery-ui-1.8.20.custom.min.js"></script> 
+<script src="js/jquery.accordion-a-1.1.min.js"></script> 
 <script>
 	$(document).ready(function() {
 		
 		$('.accordion-a').accordionA();
 	});
-	</script>
-<script src="js/jquery.pageslide.min.js"></script>
+	</script> 
+<script src="js/jquery.pageslide.min.js"></script> 
 <script>
         /* Default pageslide, moves to the right */
         $(".first").pageslide();
         
         /* Slide to the left, and make it model (you'll have to call $.pageslide.close() to close) */
         $(".second").pageslide({ direction: "left", modal: true });
-    </script>
-<script scr="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/js/bootstrap.min.js"></script>
+    </script> 
+<script scr="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/js/bootstrap.min.js"></script> 
 <script src="js/twitter-bootstrap-hover-dropdown.js"></script>
 </body>
 </html>
