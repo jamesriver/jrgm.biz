@@ -1,10 +1,24 @@
+
+
+<CFSET checkdate = '#DateFormat(DateAdd('d', -30,Now()),'mm/dd/yyyy')#'>
+
+<!---<cfabort>--->
+
 <cfquery name="make_copy"   datasource="jrgm">
 SELECT * INTO app_employees_test_backup  FROM app_employees_test
 </cfquery>
 <cfquery name="delete_old_records"   datasource="jrgm">
 DELETE FROM   app_employees_test  
  </cfquery>
-<CFSET checkdate = '01/10/2016'>
+<cfquery name="drop_test1" datasource="JRGM" >
+DROP TABLE Delete_this_employees_backup;
+</cfquery>
+<cfquery name="drop_test2" datasource="JRGM" >
+DROP TABLE Delete_this_crews_backup;
+</cfquery>
+
+ 
+
 <html>
 <head>
 <meta charset="utf-8">
@@ -18,7 +32,7 @@ DELETE FROM   app_employees_test
 <cfset emp = mydoc.ROWSET.XmlChildren>
 <cfset size = ArrayLen(emp)>
 <cfoutput> Number of employees = #size# <br>
-</cfoutput>
+</cfoutput> 
 <!--- <cfabort> --->
 <cfparam name="FILE_NUMBER" default="0">
 <cfset orderquery = QueryNew("
@@ -74,7 +88,6 @@ varchar
 "
 
 ) >
- 
 <cfset temp = QueryAddRow(orderquery, #size#)>
 <cfloop index="i" from = "1" to = "#size#">
   <cfset  QuerySetCell(orderquery, "FIRST_NAME",mydoc.rowset.ROW[i].FIRST_NAME.XmlText, i)>

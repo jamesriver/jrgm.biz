@@ -1,9 +1,4 @@
-<!---<cfquery name="make_copy"   datasource="jrgm">
-SELECT * INTO Delete_this_employees_backup  FROM app_employees
-</cfquery>
-<cfquery name="drop_test" datasource="JRGM" >
-DROP TABLE app_employees_test_backup;
-</cfquery>--->
+ <CFSET checkdate = '#DateFormat(DateAdd('d', -30,Now()),'mm/dd/yyyy')#'>
 
 <cfquery name="make_copy"   datasource="jrgm">
 SELECT * INTO Delete_this_employees_backup  FROM app_employees
@@ -11,18 +6,12 @@ SELECT * INTO Delete_this_employees_backup  FROM app_employees
 <cfquery name="make_copy"   datasource="jrgm">
 SELECT * INTO Delete_this_crews_backup  FROM app_crews
 </cfquery>
-<cfquery name="drop_test" datasource="JRGM" >
+<!---<cfquery name="drop_test" datasource="JRGM" >
 DROP TABLE app_employees_test_backup;
 </cfquery>
+--->
 
-<!--- <cfabort> --->
-<!---<cfquery name="get_max_emp_id" datasource="JRGM" >
- SELECT  MAX([Employee ID]) AS maxfilenumber FROM app_employees    WHERE [Employee ID] < 9993
-  </cfquery>--->
-<!--- <cfoutput>#get_max_emp_id.maxfilenumber#</cfoutput>
- <cfabort> --->
-<!---<CFSET   maxfilenumber = #get_max_emp_id.maxfilenumber#>--->
-<CFSET checkdate = '02/10/2016'>
+<!---<CFSET checkdate = '02/10/2016'>--->
 <!doctype html>
 <html>
 <head>
@@ -232,7 +221,6 @@ varchar
   WHERE  ID =#get_all_CL_records.ID#
   </cfquery>
 </cfloop>
-<!---  <cfabort>  ---> 
 <!-----------------  This is the end of step 1 ----------------------> 
 <!-----------------  This is the end of step 1 ----------------------> 
 <!-----------------  This is the end of step 1 ---------------------->
@@ -286,12 +274,14 @@ WHERE employee_id = #getrecords_Inactivate.empid#
   <!--- Do this Inactivate Password  ---> 
   <!--- Do this Check for Crew_leader_id and supervisor_id in APP_CREWS ---> 
   <cfoutput>(#getrecords_Inactivate.empname#) (#getrecords_Inactivate.empid#) have been inactivated in app_employees table</cfoutput><br>
+  
+  
 </cfloop>
 <!-----------------  This is the end of step 3 ----------------------> 
 <!-----------------    This is the end of step 3 ----------------------> 
 <!-----------------    This is the end of step 3 ----------------------> 
 Data Updated
 <cfabort>
-DONE!
+
 </body>
 </html>
