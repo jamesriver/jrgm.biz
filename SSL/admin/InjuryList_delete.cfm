@@ -138,7 +138,7 @@ table.sortable tbody td {
     <tr>
       <td class="jobbutton">
         
-        <a href=""><img src="/ssl/admin/images/icon_payroll.png"  width="60" height="60"  class="icons"/></a> <a href="/ssl/admin/daily_sheet_listing.cfm"><img src="/ssl/admin/images/icon_dailysheet.png" width="60" height="60"  class="icons"/></a> <a href="/ssl/admin/scheduler_select.cfm"><img src="/ssl/admin/images/icon_jobs.png" width="60" height="60" alt="Jobs" class="icons" /></a> <a href="/ssl/admin/scheduler_select.cfm"><img src="/ssl/admin/images/icon_crews.png" width="60" height="60" alt="Crews" class="icons" /></a>
+        <a href=""><img src="/ssl/admin/images/icon_payroll.png"  width="60" height="60"  class="icons"/></a> <a href="/ssl/admin/daily_sheet_listing.cfm"><img src="/ssl/admin/images/icon_dailysheet.png" width="60" height="60"  class="icons"/></a> <a href="/ssl/admin/scheduler_select.cfm"><img src="/ssl/admin/images/icon_jobs.png" width="60" height="60" alt="Jobs" class="icons" /></a> <a href="/ssl/admin/scheduler_select-new.cfm"><img src="/ssl/admin/images/icon_crews.png" width="60" height="60" alt="Crews" class="icons" /></a> 
         <a href="/ssl/admin/inventory.cfm"><img src="/ssl/admin/images/icon_inventory.png" width="60" height="60" alt="Crews" class="icons" /></a>
         <a href="/ssl/admin/directory.cfm"><img src="/ssl/admin/images/directory_icon.png" width="60" height="60" alt="Crews" class="icons" /></a>
          <a href="forms.cfm"><img src="/ssl/admin/images/icon_forms.png" width="60" height="60" alt="Forms" /></a></td> </td>
