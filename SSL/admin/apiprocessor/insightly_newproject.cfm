@@ -2,12 +2,18 @@
 <cfset multi_delimiter = '|'>
 
 <!--- ======= insert new Insightly Opportunity into Biz ======= --->
-<cfset insertKeysHeader = ['[Job ID]','[Wk Loc ID]','[Wk Location Name]','[Service Address]','[Service Address2]','[Service City]','[Service State]','[Service Zip]','active_record','branch','Status','irrigation','project_details','project_type','responsible_user_Employee_ID','sales_contact_Employee_ID','billing_contact_name','billing_contact_phone','billing_contact_email_address','billing_address','billing_address2','billing_city','billing_state','billing_zip','project_start_date','project_end_date','total_project_value','irrigation_services_included','department','billto_company_name','contract_installments','last_modified_date','last_quote_id']>
-<cfset insertKeys = ['Job ID','Wk Loc ID','Wk Location Name','Service Address','Service Address2','Service City','Service State','Service Zip','active_record','branch','Status','irrigation','project_details','project_type','responsible_user_Employee_ID','sales_contact_Employee_ID','billing_contact_name','billing_contact_phone','billing_contact_email_address','billing_address','billing_address2','billing_city','billing_state','billing_zip','project_start_date','project_end_date','total_project_value','irrigation_services_included','department','billto_company_name','contract_installments','last_modified_date','last_quote_id']>
-<cfset insertList = ArrayToList(insertKeysHeader, ", ")>
+<cfset insertKeysHeader_Master = ['[Job ID]','[Wk Loc ID]','[Wk Location Name]','[Service Address]','[Service Address2]','[Service City]','[Service State]','[Service Zip]','active_record','branch','Status','irrigation','project_details','project_type','responsible_user_Employee_ID','billing_contact_name','billing_contact_phone','billing_contact_email_address','billing_address','billing_address2','billing_city','billing_state','billing_zip','project_start_date','project_end_date','total_project_value','irrigation_services_included','department','billto_company_name']>
+<cfset insertKeys_Master = ['Job ID','Wk Loc ID','Wk Location Name','Service Address','Service Address2','Service City','Service State','Service Zip','active_record','branch','Status','irrigation','project_details','project_type','responsible_user_Employee_ID','billing_contact_name','billing_contact_phone','billing_contact_email_address','billing_address','billing_address2','billing_city','billing_state','billing_zip','project_start_date','project_end_date','total_project_value','irrigation_services_included','department','billto_company_name']>
 <cfset keepgoing = 1>
 <cfset cv = 0>
 <cfloop condition="keepgoing EQ 1 AND cv LT 50">
+    <cfset insertKeysHeader = insertKeysHeader_Master>
+    <cfset insertKeys = insertKeys_Master>
+    <cfif structKeyExists(form, cv & '_last_quote_id')>
+        <cfset ArrayAppend(insertKeysHeader, 'last_quote_id')>
+        <cfset ArrayAppend(insertKeys, 'last_quote_id')>
+    </cfif>
+    <cfset insertList = ArrayToList(insertKeysHeader, ", ")>
     <cfif structKeyExists(form, cv & '_Job ID') AND structKeyExists(form, cv & '_project_start_date') AND structKeyExists(form, cv & '_project_end_date')>
         <cfquery name="main_query" datasource="jrgm">
             SELECT * FROM dbo.app_jobs
@@ -23,10 +29,10 @@
                             ,
                         </cfif>
                         <cfset iKey = insertKeys[i]>
-                        <cfif iKey EQ 'active_record' OR iKey EQ 'irrigation' OR iKey EQ 'responsible_user_Employee_ID' OR iKey EQ 'department' OR iKey EQ 'contract_installments'>
-                            #form[cv & '_' & iKey]#
+                        <cfif iKey EQ 'active_record' OR iKey EQ 'irrigation' OR iKey EQ 'department'>
+                            #iKey# = #form[cv & '_' & iKey]#
                         <cfelse>
-                            '#form[cv & '_' & iKey]#'
+                            #iKey# = '#form[cv & '_' & iKey]#'
                         </cfif>
                     </cfloop>
                 )
