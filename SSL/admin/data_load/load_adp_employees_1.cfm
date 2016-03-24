@@ -1,8 +1,23 @@
 
+<!---Tables used :
+
+app_employees is the table where the employee data is stored. IMPORTANT!
+
+app_crews is the table where the crews are stored. New employees are set under the branch manager.
+
+app_employees_test_backup is a temp table that gets created on page 1. It contains the employees from the last data load. It is DROPPED on the last page.
+
+app_employees_test is a table where the current days employees get inserted. It is a permanent table.
+
+Delete_this_employees_backup is where the current app_employees table gets backed up to. It is created on page 2. Revert to this table for app_employees if there are problems. This Table is DROPPED on this page when the process is started next time
+
+Delete_this_crews_backup is where the current app_crews table gets backed up to. It is created on page 2. Revert to this table for app_crews if there are problems. This Table is DROPPED on this page when the process is started next time--->
+
 
 <CFSET checkdate = '#DateFormat(DateAdd('d', -30,Now()),'mm/dd/yyyy')#'>
 
 <!---<cfabort>--->
+
 
 <cfquery name="make_copy"   datasource="jrgm">
 SELECT * INTO app_employees_test_backup  FROM app_employees_test

@@ -174,34 +174,49 @@
 
 <!--- APPROVE QUOTE --->
 <cfif IsDefined("url.quote_approved") AND get_quote_start.quote_approved NEQ 1>
-  <cfmail from="alerts@jrgm.com" to="quotingapproval@jrgm.com" subject="JRGM Quote Approved" type="html">
-    <style type="text/css">
-   .arialfont {
-  font: normal .9em Arial, Helvetica, sans-serif;
-   }
-  </style>
-    <span class="arialfont">Quote ID: #url.id# for #get_quote_start.opportunity_name# has been approved in jrgm.biz.<br />
-    <br />
-    Please review the Intacct record for accuracy.</span><br />
-    <br />
-  </cfmail>
-
   <cfhttp url="http://api.jrgm.com/external_api/insightly.php?auth=jrgmAPI!&type=contractapproved&quote_id=#get_quote_start.ID#" method="get" result="httpResp" timeout="30">
   </cfhttp>
+  <!---cfoutput>http://api.jrgm.com/external_api/insightly.php?auth=jrgmAPI!&type=contractapproved&quote_id=#get_quote_start.ID#<br /></cfoutput>
+  <cfdump var="#httpResp.filecontent#">
+  <cfabort--->
 
-  <cfquery name="update_quote_start" datasource="jrgm">
-      UPDATE quote_start SET
-      date_quote_updated = GETUTCDATE(),quote_approved =1,biz_approved_date = GETUTCDATE(),
-      opportunity_state='WON',
-      user_id =  '#SESSION.userid#'
-      WHERE opportunity_id = #url.id#
-    </cfquery>
-    <cfquery name="update_quote_start" datasource="jrgm">
-      UPDATE quote_main SET
-      date_updated = GETUTCDATE(), quote_approved =1,
-      user_id =  '#SESSION.userid#'
-      WHERE opportunity_id = #url.id#
-    </cfquery>
+  <cfquery name="get_new_job" datasource="jrgm">
+      SELECT [Job ID] as Job_ID FROM app_jobs
+      WHERE last_quote_id=#get_quote_start.ID#
+  </cfquery>
+  <cfif get_new_job.recordcount GT 0>
+      <cfloop query="get_new_job">
+          <cfquery name="update_quote_start" datasource="jrgm">
+              UPDATE quote_start SET
+              date_quote_updated = GETUTCDATE(),quote_approved =1,biz_approved_date = GETUTCDATE(),
+              opportunity_state='WON',
+              user_id =  '#SESSION.userid#',
+              [Job ID] = '#get_new_job.Job_ID#'
+              WHERE opportunity_id = #url.id#
+          </cfquery>
+          <cfquery name="update_quote_main" datasource="jrgm">
+              UPDATE quote_main SET
+              date_updated = GETUTCDATE(), quote_approved =1,
+              user_id =  '#SESSION.userid#'
+              WHERE opportunity_id = #url.id#
+          </cfquery>
+
+          <cfmail from="alerts@jrgm.com" to="quotingapproval@jrgm.com" subject="JRGM Quote Approved" type="html">
+              <style type="text/css">
+             .arialfont {
+            font: normal .9em Arial, Helvetica, sans-serif;
+             }
+            </style>
+              <span class="arialfont">Quote ID: #url.id# for #get_quote_start.opportunity_name# has been approved in jrgm.biz.<br />
+              <br />
+              Please review the Intacct record for accuracy.</span><br />
+              <br />
+          </cfmail>
+      </cfloop>
+  <cfelse>
+      Something went wrong!  Please contact Ben Chan @ benchanviolin@gmail.com to find out why.
+      <cfabort>
+  </cfif>
 
   <cflocation url="quote_data_entry.cfm?ID=#url.id#" />
 </cfif>
@@ -360,22 +375,6 @@ i.mysize {
             <tr>
               <td>Quote Status : </td>
               <td>
-                <!--select name="opportunity_state"   tabindex="5" >
-                  <cfset statuses = ArrayNew(1)>
-                  <cfset ArrayAppend(statuses, ['WON', 'WON'])>
-                  <cfset ArrayAppend(statuses, ['OPEN', 'OPEN'])>
-                  <cfset ArrayAppend(statuses, ['LOST', 'LOST'])>
-                  <cfset ArrayAppend(statuses, ['SUSPENDED', 'SUSPENDED'])>
-                  <cfset ArrayAppend(statuses, ['ABANDONED', 'ABANDONED'])>
-                  <cfset ArrayAppend(statuses, ['', 'RENEWAL'])>
-                  <cfloop from="1" to="#arrayLen(statuses)#" index="i">
-                    <cfset value = "">
-                    <cfif UCASE(opportunity_state) EQ statuses[i][1]>
-                      <cfset value = ' selected="selected"'>
-                    </cfif>
-                    <option value="<cfoutput>#statuses[i][1]#</cfoutput>"<cfoutput>#value#</cfoutput>> <cfoutput>#statuses[i][2]#</cfoutput> </option>
-                  </cfloop>
-                </select-->
                 #UCASE(opportunity_state)#
               </td>
               <td>&nbsp;</td>
@@ -465,10 +464,11 @@ i.mysize {
                 </cfloop>
             </tr>
           </thead>
+          <cfoutput>
           <tbody>
             <tr>
-                <td align="right" colspan="<cfoutput>#(total_columns+3)#</cfoutput>"><!--i>Profit Margin must be greater than 50%</i--></td>
-                <td align="right"><input id="gross_margin" name="gross_margin" oninput="apply_profit_margin(this.value)" size="6" value="<cfoutput>#get_quote_main.gross_margin#</cfoutput>"></td>
+                <td align="right" colspan="#(total_columns+3)#"><!--i>Profit Margin must be greater than 50%</i--></td>
+                <td align="right"><input id="gross_margin" name="gross_margin" oninput="apply_profit_margin(this.value)" size="6" value="#get_quote_main.gross_margin#"></td>
                 <td align="left">&nbsp;</td>
             </tr>
             <cfset alternator = 1>
@@ -476,45 +476,45 @@ i.mysize {
                 <cfset quote_row_index = row_order_array[wrapi]>
                 <cfset tr_class = (alternator % 2?' bgcolor="##e5e5e5"':'')>
                 <cfset alternator = 1-alternator>
-                <tr <cfoutput>#tr_class#</cfoutput>>
+                <tr #tr_class#>
                     <cfloop from="1" to="#arrayLen(quote_rows[quote_row_index])#" index="i">
                         <cfset current_row = quote_rows[quote_row_index][i]>
                         <cfset current_column = quote_column_headers[quote_column_ID_index[current_row.quote_data_entry_headers_ID]]>
                         <cfif current_row.row_active EQ 1>
-                            <td align="<cfoutput>#quote_column_headers[i].column_displayalign#</cfoutput>">
+                            <td align="#quote_column_headers[i].column_displayalign#">
                                 <cfif current_column.ID EQ 20>
-                                    <cfoutput><span class="column<cfoutput>#current_column.ID#</cfoutput>" id="row#current_row.ID#">#current_row.row_defaultvalue#</span></cfoutput>
-                                    <cfoutput><input class="column<cfoutput>#current_column.ID#</cfoutput> #current_row.quote_services_field# subtotal<cfoutput>#current_row.row_order#</cfoutput> totaltype_<cfoutput>#current_row.row_totaltype#</cfoutput>" type="hidden" id="#current_row.quote_services_field#" name="#current_row.quote_services_field#"></cfoutput>
+                                    <span class="column#current_column.ID#" id="row#current_row.ID#">#current_row.row_defaultvalue#</span>
+                                    <input class="column#current_column.ID# #current_row.quote_services_field# subtotal#current_row.row_order# totaltype_#current_row.row_totaltype#" type="hidden" id="#current_row.quote_services_field#" name="#current_row.quote_services_field#">
                                 <cfelse>
                                     <cfif current_row.quote_services_field NEQ ''>
                                         <cfif (current_column.column_editable EQ 1 AND (current_column.ID NEQ 18 OR current_row.row_defaultvalue NEQ 40)) OR (current_row.row_order GT 55 AND (current_column.ID EQ 1 OR current_column.ID EQ 3 OR current_column.ID EQ 4 OR current_column.ID EQ 6))>
-                                            <cfoutput><input class="column<cfoutput>#current_column.ID#</cfoutput>" id="#current_row.quote_services_field#" name="#current_row.quote_services_field#" type="text" size="6" value="#current_row.row_defaultvalue#" oninput="recalculate_row<cfoutput>#quote_row_index#</cfoutput>(); recalculate_totals();" /></cfoutput>
+                                            <input class="column#current_column.ID#" id="#current_row.quote_services_field#" name="#current_row.quote_services_field#" type="text" size="6" value="#current_row.row_defaultvalue#" oninput="recalculate_row#quote_row_index#(); recalculate_totals();" />
                                         <cfelse>
-                                            <cfoutput><input disabled="true" class="column<cfoutput>#current_column.ID#</cfoutput> #current_row.quote_services_field#" type="text" size="6" value="#current_row.row_defaultvalue#" /></cfoutput>
-                                            <cfoutput><input type="hidden" class="column<cfoutput>#current_column.ID#</cfoutput> #current_row.quote_services_field# totaltype_<cfoutput>#current_row.row_totaltype#</cfoutput>" id="#current_row.quote_services_field#" name="#current_row.quote_services_field#" value="#current_row.row_defaultvalue#" /></cfoutput>
+                                            <input disabled="true" class="column#current_column.ID# #current_row.quote_services_field#" type="text" size="6" value="#current_row.row_defaultvalue#" />
+                                            <input type="hidden" class="column#current_column.ID# #current_row.quote_services_field# totaltype_#current_row.row_totaltype#" id="#current_row.quote_services_field#" name="#current_row.quote_services_field#" value="#current_row.row_defaultvalue#" />
                                         </cfif>
                                     <cfelse>
-                                        <cfoutput><span class="column<cfoutput>#current_column.ID#</cfoutput>" id="row#current_row.ID#">#current_row.row_defaultvalue#</span></cfoutput>
-                                        <cfoutput><input class="column<cfoutput>#current_column.ID#</cfoutput> totaltype_<cfoutput>#current_row.row_totaltype#</cfoutput>" type="hidden" id="row#current_row.ID#_numeric" value="#current_row.row_defaultvalue#"></cfoutput>
+                                        <span class="column#current_column.ID#" id="row#current_row.ID#">#current_row.row_defaultvalue#</span>
+                                        <input class="column#current_column.ID# totaltype_#current_row.row_totaltype#" type="hidden" id="row#current_row.ID#_numeric" value="#current_row.row_defaultvalue#">
                                     </cfif>
                                 </cfif>
                             </td>
                         <cfelse>
-                            <cfoutput><td align="<cfoutput>#quote_column_headers[i].column_displayalign#</cfoutput>"><span class="column<cfoutput>#current_column.ID#</cfoutput>" id="row#current_row.ID#"></span></td></cfoutput>
-                            <cfoutput><input type="hidden" class="column<cfoutput>#current_column.ID#</cfoutput>" id="row#current_row.ID#_numeric" value="0"></td></cfoutput>
+                            <td align="#quote_column_headers[i].column_displayalign#"><span class="column#current_column.ID#" id="row#current_row.ID#"></span></td>
+                            <input type="hidden" class="column#current_column.ID#" id="row#current_row.ID#_numeric" value="0"></td>
                         </cfif>
                         <cfif current_column.ID EQ 9>
-                            <cfoutput><td align="left">#Replace(current_row.row_formula, '[2]', '[Qty/SqFt]', 'ALL')#</td></cfoutput>
+                            <td align="left">#Replace(current_row.row_formula, '[2]', '[Qty/SqFt]', 'ALL')#</td>
                         </cfif>
                     </cfloop>
                 </tr>
             </cfloop>
-            <tr bgcolor="#EDF3F8">
+            <tr bgcolor="##EDF3F8">
                 <cfloop from="1" to="#arrayLen(quote_column_headers)#" index="i">
                         <cfset current_column = quote_column_headers[i]>
                         <cfif current_column.ID EQ 1 OR current_column.ID EQ 2>
                             <cfif current_column.ID EQ 1>
-                                <th align="<cfoutput>#current_column.column_displayalign#</cfoutput>" colspan="2">
+                                <th align="#current_column.column_displayalign#" colspan="2">
                                     Totals (Unadjusted)
                                 </th>
                             </cfif>
@@ -527,24 +527,24 @@ i.mysize {
                                     <th></th>
                                 <cfelse>
                                     <cfif current_column.ID EQ 5>
-                                        <cfoutput>
-                                            <th align="<cfoutput>#current_column.column_displayalign#</cfoutput>">
+                                        
+                                            <th align="#current_column.column_displayalign#">
                                                 <span id="seasonal_hours_formatted"></span>
                                             </th>
-                                        </cfoutput>
+                                        
                                     </cfif>
                                 </cfif>
                             <cfelse>
-                                <th align="<cfoutput>#current_column.column_displayalign#</cfoutput>">
+                                <th align="#current_column.column_displayalign#">
                                 <cfif current_column.column_totalable EQ 1>
-                                    <cfoutput>
+                                    
                                         <span class="total#current_column.ID#"></span>
-                                    </cfoutput>
+                                    
                                 <cfelse>
                                     <cfif current_column.column_totalable EQ 2>
-                                        <cfoutput>
+                                        
                                             <span class="avg#current_column.ID#"></span>
-                                        </cfoutput>
+                                        
                                     <cfelse>
                                         &nbsp;
                                     </cfif>
@@ -553,8 +553,7 @@ i.mysize {
                         </cfif>
                     </th>
                 </cfloop>
-            </tr>
-            <cfoutput>
+            </tr>            
             <tr>
                 <td align="right" colspan="#total_columns#">&nbsp;</td>
                 <td align="right" colspan="4"><a href="quote_notes.cfm?opportunity_id_original=#url.id#&opportunity_id=#url.id#&note_type=5"><i class="fa fa-file-text mysize font-blue">&nbsp;Note</i></a>&nbsp;&nbsp;&nbsp; <strong>Contract Adjustment</strong></td>
@@ -725,7 +724,7 @@ i.mysize {
                     <cfif get_quote_main.recordcount NEQ 0>
                         <cfoutput>
 
-                            <a class="btn btn-warning" href="javascript:if (confirm('SAVE ALL CHANGES BEFORE APPROVING THIS QUOTE!  Click Cancel if you need to save changes, otherwise click OK to proceed.')) window.location='quote_data_entry.cfm?ID=#url.id#&quote_approved=1';">Contract Approved</a>
+                            <a class="btn btn-warning" href="quote_data_entry_approve_contract.cfm?ID=#url.id#">Preview Contract Approval</a>
                             &nbsp;&nbsp;&nbsp;&nbsp;
                             <!---  <div class="button-box"><a href="create_duplicate_quote.cfm?ID=#url.id#" class="btn btn-success" >Duplicate this Quote</a> </div> --->
                         </cfoutput>
@@ -756,7 +755,7 @@ i.mysize {
             </tr>
             <tr>
               <td valign="top"><p> Ben: Is Billing Contact Info done like this? <br />
-                  https://www.jrgm.biz/ssl/admin/project_Edit_Project_Information.cfm?ProjectID=J3769-316</p></td>
+                  /ssl/admin/project_Edit_Project_Information.cfm?ProjectID=J3769-316</p></td>
             </tr>
           </tbody>
         </table>

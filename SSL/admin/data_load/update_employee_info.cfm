@@ -40,7 +40,6 @@ Phone_Cell =  '#get_records_from_app_employees_test.Phone_Cell#',
 <!---END Step 1 - UPDATE app-employee table with data from app_employees_test table---> 
 Step 1 Done 
 
-
 <!---Step 2 - This process adds new employees to the app_crews table--->
 <cfquery name="get_employees_not_in_app_crews" datasource="jrgm" >
     SELECT [Employee ID] AS Employee_ID , [Name FirstLast] AS Employee_name, First_name, Last_name, Position,  Branch
@@ -56,7 +55,7 @@ app_employee_passwords WHERE employee_branch ='#get_employees_not_in_app_crews.B
  INSERT INTO APP_crews 
  (Employee_ID ,crew_name,Employee_Branch ,Crew_Leader_ID ,Employee_Position_ID,First_name,Last_name,start_date,end_date,active_record,supervisor_ID)
  VALUES 
- (#get_employees_not_in_app_crews.Employee_ID#, '#get_employees_not_in_app_crews.Employee_Name#','#get_employees_not_in_app_crews.Branch#',NULL,0,'#TRIM(get_employees_not_in_app_crews.First_Name)#','#TRIM(get_employees_not_in_app_crews.Last_Name)#','2016-03-01 16:00:00','2017-11-01 16:30:00',1,'#get_BM_ID.Employee_ID#')
+ (#get_employees_not_in_app_crews.Employee_ID#, '#get_employees_not_in_app_crews.Employee_Name#','#get_employees_not_in_app_crews.Branch#',NULL,0,'#TRIM(get_employees_not_in_app_crews.First_Name)#','#TRIM(get_employees_not_in_app_crews.Last_Name)#','2016-03-01 16:00:00','2019-12-31 16:30:00',1,'#get_BM_ID.Employee_ID#')
  </cfquery>
   </cfloop>
   <!--- Query to make active_employees in app_employees are listed in APP_CREWS ----> 
@@ -65,7 +64,6 @@ app_employee_passwords WHERE employee_branch ='#get_employees_not_in_app_crews.B
 </cfif>
 <!---END Step 2 - This process adds new employees to the app_crews table---> 
 Step 2 Done 
-
 
 <!---Step 3 - Updates email address in app_employee_passwords--->
 <cfquery name="get_active_users_with_creds"   datasource="jrgm">
@@ -83,37 +81,73 @@ FROM            app_employee_passwords  WHERE employee_active =1
   </cfquery>
 </cfloop>
 <!---END Step 3 - Updates email address in app_employee_passwords---> 
-Step 3 Done
+Step 3 Done 
+
+<!---app_employees_test_backup has yesterdays active employees in it---> 
 
 <!---Step 4 Get new records--->
 <cfquery name="get_all_employees_in_app_employees" datasource="JRGM" >
- SELECT  [Employee ID] AS employee_ID FROM app_employees_test_backup    <!---WHERE [Employee ID] < 9993--->
+ SELECT  [Employee ID] AS employee_ID FROM app_employees_test_backup WHERE [Employee ID] < 9993
   </cfquery>
 <CFSET mylist ="0">
 <cfloop query="get_all_employees_in_app_employees">
   <cfset myList = ListAppend(mylist,employee_ID)>
 </cfloop>
 <cfquery name="get_new_records"  datasource="jrgm">
- SELECT * FROM app_employees WHERE [Employee ID]  NOT IN (#myList#)  <!---#maxfilenumber#--->
+ SELECT [Employee ID] AS employee_ID, [Name FirstLast] AS employee_name, branch FROM app_employees WHERE [Employee ID]  NOT IN (#myList#) AND active_record = 1  AND [Employee ID] < 9993
  </cfquery>
- <cfdump var="#get_new_records#">
- 
- <!---END Step 4 Get new records--->
- Step 4 Done
- 
- <!---Step 5 Inactivated records--->
- <cfquery name="get_inactivated_records"   datasource="jrgm">
-SELECT [Employee ID] AS empid,  [Name FirstLast] AS empname,branch
+<cfdump var="#get_new_records#">
+<cfmail to="patrick.hutchinson2@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="New Employees"  type="html">
+  <cfif get_new_records.recordcount EQ 0>
+    There are no new records in todays ADP data load.
+    <cfelse>
+    These are the new employees in todays ADP data load.<br>
+    <br>
+    <cfloop query="get_new_records">
+      #employee_ID#, #employee_name#, #branch#<br>
+    </cfloop>
+  </cfif>
+</cfmail>
+<!---END Step 4 Get new records---> 
+Step 4 Done 
+
+<!---Step 5 Inactivated records--->
+<cfquery name="get_inactivated_records"   datasource="jrgm">
+SELECT [Employee ID] AS employee_ID,  [Name FirstLast] AS employee_name,branch
 FROM app_employees
-WHERE active_record = 1 AND  [Employee ID] < 9500 AND   [Employee ID]  NOT IN (SELECT [Employee ID] FROM app_employees_test)
+WHERE active_record =0  AND  [Employee ID] < 9993 AND   [Employee ID]   IN (SELECT [Employee ID] FROM app_employees_test_backup)
 ORDER by branch
 </cfquery>
- <cfdump var="#get_inactivated_records#">
- 
- <cfquery name="drop_test" datasource="JRGM" >
+<cfdump var="#get_inactivated_records#">
+<cfmail to="patrick.hutchinson2@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="Inactivated Employees"  type="html">
+  <cfif get_inactivated_records.recordcount EQ 0>
+    There are no inactivated records in todays ADP data load.
+    <cfelse>
+    These are the inactivated employees in todays ADP data load.<br>
+    <br>
+    <cfloop query="get_inactivated_records">
+      #employee_ID#, #employee_name#, #branch#<br>
+    </cfloop>
+  </cfif>
+</cfmail>
+<!---END Step 5 Get new records---> 
+Step 5 Done 
+
+<!--- Step 6 Inactivate login credentials in App_employee_passwords--->
+<cfquery name="get_active_in_pw_table" datasource="jrgm">
+SELECT  ID, Employee_ID, employee_name, access_role, employee_active, firstname, lastname, date_added, employee_branch
+ FROM app_employee_passwords WHERE  EMPLOYEE_ACTIVE =1 AND  
+employee_id   IN (SELECT [Employee ID] FROM app_employees WHERE active_record=0)
+ </cfquery>
+<cfloop query="get_active_in_pw_table">
+  <CFQUERY name="update_pw_table" datasource="#request.dsn#">
+UPDATE app_employee_passwords SET  employee_active =0  WHERE employee_id=#get_active_in_pw_table.employee_id#
+</CFQUERY>
+</cfloop>
+<!---END Step 6 Inactivate login credentials in App_employee_passwords--->
+
+<cfquery name="drop_test" datasource="JRGM" >
 DROP TABLE app_employees_test_backup;
 </cfquery>
-
- 
 </body>
 </html>

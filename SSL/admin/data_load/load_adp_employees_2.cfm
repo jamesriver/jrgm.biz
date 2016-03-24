@@ -1,11 +1,14 @@
  <CFSET checkdate = '#DateFormat(DateAdd('d', -30,Now()),'mm/dd/yyyy')#'>
 
+<!---Make backups for crews and employees tables in case of problems--->
 <cfquery name="make_copy"   datasource="jrgm">
 SELECT * INTO Delete_this_employees_backup  FROM app_employees
 </cfquery>
 <cfquery name="make_copy"   datasource="jrgm">
 SELECT * INTO Delete_this_crews_backup  FROM app_crews
 </cfquery>
+
+
 <!---<cfquery name="drop_test" datasource="JRGM" >
 DROP TABLE app_employees_test_backup;
 </cfquery>
@@ -122,14 +125,14 @@ varchar
 <!---Modified this query 3/16/2016--->
 
 <cfquery name="get_all_employees_in_app_employees" datasource="JRGM" >
- SELECT  [Employee ID] AS employee_ID FROM app_employees    <!---WHERE [Employee ID] < 9993--->
+ SELECT  [Employee ID] AS employee_ID FROM app_employees     
   </cfquery>
 <CFSET mylist ="0">
 <cfloop query="get_all_employees_in_app_employees">
   <cfset myList = ListAppend(mylist,employee_ID)>
 </cfloop>
 <cfquery name="get_all_records"   dbtype="query"  >
- SELECT * FROM orderquery WHERE FILE_NUMBER NOT IN (#myList#)  <!---#maxfilenumber#--->
+ SELECT * FROM orderquery WHERE FILE_NUMBER NOT IN (#myList#)   
  </cfquery>
 <!---<cfdump var="#get_all_records#">
 <cfabort>--->
