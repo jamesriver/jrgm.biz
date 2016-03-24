@@ -725,7 +725,7 @@ i.mysize {
                     <cfif get_quote_main.recordcount NEQ 0>
                         <cfoutput>
 
-                            <a class="btn btn-warning" href="javascript:if (confirm('SAVE ALL CHANGES BEFORE APPROVING THIS QUOTE!  Click Cancel if you need to save changes, otherwise click OK to proceed.')) window.location='quote_data_entry.cfm?ID=#url.id#&quote_approved=1';">Contract Approved</a>
+                            <a class="btn btn-warning" href="javascript:if (confirm('SAVE ALL CHANGES BEFORE APPROVING THIS QUOTE!  Click Cancel if you need to save changes, otherwise click OK to proceed.')) window.location='quote_data_entry_contract_approved_preview.cfm?ID=#url.id#&quote_approved=1';">Contract Approved</a>
                             &nbsp;&nbsp;&nbsp;&nbsp;
                             <!---  <div class="button-box"><a href="create_duplicate_quote.cfm?ID=#url.id#" class="btn btn-success" >Duplicate this Quote</a> </div> --->
                         </cfoutput>

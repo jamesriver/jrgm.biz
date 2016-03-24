@@ -174,34 +174,49 @@
 
 <!--- APPROVE QUOTE --->
 <cfif IsDefined("url.quote_approved") AND get_quote_start.quote_approved NEQ 1>
-  <cfmail from="alerts@jrgm.com" to="quotingapproval@jrgm.com" subject="JRGM Quote Approved" type="html">
-    <style type="text/css">
-   .arialfont {
-  font: normal .9em Arial, Helvetica, sans-serif;
-   }
-  </style>
-    <span class="arialfont">Quote ID: #url.id# for #get_quote_start.opportunity_name# has been approved in jrgm.biz.<br />
-    <br />
-    Please review the Intacct record for accuracy.</span><br />
-    <br />
-  </cfmail>
-
   <cfhttp url="http://api.jrgm.com/external_api/insightly.php?auth=jrgmAPI!&type=contractapproved&quote_id=#get_quote_start.ID#" method="get" result="httpResp" timeout="30">
   </cfhttp>
+  <!---cfoutput>http://api.jrgm.com/external_api/insightly.php?auth=jrgmAPI!&type=contractapproved&quote_id=#get_quote_start.ID#<br /></cfoutput>
+  <cfdump var="#httpResp.filecontent#">
+  <cfabort--->
 
-  <cfquery name="update_quote_start" datasource="jrgm">
-      UPDATE quote_start SET
-      date_quote_updated = GETUTCDATE(),quote_approved =1,biz_approved_date = GETUTCDATE(),
-      opportunity_state='WON',
-      user_id =  '#SESSION.userid#'
-      WHERE opportunity_id = #url.id#
-    </cfquery>
-    <cfquery name="update_quote_start" datasource="jrgm">
-      UPDATE quote_main SET
-      date_updated = GETUTCDATE(), quote_approved =1,
-      user_id =  '#SESSION.userid#'
-      WHERE opportunity_id = #url.id#
-    </cfquery>
+  <cfquery name="get_new_job" datasource="jrgm">
+      SELECT [Job ID] as Job_ID FROM app_jobs
+      WHERE last_quote_id=#get_quote_start.ID#
+  </cfquery>
+  <cfif get_new_job.recordcount GT 0>
+      <cfloop query="get_new_job">
+          <cfquery name="update_quote_start" datasource="jrgm">
+              UPDATE quote_start SET
+              date_quote_updated = GETUTCDATE(),quote_approved =1,biz_approved_date = GETUTCDATE(),
+              opportunity_state='WON',
+              user_id =  '#SESSION.userid#',
+              [Job ID] = '#get_new_job.Job_ID#'
+              WHERE opportunity_id = #url.id#
+          </cfquery>
+          <cfquery name="update_quote_main" datasource="jrgm">
+              UPDATE quote_main SET
+              date_updated = GETUTCDATE(), quote_approved =1,
+              user_id =  '#SESSION.userid#'
+              WHERE opportunity_id = #url.id#
+          </cfquery>
+
+          <cfmail from="alerts@jrgm.com" to="quotingapproval@jrgm.com" subject="JRGM Quote Approved" type="html">
+              <style type="text/css">
+             .arialfont {
+            font: normal .9em Arial, Helvetica, sans-serif;
+             }
+            </style>
+              <span class="arialfont">Quote ID: #url.id# for #get_quote_start.opportunity_name# has been approved in jrgm.biz.<br />
+              <br />
+              Please review the Intacct record for accuracy.</span><br />
+              <br />
+          </cfmail>
+      </cfloop>
+  <cfelse>
+      Something went wrong!  Please contact Ben Chan @ benchanviolin@gmail.com to find out why.
+      <cfabort>
+  </cfif>
 
   <cflocation url="quote_data_entry.cfm?ID=#url.id#" />
 </cfif>
@@ -709,7 +724,7 @@ i.mysize {
                     <cfif get_quote_main.recordcount NEQ 0>
                         <cfoutput>
 
-                            <a class="btn btn-warning" href="javascript:if (confirm('SAVE ALL CHANGES BEFORE APPROVING THIS QUOTE!  Click Cancel if you need to save changes, otherwise click OK to proceed.')) window.location='quote_data_entry.cfm?ID=#url.id#&quote_approved=1';">Contract Approved</a>
+                            <a class="btn btn-warning" href="quote_data_entry_approve_contract.cfm?ID=#url.id#">Preview Contract Approval</a>
                             &nbsp;&nbsp;&nbsp;&nbsp;
                             <!---  <div class="button-box"><a href="create_duplicate_quote.cfm?ID=#url.id#" class="btn btn-success" >Duplicate this Quote</a> </div> --->
                         </cfoutput>
