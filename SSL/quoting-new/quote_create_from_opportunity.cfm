@@ -135,6 +135,16 @@ $(document).ready(function() {
             <cfabort>
             --->
 
+            <!--- GET QUOTE COLUMN HEADERS AND ROWS FROM VERSIONS CACHE --->
+            <cfquery name="get_quote_column_headers" datasource="jrgm">
+                SELECT TOP 1 ID FROM quote_data_entry_versions
+                ORDER BY ID DESC
+            </cfquery>
+
+            <cfloop query="get_quote_column_headers">
+                <cfset version_ID = ID>
+            </cfloop>
+
             <!--- ===================== check if this opportunity_id is already in use - if so, turn this into a duplicate quote ==================== --->
             <cfquery name="get_opportunity" datasource="jrgm">
                 SELECT opportunity_id FROM quote_start
@@ -151,8 +161,8 @@ $(document).ready(function() {
             <!--- ===================== insert a new quote_start entry =================== --->
             <cfquery name="insert_quote_start" datasource="jrgm" result="result_insert_quote_start">
                 INSERT INTO quote_start
-                (opportunity_id, opportunity_id_original, duplicate_quote, opportunity_state)
-                VALUES (#opportunity_id#, #opportunity_id_original#, #duplicate_quote#, 'OPEN')
+                (opportunity_id, opportunity_id_original, duplicate_quote, opportunity_state, quote_data_entry_versions_ID)
+                VALUES (#opportunity_id#, #opportunity_id_original#, #duplicate_quote#, 'OPEN', #version_ID#)
             </cfquery>
 
             <!--- ===================== if this opportunity has already been converted at least once before, make this a duplicate quote with the original opportunity_id as the parent and give this an opportunity_id equal to the next available auto inc for quote_start.ID ====================== --->

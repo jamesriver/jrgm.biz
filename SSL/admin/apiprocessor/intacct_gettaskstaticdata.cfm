@@ -1,5 +1,5 @@
 <cfinclude template="include_authorization.cfm">
-<cfset multi_delimiter = ''>
+<cfset multi_delimiter = '`'>
 
 <!--- ======= get Service Task data in a uniform format for use with labor reports ======= --->
 <cfquery name="main_query" datasource="jrgm">

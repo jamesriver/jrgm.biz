@@ -178,7 +178,7 @@ ORDER by ID DESC
         <div class="dashboardHeader">Project Management</div>
         <li><a href="project_list.cfm">Project List / Manage Project Information</a></li>
         <cfif  IsDefined("SESSION.access_role")  AND  SESSION.access_role NEQ  '1'  >
-          <li><a href="project_create_new_project.cfm">Create New Project</a></li>
+          <!---li><a href="project_create_new_project.cfm">Create New Project</a></li--->
         </cfif>
         <li><a href="http://api.jrgm.com/cronjob_projectlinks.php">Authorize Insightly Project Links</a></li>
         <!---    <li><a href="project-View_Project_Information.cfm">Manage Project Information</a> </li>--->

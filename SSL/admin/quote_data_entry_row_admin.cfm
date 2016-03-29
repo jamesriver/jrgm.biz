@@ -116,7 +116,7 @@
                                     <cfoutput>
                                     <tr>
                                         <td>#quote_row_field#</td>
-                                        <td><input name="#current_row.ID#_#quote_row_field#" value="#current_row[quote_row_field]#" onChange="saveInput(#current_row.ID#, '#quote_row_field#', this.value)"></td>
+                                        <td><input name="#current_row.ID#_#quote_row_field#" value="#encodeForHTML(current_row[quote_row_field])#" onChange="saveInput(#current_row.ID#, '#quote_row_field#', this.value)"></td>
                                     </tr>
                                     </cfoutput>
                                 </cfif>

@@ -113,13 +113,16 @@ where opportunity_id  =#url.id#
     <cfset version_ID = ID>
     <cfset version_date_created = date_created>
 </cfloop>
+<!---cfdump var="#quote_column_headers#">
+<cfdump var="#quote_rows_raw#">
+<cfabort--->
 
 <!--- CREATE COLUMNS BASED ON CACHED VERSION --->
 <cfset quote_column_ID_index = StructNew()>
 <cfloop from="1" to="#arrayLen(quote_column_headers)#" index="i">
     <cfset StructInsert(quote_column_ID_index, quote_column_headers[i].ID, i)>
 </cfloop>
-<cfset total_columns = arrayLen(quote_column_headers) - 5 + 1>
+<cfset total_columns = arrayLen(quote_column_headers) - 5>
 
 <!--- CREATE ROWS BASED ON CACHED VERSION --->
 <cfset quote_rows = StructNew()>
