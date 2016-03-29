@@ -1,126 +1,56 @@
-<cfif IsDefined('form.submitted')>
-    <cfset row_iterator = StructNew()>
-    <cfloop collection=#form# item="field">
-        <cfset val = form[field]>
-        <cfif val EQ ''>
-            <cfset val = 'NULL'>
-        <cfelse>
-            <cfif !IsNumeric(val)>
-                <cfset val = "'" & val & "'">
-            </cfif>
-        </cfif>
-        <cfset splitter = field.split('_')>
-        <cfset row_iterator_key = splitter[1]>
-        <cfif IsNumeric(row_iterator_key)>
-            <cfset row_iterator_field = ''>
-            <cfloop from="2" to="#arrayLen(splitter)#" index="i">
-                <cfif row_iterator_field NEQ ''>
-                    <cfset row_iterator_field = row_iterator_field & '_'>
-                </cfif>
-                <cfset row_iterator_field = row_iterator_field & splitter[i]>
-            </cfloop>
-            <cfif !structKeyExists(row_iterator, row_iterator_key)>
-                <cfset row_iterator[row_iterator_key] = StructNew()>
-            </cfif>
-            <cfif !structKeyExists(row_iterator[row_iterator_key], row_iterator_field)>
-                <cfset row_iterator[row_iterator_key][row_iterator_field] = val>
-            </cfif>
-            <!---<cfoutput>ID #row_iterator_key#: #row_iterator_field# = #row_iterator[row_iterator_key][row_iterator_field]#</cfoutput><br />--->
-        </cfif>
-        <!---<cfoutput>#field# = #val#</cfoutput><br />--->
-    </cfloop>
-
-    <cfloop collection=#row_iterator# item="row">
-        <cfset query_string = 'UPDATE quote_data_entry_row SET '>
-        <cfset count = 0>
-        <cfloop collection=#row_iterator[row]# item="field">
-            <cfif count NEQ 0>
-                <cfset query_string = query_string & ', '>
-            </cfif>
-            <cfset query_string = query_string & field & ' = ' & row_iterator[row][field]>
-            <cfset count++>
-        </cfloop>
-        <cfset query_string = query_string & ' WHERE ID = ' & row>
-        <cfquery name="update_quote_data_entry_row" datasource="jrgm">
-            #preserveSingleQuotes(query_string)#
-        </cfquery>
-    </cfloop>
-    <cflocation url="quote_data_entry_row_admin.cfm">
-</cfif>
-
 <cfinclude template="../quoting-new/include_cffunctions.cfm">
-
-<!--- GET QUOTE COLUMN HEADERS --->
-<cfset quote_column_headers = ArrayNew(1)>
-<cfquery name="get_quote_column_headers" datasource="jrgm">
-    SELECT * FROM quote_data_entry_headers
-    WHERE ID IN (1,3,4,6,9,10,18,23)
-    ORDER BY column_order
-</cfquery>
-
-<!--- CONVERT QUERY INTO ARRAY OF STRUCTS --->
-<cfset quote_column_headers = QueryToStruct(get_quote_column_headers)>
-<cfset quote_column_ID_index = StructNew()>
-<cfloop from="1" to="#arrayLen(quote_column_headers)#" index="i">
-    <cfset StructInsert(quote_column_ID_index, quote_column_headers[i].ID, i)>
-</cfloop>
-
-<!--- GET QUOTE ROWS --->
-<cfquery name="get_quote_rows" datasource="jrgm">
-    SELECT qder.ID, qder.row_order, qder.quote_data_entry_headers_id, qder.quote_services_field, qder.row_formula, qder.row_defaultvalue FROM quote_data_entry_row qder
-    INNER JOIN quote_data_entry_headers qdeh ON qdeh.ID=qder.quote_data_entry_headers_ID
-    WHERE qdeh.ID IN (1,3,4,6,9,10,18,23)
-    ORDER BY qder.row_order, qdeh.column_order
-</cfquery>
-
-<!--- CONVERT QUERY INTO ARRAY OF STRUCTS --->
-<cfset quote_rows_raw = QueryToStruct(get_quote_rows)>
-<cfset quote_rows = StructNew()>
-<cfset row_order_array = ArrayNew(1)>
-<cfloop from="1" to="#arrayLen(quote_rows_raw)#" index="i">
-    <cfset row_ID = quote_rows_raw[i].row_order>
-    <cfif !structKeyExists(quote_rows, row_ID)>
-        <cfset quote_rows[row_ID] = ArrayNew(1)>
-        <cfset ArrayAppend(row_order_array, row_ID)>
-    </cfif>
-    <cfset ArrayAppend(quote_rows[row_ID], quote_rows_raw[i])>
-</cfloop>
-
+<cfinclude template="../admin/include_sql_quote_data_entry_row.cfm">
+<cfset columnList = "1,3,4,6,8,9,10,18,23">
 <!--- BEGIN OUTPUT --->
+<cfoutput>
+    <center>
+        <b>NOTE:</b>&nbsp;Changes made to this page are saved every time you click outside of an input box after editing it.<br />
+        However, the Quoting system will not create a new Version until you click the button below.
+        <br /><br />
+        <a href="quote_data_entry_row_maria_preview.cfm"><input type="button" value="Preview New Version of Quoting Calculations"></a>
+        <br /><br />
+        <i>Last version created is ID #version_ID# on #dateformat(version_date_created, "mm/dd/yyyy")#</i>
+        <br /><br />
+    </center>
+</cfoutput>
 <form method="post">
   <table width="98%" border="0" cellspacing="0" cellpadding="0">
     <tr>
       <td valign="top"><table class="table table-striped">
           <thead>
             <tr>
-                <cfloop from="1" to="#arrayLen(quote_column_headers)#" index="i">
-                    <cfoutput>
-                        <th align="left">(#quote_column_headers[i].ID#) #quote_column_headers[i].column_name#</th>
-                    </cfoutput>
+                <cfloop from="1" to="#arrayLen(quote_column_headers_temp)#" index="i">
+                    <cfif ListFind(columnList, quote_column_headers_temp[i].ID) NEQ 0>
+                        <cfoutput>
+                            <th align="left">(#quote_column_headers_temp[i].ID#) #quote_column_headers_temp[i].column_name#</th>
+                        </cfoutput>
+                    </cfif>
                 </cfloop>
             </tr>
           </thead>
           <tbody>
-            <cfloop from="1" to="#arrayLen(row_order_array)#" index="wrapi">
-                <cfset quote_row_index = row_order_array[wrapi]>
+            <cfloop from="1" to="#arrayLen(row_order_array_temp)#" index="wrapi">
+                <cfset quote_row_index = row_order_array_temp[wrapi]>
                 <tr>
-                    <cfloop from="1" to="#arrayLen(quote_rows[quote_row_index])#" index="i">
-                        <td>
-                            <cfset current_row = quote_rows[quote_row_index][i]>
-                            <cfset current_column = quote_column_headers[quote_column_ID_index[current_row.quote_data_entry_headers_ID]]>
-                            <table border="1">
-                            <cfloop collection=#current_row# item="quote_row_field">
-                                <cfif quote_row_field EQ 'quote_services_field' OR quote_row_field EQ 'row_formula' OR quote_row_field EQ 'row_defaultvalue'>
-                                    <cfoutput>
-                                    <tr>
-                                        <td>#quote_row_field#</td>
-                                        <td><input<cfif quote_row_field EQ 'quote_services_field' OR ((quote_row_field EQ 'row_formula' OR quote_row_field EQ 'row_defaultvalue') AND current_row[quote_row_field] EQ '')> disabled="true"</cfif> name="#current_row.ID#_#quote_row_field#" value="#current_row[quote_row_field]#" onChange="saveInput(#current_row.ID#, '#quote_row_field#', this.value)"></td>
-                                    </tr>
-                                    </cfoutput>
-                                </cfif>
-                            </cfloop>
-                            </table>
-                        </td>
+                    <cfloop from="1" to="#arrayLen(quote_rows_temp[quote_row_index])#" index="i">
+                        <cfset current_row = quote_rows_temp[quote_row_index][i]>
+                        <cfset current_column = quote_column_headers_temp[quote_column_ID_index_temp[current_row.quote_data_entry_headers_ID]]>
+                        <cfif ListFind(columnList, current_column.ID) NEQ 0>
+                            <td>
+                                <table border="1">
+                                <cfloop collection=#current_row# item="quote_row_field">
+                                    <cfif quote_row_field EQ 'quote_services_field' OR quote_row_field EQ 'row_formula' OR quote_row_field EQ 'row_defaultvalue'>
+                                        <cfoutput>
+                                        <tr>
+                                            <td>#quote_row_field#</td>
+                                            <td><input<cfif quote_row_field EQ 'quote_services_field' OR ((quote_row_field EQ 'row_formula' OR quote_row_field EQ 'row_defaultvalue') AND current_row[quote_row_field] EQ '')> disabled="true"</cfif> name="#current_row.ID#_#quote_row_field#" value="#htmlEditFormat(current_row[quote_row_field])#" onChange="saveInput(#current_row.ID#, '#quote_row_field#', this.value)"></td>
+                                        </tr>
+                                        </cfoutput>
+                                    </cfif>
+                                </cfloop>
+                                </table>
+                            </td>
+                        </cfif>
                     </cfloop>
                 </tr>
             </cfloop>

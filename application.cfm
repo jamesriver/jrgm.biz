@@ -99,16 +99,7 @@ SetClientCookies="Yes">
 <!---Once every 2 weeks --->
  
 
-<!---<CFSET APPLICATION.blockdate ='02/13/2016'>
-<CFSET APPLICATION.pay_period_week1 =95>
-<CFSET APPLICATION.pay_period_week2 =96>
-<CFSET APPLICATION.pay_period_number =48>
-<CFSET APPLICATION.week1_date_available ='02/20/2016'>
-<CFSET APPLICATION.week2_date_available ='02/27/2016'>
-<CFSET APPLICATION.pay_period_week1_date ='02/20/2016'>
-<CFSET APPLICATION.pay_period_week2_date ='02/27/2016'>--->
-
-
+ 
 <!---<CFSET APPLICATION.blockdate ='02/27/2016'>
 <CFSET APPLICATION.pay_period_week1 =97>
 <CFSET APPLICATION.pay_period_week2 =98>
@@ -118,7 +109,7 @@ SetClientCookies="Yes">
 <CFSET APPLICATION.pay_period_week1_date ='03/05/2016'>
 <CFSET APPLICATION.pay_period_week2_date ='03/12/2016'>--->
 
-
+<!---
 <CFSET APPLICATION.blockdate ='03/12/2016'>
 <CFSET APPLICATION.pay_period_week1 =99>
 <CFSET APPLICATION.pay_period_week2 =100>
@@ -126,7 +117,20 @@ SetClientCookies="Yes">
 <CFSET APPLICATION.week1_date_available ='03/19/2016'>
 <CFSET APPLICATION.week2_date_available ='03/26/2016'>
 <CFSET APPLICATION.pay_period_week1_date ='03/19/2016'>
-<CFSET APPLICATION.pay_period_week2_date ='03/26/2016'>
+<CFSET APPLICATION.pay_period_week2_date ='03/26/2016'>--->
+
+<CFSET APPLICATION.pay_period_number_current_calendar = #pay_period_number#>
+
+<CFSET APPLICATION.blockdate ='03/26/2016'>
+<CFSET APPLICATION.pay_period_week1 =101>
+<CFSET APPLICATION.pay_period_week2 =102>
+<CFSET APPLICATION.pay_period_number =51>
+<CFSET APPLICATION.week1_date_available ='04/02/2016'>
+<CFSET APPLICATION.week2_date_available ='04/09/2016'>
+<CFSET APPLICATION.pay_period_week1_date ='04/02/2016'>
+<CFSET APPLICATION.pay_period_week2_date ='04/09/2016'>
+
+
 <!--- This ENDS  info is for the current pay period  for ALL non Betty--->
 
 <!--- 

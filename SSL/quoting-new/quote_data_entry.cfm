@@ -457,9 +457,11 @@ i.mysize {
            </tr>
             <tr bgcolor="#EDF3F8">
                 <cfloop from="1" to="#arrayLen(quote_column_headers)#" index="i">
-                    <th align="<cfoutput>#quote_column_headers[i].column_displayalign#</cfoutput>"><cfoutput>#quote_column_headers[i].column_name#</cfoutput></th>
-                    <cfif i EQ 9>
-                        <th align="left">Formula</th>
+                    <cfif quote_column_headers[i].column_active EQ 1>
+                        <th align="<cfoutput>#quote_column_headers[i].column_displayalign#</cfoutput>"><cfoutput>#quote_column_headers[i].column_name#</cfoutput></th>
+                        <cfif i EQ 9>
+                            <th align="left">Formula</th>
+                        </cfif>
                     </cfif>
                 </cfloop>
             </tr>
@@ -480,31 +482,33 @@ i.mysize {
                     <cfloop from="1" to="#arrayLen(quote_rows[quote_row_index])#" index="i">
                         <cfset current_row = quote_rows[quote_row_index][i]>
                         <cfset current_column = quote_column_headers[quote_column_ID_index[current_row.quote_data_entry_headers_ID]]>
-                        <cfif current_row.row_active EQ 1>
-                            <td align="#quote_column_headers[i].column_displayalign#">
-                                <cfif current_column.ID EQ 20>
-                                    <span class="column#current_column.ID#" id="row#current_row.ID#">#current_row.row_defaultvalue#</span>
-                                    <input class="column#current_column.ID# #current_row.quote_services_field# subtotal#current_row.row_order# totaltype_#current_row.row_totaltype#" type="hidden" id="#current_row.quote_services_field#" name="#current_row.quote_services_field#">
-                                <cfelse>
-                                    <cfif current_row.quote_services_field NEQ ''>
-                                        <cfif (current_column.column_editable EQ 1 AND (current_column.ID NEQ 18 OR current_row.row_defaultvalue NEQ 40)) OR (current_row.row_order GT 55 AND (current_column.ID EQ 1 OR current_column.ID EQ 3 OR current_column.ID EQ 4 OR current_column.ID EQ 6))>
-                                            <input class="column#current_column.ID#" id="#current_row.quote_services_field#" name="#current_row.quote_services_field#" type="text" size="6" value="#current_row.row_defaultvalue#" oninput="recalculate_row#quote_row_index#(); recalculate_totals();" />
-                                        <cfelse>
-                                            <input disabled="true" class="column#current_column.ID# #current_row.quote_services_field#" type="text" size="6" value="#current_row.row_defaultvalue#" />
-                                            <input type="hidden" class="column#current_column.ID# #current_row.quote_services_field# totaltype_#current_row.row_totaltype#" id="#current_row.quote_services_field#" name="#current_row.quote_services_field#" value="#current_row.row_defaultvalue#" />
-                                        </cfif>
-                                    <cfelse>
+                        <cfif current_column.column_active EQ 1>
+                            <cfif current_row.row_active EQ 1>
+                                <td align="#quote_column_headers[i].column_displayalign#">
+                                    <cfif current_column.ID EQ 20>
                                         <span class="column#current_column.ID#" id="row#current_row.ID#">#current_row.row_defaultvalue#</span>
-                                        <input class="column#current_column.ID# totaltype_#current_row.row_totaltype#" type="hidden" id="row#current_row.ID#_numeric" value="#current_row.row_defaultvalue#">
+                                        <input class="column#current_column.ID# #current_row.quote_services_field# subtotal#current_row.row_order# totaltype_#current_row.row_totaltype#" type="hidden" id="#current_row.quote_services_field#" name="#current_row.quote_services_field#">
+                                    <cfelse>
+                                        <cfif current_row.quote_services_field NEQ ''>
+                                            <cfif (current_column.column_editable EQ 1 AND (current_column.ID NEQ 18 OR current_row.row_defaultvalue NEQ 40)) OR (current_row.row_order GT 55 AND (current_column.ID EQ 1 OR current_column.ID EQ 3 OR current_column.ID EQ 4 OR current_column.ID EQ 6))>
+                                                <input class="column#current_column.ID#" id="#current_row.quote_services_field#" name="#current_row.quote_services_field#" type="text" size="6" value="#current_row.row_defaultvalue#" oninput="recalculate_row#quote_row_index#(); recalculate_totals();" />
+                                            <cfelse>
+                                                <input disabled="true" class="column#current_column.ID# #current_row.quote_services_field#" type="text" size="6" value="#current_row.row_defaultvalue#" />
+                                                <input type="hidden" class="column#current_column.ID# #current_row.quote_services_field# totaltype_#current_row.row_totaltype#" id="#current_row.quote_services_field#" name="#current_row.quote_services_field#" value="#current_row.row_defaultvalue#" />
+                                            </cfif>
+                                        <cfelse>
+                                            <span class="column#current_column.ID#" id="row#current_row.ID#">#current_row.row_defaultvalue#</span>
+                                            <input class="column#current_column.ID# totaltype_#current_row.row_totaltype#" type="hidden" id="row#current_row.ID#_numeric" value="#current_row.row_defaultvalue#">
+                                        </cfif>
                                     </cfif>
-                                </cfif>
-                            </td>
-                        <cfelse>
-                            <td align="#quote_column_headers[i].column_displayalign#"><span class="column#current_column.ID#" id="row#current_row.ID#"></span></td>
-                            <input type="hidden" class="column#current_column.ID#" id="row#current_row.ID#_numeric" value="0"></td>
-                        </cfif>
-                        <cfif current_column.ID EQ 9>
-                            <td align="left">#Replace(current_row.row_formula, '[2]', '[Qty/SqFt]', 'ALL')#</td>
+                                </td>
+                            <cfelse>
+                                <td align="#quote_column_headers[i].column_displayalign#"><span class="column#current_column.ID#" id="row#current_row.ID#"></span></td>
+                                <input type="hidden" class="column#current_column.ID#" id="row#current_row.ID#_numeric" value="0"></td>
+                            </cfif>
+                            <cfif current_column.ID EQ 9>
+                                <td align="left">#Replace(current_row.row_formula, '[2]', '[Qty/SqFt]', 'ALL')#</td>
+                            </cfif>
                         </cfif>
                     </cfloop>
                 </tr>
@@ -512,41 +516,43 @@ i.mysize {
             <tr bgcolor="##EDF3F8">
                 <cfloop from="1" to="#arrayLen(quote_column_headers)#" index="i">
                         <cfset current_column = quote_column_headers[i]>
-                        <cfif current_column.ID EQ 1 OR current_column.ID EQ 2>
-                            <cfif current_column.ID EQ 1>
-                                <th align="#current_column.column_displayalign#" colspan="2">
-                                    Totals (Unadjusted)
-                                </th>
-                            </cfif>
-                        <cfelse>
-                            <cfif current_column.ID EQ 6 OR current_column.ID EQ 7 OR current_column.ID EQ 5>
-                                <cfif current_column.ID EQ 6>
-                                    <th align="left" colspan="2">
-                                        Seasonal Hours
+                        <cfif current_column.column_active EQ 1>
+                            <cfif current_column.ID EQ 1 OR current_column.ID EQ 2>
+                                <cfif current_column.ID EQ 1>
+                                    <th align="#current_column.column_displayalign#" colspan="2">
+                                        Totals (Unadjusted)
                                     </th>
-                                    <th></th>
-                                <cfelse>
-                                    <cfif current_column.ID EQ 5>
-                                        
-                                            <th align="#current_column.column_displayalign#">
-                                                <span id="seasonal_hours_formatted"></span>
-                                            </th>
-                                        
-                                    </cfif>
                                 </cfif>
                             <cfelse>
-                                <th align="#current_column.column_displayalign#">
-                                <cfif current_column.column_totalable EQ 1>
-                                    
-                                        <span class="total#current_column.ID#"></span>
-                                    
-                                <cfelse>
-                                    <cfif current_column.column_totalable EQ 2>
-                                        
-                                            <span class="avg#current_column.ID#"></span>
-                                        
+                                <cfif current_column.ID EQ 6 OR current_column.ID EQ 7 OR current_column.ID EQ 5>
+                                    <cfif current_column.ID EQ 6>
+                                        <th align="left" colspan="2">
+                                            Seasonal Hours
+                                        </th>
+                                        <th></th>
                                     <cfelse>
-                                        &nbsp;
+                                        <cfif current_column.ID EQ 5>
+
+                                                <th align="#current_column.column_displayalign#">
+                                                    <span id="seasonal_hours_formatted"></span>
+                                                </th>
+
+                                        </cfif>
+                                    </cfif>
+                                <cfelse>
+                                    <th align="#current_column.column_displayalign#">
+                                    <cfif current_column.column_totalable EQ 1>
+
+                                            <span class="total#current_column.ID#"></span>
+
+                                    <cfelse>
+                                        <cfif current_column.column_totalable EQ 2>
+
+                                                <span class="avg#current_column.ID#"></span>
+
+                                        <cfelse>
+                                            &nbsp;
+                                        </cfif>
                                     </cfif>
                                 </cfif>
                             </cfif>

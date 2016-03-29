@@ -126,13 +126,23 @@ $(document).ready(function() {
                 <cfset query_keys = query_keys & field_name & ", ">
               </cfif>
             </cfloop>
-            
+
+            <!--- GET QUOTE COLUMN HEADERS AND ROWS FROM VERSIONS CACHE --->
+            <cfquery name="get_quote_column_headers" datasource="jrgm">
+                SELECT TOP 1 ID FROM quote_data_entry_versions
+                ORDER BY ID DESC
+            </cfquery>
+
+            <cfloop query="get_quote_column_headers">
+                <cfset version_ID = ID>
+            </cfloop>
+
             <!--- ===================== insert a new quote_start entry =================== --->
             <cfquery name="insert_quote_start" datasource="jrgm" result="result_insert_quote_start">
-        INSERT INTO quote_start
-        ([Job ID])
-        VALUES (#project_id#)
-    </cfquery>
+                INSERT INTO quote_start
+                ([Job ID], quote_data_entry_versions_ID)
+                VALUES (#project_id#, #version_ID#)
+            </cfquery>
             
             <!--- ===================== update the new quote_start entry with the rest of the data =================== --->
             <cfquery name="update_quote_start_remaining_data" datasource="jrgm">

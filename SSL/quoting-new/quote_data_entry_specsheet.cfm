@@ -87,6 +87,49 @@ where qs.opportunity_id  =#url.id#
   </cfloop>
 </cfloop>
 
+<!--- *** NEED TO APPLY CURRENT VERSION'S VALUES (NOT THE CLEANEST METHOD BUT AT LEAST A METHOD THAT CAN BE APPLIED) *** --->
+<!--- GET QUOTE COLUMN HEADERS AND ROWS FROM VERSIONS CACHE --->
+<cfif get_quote_start.quote_data_entry_versions_ID GT 0>
+    <cfquery name="get_quote_column_headers_cache" datasource="jrgm">
+        SELECT ID, date_created, cache_quote_data_entry_headers, cache_quote_data_entry_row FROM quote_data_entry_versions
+        WHERE ID=#get_quote_start.quote_data_entry_versions_ID#
+    </cfquery>
+<cfelse>
+    <cfquery name="get_quote_column_headers_cache" datasource="jrgm">
+        SELECT TOP 1 ID, date_created, cache_quote_data_entry_headers, cache_quote_data_entry_row FROM quote_data_entry_versions
+        ORDER BY ID DESC
+    </cfquery>
+</cfif>
+
+<cfloop query="get_quote_column_headers_cache">
+    <cfset quote_column_headers_cache = DeserializeJSON(ToString(ToBinary(cache_quote_data_entry_headers)))>
+    <cfset quote_rows_raw_cache = DeserializeJSON(ToString(ToBinary(cache_quote_data_entry_row)))>
+    <cfset version_ID = ID>
+    <cfset version_date_created = date_created>
+</cfloop>
+<!---cfdump var="#quote_column_headers#">
+<cfdump var="#quote_rows_raw#">
+<cfabort--->
+
+<!--- CREATE COLUMNS BASED ON CACHED VERSION --->
+<cfset quote_column_ID_index_cache = StructNew()>
+<cfloop from="1" to="#arrayLen(quote_column_headers_cache)#" index="i">
+    <cfset StructInsert(quote_column_ID_index_cache, quote_column_headers_cache[i].ID, i)>
+</cfloop>
+
+<!--- CREATE ROWS BASED ON CACHED VERSION --->
+<cfset quote_rows_cache = StructNew()>
+<cfset row_order_array_cache = ArrayNew(1)>
+<cfloop from="1" to="#arrayLen(quote_rows_raw_cache)#" index="i">
+    <cfset row_ID = quote_rows_raw_cache[i].row_order>
+    <cfif !structKeyExists(quote_rows_cache, row_ID)>
+        <cfset quote_rows_cache[row_ID] = ArrayNew(1)>
+        <cfset ArrayAppend(row_order_array_cache, row_ID)>
+    </cfif>
+    <cfset ArrayAppend(quote_rows_cache[row_ID], quote_rows_raw_cache[i])>
+</cfloop>
+<!--- ****** --->
+
 <!--- GET QUOTE COLUMN HEADERS --->
 <cfset quote_column_headers = ArrayNew(1)>
 <cfquery name="get_quote_column_headers" datasource="jrgm">
@@ -343,7 +386,22 @@ SELECT  [Employee ID] as employee_id, [Name FirstLast] AS employee_Name FROM app
                 </cfif>
                 <tr id="#row_ID#">
                   <cfloop from="1" to="#arrayLen(current_row)#" index="iii">
-                    <cfset row_column = current_row[iii]>
+                    <!---cfdump var="#quote_rows_cache[quote_data_entry_row_order_array[ii]]#">
+                    <cfabort--->
+                    <cfswitch expression="#iii#">
+                        <cfcase value="1">
+                            <cfset row_column = quote_rows_cache[quote_data_entry_row_order_array[ii]][1]['row_defaultvalue']>
+                        </cfcase>
+                        <cfcase value="2">
+                            <cfset row_column = quote_rows_cache[quote_data_entry_row_order_array[ii]][19]['row_defaultvalue']>
+                        </cfcase>
+                        <cfcase value="5">
+                            <cfset row_column = quote_rows_cache[quote_data_entry_row_order_array[ii]][8]['row_defaultvalue']>
+                        </cfcase>
+                        <cfdefaultcase>
+                            <cfset row_column = current_row[iii]>
+                        </cfdefaultcase>
+                    </cfswitch>
                     <td style="font-size: 8pt !important"><strong>#row_column#</strong></td>
                   </cfloop>
                 </tr>

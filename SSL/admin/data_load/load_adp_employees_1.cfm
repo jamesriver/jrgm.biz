@@ -25,15 +25,43 @@ SELECT * INTO app_employees_test_backup  FROM app_employees_test
 <cfquery name="delete_old_records"   datasource="jrgm">
 DELETE FROM   app_employees_test  
  </cfquery>
+ 
+ <!---Make sure Delete_this_employees_backup table Exists before you try and DROP--->
+ <cfparam name="see_if_Delete_this_employees_backup_EXISTS.recordcount" default="0">
+<cfquery name="see_if_Delete_this_employees_backup_EXISTS"   datasource="jrgm">
+SELECT name
+FROM sys.tables
+WHERE name = 'Delete_this_employees_backup'
+</cfquery>
+<cfif see_if_Delete_this_employees_backup_EXISTS.recordcount EQ 1>
+<!---DROP Delete_this_employees_backup Table--->
 <cfquery name="drop_test1" datasource="JRGM" >
 DROP TABLE Delete_this_employees_backup;
 </cfquery>
+</cfif>
+
+<!---Make sure Delete_this_crews_backup table Exists before you try and DROP--->
+<cfparam name="see_if_Delete_this_crews_backup_EXISTS1.recordcount" default="0">
+<cfquery name="see_if_Delete_this_crews_backup_EXISTS1"   datasource="jrgm">
+SELECT name
+FROM sys.tables
+WHERE name = 'Delete_this_crews_backup'
+</cfquery>
+<cfif see_if_Delete_this_crews_backup_EXISTS1.recordcount EQ 1>
+<!---DROP  Delete_this_crews_backup Table--->
 <cfquery name="drop_test2" datasource="JRGM" >
 DROP TABLE Delete_this_crews_backup;
 </cfquery>
+</cfif>
 
+   
+<!---<cfquery name="drop_test1" datasource="JRGM" >
+DROP TABLE Delete_this_employees_backup;
+</cfquery>--->
+<!---<cfquery name="drop_test2" datasource="JRGM" >
+DROP TABLE Delete_this_crews_backup;
+</cfquery>--->
  
-
 <html>
 <head>
 <meta charset="utf-8">
