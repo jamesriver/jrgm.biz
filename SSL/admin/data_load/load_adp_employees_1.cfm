@@ -22,6 +22,12 @@ Delete_this_crews_backup is where the current app_crews table gets backed up to.
 <cfquery name="make_copy"   datasource="jrgm">
 SELECT * INTO app_employees_test_backup  FROM app_employees_test
 </cfquery>
+
+<!---This is temporary to check and see if any events were deleted.--->
+<cfquery name="make_copy_app_events"   datasource="jrgm">
+SELECT * INTO app_events_backup  FROM app_events
+</cfquery>
+<!---This is temporary to check and see if any events were deleted.--->
 <cfquery name="delete_old_records"   datasource="jrgm">
 DELETE FROM   app_employees_test  
  </cfquery>

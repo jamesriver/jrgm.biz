@@ -7,6 +7,86 @@
     <cfabort>
 </cfif>
 
+<cfif IsDefined('form.update_version')>
+    <cfinclude template="../quoting-new/include_sql_latest_version.cfm">
+
+    <cfset quote_services_parameters = ''>
+    <cfset quote_materials_parameters = ''>
+    <cfset last_sql_field = ''>
+
+    <cfloop from="1" to="#arrayLen(row_order_array_temp)#" index="wrapi">
+        <cfset quote_row_index = row_order_array_temp[wrapi]>
+        <cfloop from="1" to="#arrayLen(quote_rows_temp[quote_row_index])#" index="i">
+            <cfset current_row = quote_rows_temp[quote_row_index][i]>
+            <cfset current_column = quote_column_headers_temp[quote_column_ID_index_temp[current_row.quote_data_entry_headers_ID]]>
+            <cfif current_column.column_editable NEQ 1 AND current_column.column_formula EQ ''>
+                <cfloop collection=#current_row# item="quote_row_field">
+                    <cfset sql_field = ''>
+                    <cfif (quote_row_field EQ 'QUOTE_SERVICES_FIELD' OR quote_row_field EQ 'QUOTE_SERVICES_FIELD_SPECSHEET') AND quote_rows_temp[quote_row_index][i][quote_row_field] NEQ ''>
+                        <cfset sql_field = quote_rows_temp[quote_row_index][i][quote_row_field]>
+                    </cfif>
+                    <cfif sql_field NEQ '' AND sql_field NEQ last_sql_field>
+                        <cfset last_sql_field = sql_field>
+                        <cfif sql_field DOES NOT CONTAIN 'blank' AND sql_field DOES NOT CONTAIN '_qty'>
+                            <cfset param = quote_rows_temp[quote_row_index][i][quote_row_field] & '=' & quote_rows_temp[quote_row_index][i]['ROW_DEFAULTVALUE']>
+                            <cfif sql_field DOES NOT CONTAIN '_materials_'>
+                                <cfif quote_services_parameters NEQ ''>
+                                    <cfset quote_services_parameters = quote_services_parameters & ','>                                    
+                                </cfif>
+                                <cfset quote_services_parameters = quote_services_parameters & param>
+                            <cfelse>
+                                <cfif quote_materials_parameters NEQ ''>
+                                    <cfset quote_materials_parameters = quote_materials_parameters & ','>                                    
+                                </cfif>
+                                <cfset quote_materials_parameters = quote_materials_parameters & param>
+                            </cfif>
+                        </cfif>
+                    </cfif>
+                </cfloop>
+            </cfif>
+        </cfloop>
+    </cfloop>
+
+    <!---
+    <cfoutput>
+        UPDATE quote_start
+        SET quote_data_entry_versions_ID=#version_ID#
+        WHERE opportunity_id=#url.id#
+    </cfoutput>
+    <br />
+    <cfoutput>
+        UPDATE quote_services
+        SET #PreserveSingleQuotes(quote_services_parameters)#
+        WHERE opportunity_id=#url.id#
+    </cfoutput>
+    <br />
+    <cfoutput>
+        UPDATE quote_materials
+        SET #PreserveSingleQuotes(quote_materials_parameters)#
+        WHERE opportunity_id=#url.id#
+    </cfoutput>
+    <cfabort>
+    --->
+
+    <cfquery name="update_quote_start" datasource="jrgm">
+        UPDATE quote_start
+        SET quote_data_entry_versions_ID=#version_ID#
+        WHERE opportunity_id=#url.id#
+    </cfquery>
+    <cfquery name="update_quote_services" datasource="jrgm">
+        UPDATE quote_services
+        SET #PreserveSingleQuotes(quote_services_parameters)#
+        WHERE opportunity_id=#url.id#
+    </cfquery>
+    <cfquery name="update_quote_materials" datasource="jrgm">
+        UPDATE quote_materials
+        SET #PreserveSingleQuotes(quote_materials_parameters)#
+        WHERE opportunity_id=#url.id#
+    </cfquery>
+    <cflocation url="quote_data_entry.cfm?ID=#url.id#&mustsave=1" />
+    <cfabort>
+</cfif>
+
 <cfif IsDefined('form.contract_installments')>
     <!--- ========================= clean the variables before putting them into the SQL query ======================== --->
     <cfset opportunity_id = form.opportunity_id>
@@ -317,6 +397,12 @@ i.mysize {
       </div>
     </cfoutput></div>
 </div>
+
+<form id="form_updateversion" method="post">
+ <input type="hidden" name="update_version" value="1">
+ <input type="hidden" name="opportunity_id" value="#url.id#">
+</form>
+
 <div class="page-content">
   <div class="container-fluid">
     <form   name="quoteform" method="post" action="quote_data_entry.cfm?ID=<cfoutput>#url.id#</cfoutput>" onSubmit="return validate()">
@@ -435,6 +521,13 @@ i.mysize {
                 </select>
               </td>
             </tr>
+            <cfif get_quote_start.quote_approved NEQ 1 AND highest_version_ID GT version_ID>
+                <tr>
+                    <td colspan="6">
+                        <span style="color: ##00AA00">(optional) New Calculations Version: #highest_version_ID# (created #dateformat(highest_version_date_created,"mm/dd/yyyy")#) is available!</span>  <input id="btn_previewversionupdate" type="button" value="Preview Update">&nbsp;<span id="icon_ajaxloading" style="display: none"><i>Loading... please wait.</i></span>
+                    </td>
+                </tr>
+            </cfif>
           </table>
         </cfoutput></div>
 
@@ -601,6 +694,35 @@ i.mysize {
   <cfinclude template="../quoting-new/include_js_quote_data_entry_calculations.cfm">
 <!--- END OUTPUT --->
 
+<script>
+    function init_before()
+    {
+        var ajax_locked = false;
+        $(document).ready(function(){
+            $('#btn_previewversionupdate').click(function(){
+                ajax_locked = true;
+                $('#icon_ajaxloading').show();
+                $.ajax({
+                    url: 'quote_data_entry_previewversionupdate.cfm',
+                    type: 'post',
+                    data: { 'id': <cfoutput>#url.id#</cfoutput> },
+                    success: function(data) {
+                        ajax_locked = false;
+                        $('#icon_ajaxloading').hide();
+                        if (confirm(data.trim().replace(new RegExp('!br!', 'g'), '\n'))) {
+                            $('#form_updateversion').submit();
+                        }
+                    }
+                });
+            });
+        });
+
+        <cfif IsDefined('url.mustsave')>
+            alert('PLEASE SAVE THIS QUOTE IMMEDIATELY RIGHT NOW TO APPLY ALL THE NEW CALCULATIONS TO THE DATABASE.  FAILURE TO DO SO WILL RESULT IN OUTDATED CALCULATIONS IN OTHER PAGES.');
+        </cfif>
+    }
+</script>
+
 <table   width="98%"border="0" cellspacing="0" cellpadding="0"
 <cfif get_quote_start.quote_approved EQ 1>
     style="pointer-events: none"
@@ -732,7 +854,7 @@ i.mysize {
 
                             <a class="btn btn-warning" href="quote_data_entry_approve_contract.cfm?ID=#url.id#">Preview Contract Approval</a>
                             &nbsp;&nbsp;&nbsp;&nbsp;
-                            <!---  <div class="button-box"><a href="create_duplicate_quote.cfm?ID=#url.id#" class="btn btn-success" >Duplicate this Quote</a> </div> --->
+                            <div class="button-box"><a href="create_duplicate_quote.cfm?ID=#url.id#" class="btn btn-success" >Duplicate this Quote</a> </div>
                         </cfoutput>
                     </cfif>
                 </cfif>

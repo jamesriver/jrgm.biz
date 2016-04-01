@@ -79,4 +79,27 @@
         var matches = preg_match('"(.*?)"', str);
         return matches[1];
     }
+
+    function getSQLToDuplicateRow(table_name, quote_start_data, quote_start_fields_raw)
+    {
+        var quote_start_fields = ArrayNew(1);
+        var quote_start_values = '';
+        for (i = 1; i lte arrayLen(quote_start_fields_raw); i = i + 1) {        
+            var field = quote_start_fields_raw[i];
+            if (field NEQ 'ID') {
+                ArrayAppend(quote_start_fields, '[' & field & ']');
+                var value = quote_start_data[field];
+                if (value EQ '')
+                    value = "NULL";
+                else if (value CONTAINS "{ts")
+                    value = value;
+                else
+                    value = "'" & Replace(value, "'", "''", "ALL") & "'";
+                if (quote_start_values NEQ '')
+                    quote_start_values = quote_start_values & ',';
+                quote_start_values = quote_start_values & value;
+            }
+        }
+        return 'INSERT INTO ' & table_name & ' (' & ArrayToList(quote_start_fields) & ') VALUES (' & quote_start_values & ')';
+    }
 </cfscript>
