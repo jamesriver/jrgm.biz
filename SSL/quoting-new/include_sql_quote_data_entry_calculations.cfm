@@ -95,24 +95,35 @@ where opportunity_id  =#url.id#
 </cfloop>
 
 <!--- GET QUOTE COLUMN HEADERS AND ROWS FROM VERSIONS CACHE --->
-<cfif get_quote_start.quote_data_entry_versions_ID GT 0>
-    <cfquery name="get_quote_column_headers" datasource="jrgm">
+<cfquery name="get_highest_version" datasource="jrgm">
+    SELECT TOP 1 ID, date_created, cache_quote_data_entry_headers, cache_quote_data_entry_row FROM quote_data_entry_versions
+    ORDER BY ID DESC
+</cfquery>
+<cfloop query="get_highest_version">
+    <cfset highest_version_ID = ID>
+    <cfset highest_version_date_created = date_created>
+</cfloop>
+
+<cfif get_quote_start.quote_data_entry_versions_ID EQ highest_version_ID>
+    <cfloop query="get_highest_version">
+        <cfset quote_column_headers = DeserializeJSON(ToString(ToBinary(cache_quote_data_entry_headers)))>
+        <cfset quote_rows_raw = DeserializeJSON(ToString(ToBinary(cache_quote_data_entry_row)))>
+        <cfset version_ID = ID>
+        <cfset version_date_created = date_created>
+    </cfloop>
+<cfelse>
+    <cfquery name="get_current_version" datasource="jrgm">
         SELECT ID, date_created, cache_quote_data_entry_headers, cache_quote_data_entry_row FROM quote_data_entry_versions
         WHERE ID=#get_quote_start.quote_data_entry_versions_ID#
     </cfquery>
-<cfelse>
-    <cfquery name="get_quote_column_headers" datasource="jrgm">
-        SELECT TOP 1 ID, date_created, cache_quote_data_entry_headers, cache_quote_data_entry_row FROM quote_data_entry_versions
-        ORDER BY ID DESC
-    </cfquery>
+    <cfloop query="get_current_version">
+        <cfset quote_column_headers = DeserializeJSON(ToString(ToBinary(cache_quote_data_entry_headers)))>
+        <cfset quote_rows_raw = DeserializeJSON(ToString(ToBinary(cache_quote_data_entry_row)))>
+        <cfset version_ID = ID>
+        <cfset version_date_created = date_created>
+    </cfloop>
 </cfif>
 
-<cfloop query="get_quote_column_headers">
-    <cfset quote_column_headers = DeserializeJSON(ToString(ToBinary(cache_quote_data_entry_headers)))>
-    <cfset quote_rows_raw = DeserializeJSON(ToString(ToBinary(cache_quote_data_entry_row)))>
-    <cfset version_ID = ID>
-    <cfset version_date_created = date_created>
-</cfloop>
 <!---cfdump var="#quote_column_headers#">
 <cfdump var="#quote_rows_raw#">
 <cfabort--->

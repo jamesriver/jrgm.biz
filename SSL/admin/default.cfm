@@ -196,9 +196,10 @@ ORDER by ID DESC
         </ul>
       </cfif>
       <cfif SESSION.userid EQ 1001  >
-        <div class="dashboardHeader">Quoting Admin (only visible to Maria)</div>
+        <div class="dashboardHeader">Quoting Admin</div>
         <ul class="dashboard">
-          <li><a href="quote_data_entry_row_maria.cfm" target="_blank">Manage Default Service Rates and Material Costs</a></li>
+          <li><a href="quote_data_entry_row_maria.cfm" target="_blank">View/Edit Quoting Calculations and Versions</a></li>
+          <li><a href="quote_materials_admin.cfm" target="_blank">Manage Material Names and Costs</a></li>
         </ul>
       </cfif>
       <br />

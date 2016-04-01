@@ -1,5 +1,4 @@
- 
- <!---<cfoutput>#APPLICATION.pay_period_number_current_calendar#</cfoutput> --->
+<!---<cfoutput>#APPLICATION.pay_period_number_current_calendar#</cfoutput> --->
 <CFPARAM name="random" default="0">
 <cfquery name="get_payroll_block_info" datasource="jrgm" maxrows="1">
 SELECT * FROM payroll_block 
@@ -35,7 +34,7 @@ ORDER by ID DESC
   <CFSET pay_period_week2_date_next  = dateadd("d",14,pay_period_week2_date)>
 </cfoutput>
 <cfif IsDefined("url.change") AND url.change EQ 'prior'>
-<!---  Do change to prior--->
+  <!---  Do change to prior--->
   <cfquery name="update_payroll_block_info_prior" datasource="jrgm" >
 UPDATE payroll_block 
 SET 
@@ -48,11 +47,13 @@ week2_date_available=  #week2_date_available_prior#,
 pay_period_week1_date =  #pay_period_week1_date_prior#, 
 pay_period_week2_date =  #pay_period_week2_date_prior#
 </cfquery>
-</cfif>
 
+<!---ADD CF MAIL--->
+<cflocation url="payroll_block.cfm">
+</cfif>
 <cfif IsDefined("url.change") AND url.change EQ 'next'>
- <!--- Do change to next--->
- <cfquery name="update_payroll_block_info_next" datasource="jrgm" >
+  <!--- Do change to next--->
+  <cfquery name="update_payroll_block_info_next" datasource="jrgm" >
  UPDATE payroll_block 
 SET 
 block_date = #block_date_next#,
@@ -64,9 +65,9 @@ week2_date_available=  #week2_date_available_next#,
 pay_period_week1_date =  #pay_period_week1_date_next#, 
 pay_period_week2_date =  #pay_period_week2_date_next#
 </cfquery>
+<!---ADD CF MAIL--->
+<cflocation url="payroll_block.cfm">
 </cfif>
-
-
 <cfquery name="get_payroll_block_info" datasource="jrgm" maxrows="1">
 SELECT * FROM payroll_block 
 ORDER by ID DESC
@@ -100,8 +101,6 @@ ORDER by ID DESC
   <CFSET pay_period_week1_date_next =  dateadd("d",14,pay_period_week1_date)>
   <CFSET pay_period_week2_date_next  = dateadd("d",14,pay_period_week2_date)>
 </cfoutput>
-
-
 <CFSET pay_period_end_week_L  =  pay_period_number-1>
 <CFSET pay_period_week_week1  =  pay_period_week-1>
 <CFSET pay_period_end_week  =  pay_period_number>
@@ -221,6 +220,24 @@ th {
 	font-size: 16px;
 	font-family: Arial, Helvetica, sans-serif;
 }
+.td1 {
+	padding-left: 10px;
+	padding-right: 10px;
+	PADDING-BOTTOM: 10 px;
+	PADDING-TOP: 10px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 120%;
+	border: 4px solid #5cb85c;
+	width: 500px
+}
+.table1 {
+	padding-left: 10px;
+	padding-right: 10px;
+	PADDING-BOTTOM: 10 px;
+	PADDING-TOP: 10px;
+ border: 4px solid #5cb85c;
+width: 650px
+}
 </style>
 </head>
 <!-- END HEAD -->
@@ -228,16 +245,13 @@ th {
 <!-- DOC: Apply "page-header-menu-fixed" class to set the mega menu fixed  -->
 <!-- DOC: Apply "page-header-top-fixed" class to set the top menu fixed  -->
 <body>
-
 <CFIF APPLICATION.pay_period_number_current_calendar NEQ #pay_period_number#>
- <table width="100%" cellpadding="0" cellspacing="0">
-  <tr bgcolor="#B90000">
-    <td colspan="2" align="center" valign="middle" nowrap="nowrap" class="style21" height="30"  >ALERT!<br />
-THE PAYROLL BLOCK IS NOT IN THE CURRENT PERIOD. PLEASE CORRECT.</td>
-  </tr>
-</table>   
-
-
+  <table width="100%" cellpadding="0" cellspacing="0">
+    <tr bgcolor="#B90000">
+      <td colspan="2" align="center" valign="middle" nowrap="nowrap" class="style21" height="30"  >ALERT!<br />
+        THE PAYROLL BLOCK IS NOT IN THE CURRENT PERIOD. PLEASE CORRECT.</td>
+    </tr>
+  </table>
 </CFIF>
 <!-- BEGIN HEADER SECTION  -->
 <div class="page-header">
@@ -277,45 +291,62 @@ THE PAYROLL BLOCK IS NOT IN THE CURRENT PERIOD. PLEASE CORRECT.</td>
         </table>
         <p><br />
         </p>
-        <table width="100%" border="0" align="center">
+        <table width="100%" border="0" align="center" >
           <tbody>
             <tr>
               <td><p><span class="bigfont">The payroll block is implemented for <cfoutput>#DateFormat("#APPLICATION.blockdate#", "mmmm dd,yyyy")#</cfoutput>. 
                   Any payroll prior to this date cannot be edited.</span><br />
                 </p>
                 <cfoutput>
-                  <table border="0" width="650">
+                  <table border="0" width="650" class="table1">
                     <tbody>
                       <tr>
-                        <td colspan="5" align="center" bgcolor="##D5F7D4" height="40"><strong>This is the current information in the application.cfm</strong></td>
+                        <td colspan="7" align="center" bgcolor="##D5F7D4" height="40"><strong>This is the current information in the application.cfm</strong></td>
                       </tr>
                       <tr>
+                        <td bgcolor="##D5F7D4" width="20">&nbsp;</td>
                         <td bgcolor="##D5F7D4">Payroll Blockdate</td>
                         <td bgcolor="##D5F7D4">#DateFormat("#block_date#", "mm/dd/yyyy")#</td>
                         <td width="100" bgcolor="##D5F7D4">&nbsp;</td>
                         <td bgcolor="##D5F7D4">Pay Period Number</td>
                         <td bgcolor="##D5F7D4">#pay_period_number#</td>
+                        <td bgcolor="##D5F7D4">&nbsp;</td>
                       </tr>
                       <tr>
+                        <td bgcolor="##D5F7D4">&nbsp;</td>
                         <td bgcolor="##D5F7D4">Pay Period Week 1</td>
                         <td bgcolor="##D5F7D4">#pay_period_week1#</td>
                         <td width="100" bgcolor="##D5F7D4">&nbsp;</td>
                         <td bgcolor="##D5F7D4">Pay Period Week 2</td>
                         <td bgcolor="##D5F7D4">#pay_period_week2#</td>
+                        <td bgcolor="##D5F7D4">&nbsp;</td>
                       </tr>
                       <tr>
+                        <td bgcolor="##D5F7D4">&nbsp;</td>
                         <td bgcolor="##D5F7D4">Pay Period Week 1 Date</td>
                         <td bgcolor="##D5F7D4">#DateFormat("#pay_period_week1_date#", "mm/dd/yyyy")#</td>
                         <td width="100" bgcolor="##D5F7D4">&nbsp;</td>
                         <td bgcolor="##D5F7D4">Pay Period Week 2 Date</td>
                         <td bgcolor="##D5F7D4">#DateFormat("#pay_period_week2_date#", "mm/dd/yyyy")#</td>
+                        <td bgcolor="##D5F7D4">&nbsp;</td>
                       </tr>
                       <tr>
+                        <td bgcolor="##D5F7D4">&nbsp;</td>
                         <td bgcolor="##D5F7D4">Week 1 Date Available</td>
                         <td bgcolor="##D5F7D4">#DateFormat("#week1_date_available#", "mm/dd/yyyy")#</td>
                         <td width="100" bgcolor="##D5F7D4">&nbsp;</td>
                         <td bgcolor="##D5F7D4">Week 2 Date Available</td>
                         <td bgcolor="##D5F7D4">#DateFormat("#week2_date_available#", "mm/dd/yyyy")#</td>
+                        <td bgcolor="##D5F7D4" width="20">&nbsp;</td>
+                      </tr>
+                       <tr>
+                        <td bgcolor="##D5F7D4">&nbsp;</td>
+                        <td bgcolor="##D5F7D4">&nbsp;</td>
+                        <td bgcolor="##D5F7D4">&nbsp;</td>
+                        <td width="100" bgcolor="##D5F7D4">&nbsp;</td>
+                        <td bgcolor="##D5F7D4">&nbsp;</td>
+                        <td bgcolor="##D5F7D4">&nbsp;</td>
+                        <td bgcolor="##D5F7D4" width="20">&nbsp;</td>
                       </tr>
                     </tbody>
                   </table>
@@ -324,35 +355,34 @@ THE PAYROLL BLOCK IS NOT IN THE CURRENT PERIOD. PLEASE CORRECT.</td>
           </tbody>
         </table>
         <p><br />
-          <br />
-          <br />
-        
-        
-        <table width="90%" border="0">
+          
+        <table width="650"   border="0">
           <tbody>
             <tr>
-              <td>
-			  
-			  <CFIF APPLICATION.pay_period_number_current_calendar LTE #pay_period_number#>
-			  <CFSET random = #random# -1>
-              Do you want to change the payroll block date to the <u>prior</u> pay period?<br />
-                This action will make the payroll block date <cfoutput><strong>#DateFormat("#block_date_prior#", "mmmm dd,yyyy")#</strong></cfoutput>. <br />
-                <br />
-                <p><a href="payroll_block.cfm?change=prior&random=<cfoutput>#random#</cfoutput>" class="btn btn-success" role="button" ><strong>Yes</strong></a> </p>
-                <p>&nbsp;</p></CFIF>
-                </td>
-              <td>&nbsp;</td>
-              <td>
-                 <CFIF today GTE #week2_date_available#>
-                 <CFSET random = #random# +1> Do you want to change the date to the <u>next</u> pay period? <br />
+              <CFIF APPLICATION.pay_period_number_current_calendar LTE #pay_period_number#>
+                <td class="td1"><CFSET random = #random# -1>
+                  Do you want to change the payroll block date to the <u>prior</u> pay period?<br />
+                  This action will make the payroll block date <cfoutput><strong>#DateFormat("#block_date_prior#", "mmmm dd,yyyy")#</strong></cfoutput>. <br />
+                  <br />
+                  <p><a href="payroll_block.cfm?change=prior&random=<cfoutput>#random#</cfoutput>" class="btn btn-success" role="button" ><strong>Yes</strong></a> </p>
+                  </td>
+              </CFIF>
+              <!---<td>&nbsp;</td>--->
+              <CFIF today GTE #week2_date_available#>
+                <td class="td1"><CFSET random = #random# +1>
+                  Do you want to change the date to the <u>next</u> pay period? <br />
                   This action will make the payroll block date <strong><cfoutput>#DateFormat("#block_date_next#", "mmmm dd,yyyy")#</cfoutput>. </strong> <br />
                   <br />
                   <p  text-indent: 50px><a href="payroll_block.cfm?change=next&random=<cfoutput>#random#</cfoutput>" class="btn btn-success" role="button"><strong>Yes</strong></a> </p>
-                  <p>
-                 </CFIF></td>
+                   </td>
+              </CFIF>
             </tr>
           </tbody>
-        </table></td>
+        </table><br />
+<br />
+<br />
+<br />
+</td>
     </tr>
   </tbody>
 </table>

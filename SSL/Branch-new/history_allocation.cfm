@@ -1,4 +1,4 @@
-<CFSET todaydate =  DateFormat(now(), "mm/dd/yyyy")>
+ <CFSET todaydate =  DateFormat(now(), "mm/dd/yyyy")>
 <!---  <cfparam  name="Session.mileage_eq" default=""  > 
  <cfparam  name="Session.hours_eq" default=""  > --->
 
