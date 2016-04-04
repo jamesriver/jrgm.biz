@@ -307,7 +307,7 @@
                         initial_element = document.getElementById('#field#');
                         if (initial_element)
                         {
-                            if ('#field#'.indexOf('_rate') != -1 || '#replace(current_quote_services_materials[field], "'", "\'", 'ALL')#'*1 > 0 || '#field#'.indexOf('blank') != -1)
+                            if ('#field#'.indexOf('_rate') != -1 || '#replace(current_quote_services_materials[field], "'", "\'", 'ALL')#'*1 > 0 || '#replace(current_quote_services_materials[field], "'", "\'", 'ALL')#'*1 < 0 || '#field#'.indexOf('blank') != -1)
                                 initial_element.innerHTML = initial_element.value = '#replace(current_quote_services_materials[field], "'", "\'", 'ALL')#';
                         }
                     </cfoutput>

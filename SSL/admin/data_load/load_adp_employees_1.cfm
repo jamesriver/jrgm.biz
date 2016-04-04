@@ -23,14 +23,31 @@ Delete_this_crews_backup is where the current app_crews table gets backed up to.
 SELECT * INTO app_employees_test_backup  FROM app_employees_test
 </cfquery>
 
+
+ 
+<!---Make sure Delete_this_events_backup table Exists before you try and DROP--->
+<cfparam name="see_if_Delete_this_events_backup_EXISTS.recordcount" default="0">
+<cfquery name="see_if_Delete_this_events_backup_EXISTS"   datasource="jrgm">
+SELECT name
+FROM sys.tables
+WHERE name = 'Delete_this_events_backup'
+</cfquery>
+<cfif see_if_Delete_this_events_backup_EXISTS.recordcount EQ 1>
+<!---DROP Delete_this_employees_backup Table--->
+<cfquery name="drop_test3" datasource="JRGM" >
+DROP TABLE Delete_this_events_backup;
+</cfquery>
+</cfif>
+
 <!---This is temporary to check and see if any events were deleted.--->
 <cfquery name="make_copy_app_events"   datasource="jrgm">
-SELECT * INTO app_events_backup  FROM app_events
+SELECT * INTO Delete_this_events_backup  FROM app_events
 </cfquery>
-<!---This is temporary to check and see if any events were deleted.--->
+<!---END This is temporary to check and see if any events were deleted.--->
+
 <cfquery name="delete_old_records"   datasource="jrgm">
 DELETE FROM   app_employees_test  
- </cfquery>
+</cfquery>
  
  <!---Make sure Delete_this_employees_backup table Exists before you try and DROP--->
  <cfparam name="see_if_Delete_this_employees_backup_EXISTS.recordcount" default="0">
