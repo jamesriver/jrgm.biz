@@ -1,5 +1,5 @@
 <cfset todayDate = Now()>
-<CFSET date2015 = '12/31/2015'>
+<CFSET date2015 = '02/28/2015'>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -36,7 +36,7 @@ SELECT ID, Employee_ID,  time_worked, in_out_status,ds_date ,ds_id
   </cfquery>
 <!---<cfdump  var="#get_all_employee_time_for_period_late#">--->
 <cfif get_all_employee_time_for_period_late.recordcount GT 0>
-<!---<cfmail from="patrick.hutchinson2@gmail.com" to="patrick.hutchinson2@gmail.com" subject="Late Payroll" type="html">
+ <cfmail from="patrick.hutchinson2@gmail.com" to="patrick.hutchinson2@gmail.com" subject="Late Payroll" type="html">
     <style type="text/css">
        .arialfont {
 	  font: normal .9em Arial, Helvetica, sans-serif;
@@ -64,7 +64,7 @@ SELECT ID, Employee_ID,  time_worked, in_out_status,ds_date ,ds_id
         </cfloop>
       </tbody>
     </table>
- </cfmail>--->
+ </cfmail> 
 </cfif>
 <cfabort>
 </body>

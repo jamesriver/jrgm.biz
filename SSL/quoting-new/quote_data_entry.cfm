@@ -150,7 +150,12 @@
         </cfif>
       </cfif>
     </cfloop>
-    <!---cfoutput>#query_quote_services_parameters#</cfoutput>
+    <!---cfoutput>
+        UPDATE quote_main
+        SET #preserveSingleQuotes(query_quote_main_parameters)#
+            opportunity_id=opportunity_id
+        WHERE opportunity_id=#opportunity_id#
+    </cfoutput>
     <cfabort--->
 
     <!--- Quote Main Insert --->
