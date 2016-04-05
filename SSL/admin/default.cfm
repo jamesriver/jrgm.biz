@@ -149,15 +149,16 @@ ORDER by ID DESC
         </ul></td>
       <cfif  IsDefined("Session.USERID")  AND Session.USERID NEQ  '3298' >
         <td valign="top" nowrap="nowrap"><div class="subheader">Payroll</div>
-          <div class="dashboardHeader">Neil / Karen Screens</div>
+          <div class="dashboardHeader">Neil / Erica Screens</div>
           <ul class="dashboard">
-            <li><a href="/ssl/admin/payroll/payrollbetty.cfm">Neil Payroll Screen</a></li>
+            <li> <strong><a  href="payroll/payrollBetty.cfm">Erica Payroll Approval Screen</a></strong></li>
+             <li><strong><a href="payroll_manager.cfm">Erica Payroll Manager</a></strong><a href="payroll_manager.cfm"></a></li>
             <li><a href="payroll/payroll_unapproved.cfm">Unapproved Payroll</a></li>
             <li><a href="dailysheet_add.cfm">Add a Daily Sheet</a></li>
             <li><a href="payroll/pto_add.cfm">Add PTO Time</a></li>
             <li><a href="payroll/pto_payroll_view_employee_detail.cfm">View PTO Report</a></li>
             <li><a href="payroll_report_employees_multiple_ID_betty.cfm">Employees Working in 2 Branches</a></li>
-            <li><a href="payroll_manager.cfm">Payroll Manager</a></li>
+           
           </ul>
           <cfif  IsDefined("Session.USERID")  AND Session.USERID NEQ  '3298' >
             <div class="dashboardHeader">Payroll Reports</div>

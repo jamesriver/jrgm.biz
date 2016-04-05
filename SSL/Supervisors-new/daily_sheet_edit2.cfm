@@ -1,23 +1,17 @@
-<!---<!--- This code is for the prior day timeout issue --->
-<cfset todayDate = Now()>
-<cfset today_datex = #DateFormat(todayDate, "mm/dd/yyyy")#>
-<cfset mytime = timeFormat(now(), "hh:mm tt")>
-<!---   EMPLOYEES --->
-<cfquery name="time_me_out" datasource="jrgm">
- SELECT * FROM APP_Employee_Payroll_Clock WHERE In_out_status = 1 AND ds_date < '#today_datex#'
- </cfquery>
-<!---  <cfdump  var="#time_me_out#"> --->--->
+ 
 
 <!--- This code is for the prior day timeout issue --->
 <cfset todayDate = Now()>
 <cfset today_datex = #DateFormat(todayDate, "mm/dd/yyyy")#>
 <cfset mytime = timeFormat(now(), "hh:mm tt")>
 <cfset daysago7 = dateadd("d",-7,today_datex)>
+<!---This code was commented out on April 5 , 2016 to address SQL deadlock problem--->
+<!---This code was commented out on April 5 , 2016 to address SQL deadlock problem--->
+
 <!---   EMPLOYEES --->
-<cfquery name="time_me_out" datasource="jrgm">
+<!---<cfquery name="time_me_out" datasource="jrgm">
  SELECT * FROM APP_Employee_Payroll_Clock WHERE In_out_status = 1 AND ds_date < '#today_datex#'  AND ds_date > #daysago7#
  </cfquery>
-
 <cfif  time_me_out.recordcount GT 0>
   <!---<cfmail to="patrick.hutchinson2@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="Timed in Prior Branch"  type="html">
     Timed in Prior Branch  -#time_me_out.ds_id#
@@ -34,24 +28,28 @@
   WHERE ID = #time_me_out.ID#
  </cfquery>
   </cfloop>
-</cfif>
+</cfif>--->
+
+<!---END this code was commented out on April 5 , 2016 to address SQL deadlock problem--->
+<!---END this code was commented out on April 5 , 2016 to address SQL deadlock problem--->
+
+
+<!---This code was commented out on April 5 , 2016 to address SQL deadlock problem--->
+<!---This code was commented out on April 5 , 2016 to address SQL deadlock problem--->
+<!---<cfquery name="update_employee_time" datasource="jrgm">
+UPDATE APP_Employee_Payroll_Clock SET time_worked = DATEDIFF(mi,time_in,time_out)   WHERE ds_date > #daysago7#
+</cfquery>--->
+<!---This code was commented out on April 5 , 2016 to address SQL deadlock problem--->
+<!---This code was commented out on April 5 , 2016 to address SQL deadlock problem--->
 
 <cfquery name="update_employee_time" datasource="jrgm">
-    UPDATE APP_Employee_Payroll_Clock SET time_worked = DATEDIFF(mi,time_in,time_out)   WHERE ds_date > #daysago7#
-      </cfquery>
-<cfquery name="update_employee_time" datasource="jrgm">
-    UPDATE APP_Employee_Payroll_Clock SET time_worked = DATEDIFF(mi,time_in,time_out), in_out_status=2
-    WHERE time_out IS NOT NULL  AND  ds_date > #daysago7#
-     </cfquery>
-<!---<cfquery name="update_employee_time" datasource="jrgm">
-    UPDATE APP_Employee_Payroll_Clock SET time_worked = DATEDIFF(mi,time_in,time_out) 
-      </cfquery>
-<cfquery name="update_employee_time" datasource="jrgm">
-    UPDATE APP_Employee_Payroll_Clock SET time_worked = DATEDIFF(mi,time_in,time_out), in_out_status=2
-    WHERE time_out IS NOT NULL
-     </cfquery>--->
-<!---  <strong>JOBS</strong> --->
-<cfquery name="time_me_outj" datasource="jrgm">
+UPDATE APP_Employee_Payroll_Clock SET time_worked = DATEDIFF(mi,time_in,time_out), in_out_status=2
+WHERE   ds_id =#dsid#
+</cfquery>
+ 
+ <!---This code was commented out on April 5 , 2016 to address SQL deadlock problem--->
+<!---This code was commented out on April 5 , 2016 to address SQL deadlock problem--->
+<!---<cfquery name="time_me_outj" datasource="jrgm">
   SELECT * FROM APP_Job_Clock WHERE In_out_status = 1 AND job_time_in < '#today_datex#'
     </cfquery>
 <!---     <cfdump  var="#time_me_outj#"> --->
@@ -68,18 +66,25 @@
   WHERE ID = #time_me_outj.ID#
  </cfquery>
   </cfloop>
-</cfif>
+</cfif>--->
+<!---END this code was commented out on April 5 , 2016 to address SQL deadlock problem--->
+<!---END this code was commented out on April 5 , 2016 to address SQL deadlock problem--->
 
-<cfquery name="update_job_clock" datasource="jrgm">
-    UPDATE APP_Job_Clock SET job_time_worked = DATEDIFF(mi,job_time_in,job_time_out), in_out_status=2
-    WHERE job_time_out IS NOT NULL   AND Job_Time_In > #daysago7#
-     </cfquery>
-     
+<!---This is new code added April 5 , 2016 to address SQL deadlock problem--->
+<!---This is new code added April 5 , 2016 to address SQL deadlock problem--->
+<cftransaction >
 <!---<cfquery name="update_job_clock" datasource="jrgm">
-    UPDATE APP_Job_Clock SET job_time_worked = DATEDIFF(mi,job_time_in,job_time_out), in_out_status=2
-    WHERE job_time_out IS NOT NULL  AND ID > 50000
-     </cfquery>--->
-<!--- This code is for the prior day timeout issue --->
+UPDATE APP_Job_Clock SET job_time_worked = DATEDIFF(mi,job_time_in,job_time_out), in_out_status=2
+WHERE job_time_out IS NOT NULL   AND Job_Time_In > #daysago7#
+</cfquery>
+--->
+<cfquery name="update_job_clock" datasource="jrgm">
+UPDATE APP_Job_Clock SET job_time_worked = DATEDIFF(mi,job_time_in,job_time_out), in_out_status=2
+WHERE ds_id =#dsid#
+</cfquery>
+</cftransaction>
+<!---This is new code added April 5 , 2016 to address SQL deadlock problem--->
+<!---This is new code added April 5 , 2016 to address SQL deadlock problem--->
 
 <cfif IsDefined("url.unapprove")>
   <cfquery name="approve_ds" datasource="jrgm">
@@ -141,8 +146,7 @@ SELECT   [Employee ID], [Name FirstLast] AS employeename FROM app_employees WHER
     SELECT    ID, Service_Name, Service_ID
 FROM         dbo.app_services
     </cfquery>
-    
-    <CFSET branch_code =  get_ds.branch_code>
+<CFSET branch_code =  get_ds.branch_code>
 <cfif branch_code EQ '10' >
   <CFSET branchname ='Richmond'>
   <cfelseif branch_code EQ '20' >
@@ -238,7 +242,7 @@ FROM         dbo.app_services
         <br>
         <br>
         <h1 class="text-danger">As this daily sheet process is new, please review all daily sheets extra carefully.<br>
-        </h1>--->
+        </h1>---> 
       <!-- END PAGE TITLE --> 
       <!-- BEGIN PAGE TOOLBAR -->
       <div class="page-toolbar">
@@ -259,75 +263,39 @@ FROM         dbo.app_services
     <!-- BEGIN PAGE CONTENT INNER -->
     <div class="row">
       <div class="col-md-5">
-      <!---  <table class="table large">
+        <table class="table large">
           <tr>
             <td nowrap="nowrap"><strong>Date : <cfoutput>#DateFormat(ds_date, "mmmm dd, yyyy")#</cfoutput></strong></td>
-            <td align="left" nowrap="nowrap"><strong>Production Manager : <cfoutput>#get_crew_leader.employeename#</cfoutput></strong></td>
+            <td width="50" nowrap="nowrap">&nbsp;</td>
+            <td nowrap="nowrap"><strong>Branch : <cfoutput>#branchname#</cfoutput></strong></td>
+            <td width="150" nowrap="nowrap"><strong>DSID : <cfoutput query="get_ds">#ID#</cfoutput></strong></td>
+            <td width="150" nowrap="nowrap">&nbsp;</td>
+            <td  nowrap="nowrap"><cfif get_ds.ds_approved EQ 1>
+                Approved as of <cfoutput>#DateFormat(get_ds.ds_approved_date, "mm/dd/yyyy")#</cfoutput>
+              </cfif>
+              </span>
+              <cfif ((ds_date LTE  yesterday) OR  ((ds_date EQ  todaydate_DS))  AND timenow GT today_3PM) AND get_open_workers.recordcount  EQ 0>
+                <cfoutput><a href="daily_sheet_edit_add_job2.cfm?ds_id=#dsid#" class="btn blue">Add a Job</a></cfoutput> <a href="dailysheet_help2.cfm?" onclick="javascript:void window.open('dailysheet_help2.cfm','1384819222444','width=800,height=725,toolbar=0,menubar=0,location=0,status=0,scrollbars=0,resizable=1,right=0,top=20');return false;"><i class="fa-red fa-question-circle"></i></a> <cfoutput><a href="daily_sheet_edit2.cfm?dsid=#dsid#"><i class="fa-green fa-refresh"></i></a></cfoutput>
+                <cfif get_ds.ds_approved EQ 1>
+                  <cfoutput><a href="daily_sheet_edit2.cfm?dsid=#get_ds.ID#&email=yes&unapprove=yes" class="btn red">Unapprove</a></cfoutput>
+                  <cfelse>
+                  <cfoutput><a href="daily_sheet2.cfm?dsid=#get_ds.ID#&email=yes&approve=yes" class="btn green">Approve</a></cfoutput>
+                </cfif>
+              </cfif>
+              &nbsp;<cfoutput><a href="daily_sheet2_print.cfm?dsid=#get_ds.ID#"  class="btn btn-warning" target="_blank">Printable Version </a></cfoutput></td>
           </tr>
           <tr>
-            <td nowrap="nowrap"><strong>DSID: <cfoutput query="get_ds">#ID#</cfoutput></strong></td>
-            <td align="left" nowrap="nowrap"><strong>Supervisor/Crew Leader  : <cfoutput>#get_supervisor.employeename#</cfoutput></strong></td>
+            <td nowrap="nowrap"><strong>Production Manager : <cfoutput>#get_supervisor.employeename#</cfoutput></strong></td>
+            <td width="50" nowrap="nowrap">&nbsp;</td>
+            <td nowrap="nowrap"><strong>Supervisor / Crew Leader : <cfoutput>#get_crew_leader.employeename#</cfoutput></strong></td>
+            <td nowrap="nowrap"></td>
+            <td nowrap="nowrap"></td>
+            <td  nowrap="nowrap"></td>
           </tr>
-        </table>--->
-         <table class="table large">
-            <tr>
-              <td nowrap="nowrap"><strong>Date : <cfoutput>#DateFormat(ds_date, "mmmm dd, yyyy")#</cfoutput></strong></td>
-              <td width="50" nowrap="nowrap">&nbsp;</td>
-              <td nowrap="nowrap"><strong>Branch : <cfoutput>#branchname#</cfoutput></strong></td>
-              <td width="150" nowrap="nowrap"><strong>DSID : <cfoutput query="get_ds">#ID#</cfoutput></strong></td>
-              <td width="150" nowrap="nowrap">&nbsp;</td>
-               <td  nowrap="nowrap"> <cfif get_ds.ds_approved EQ 1>
-          Approved as of <cfoutput>#DateFormat(get_ds.ds_approved_date, "mm/dd/yyyy")#</cfoutput>
-        </cfif>
-        </span>
-        <cfif ((ds_date LTE  yesterday) OR  ((ds_date EQ  todaydate_DS))  AND timenow GT today_3PM) AND get_open_workers.recordcount  EQ 0>
-        <cfoutput><a href="daily_sheet_edit_add_job2.cfm?ds_id=#dsid#" class="btn blue">Add a Job</a></cfoutput> <a href="dailysheet_help2.cfm?" onclick="javascript:void window.open('dailysheet_help2.cfm','1384819222444','width=800,height=725,toolbar=0,menubar=0,location=0,status=0,scrollbars=0,resizable=1,right=0,top=20');return false;"><i class="fa-red fa-question-circle"></i></a> <cfoutput><a href="daily_sheet_edit2.cfm?dsid=#dsid#"><i class="fa-green fa-refresh"></i></a></cfoutput>
-          <cfif get_ds.ds_approved EQ 1>
-            <cfoutput><a href="daily_sheet_edit2.cfm?dsid=#get_ds.ID#&email=yes&unapprove=yes" class="btn red">Unapprove</a></cfoutput>
-            <cfelse>
-            <cfoutput><a href="daily_sheet2.cfm?dsid=#get_ds.ID#&email=yes&approve=yes" class="btn green">Approve</a></cfoutput>
-          </cfif>
-        </cfif>   &nbsp;<cfoutput><a href="daily_sheet2_print.cfm?dsid=#get_ds.ID#"  class="btn btn-warning" target="_blank">Printable Version </a></cfoutput></td>
-            </tr>
-            <tr>
-              <td nowrap="nowrap"><strong>Production Manager : <cfoutput>#get_supervisor.employeename#</cfoutput></strong></td>
-              <td width="50" nowrap="nowrap">&nbsp;</td>
-              <td nowrap="nowrap"><strong>Supervisor / Crew Leader : <cfoutput>#get_crew_leader.employeename#</cfoutput></strong></td>
-              <td nowrap="nowrap"></td>
-              <td nowrap="nowrap"></td>
-                <td  nowrap="nowrap"> </td>
-            </tr>
-          </table>
+        </table>
       </div>
-      <!---<div class="col-md-4">
-       <!---<span class="text-dsadd">
-        <cfif get_ds.ds_approved EQ 1>
-          Approved as of <cfoutput>#DateFormat(get_ds.ds_approved_date, "mm/dd/yyyy")#</cfoutput>
-        </cfif>
-        </span>
-        <cfif ((ds_date LTE  yesterday) OR  ((ds_date EQ  todaydate_DS))  AND timenow GT today_3PM) AND get_open_workers.recordcount  EQ 0>
-          <cfif get_ds.ds_approved EQ 1>
-            <cfoutput><a href="daily_sheet_edit2.cfm?dsid=#get_ds.ID#&email=yes&unapprove=yes" class="btn red">Unapprove</a></cfoutput>
-            <cfelse>
-            <cfoutput><a href="daily_sheet2.cfm?dsid=#get_ds.ID#&email=yes&approve=yes" class="btn green">Approve</a></cfoutput>
-          </cfif>
-        </cfif>--->
-      </div>--->
-       <div class="col-md-4">
-       </div>
-      <div class="col-md-5">
-      <span class="text-dsadd">
-      <!---  <cfif get_ds.ds_approved EQ 1>
-          Approved as of <cfoutput>#DateFormat(get_ds.ds_approved_date, "mm/dd/yyyy")#</cfoutput>
-        </cfif>
-        </span>
-        <cfif ((ds_date LTE  yesterday) OR  ((ds_date EQ  todaydate_DS))  AND timenow GT today_3PM) AND get_open_workers.recordcount  EQ 0>
-          <cfif get_ds.ds_approved EQ 1>
-            <cfoutput><a href="daily_sheet_edit2.cfm?dsid=#get_ds.ID#&email=yes&unapprove=yes" class="btn red">Unapprove</a></cfoutput>
-            <cfelse>
-            <cfoutput><a href="daily_sheet2.cfm?dsid=#get_ds.ID#&email=yes&approve=yes" class="btn green">Approve</a></cfoutput>
-          </cfif>
-        </cfif> <a href="dailysheet_help2.cfm?" onclick="javascript:void window.open('dailysheet_help2.cfm','1384819222444','width=800,height=725,toolbar=0,menubar=0,location=0,status=0,scrollbars=0,resizable=1,right=0,top=20');return false;"><i class="fa-red fa-question-circle"></i></a> <cfoutput><a href="daily_sheet_edit2.cfm?dsid=#dsid#"><i class="fa-green fa-refresh"></i></a></cfoutput> <cfoutput><a href="daily_sheet_edit_add_job2.cfm?ds_id=#dsid#" class="btn green">Add a Job</a></cfoutput> ---></div>
+      <div class="col-md-4"> </div>
+      <div class="col-md-5"> <span class="text-dsadd"> </div>
     </div>
     <div class="row">
       <div class="col-md-12">
@@ -464,10 +432,7 @@ WHERE Employee_ID =#get_employees_for_Crew_Leader.Employee_ID# AND ds_id = #dsid
                       <cfelse>
                       <cfset totalminutes_this_job=#get_this_job.job_time_worked#-#get_this_job_lunch.Lunch_Time#>
                     </cfif>
-                    
-                       <CFSET totalminutes_this_job_all_crew = totalminutes_this_job * get_employees_for_Crew_Leader.recordcount>
-                       
-                       
+                    <CFSET totalminutes_this_job_all_crew = totalminutes_this_job * get_employees_for_Crew_Leader.recordcount>
                     <cfset hours_all_tj= int(totalminutes_this_job\60)>
                     <cfset minutes_all_tj = int(totalminutes_this_job mod 60)>
                     <cfif get_this_job.job_time_worked GT 0>
@@ -485,22 +450,16 @@ WHERE Employee_ID =#get_employees_for_Crew_Leader.Employee_ID# AND ds_id = #dsid
                       <CFSET get_all_employee_minutes_for_job.minutes_worked_day_crew = 0>
                     </cfif>
                     <cfset totalminutes="#get_all_employee_minutes_for_job.minutes_worked_day_crew#">
-                    
-                    
                     <cfset hours_all_j= int(totalminutes\60)>
                     <cfset minutes_all_j = int(totalminutes mod 60)>
-                    
-                    <!---   <cfif totalminutes GT 0>
-                       &nbsp; &nbsp;   &nbsp; &nbsp;  Total Crew Hours #hours_all_j#:#NumberFormat(minutes_all_j,"09")# &nbsp;&nbsp;(#totalminutes# min.)
-                    </cfif > &nbsp; &nbsp;   &nbsp; &nbsp;  ---> 
-                   
                     <CFSET time_difference  = totalminutes_this_job_all_crew - totalminutes>
-                    
-                    <!---   <cfif totalminutes GT 0>
-                       &nbsp; &nbsp;   &nbsp; &nbsp;  Total Crew Hours #hours_all_j#:#NumberFormat(minutes_all_j,"09")# &nbsp;&nbsp;(#totalminutes# min.)
-                    </cfif > &nbsp; &nbsp;   &nbsp; &nbsp;  ---> 
                     <span class="text-danger"><br>
-                   <cfif time_difference NEQ 0> Please make sure all crew members service time is accounted for. You may still need to account for #time_difference# employee minutes. <cfelse>All service time is accounted for!</cfif></span></th>
+                    <cfif time_difference NEQ 0>
+                      Please make sure all crew members service time is accounted for. You may still need to account for #time_difference# employee minutes.
+                      <cfelse>
+                      All service time is accounted for!
+                    </cfif>
+                    </span></th>
                 </tr>
               </cfoutput>
             </thead>
@@ -607,69 +566,7 @@ WHERE Employee_ID =#get_employees_for_Crew_Leader.Employee_ID# AND ds_id = #dsid
                       </cfif>
                     </div></td>
                 </tr>
-              </cfoutput> 
-              <!--- Its looping through the job_services and thus getting a new row for each service.
-   It needs to loop through the each employee job_services  ---> 
-              <!---  <cfquery name="get_employee_time_services" datasource="jrgm"   >
-			SELECT ID, Employee_ID,SERVICE_ID,TOTAL_TIME,JOB_clock_ID FROM app_job_services_actual_employee 
-			WHERE   job_clock_id = #get_this_job.ID#
-		AND ds_id = #dsid# 
-			      </cfquery>
-                <!--- <cfdump var="#get_employee_time_services#">   ---> 
-                <cfoutput query="get_employee_time_services" >
-                  <cfset hours_all_s= int(get_employee_time_services.total_time\60)>
-                  <cfset minutes_all_s = int(get_employee_time_services.total_time mod 60)>
-                  <cfquery name="get_employee_name" datasource="jrgm">
-            	 SELECT [Employee ID] As employee_id,[Name FirstLast] AS employee_name FROM APP_employees WHERE [Employee ID] =  #get_employee_time_services.Employee_ID#
-                    </cfquery>
-                  <!--- <cfoutput> --->
-                  <tr>
-                    <td width="25" align="center"  nowrap="nowrap"><a href="daily_sheet_edit_employee_service_time2.cfm?ds_id=#dsid#&Employee_ID=#get_employee_time_services.Employee_ID#&JOB_clock_ID=#get_employee_time_services.job_clock_id#&totalminutes=#totalminutes_this_job#"><i class="fa-orange fa-pencil-square"></i></a></td>
-                    <td  nowrap="nowrap">#get_employee_name.employee_name#</td>
-                    <td align="center"><cfif SERVICE_ID EQ 1000>
-                        #hours_all_s#:#NumberFormat(minutes_all_s,"09")#
-                      </cfif></td>
-                    <td  align="center"><cfif SERVICE_ID EQ 1010>
-                        #hours_all_s#:#NumberFormat(minutes_all_s,"09")#
-                      </cfif></td>
-                    <td align="center"><cfif SERVICE_ID EQ 1020>
-                        #hours_all_s#:#NumberFormat(minutes_all_s,"09")#
-                      </cfif></td>
-                    <td  align="center"><cfif SERVICE_ID EQ 1040>
-                        #hours_all_s#:#NumberFormat(minutes_all_s,"09")#
-                      </cfif></td>
-                    <td  align="center"><cfif SERVICE_ID EQ 1070>
-                        #hours_all_s#:#NumberFormat(minutes_all_s,"09")#
-                      </cfif></td>
-                    <td  align="center"><cfif SERVICE_ID EQ 1080>
-                        #hours_all_s#:#NumberFormat(minutes_all_s,"09")#
-                      </cfif></td>
-                    <td  align="center"><cfif SERVICE_ID EQ 1090>
-                        #hours_all_s#:#NumberFormat(minutes_all_s,"09")#
-                      </cfif></td>
-                    <td  align="center"><cfif SERVICE_ID EQ 2000>
-                        #hours_all_s#:#NumberFormat(minutes_all_s,"09")#
-                      </cfif></td>
-                    <td  align="center"><cfif SERVICE_ID EQ 2030>
-                        #hours_all_s#:#NumberFormat(minutes_all_s,"09")#
-                      </cfif></td>
-                    <td  align="center"><cfif SERVICE_ID EQ 2050>
-                        #hours_all_s#:#NumberFormat(minutes_all_s,"09")#
-                      </cfif></td>
-                    <td  align="center"><cfif SERVICE_ID EQ 2060>
-                        #hours_all_s#:#NumberFormat(minutes_all_s,"09")#
-                      </cfif></td>
-                    <td align="center"><cfif SERVICE_ID EQ 2090>
-                        #hours_all_s#:#NumberFormat(minutes_all_s,"09")#
-                      </cfif></td>
-                    <td align="center"><cfif SERVICE_ID EQ 3030>
-                        #hours_all_s#:#NumberFormat(minutes_all_s,"09")#
-                      </cfif></td>
-                    <td align="center"><cfif SERVICE_ID EQ 4000>
-                        #hours_all_s#:#NumberFormat(minutes_all_s,"09")#
-                      </cfif></td>
-                  </tr>
-                </cfoutput>--->
+              </cfoutput>
               <cfquery name="get_materials_used" datasource="jrgm"  >
 				SELECT * FROM app_job_materials_actual  
 				WHERE   job_clock_id=  '#get_this_job.ID#'
@@ -685,7 +582,7 @@ WHERE Employee_ID =#get_employees_for_Crew_Leader.Employee_ID# AND ds_id = #dsid
               </cfif>
               <cfoutput query="get_materials_used">
                 <tr>
-<td width="25" align="center" nowrap="nowrap" ><a href="daily_sheet_edit_materials2.cfm?ds_id=#dsid#&MATID=#get_materials_used.ID#&JOB_CLOCK_ID=#get_this_job.ID#"><i class="fa-orange fa-pencil-square"></i></a></td>
+                  <td width="25" align="center" nowrap="nowrap" ><a href="daily_sheet_edit_materials2.cfm?ds_id=#dsid#&MATID=#get_materials_used.ID#&JOB_CLOCK_ID=#get_this_job.ID#"><i class="fa-orange fa-pencil-square"></i></a></td>
                   <td nowrap="nowrap" >#item_id#</td>
                   <td   align="center" nowrap="nowrap"  >#Quantity_used#</td>
                   <!--- <td  align="center" nowrap="nowrap"  >#unit_used#</td>--->
@@ -772,9 +669,6 @@ WHERE Employee_ID =#get_employees_for_Crew_Leader.Employee_ID# AND ds_id = #dsid
                     <span class="text-cotime">&nbsp; &nbsp;&nbsp; &nbsp;Total Crew Hours #hours_all_j#:#NumberFormat(minutes_all_j,"09")# &nbsp;&nbsp;(#totalminutes# min.)</span>
                   </cfif >
                 </th>
-                <!---  <th  nowrap="nowrap" align="right" width="50">
-                              <span class="text-cotime">## #get_this_job.currentrow#</span>
-                               </th>---> 
               </tr>
             </thead>
           </cfoutput> 
