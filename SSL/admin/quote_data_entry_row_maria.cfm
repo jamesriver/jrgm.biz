@@ -1,7 +1,35 @@
 <cfinclude template="../quoting-new/include_cffunctions.cfm">
 <cfinclude template="../admin/include_sql_quote_data_entry_row.cfm">
 <cfset columnList = "1,3,4,6,8,9,10,18,23">
+
 <!--- BEGIN OUTPUT --->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>James River Grounds Management -<cfoutput>#SESSION.access_role#</cfoutput></title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link href="css/styles.css" rel="stylesheet" type="text/css" />
+<link href="css/bootstrap.css" rel="stylesheet" />
+<style type="text/css">
+.red {
+	font: 13px;
+	color: red;
+	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-weight: bold
+}
+.black {
+	font: 13px;
+	color: black;
+	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-weight: bold
+}
+</style>
+<!--[if lt IE 9]>
+    <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+<body>
 <cfoutput>
     <center>
         <b>NOTE:</b>&nbsp;Changes made to this page are saved every time you click outside of an input box after editing it.<br />
@@ -103,3 +131,5 @@
 <script src="assets/admin/pages/scripts/dropdown-header-menu.js"></script>
 <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/js/bootstrap.min.js"></script>
 <script src="js/twitter-bootstrap-hover-dropdown.js"></script>
+</body>
+</html>

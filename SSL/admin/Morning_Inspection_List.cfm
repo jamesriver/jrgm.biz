@@ -161,7 +161,7 @@ ON APP_employees.[Employee ID]=app_Inspection_Master.Crew_LeaderID
               <cfquery name="get_morning_inspections" datasource="jrgm"  maxrows="500">
 SELECT      Inspection_ID, Crew_LeaderID, Inspection_Date, Inspection_Type, Problem, Created_By, Created_On, Current_Mileage, vehicleSatisfactory, 
                       InspectionMode,branch_code
-FROM     app_Inspection_Master  WHERE Inspection_Type ='Evening'  <!---<cfif IsDefined("form.criteria")  AND form.criteria NEQ "" >AND Inspection_ID =#form.criteria#</cfif>--->  <cfif IsDefined("form.Crew_LeaderID") AND form.Crew_LeaderID NEQ "All" > AND Crew_LeaderID ='#form.Crew_LeaderID#'</cfif> <cfif IsDefined("form.branch_code") AND form.branch_code NEQ "All" > AND branch_code ='#form.branch_code#'</cfif>  <cfif IsDefined("form.inspection_date")  AND form.inspection_date NEQ "" > AND Inspection_Date ='#form.inspection_date#'</cfif>   
+FROM     app_Inspection_Master  WHERE Inspection_Type ='morning'  <!---<cfif IsDefined("form.criteria")  AND form.criteria NEQ "" >AND Inspection_ID =#form.criteria#</cfif>--->  <cfif IsDefined("form.Crew_LeaderID") AND form.Crew_LeaderID NEQ "All" > AND Crew_LeaderID ='#form.Crew_LeaderID#'</cfif> <cfif IsDefined("form.branch_code") AND form.branch_code NEQ "All" > AND branch_code ='#form.branch_code#'</cfif>  <cfif IsDefined("form.inspection_date")  AND form.inspection_date NEQ "" > AND Inspection_Date ='#form.inspection_date#'</cfif>   
 
 order by   Inspection_ID DESC,  Inspection_Date DESC
 </cfquery>

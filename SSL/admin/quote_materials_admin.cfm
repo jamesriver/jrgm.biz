@@ -14,6 +14,33 @@
     ORDER BY Item_ID
 </cfquery>
 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>James River Grounds Management -<cfoutput>#SESSION.access_role#</cfoutput></title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link href="css/styles.css" rel="stylesheet" type="text/css" />
+<link href="css/bootstrap.css" rel="stylesheet" />
+<style type="text/css">
+.red {
+	font: 13px;
+	color: red;
+	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-weight: bold
+}
+.black {
+	font: 13px;
+	color: black;
+	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-weight: bold
+}
+</style>
+<!--[if lt IE 9]>
+    <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+<body>
 <b>INSTRUCTIONS</b>: Change a value, then click outside the box to tell the system to save it.  Refresh the screen periodically to make sure changes have been saved.<br /><br />
 <i>NOTE: Job Costing calculations will immediately be affected as soon as any values are changed here.</i><br /><br />
 
@@ -82,3 +109,5 @@
 <script src="assets/admin/pages/scripts/dropdown-header-menu.js"></script>
 <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/js/bootstrap.min.js"></script>
 <script src="js/twitter-bootstrap-hover-dropdown.js"></script>
+</body>
+</html>

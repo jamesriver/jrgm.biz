@@ -1,4 +1,8 @@
  
+<cfset todayDate = Now()>
+<cfset today_datex = #DateFormat(todayDate, "mm/dd/yyyy")#>
+<cfset mytime = timeFormat(now(), "hh:mm tt")>
+<cfset daysago7 = dateadd("d",-14,today_datex)>
 
 <!doctype html>
 <html>
@@ -102,9 +106,9 @@ Step 3 Done
 <!---This email address needs to be changed to Maria--->
 <cfmail to="patrick.hutchinson2@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="New Employees"  type="html">
   <cfif get_new_records.recordcount EQ 0>
-    There are no new records in todays ADP data load.
+    There are no new records in today's ADP data load.
     <cfelse>
-    These are the new employees in todays ADP data load.<br>
+    These are the new employees in today's ADP data load.<br>
     <br>
     <cfloop query="get_new_records">
       #employee_ID#, #employee_name#, #branch#<br>
@@ -125,9 +129,9 @@ ORDER by branch
 <!---This email address needs to be changed to Maria--->
 <cfmail to="patrick.hutchinson2@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="Inactivated Employees"  type="html">
   <cfif get_inactivated_records.recordcount EQ 0>
-    There are no inactivated records in todays ADP data load.
+    There are no inactivated records in today's ADP data load.
     <cfelse>
-    These are the inactivated employees in todays ADP data load.<br>
+    These are the inactivated employees in today's ADP data load.<br>
     <br>
     <cfloop query="get_inactivated_records">
       #employee_ID#, #employee_name#, #branch#<br>
@@ -246,7 +250,12 @@ WHERE ID  = #get_equipment_allocated_to_inactive_employee.ID#
 </cfloop>
 <!------END Step 9--------------------- Job is  loaded into app_events table----------------------------------->--->
 
-
+<!---Step 10 make sure that time_worked is updated in APP_Employee_Payroll_Clock --->
+<cfquery name="update_employee_time" datasource="jrgm">
+UPDATE APP_Employee_Payroll_Clock SET time_worked = DATEDIFF(mi,time_in,time_out), in_out_status=2
+WHERE time_out IS NOT NULL  AND  ds_date > #daysago14#
+</cfquery>
+<!---END Step 10 make sure that time_worked is updated in APP_Employee_Payroll_Clock --->
 <cfquery name="drop_test" datasource="JRGM" >
 DROP TABLE app_employees_test_backup;
 </cfquery>

@@ -36,6 +36,22 @@
         </cfquery>
         <cfset output_str = output_str & '|||' & Item_ID>
     </cfloop>
+    
+    <cfquery name="check_app_materials_list" datasource="jrgm">
+        SELECT aml.Item_ID FROM app_materials_list aml
+        LEFT JOIN quote_materials_cost qmc ON qmc.Item_ID=aml.Item_ID
+        WHERE qmc.Item_ID IS NULL
+        GROUP BY aml.Item_ID
+    </cfquery>
+    <cfloop query="check_app_materials_list">
+        <cfquery name="update_from_app_materials_list" datasource="jrgm">
+            INSERT INTO quote_materials_cost
+            (Item_ID)
+            VALUES
+            (<cfqueryparam value="#Item_ID#"     CFSQLType="CF_SQL_TEXT">)
+        </cfquery>
+        <cfset output_str = output_str & '|||' & Item_ID>
+    </cfloop>
 </cfif>
 
 <cfinclude template="include_output.cfm">
