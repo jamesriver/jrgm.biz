@@ -1,0 +1,45 @@
+DECLARE @statement VARCHAR(MAX)
+ 
+-- Generate drop statement for all foreign key constraints
+DECLARE cur cursor FOR 
+SELECT 'ALTER TABLE "' + TABLE_SCHEMA + '"."' + TABLE_NAME + '" DROP CONSTRAINT ' + CONSTRAINT_NAME
+FROM information_schema.table_constraints
+WHERE CONSTRAINT_TYPE = 'FOREIGN KEY' AND TABLE_SCHEMA = 'dbo'
+ 
+-- Iterate over drop statement and execute them
+OPEN cur
+FETCH NEXT FROM cur INTO @statement
+WHILE (@@fetch_status = 0) BEGIN
+  PRINT @statement
+  EXEC (@statement)
+  FETCH NEXT FROM cur INTO @statement
+END 
+CLOSE cur
+DEALLOCATE cur
+ 
+ 
+-- Generate drop statement for all tables in schema
+DECLARE cur cursor FOR 
+SELECT 'DROP ' + CASE
+    WHEN o.xtype = 'U' THEN 'TABLE'
+    WHEN o.xtype = 'V' THEN 'VIEW'
+    WHEN o.xtype = 'P' THEN 'PROCEDURE'
+    WHEN o.xtype = 'FN' THEN 'FUNCTION'
+  END + ' "' + s.name + '"."' + o.name + '"'
+FROM
+  sys.sysobjects AS o
+  JOIN sys.schemas AS s ON o.uid = s.schema_id
+WHERE
+  s.name = 'dbo' AND
+  o.xtype IN ('U','V','P','FN')
+ 
+-- Iterate over drop statement and execute them
+OPEN cur
+FETCH NEXT FROM cur INTO @statement
+WHILE (@@fetch_status = 0) BEGIN
+  PRINT @statement
+  EXEC (@statement)
+  FETCH NEXT FROM cur INTO @statement
+END 
+CLOSE cur
+DEALLOCATE cur
