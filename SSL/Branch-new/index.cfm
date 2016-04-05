@@ -150,8 +150,8 @@ License: You must have a valid license purchased only from themeforest(the above
     <div class="container-fluid"> 
       
       <!-- BEGIN PAGE CONTENT INNER -->
-      <cfset today_datex = #DateFormat(todayDate, "mm/dd/yyyy")#>
-      <cfset today_datexy = #DateFormat(yesterday, "mm/dd/yyyy")#>
+      <cfset today_datex = #DateAdd('d', 0, DateFormat(todayDate, "mm/dd/yyyy"))#>
+      <cfset today_datexy = #DateAdd('d', 0, DateFormat(yesterday, "mm/dd/yyyy"))#>
       <!---   Get the first time in of today --->
       <cfquery name="get_first_time_in" datasource="jrgm">
  SELECT MIN(ID) AS  first_id_oftheday  
