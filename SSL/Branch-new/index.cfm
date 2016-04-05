@@ -395,10 +395,11 @@ WHERE  employee_ID = #Employee_ID#
  </cfquery>
                         <td>#get_many_hours_name.employee_name#</td>
                         <!---    <td>#get_many_hours_name.branch#</td> --->
+<cfabort>
                         <cfquery name="get_ds_id" datasource="jrgm">
 SELECT     Employee_ID, ds_date, ID,ds_id,Time_In, Time_Out
 FROM         app_employee_payroll_clock
-WHERE    ds_date =#ds_date#  AND Employee_ID = #Employee_ID# 
+WHERE    ds_date = '#ds_date#'  AND Employee_ID = #Employee_ID# 
 ORDER by time_IN ASC
  </cfquery>
                         <td> DSID: <a href="daily_sheet.cfm?dsid=#get_ds_id.ds_id#"  target="_blank">#get_ds_id.ds_id#</a><br>
@@ -406,7 +407,7 @@ ORDER by time_IN ASC
                         <cfquery name="get_ds_id_other" datasource="jrgm">
 SELECT     Employee_ID, ds_date, ID,ds_id,Time_In, Time_Out
 FROM         app_employee_payroll_clock
-WHERE    ds_date =#ds_date#  AND Employee_ID = #Employee_ID#  AND ds_id <> #get_ds_id.ds_id#
+WHERE    ds_date = '#ds_date#'  AND Employee_ID = #Employee_ID#  AND ds_id <> #get_ds_id.ds_id#
  </cfquery>
                         <td> DSID: <a href="daily_sheet.cfm?dsid=#get_ds_id_other.ds_id#"  target="_blank">#get_ds_id_other.ds_id#</a><br>
                           #TimeFormat(get_ds_id_other.time_in, "HH:mm")# - #TimeFormat(get_ds_id_other.time_out, "HH:mm")#</td>
