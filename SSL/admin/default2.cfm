@@ -93,12 +93,12 @@ font:13px "Arial",san-serif;
         <td valign="top"><div class="subheader">Forms</div>
        <div class="dashboardHeader">Incident</div>
             <ul class="dashboard">
-            <li><a href="http://jrgm.biz/forms/irlist.cfm">Incident Report List</a></li>
+            <li><a href="/forms/irlist.cfm">Incident Report List</a></li>
             <li><a href="../../forms/IncidentReport.php" target="_blank">Start  a new Incident Report</a></li>
           </ul>
          <div class="dashboardHeader">Injury</div>
             <ul class="dashboard">
-            <li><a href="http://jrgm.biz/forms/injurylist.php">Injury Report List</a>&nbsp; &nbsp;&nbsp; </li>
+            <li><a href="/forms/injurylist.php">Injury Report List</a>&nbsp; &nbsp;&nbsp; </li>
             <li><a href="../../forms/injury.php" target="_blank"> Start  a new Injury Report</a></li>
           </ul>
          </td>

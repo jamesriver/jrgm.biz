@@ -64,7 +64,7 @@ li {
     <table class="arialfont">
  <tr>  
  <td>
-    <p><a href="http://jrgm.biz/forms/irlist.cfm">Incident Report List</a>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <a href="../../forms/IncidentReport.php" target="_blank">&gt; Start  a new Incident Report</a></p>
+    <p><a href="/forms/irlist.cfm">Incident Report List</a>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <a href="../../forms/IncidentReport.php" target="_blank">&gt; Start  a new Incident Report</a></p>
    <p>&nbsp;</p>
    <p>&nbsp;</p>
  </td>

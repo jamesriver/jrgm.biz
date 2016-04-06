@@ -210,8 +210,8 @@ ORDER by ID DESC
         <cfif SESSION.userid EQ 1001  >
           <div class="dashboardHeader">Lists</div>
           <ul class="dashboard">
-            <li><a href="http://jrgm.biz/forms/irlist.cfm">Incident Report List</a></li>
-            <li><a href="http://jrgm.biz/forms/injurylist.php">Injury Report List</a>&nbsp; &nbsp;&nbsp; </li>
+            <li><a href="/forms/irlist.cfm">Incident Report List</a></li>
+            <li><a href="/forms/injurylist.php">Injury Report List</a>&nbsp; &nbsp;&nbsp; </li>
           </ul>
           </div>
         </cfif>
