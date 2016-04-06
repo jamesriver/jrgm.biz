@@ -30,7 +30,7 @@
 		app_employee_payroll_clock  
 		INNER JOIN APP_employees
 		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
-		WHERE branch = '#SESSION.branch#'  AND (app_employee_payroll_clock.Time_In > #pay_period_start# AND app_employee_payroll_clock.Time_Out < #pay_period_end#) AND (payroll_approved = 0 OR payroll_approved IS NULL)
+		WHERE branch = '#SESSION.branch#'  AND (app_employee_payroll_clock.Time_In > '#DateFormat(ds_date, "yyyy-mm-dd")# 00:00:00.000' AND app_employee_payroll_clock.Time_Out < #pay_period_end#) AND (payroll_approved = 0 OR payroll_approved IS NULL)
 		ORDER by APP_employees.last_name
  	</cfquery>
     
@@ -159,7 +159,7 @@
 		app_employee_payroll_clock  
 		INNER JOIN APP_employees
 		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
-		WHERE branch = '#SESSION.branch#'  AND app_employee_payroll_clock.Time_In > #pay_period_start#
+		WHERE branch = '#SESSION.branch#'  AND app_employee_payroll_clock.Time_In > '#DateFormat(ds_date, "yyyy-mm-dd")# 00:00:00.000'
 		ORDER by APP_employees.last_name
  </cfquery>
         <cfparam name="current_date" default="1">

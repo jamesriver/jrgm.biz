@@ -49,7 +49,7 @@ FROM app_pay_periods WHERE pay_period_number =#pay_period_number#
 SELECT DISTINCT Employee_ID, APP_employees.last_name, APP_employees.first_name,APP_employees.branch FROM 
 app_employee_payroll_clock  INNER JOIN APP_employees
 ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
-WHERE  app_employee_payroll_clock.Time_In > #pay_period_start# AND  app_employee_payroll_clock.Time_In < #pay_period_end#  AND   FWW =1
+WHERE  app_employee_payroll_clock.Time_In > '#DateFormat(ds_date, "yyyy-mm-dd")# 00:00:00.000' AND  app_employee_payroll_clock.Time_In < #pay_period_end#  AND   FWW =1
 ORDER by APP_employees.last_name
  </cfquery>
 <cfif get_employees_with_time.recordcount EQ 0>
