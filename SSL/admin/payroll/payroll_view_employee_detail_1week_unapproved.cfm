@@ -102,7 +102,7 @@ table.sortable tbody .yellowaltrt:hover {
 		app_employee_payroll_clock  
 		INNER JOIN APP_employees
 		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
-		WHERE branch = '#url.branch#'  AND app_employee_payroll_clock.Time_In > > '#DateFormat(pay_period_start, "yyyy-mm-dd")# 00:00:00.000' AND  app_employee_payroll_clock.Time_In < #end_date_plus1#
+		WHERE branch = '#url.branch#'  AND app_employee_payroll_clock.Time_In > '#DateFormat(pay_period_start, "yyyy-mm-dd")# 00:00:00.000' AND  app_employee_payroll_clock.Time_In < #end_date_plus1#
 		ORDER by APP_employees.last_name
  </cfquery>
       <cfif get_employees_with_time.recordcount EQ 0>
@@ -128,7 +128,7 @@ table.sortable tbody .yellowaltrt:hover {
 		INNER JOIN APP_employees
 		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
 		WHERE  
-         (app_employee_payroll_clock.Time_In > > '#DateFormat(pay_period_start, "yyyy-mm-dd")# 00:00:00.000' AND app_employee_payroll_clock.Time_Out < #end_date_plus1#)  AND Employee_ID IN (#mylist#)  AND payroll_approved IS NULL
+         (app_employee_payroll_clock.Time_In > '#DateFormat(pay_period_start, "yyyy-mm-dd")# 00:00:00.000' AND app_employee_payroll_clock.Time_Out < #end_date_plus1#)  AND Employee_ID IN (#mylist#)  AND payroll_approved IS NULL
 		ORDER by APP_employees.last_name
  </cfquery>
         <cfoutput query="get_employees_with_time_unapproved">

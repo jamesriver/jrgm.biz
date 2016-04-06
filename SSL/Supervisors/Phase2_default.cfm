@@ -122,7 +122,7 @@ FROM APP_employees WHERE [Employee ID] =#get_UA_daily_sheets_for_RM.supervisor_i
 		app_employee_payroll_clock  
 		INNER JOIN APP_employees
 		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
-		WHERE branch = '#SESSION.branch#'  AND app_employee_payroll_clock.Time_In > > '#DateFormat(pay_period_start, "yyyy-mm-dd")# 00:00:00.000' AND  app_employee_payroll_clock.Time_In < #end_date_plus1#
+		WHERE branch = '#SESSION.branch#'  AND app_employee_payroll_clock.Time_In > '#DateFormat(pay_period_start, "yyyy-mm-dd")# 00:00:00.000' AND  app_employee_payroll_clock.Time_In < #end_date_plus1#
 		ORDER by APP_employees.last_name
  </cfquery>
                 <CFSET mylist ="">
@@ -139,7 +139,7 @@ FROM APP_employees WHERE [Employee ID] =#get_UA_daily_sheets_for_RM.supervisor_i
 		INNER JOIN APP_employees
 		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
 		WHERE  
-         (app_employee_payroll_clock.Time_In > > '#DateFormat(pay_period_start, "yyyy-mm-dd")# 00:00:00.000' AND app_employee_payroll_clock.Time_Out < #pay_period_end_week_plusone#)  AND Employee_ID IN (#mylist#)  AND payroll_approved IS NULL
+         (app_employee_payroll_clock.Time_In > '#DateFormat(pay_period_start, "yyyy-mm-dd")# 00:00:00.000' AND app_employee_payroll_clock.Time_Out < #pay_period_end_week_plusone#)  AND Employee_ID IN (#mylist#)  AND payroll_approved IS NULL
 		ORDER by APP_employees.last_name
  </cfquery>
                 <!--- <cfdump var="#get_employees_with_time_unapproved#"> --->
