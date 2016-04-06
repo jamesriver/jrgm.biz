@@ -82,7 +82,7 @@ WHERE   [Employee ID] = #Employee_ID#
             <cfquery name="get_many_hours_DSD" datasource="jrgm">
 SELECT    ds_id, Time_In, Time_Out
 FROM         app_employee_payroll_clock
-WHERE    ds_date =#ds_date#  AND Employee_ID = #Employee_ID# 
+WHERE    ds_date ='#DateFormat(ds_date, "yyyy-mm-dd")#'  AND Employee_ID = #Employee_ID#
 ORDER by time_IN ASC
 </cfquery>
             <td><a href="../admin/daily_sheet.cfm?dsid=#get_many_hours_DSD.ds_id#"  target="_blank">#get_many_hours_DSD.ds_id#</a><br />
@@ -93,7 +93,7 @@ ORDER by time_IN ASC
             <cfquery name="get_many_hours_DSD2" datasource="jrgm">
 SELECT     ds_id, Time_In, Time_Out
 FROM         app_employee_payroll_clock
-WHERE    ds_date =#ds_date#  AND Employee_ID = #Employee_ID#  AND ds_ID <> #thisone#
+WHERE    ds_date ='#DateFormat(ds_date, "yyyy-mm-dd")#'  AND Employee_ID = #Employee_ID#  AND ds_ID <> #thisone#
 </cfquery>
             <CFSET nextoneamtime = #get_many_hours_DSD2.Time_In#>
             <CFSET nextonepmtime = #get_many_hours_DSD2.Time_Out#>
@@ -140,7 +140,7 @@ WHERE   [Employee ID] = #Employee_ID#
             <cfquery name="get_many_hours_DSD" datasource="jrgm">
 SELECT     Employee_ID, ds_date, ID,ds_id
 FROM         app_employee_payroll_clock
-WHERE    ds_date =#ds_date#  AND Employee_ID = #Employee_ID# 
+WHERE    ds_date ='#DateFormat(ds_date, "yyyy-mm-dd")#'  AND Employee_ID = #Employee_ID#
 </cfquery>
             <td><a href="../admin/daily_sheet.cfm?dsid=#get_many_hours_DSD.ds_id#"  target="_blank">#get_many_hours_DSD.ds_id#</a></td>
           </tr>
@@ -183,7 +183,7 @@ WHERE   [Employee ID] = #Employee_ID#
             <cfquery name="get_many_hours_DSD" datasource="jrgm" >
 SELECT     ds_id
 FROM         app_employee_payroll_clock
-WHERE    ds_date =#ds_date#  AND Employee_ID = #Employee_ID# 
+WHERE    ds_date ='#DateFormat(ds_date, "yyyy-mm-dd")#'  AND Employee_ID = #Employee_ID#
 </cfquery>
             <cfloop query="get_many_hours_DSD" >
               <td><a href="../admin/daily_sheet.cfm?dsid=#get_many_hours_DSD.ds_id#"  target="_blank">#get_many_hours_DSD.ds_id#</a>&nbsp;</td>
@@ -227,7 +227,7 @@ WHERE   [Employee ID] = #Employee_ID#
             <cfquery name="get_many_hours_DSD" datasource="jrgm" >
 SELECT     ds_id
 FROM         app_employee_payroll_clock
-WHERE    ds_date =#ds_date#  AND Employee_ID = #Employee_ID# 
+WHERE    ds_date ='#DateFormat(ds_date, "yyyy-mm-dd")#'  AND Employee_ID = #Employee_ID#
 </cfquery>
             <!---   <cfloop query="get_many_hours_DSD" > --->
             <td><a href="../admin/daily_sheet.cfm?dsid=#get_many_hours_DSD.ds_id#"  target="_blank">#get_many_hours_DSD.ds_id#</a>&nbsp;</td>
