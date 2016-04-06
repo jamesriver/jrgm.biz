@@ -33,7 +33,7 @@
 		app_employee_payroll_clock  
 		INNER JOIN APP_employees
 		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
-		WHERE branch = '#SESSION.branch#'  AND (app_employee_payroll_clock.Time_In > '#DateFormat(ds_date, "yyyy-mm-dd")# 00:00:00.000' AND app_employee_payroll_clock.Time_Out < #pay_period_end_week_plusone#)   <!--- AND employee_id =2714  --->
+		WHERE branch = '#SESSION.branch#'  AND (app_employee_payroll_clock.Time_In > '#DateFormat(pay_period_start, "yyyy-mm-dd")# 00:00:00.000' 00:00:00.000' AND app_employee_payroll_clock.Time_Out < #pay_period_end_week_plusone#)   <!--- AND employee_id =2714  --->
 		ORDER by APP_employees.last_name
  	</cfquery>
 <CFSET employeelist ="">
@@ -45,13 +45,13 @@
 <cfparam name="employee_total" default="0">
  <cfif IsDefined("form.SUBMIT") AND IsDefined("form.employee_ID") > 
  <cfquery name="update_time_null" datasource="jrgm">
- UPDATE App_Employee_Payroll_Clock SET payroll_approved = NULL, approved_by = NULL WHERE   Employee_ID IN (#employeelist#)  AND (app_employee_payroll_clock.Time_In > '#DateFormat(ds_date, "yyyy-mm-dd")# 00:00:00.000' AND app_employee_payroll_clock.Time_Out < #pay_period_end_week_plusone#)
+ UPDATE App_Employee_Payroll_Clock SET payroll_approved = NULL, approved_by = NULL WHERE   Employee_ID IN (#employeelist#)  AND (app_employee_payroll_clock.Time_In > '#DateFormat(pay_period_start, "yyyy-mm-dd")# 00:00:00.000' 00:00:00.000' AND app_employee_payroll_clock.Time_Out < #pay_period_end_week_plusone#)
  </cfquery>
  <CFSET mylist = #Form.EMPLOYEE_ID#>
 <cfloop  list = "#mylist#"   index = "i" >
  
   <cfquery name="update_time" datasource="jrgm">
- UPDATE App_Employee_Payroll_Clock SET payroll_approved = 1, approved_by = #SESSION.userid#  WHERE   Employee_ID = #i# AND (app_employee_payroll_clock.Time_In > '#DateFormat(ds_date, "yyyy-mm-dd")# 00:00:00.000' AND app_employee_payroll_clock.Time_Out < #pay_period_end_week_plusone#)
+ UPDATE App_Employee_Payroll_Clock SET payroll_approved = 1, approved_by = #SESSION.userid#  WHERE   Employee_ID = #i# AND (app_employee_payroll_clock.Time_In > '#DateFormat(pay_period_start, "yyyy-mm-dd")# 00:00:00.000' 00:00:00.000' AND app_employee_payroll_clock.Time_Out < #pay_period_end_week_plusone#)
  </cfquery></cfloop>
  <CFSET flag = 'uncheck'>
    <CFSET message = 'These pay periods have been approved'>
@@ -245,7 +245,7 @@ SELECT  Employee_ID , SUM(time_worked) As sumdailytime, in_out_status,ds_date
                <cfquery name="is_already_approved" datasource="jrgm">
        SELECT  *
        FROM app_employee_payroll_clock
-       WHERE Employee_ID  =#get_employees_with_time.Employee_ID# AND (app_employee_payroll_clock.Time_In > '#DateFormat(ds_date, "yyyy-mm-dd")# 00:00:00.000' AND app_employee_payroll_clock.Time_Out < #pay_period_end_week_plusone#)
+       WHERE Employee_ID  =#get_employees_with_time.Employee_ID# AND (app_employee_payroll_clock.Time_In > '#DateFormat(pay_period_start, "yyyy-mm-dd")# 00:00:00.000' 00:00:00.000' AND app_employee_payroll_clock.Time_Out < #pay_period_end_week_plusone#)
        AND payroll_approved IS NULL
          </cfquery> 
          <td align="center"     <cfif is_already_approved.recordcount  GT 0> bgcolor="##FFFFE8" </cfif>>

@@ -140,14 +140,14 @@ app_employees WHERE [Employee ID] = #empid#
          <cfif   timenow GT today_7PM>
           <cfquery name="get_employee_time_sum" datasource="jrgm" >
 SELECT Employee_ID,SUM(time_worked) AS sumtime FROM 
-app_employee_payroll_clock WHERE Employee_ID =#empid#  AND app_employee_payroll_clock.Time_In > '#DateFormat(ds_date, "yyyy-mm-dd")# 00:00:00.000'   AND in_out_status =2
+app_employee_payroll_clock WHERE Employee_ID =#empid#  AND app_employee_payroll_clock.Time_In > '#DateFormat(pay_period_start, "yyyy-mm-dd")# 00:00:00.000' 00:00:00.000'   AND in_out_status =2
 GROUP by Employee_ID
          </cfquery>
          
          <cfelse>
         <cfquery name="get_employee_time_sum" datasource="jrgm" >
 SELECT Employee_ID,SUM(time_worked) AS sumtime FROM 
-app_employee_payroll_clock WHERE Employee_ID =#empid#  AND app_employee_payroll_clock.Time_In > '#DateFormat(ds_date, "yyyy-mm-dd")# 00:00:00.000' AND    ds_date < '#todaydate_DS#' AND in_out_status =2
+app_employee_payroll_clock WHERE Employee_ID =#empid#  AND app_employee_payroll_clock.Time_In > '#DateFormat(pay_period_start, "yyyy-mm-dd")# 00:00:00.000' 00:00:00.000' AND    ds_date < '#todaydate_DS#' AND in_out_status =2
 GROUP by Employee_ID
          </cfquery>
          </cfif>
@@ -165,7 +165,7 @@ GROUP by Employee_ID
        <cfquery name="get_employee_time_by_day" datasource="jrgm">
 SELECT Employee_ID, SUM(time_worked) As sumdailytime, ds_id ,in_out_status,ds_date
  FROM app_employee_payroll_clock
- WHERE Employee_ID =#empid#  AND app_employee_payroll_clock.Time_In > '#DateFormat(ds_date, "yyyy-mm-dd")# 00:00:00.000'  AND in_out_status =2
+ WHERE Employee_ID =#empid#  AND app_employee_payroll_clock.Time_In > '#DateFormat(pay_period_start, "yyyy-mm-dd")# 00:00:00.000' 00:00:00.000'  AND in_out_status =2
  GROUP by Employee_ID, ds_date, ds_id ,in_out_status
  ORDER by ds_date DESC ,ds_id DESC
         </cfquery>
@@ -174,7 +174,7 @@ SELECT Employee_ID, SUM(time_worked) As sumdailytime, ds_id ,in_out_status,ds_da
  <cfquery name="get_employee_time_by_day" datasource="jrgm">
 SELECT Employee_ID, SUM(time_worked) As sumdailytime, ds_id ,in_out_status,ds_date 
  FROM app_employee_payroll_clock
- WHERE Employee_ID =#empid#  AND app_employee_payroll_clock.Time_In > '#DateFormat(ds_date, "yyyy-mm-dd")# 00:00:00.000'  AND    ds_date < '#todaydate_DS#' AND in_out_status =2
+ WHERE Employee_ID =#empid#  AND app_employee_payroll_clock.Time_In > '#DateFormat(pay_period_start, "yyyy-mm-dd")# 00:00:00.000' 00:00:00.000'  AND    ds_date < '#todaydate_DS#' AND in_out_status =2
  GROUP by Employee_ID, ds_date, ds_id ,in_out_status
  ORDER by ds_date DESC ,ds_id DESC
         </cfquery>

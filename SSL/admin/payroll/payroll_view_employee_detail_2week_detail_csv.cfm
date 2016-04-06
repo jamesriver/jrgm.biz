@@ -73,7 +73,7 @@
 		app_employee_payroll_clock  
 		INNER JOIN APP_employees
 		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
-		WHERE  app_employee_payroll_clock.Time_In > '#DateFormat(ds_date, "yyyy-mm-dd")# 00:00:00.000' AND  app_employee_payroll_clock.Time_In < #end_date_plus1#  AND FWW <> 1
+		WHERE  app_employee_payroll_clock.Time_In > '#DateFormat(pay_period_start, "yyyy-mm-dd")# 00:00:00.000' 00:00:00.000' AND  app_employee_payroll_clock.Time_In < #end_date_plus1#  AND FWW <> 1
 		ORDER by APP_employees.last_name
  </cfquery>
  
@@ -181,7 +181,7 @@ There are no employees with time for ths period.
    <cfquery name="get_all_employee_time_for_period" datasource="jrgm"      >
 	SELECT Employee_ID,  time_worked, in_out_status,ds_date 
  FROM app_employee_payroll_clock
- WHERE Employee_ID IN (#mylist#) AND app_employee_payroll_clock.Time_In > '#DateFormat(ds_date, "yyyy-mm-dd")# 00:00:00.000' AND  app_employee_payroll_clock.Time_In < #end_date_plus1#
+ WHERE Employee_ID IN (#mylist#) AND app_employee_payroll_clock.Time_In > '#DateFormat(pay_period_start, "yyyy-mm-dd")# 00:00:00.000' 00:00:00.000' AND  app_employee_payroll_clock.Time_In < #end_date_plus1#
  AND in_out_status =2
   </cfquery> 
         <cfparam name="current_date" default="1">
