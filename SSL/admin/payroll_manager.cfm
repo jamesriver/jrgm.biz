@@ -10,6 +10,11 @@
 <cfset tomorrow = dateadd("d",1,somedate)>
 <cfset todayDate_dow = DayOfWeek(todayDate)>
 
+  <cfquery name="get_all_employees" datasource="jrgm">
+SELECT     [Employee ID] AS employee_id, branch,[Name FirstLast] AS empname
+FROM         app_employees
+ </cfquery>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -71,10 +76,10 @@
           <tr>
             <td>#Employee_ID#</td>
             <td>#DateFormat(ds_date, "mm/dd/yyyy")#</td>
-            <cfquery name="get_many_hours_name" datasource="jrgm">
-SELECT     [Employee ID], branch,[Name FirstLast] AS empname
-FROM         app_employees
-WHERE   [Employee ID] = #Employee_ID#
+   <cfquery name="get_many_hours_name"  dbtype="query">
+SELECT    employee_id, branch,  empname
+FROM         get_all_employees
+WHERE   employee_id = #Employee_ID#
  </cfquery>
             <td>#get_many_hours_name.empname#</td>
             <td>#get_many_hours_name.branch#</td>
@@ -129,10 +134,50 @@ ORDER BY totalids DESC
           <tr>
             <td>#Employee_ID#</td>
             <td>#DateFormat(ds_date, "mm/dd/yyyy")#</td>
-            <cfquery name="get_many_hours_name" datasource="jrgm">
-SELECT     [Employee ID], branch,[Name FirstLast] AS empname
-FROM         app_employees
-WHERE   [Employee ID] = #Employee_ID#
+            <cfquery name="get_many_hours_name"  dbtype="query">
+SELECT    employee_id, branch,  empname
+FROM         get_all_employees
+WHERE   employee_id = #Employee_ID#
+ </cfquery>
+            <td>#get_many_hours_name.empname#</td>
+            <td>#get_many_hours_name.branch#</td>
+            <td>#totalids#</td>
+            <cfquery name="get_many_hours_DSD" datasource="jrgm">
+SELECT     Employee_ID, ds_date, ID,ds_id
+FROM         app_employee_payroll_clock
+WHERE    ds_date =#ds_date#  AND Employee_ID = #Employee_ID# 
+</cfquery>
+            <td><a href="../admin/daily_sheet.cfm?dsid=#get_many_hours_DSD.ds_id#"  target="_blank">#get_many_hours_DSD.ds_id#</a></td>
+          </tr>
+        </cfoutput>
+      </table>
+       <br>
+      <strong class="lgaddress">Employees with only 1 time in per Day </strong>
+      <cfquery name="get_one_dsids" datasource="jrgm"  maxrows="50">
+SELECT     Employee_ID, ds_date, COUNT(ds_ID) AS totalids
+FROM         app_employee_payroll_clock
+WHERE     (ds_date > '#APPLICATION.blockdate#')  AND  (ds_date < '#APPLICATION.pay_period_week2_date#')  AND ds_date <> '#todaydate#'
+GROUP BY Employee_ID, ds_id,ds_date
+HAVING   COUNT(ds_ID) =1
+ORDER BY ds_date ASC  
+</cfquery>
+      <table class="sortable" border="0" cellspacing="0" cellpadding="0"   width="100%">
+        <tr height="40">
+          <td>Employee ID</td>
+          <td>Date</td>
+          <td>Name</td>
+          <td>Branch</td>
+          <td>Daily Time Ins</td>
+          <td>Daily Sheet</td>
+        </tr>
+        <cfoutput query="get_one_dsids">
+          <tr>
+            <td>#Employee_ID#</td>
+            <td>#DateFormat(ds_date, "mm/dd/yyyy")#</td>
+            <cfquery name="get_many_hours_name" dbtype="query">
+SELECT    employee_id, branch,  empname
+FROM         get_all_employees
+WHERE   employee_id = #Employee_ID#
  </cfquery>
             <td>#get_many_hours_name.empname#</td>
             <td>#get_many_hours_name.branch#</td>
@@ -147,7 +192,8 @@ WHERE    ds_date =#ds_date#  AND Employee_ID = #Employee_ID#
         </cfoutput>
       </table>
       <br>
-      <strong class="lgaddress">Employees with more than 13 Hours Per Day</strong>
+      <br>
+      <strong class="lgaddress">Employees with more than 13 Hours Per Day on ALL Daily Sheets</strong>
       <cfquery name="get_many_hours" datasource="jrgm">
 SELECT     Employee_ID, ds_date, SUM(time_worked) AS sumtimeworked
 FROM         app_employee_payroll_clock
@@ -172,10 +218,10 @@ ORDER BY sumtimeworked DESC
           <tr>
             <td>#Employee_ID#</td>
             <td>#DateFormat(ds_date, "mm/dd/yyyy")#</td>
-            <cfquery name="get_many_hours_name" datasource="jrgm">
-SELECT     [Employee ID], branch,[Name FirstLast] AS empname
-FROM         app_employees
-WHERE   [Employee ID] = #Employee_ID#
+            <cfquery name="get_many_hours_name" dbtype="query">
+SELECT    employee_id, branch,  empname
+FROM         get_all_employees
+WHERE   employee_id = #Employee_ID#
  </cfquery>
             <td>#get_many_hours_name.empname#</td>
             <td>#get_many_hours_name.branch#</td>
@@ -216,10 +262,10 @@ ORDER BY time_worked  ASC
           <tr>
             <td>#Employee_ID#</td>
             <td>#DateFormat(ds_date, "mm/dd/yyyy")#</td>
-            <cfquery name="get_many_hours_name" datasource="jrgm">
-SELECT     [Employee ID], branch,[Name FirstLast] AS empname
-FROM         app_employees
-WHERE   [Employee ID] = #Employee_ID#
+            <cfquery name="get_many_hours_name" dbtype="query">
+SELECT    employee_id, branch,  empname
+FROM         get_all_employees
+WHERE   employee_id = #Employee_ID#
  </cfquery>
             <td>#get_many_hours_name.empname#</td>
             <td>#get_many_hours_name.branch#</td>
