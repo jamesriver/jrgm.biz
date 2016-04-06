@@ -36,8 +36,8 @@
       </ul>
       <!--- <li><a title="JRGM Phone List" href="https://docs.google.com/a/jrgm.com/forms/d/1Xzca36B_5cezYnvPcVJyg2x8N6eQCADXJPC8ms7ozd0/viewform?usp=send_form" target="_blank">Crew Safety Inspection Form</a></li>
         <li><a title="JRGM Gate Check" href="https://docs.google.com/a/jrgm.com/forms/d/1PKSKtcxDlJNR8FdCL2JKDRGU1zisD521C5LPnJqYMs0/viewform?usp=send_form" target="_blank">Gate Check</a></li>
-        <li><a title="Leadership Behaviors" href="http://www.jrgm.biz/forms/IncidentReport.php" target="_blank">Incident Report</a></li>
-        <li><a title="JRGM Phone List" href="http://www.jrgm.biz/forms/injury.php" target="_blank">Injury Report</a></li>
+        <li><a title="Leadership Behaviors" href="/forms/IncidentReport.php" target="_blank">Incident Report</a></li>
+        <li><a title="JRGM Phone List" href="/forms/injury.php" target="_blank">Injury Report</a></li>
         <li><a title="Leadership Behaviors" href="http://garden.jrgm.com/wp-content/uploads/2012/11/James-River-Leadership-Behaviors.pdf" target="_blank">JRGM Leadership Behaviors</a></li>
         <li><a href="https://docs.google.com/a/jrgm.com/forms/d/1RLdgrKjQrwSokB1khL0bVsV5c1vj-Q-MwZotzxrm6GU/viewform?usp=send_form" target="_blank">Quality Control Audit</a></li>
         <li><a href="https://docs.google.com/a/jrgm.com/forms/d/1yHc5FJBRXDKaSBTExF82vrFN-hL8mNquYgAgOJAKf9U/viewform" target="_blank">Shop Inspection Form</a></li>
