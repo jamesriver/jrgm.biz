@@ -2,7 +2,7 @@
 <cfset todayDate = Now()>
 <cfset today_datex = #DateFormat(todayDate, "mm/dd/yyyy")#>
 <cfset mytime = timeFormat(now(), "hh:mm tt")>
-<cfset daysago7 = dateadd("d",-14,today_datex)>
+<cfset daysago14 = dateadd("d",-14,today_datex)>
 
 <!doctype html>
 <html>

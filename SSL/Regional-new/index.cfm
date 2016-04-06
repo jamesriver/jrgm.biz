@@ -401,7 +401,7 @@ WHERE  employee_ID = #Employee_ID#
                         <cfquery name="get_ds_id" datasource="jrgm">
 SELECT     Employee_ID, ds_date, ID,ds_id,time_in,time_out
 FROM         app_employee_payroll_clock
-WHERE    ds_date =#ds_date#  AND Employee_ID = #Employee_ID# 
+WHERE    ds_date =#ds_date#  AND Employee_ID = #Employee_ID#
 ORDER by time_IN ASC
  </cfquery>
                         <td> DSID: <a href="daily_sheet.cfm?dsid=#get_ds_id.ds_id#"  target="_blank">#get_ds_id.ds_id#</a><br>
