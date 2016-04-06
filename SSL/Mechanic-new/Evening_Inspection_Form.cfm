@@ -65,9 +65,13 @@ FROM app_employees  WHERE  [Employee ID]  = #get_evening_inspections.Crew_Leader
               <td align="left"><cfoutput>#get_CL_info.phone_cell#</cfoutput></td> 
             </tr>
          <cfoutput query="get_evening_inspections">  
-                 <tr>
+                <!--- <tr>
                     <td>Oil Change Due</td>
                     <td>#dateformat(get_evening_inspections.oil_change_mileage_due,"mm/dd/yy")# </td>
+                  </tr>--->
+                     <tr>
+                    <td>Oil Change Due</td>
+                    <td> <cfif  get_evening_inspections.oil_change_mileage_due IS ""  OR get_evening_inspections.oil_change_mileage_due EQ 0 >-<cfelse>#oil_change_mileage_due# </cfif></td>
                   </tr>
                   <tr>
                     <td>Inspection Due</td>
