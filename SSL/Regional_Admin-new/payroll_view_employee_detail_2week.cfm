@@ -236,7 +236,7 @@ There are no employees with time for ths period.
             </cfoutput> 
               <cfquery name="get_employee_time_sum_w1" datasource="jrgm" >
 				SELECT Employee_ID,SUM(time_worked) AS sumtime FROM 
-				app_employee_payroll_clock WHERE Employee_ID =#get_employees_with_time.Employee_ID#  AND app_employee_payroll_clock.Time_In > #begin_date#    
+				app_employee_payroll_clock WHERE Employee_ID =#get_employees_with_time.Employee_ID#  AND app_employee_payroll_clock.Time_In > '#DateFormat(begin_date, "yyyy-mm-dd")# 00:00:00.000'
           		  AND app_employee_payroll_clock.Time_Out < '#DateFormat(midplus1_date, "yyyy-mm-dd")# 00:00:00.000' AND in_out_status =2  GROUP by Employee_ID
       		   </cfquery >
            <cfif  get_employee_time_sum_w1.recordcount EQ 0>
