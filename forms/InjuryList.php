@@ -238,7 +238,7 @@ while (!$recordset->EOF) {
 	<td align="right"><?php echo $BO_WorkerComp ?></td>
 	<td align="right"><?php echo $BO_WorkerCompNo ?></td>
     <td align="right"><?php echo $BO_Status ?></td>
-	<td align="right"><a href="http://www.jrgm.biz/forms/injury_bo.php?id=<?php echo $ID ?>" target="_blank">View Report</a></td>
+	<td align="right"><a href="/forms/injury_bo.php?id=<?php echo $ID ?>" target="_blank">View Report</a></td>
 	<td align="right">
       <?php if(isset($InjuryRpt_File)) { ?>
       <a <?php echo "href='photos/injury_reports/$InjuryRpt_File'"?> target="_blank"><img src="images/pdf_file.png" width="24" height="24" />

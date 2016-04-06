@@ -191,7 +191,7 @@ SELECT  * FROM Form_IncidentReport   ORDER  by  IR_ID DESC
     <td align="right">#BO_FinalLoss#</td>
     <td align="right">#BO_IsFine#</td>
     <td align="right">#BO_Status#</td>
-    <td align="right"><a href="http://www.jrgm.biz/forms/incidentreport_bo.php?id=#IR_ID#" target="_blank">View Report</a></td>
+    <td align="right"><a href="/forms/incidentreport_bo.php?id=#IR_ID#" target="_blank">View Report</a></td>
   <cfdirectory action="list" directory="C:\inetpub\websites\jrgm.biz\forms\photos\incident_reports\" name="incident_reports" recurse="true">
     <cfquery name="incident_reports" dbtype="query">
     SELECT   *

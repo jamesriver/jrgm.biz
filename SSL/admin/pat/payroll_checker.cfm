@@ -42,7 +42,7 @@ WHERE   [Employee ID] = #Employee_ID#
     <cfquery name="get_many_hours_DSD" datasource="jrgm">
 SELECT     Employee_ID, ds_date, ID,ds_id
 FROM         app_employee_payroll_clock
-WHERE    ds_date =#ds_date#  AND Employee_ID = #Employee_ID# 
+WHERE    ds_date ='#DateFormat(ds_date, "yyyy-mm-dd")#'  AND Employee_ID = #Employee_ID#
 </cfquery>
   <cfloop query="get_many_hours_DSD">  <td><a href="../daily_sheet.cfm?dsid=#get_many_hours_DSD.ds_id#">#get_many_hours_DSD.ds_id#</a></td></cfloop>
     </tr>
@@ -86,7 +86,7 @@ WHERE   [Employee ID] = #Employee_ID#
     <cfquery name="get_many_hours_DSD" datasource="jrgm">
 SELECT     Employee_ID, ds_date, ID,ds_id
 FROM         app_employee_payroll_clock
-WHERE    ds_date =#ds_date#  AND Employee_ID = #Employee_ID# 
+WHERE    ds_date ='#DateFormat(ds_date, "yyyy-mm-dd")#'  AND Employee_ID = #Employee_ID#
 </cfquery>
   <cfloop query="get_many_hours_DSD">  <td><a href="../daily_sheet.cfm?dsid=#get_many_hours_DSD.ds_id#">#get_many_hours_DSD.ds_id#</a></td></cfloop>
     </tr>
@@ -130,7 +130,7 @@ WHERE   [Employee ID] = #Employee_ID#
     <cfquery name="get_many_hours_DSD" datasource="jrgm">
 SELECT     Employee_ID, ds_date, ID,ds_id
 FROM         app_employee_payroll_clock
-WHERE    ds_date =#ds_date#  AND Employee_ID = #Employee_ID# 
+WHERE    ds_date ='#DateFormat(ds_date, "yyyy-mm-dd")#'  AND Employee_ID = #Employee_ID#
 </cfquery>
   <cfloop query="get_many_hours_DSD">  <td><a href="../daily_sheet.cfm?dsid=#get_many_hours_DSD.ds_id#">#get_many_hours_DSD.ds_id#</a></td></cfloop>
     </tr>
@@ -172,7 +172,7 @@ WHERE   [Employee ID] = #Employee_ID#
      <cfquery name="get_many_hours_DSD" datasource="jrgm" >
 SELECT     ds_id
 FROM         app_employee_payroll_clock
-WHERE    ds_date =#ds_date#  AND Employee_ID = #Employee_ID# 
+WHERE    ds_date ='#DateFormat(ds_date, "yyyy-mm-dd")#'  AND Employee_ID = #Employee_ID#
 </cfquery>
   <cfloop query="get_many_hours_DSD" >  <td><a href="../daily_sheet.cfm?dsid=#get_many_hours_DSD.ds_id#">#get_many_hours_DSD.ds_id#</a></td></cfloop>
 

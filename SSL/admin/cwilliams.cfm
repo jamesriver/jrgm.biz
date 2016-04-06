@@ -63,12 +63,12 @@ li {
  <td>
    <div class="dashboardHeader">Incident</div>
     <ul>
-      <li><a href="http://jrgm.biz/forms/irlist.cfm">Incident Report List</a></li>
+      <li><a href="/forms/irlist.cfm">Incident Report List</a></li>
       <li><a href="/forms/IncidentReport.php" target="_blank">Start a new Incident Report</a></li>
     </ul>
  <div class="dashboardHeader">Injury</div>
     <ul>
-      <li><a href="http://jrgm.biz/forms/injurylist.php">Injury Report List</a></li>
+      <li><a href="/forms/injurylist.php">Injury Report List</a></li>
       <li><a href="/forms/injury.php" target="_blank">Start a new Injury Report</a></li>
     </ul>
   </td>

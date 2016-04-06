@@ -150,12 +150,12 @@ License: You must have a valid license purchased only from themeforest(the above
     <div class="container-fluid"> 
       
       <!-- BEGIN PAGE CONTENT INNER -->
-      <cfset today_datex = #DateAdd('d', 0, DateFormat(todayDate, "mm/dd/yyyy"))#>
-      <cfset today_datexy = #DateAdd('d', 0, DateFormat(yesterday, "mm/dd/yyyy"))#>
+      <cfset today_datex = #DateFormat(todayDate, "mm/dd/yyyy")#>
+      <cfset today_datexy = #DateFormat(yesterday, "mm/dd/yyyy")#>
       <!---   Get the first time in of today --->
       <cfquery name="get_first_time_in" datasource="jrgm">
  SELECT MIN(ID) AS  first_id_oftheday  
- FROM APP_Employee_Payroll_Clock WHERE entry_method IS NULL AND ds_date = #today_datex#  
+ FROM APP_Employee_Payroll_Clock WHERE entry_method IS NULL AND ds_date = '#today_datex#'  
  </cfquery>
       <!---<cfdump var="#get_first_time_in#">--->
       
@@ -166,7 +166,7 @@ License: You must have a valid license purchased only from themeforest(the above
  </cfquery>
       </cfif>
       <cfquery name="get_APK_time_after_DSID" datasource="jrgm">
- SELECT  DISTINCT ds_id   FROM APP_Employee_Payroll_Clock WHERE entry_method IS NULL AND ds_date < #today_datex# AND ID > #get_first_time_in.first_id_oftheday#    
+ SELECT  DISTINCT ds_id   FROM APP_Employee_Payroll_Clock WHERE entry_method IS NULL AND ds_date < '#today_datex#' AND ID > #get_first_time_in.first_id_oftheday#    
   </cfquery>
       <CFSET mylist ="0">
       <cfloop query="get_APK_time_after_DSID" >
@@ -396,7 +396,6 @@ WHERE  employee_ID = #Employee_ID#
 
                         <td>#get_many_hours_name.employee_name#</td>
                         <!---    <td>#get_many_hours_name.branch#</td> --->
-<cfabort>
                         <cfquery name="get_ds_id" datasource="jrgm">
 SELECT     Employee_ID, ds_date, ID,ds_id,Time_In, Time_Out
 FROM         app_employee_payroll_clock
