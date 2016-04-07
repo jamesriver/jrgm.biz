@@ -13,7 +13,7 @@
      <td align="right"><a href="daily_sheet.cfm"><img src="images/icon_dailysheet.png" alt="Daily Sheet" width="60" height="60" /></a>
  <a href="forms.cfm"><img src="images/icon_forms.png" alt="Daily Sheet" width="60" height="60" /></a>
 
-      <a  href="default.cfm"><img src="images/icon_home.png" alt="Home" width="60" height="60" /></a> <a  href="http://www.jrgm.biz/index.cfm"><img src="images/icon_logout.png" alt="Logout" width="60" height="60" /></a> </td>
+      <a  href="default.cfm"><img src="images/icon_home.png" alt="Home" width="60" height="60" /></a> <a  href="/index.cfm"><img src="images/icon_logout.png" alt="Logout" width="60" height="60" /></a> </td>
       <td><img src="images/clear.gif" width="10" height="1" /></td>
       <!---   <td><div id="google_translate_element"></div><script type="text/javascript">
 function googleTranslateElementInit() {

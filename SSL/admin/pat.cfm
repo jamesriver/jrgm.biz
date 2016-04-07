@@ -196,7 +196,7 @@ table.sortable span.sortarrow {
          <td class="subbartxt"  ><a href="/ssl/admin/inventory.cfm">Equipment</a></td>
         <td class="subbartxt" ><a href="/ssl/admin/directory.cfm">Directory</a></td>
         <td class="subbartxt"  ><a href="/ssl/admin/default.cfm">Home</a></td>
-        <td class="subbartxt" ><a href="https://www.jrgm.biz">Log Out</a></td>
+        <td class="subbartxt" ><a href="/">Log Out</a></td>
         <td class="subbartxt"  width="100"></td>
       </tr>
     </table>

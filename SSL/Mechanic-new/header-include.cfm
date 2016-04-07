@@ -11,7 +11,7 @@
     <div class="top-menu">
       
         <a href="#myModal-01" role="button" class="btn btn-primary btn-sm" data-toggle="modal">Feedback</a>
-      <span class="separator"></span> <!--<a href="help-center.cfm" class="btn btn-default"><i class="fa fa-question-circle"></i> Help Center </a>--> <a href="index.cfm" class="btn btn-default"><i class="fa fa-home"></i> Home </a> <a href="http://www.jrgm.biz/indexnew.cfm" class="btn btn-default"><i class="fa fa-sign-out"></i> Logout </a> </div>
+      <span class="separator"></span> <!--<a href="help-center.cfm" class="btn btn-default"><i class="fa fa-question-circle"></i> Help Center </a>--> <a href="index.cfm" class="btn btn-default"><i class="fa fa-home"></i> Home </a> <a href="/indexnew.cfm" class="btn btn-default"><i class="fa fa-sign-out"></i> Logout </a> </div>
   </div>
 </div>
 <!-- END HEADER INCLUDE --> 

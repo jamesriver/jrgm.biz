@@ -182,7 +182,7 @@ WHERE Employee_ID = #SESSION.userid#
  <cfset SESSION.screenname = "JRGM Admin">
  <cflocation url="/ssl/admin/patip.cfm">--->
  <cfelse>
- <cflocation url="http://www.jrgm.biz/index.cfm?message=invalid">
+ <cflocation url="/index.cfm?message=invalid">
 </cfif>
 </body>
 </html>

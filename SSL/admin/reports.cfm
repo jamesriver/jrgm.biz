@@ -63,7 +63,7 @@
         <td valign="top"><div class="subheader">Equipment Reports</div>
           <ul class="dashboard">
             <li><a href="inventory.cfm">Repair Report</a></li>
-            <li><a href="https://www.jrgm.biz/ssl/admin/Log_Repair_logs.cfm">Repair Logs</a></li>
+            <li><a href="/ssl/admin/Log_Repair_logs.cfm">Repair Logs</a></li>
             <li><a href="inventory_list_report_miscategorized.cfm">Uncategorized Equipment</a></li>
             <li><a href="inventory_list_report_dupeqid.cfm">Duplicate Equipment ID Report</a></li>
             <li><a href="inventory_list_report_dupserial.cfm">Duplicate Serial Number Report</a></li>

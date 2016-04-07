@@ -352,7 +352,7 @@ SELECT * FROM equipment WHERE ID = #url.id#
   <!-- to clear footer -->
 </div>
 <!-- end outer div -->
- <footer><a href="http://www.jrgm.biz/"><img src="http://www.jrgm.biz/images/logo.png" width="281" height="66" /></a></footer>
+ <footer><a href="/"><img src="/images/logo.png" width="281" height="66" /></a></footer>
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
 <!-- // <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap.min.js"></script> -->
 <script scr="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/js/bootstrap.min.js"></script>

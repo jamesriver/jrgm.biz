@@ -24,8 +24,8 @@
         <a href="/ssl/branch/forms.cfm"><img src="images/icon_forms.png" alt="Forms" class="icons" /></a>
         </td>
       <!-- .btn-group -->
-      <td align="right"><!--<a href="http://www.jrgm.biz/supervisors/proposal.cfm" class="btn btn-primary">Proposal Maker</a><a href="http://www.jrgm.biz/supervisors/forms.cfm" class="btn btn-primary">Forms</a> -->
-        <a href="default.cfm"><img src="images/icon_home.png" alt="Home" class="icons" /></a> <a href="http://www.jrgm.biz/index.cfm"><img src="images/icon_logout.png" alt="Logout" class="icons" /></a> </td>
+      <td align="right"><!--<a href="/supervisors/proposal.cfm" class="btn btn-primary">Proposal Maker</a><a href="/supervisors/forms.cfm" class="btn btn-primary">Forms</a> -->
+        <a href="default.cfm"><img src="images/icon_home.png" alt="Home" class="icons" /></a> <a href="/index.cfm"><img src="images/icon_logout.png" alt="Logout" class="icons" /></a> </td>
     </tr>
   </table>
 </div>

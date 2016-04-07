@@ -11,7 +11,7 @@
           <li class="menu-dropdown classic-menu-dropdown clearfix"><a href="/ssl/admin/inventory.cfm">Equipment</a> </li>
           <li class="menu-dropdown classic-menu-dropdown clearfix"><a href="/ssl/admin/directory.cfm">Directory</a> </li>
          <!--- <li class="menu-dropdown classic-menu-dropdown clearfix"><a href="/ssl/admin/default.cfm">Home</a> </li>
-          <li class="menu-dropdown classic-menu-dropdown clearfix"><a href="https://www.jrgm.biz">Log Out</a> </li>--->
+          <li class="menu-dropdown classic-menu-dropdown clearfix"><a href="/">Log Out</a> </li>--->
       </ul>
     </div>
   </div>

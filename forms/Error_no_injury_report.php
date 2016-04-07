@@ -6,7 +6,7 @@
         </title>
         <script type="text/javascript" language="javascript">
              function redirect(){
-                document.location.href="http://jrgm.biz/forms/injurylist.php";
+                document.location.href="/forms/injurylist.php";
              }
         </script>
     </head>

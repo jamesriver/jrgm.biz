@@ -10,7 +10,7 @@
  <cfinclude template="../../application.cfm">
  
  
-  <cflocation url="http://www.jrgm.biz/">
+  <cflocation url="/">
 </cfif> 
 <cfset theDate = #Now()#>
  

@@ -11,7 +11,7 @@
 
         <td align="right">
          <a href="default.cfm"><img src="images/icon_home.png" alt="Home" width="60" height="60" class="icons"></a> 
-         <a href="http://www.jrgm.biz/index.cfm"><img src="images/icon_logout.png" alt="Logout" width="60" height="60" class="icons" /></a>
+         <a href="/index.cfm"><img src="images/icon_logout.png" alt="Logout" width="60" height="60" class="icons" /></a>
       </td>
       </tr>
     </table>

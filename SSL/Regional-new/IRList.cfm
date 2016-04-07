@@ -133,7 +133,7 @@ SELECT  * FROM Form_IncidentReport   ORDER  by  incidentRpt_Date DESC
     <td><div align="right">#BO_FinalLoss#</div></td>
     <td><div align="right">#BO_IsFine#</div></td>
     <td><div align="right">#BO_Status#</div></td>
-    <td><div align="center"><a href="http://www.jrgm.biz/forms/incidentreport_bo.php?id=#IR_ID#" target="_blank">View</a></div></td>
+    <td><div align="center"><a href="/forms/incidentreport_bo.php?id=#IR_ID#" target="_blank">View</a></div></td>
   <cfquery name="incident_reports" dbtype="query">
     SELECT   * 
     from incident_reports
@@ -141,7 +141,7 @@ SELECT  * FROM Form_IncidentReport   ORDER  by  incidentRpt_Date DESC
 </cfquery>
 <cfif  incident_reports.recordcount GT 0>
   <td><div align="right">
-         <a href="http://www.jrgm.biz/forms/photos/incident_reports/#IR_ID#.pdf">  <img src="assets/admin/layout3/img/pdf_file.png" width="24" height="24" /> </a>
+         <a href="/forms/photos/incident_reports/#IR_ID#.pdf">  <img src="assets/admin/layout3/img/pdf_file.png" width="24" height="24" /> </a>
      </div></td>
      <cfelse>
        <td><div align="center"> - </div></td>

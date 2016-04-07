@@ -268,10 +268,10 @@ while (!$recordset->EOF) {
     <td align="right"><?php echo $BO_FinalLoss ?></td>
     <td align="right"><?php echo $BO_IsFine ?></td>
     <td align="right"><?php echo $BO_Status ?></td>
-    <td align="right"><a href="http://www.jrgm.biz/forms/incidentreport_bo.php?id=<?php echo $ID ?>" target="_blank">View Report</a></td>
+    <td align="right"><a href="/forms/incidentreport_bo.php?id=<?php echo $ID ?>" target="_blank">View Report</a></td>
     <td align="right">
       <?php if(isset($IncidentRpt_File)) {?>
-      <a <?php echo "href='http://www.jrgm.biz/forms/photos/incident_reports/$IncidentRpt_File'"?> target="_blank"><img src="http://www.jrgm.biz/forms/images/pdf_file.png" width="24" height="24" /></a> 
+      <a <?php echo "href='/forms/photos/incident_reports/$IncidentRpt_File'"?> target="_blank"><img src="/forms/images/pdf_file.png" width="24" height="24" /></a>
       <?php }?>
     </td>
     </tr>

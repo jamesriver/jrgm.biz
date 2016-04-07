@@ -110,9 +110,9 @@ License: You must have a valid license purchased only from themeforest(the above
               <!---<ul>
 								<li><a title="Crew Safety Inspection Form" href="https://docs.google.com/a/jrgm.com/forms/d/1Xzca36B_5cezYnvPcVJyg2x8N6eQCADXJPC8ms7ozd0/viewform?usp=send_form" target="_blank">Crew Safety Inspection Form</a></li>
 								<li><a href="https://docs.google.com/a/jrgm.com/forms/d/1PKSKtcxDlJNR8FdCL2JKDRGU1zisD521C5LPnJqYMs0/viewform?usp=send_form" target="_blank">Gate Check</a></li>
-								<li><a href="http://www.jrgm.biz/forms/IncidentReport.php" title="Incident Report" target="_blank" >Incident Report</a></li>
+								<li><a href="/forms/IncidentReport.php" title="Incident Report" target="_blank" >Incident Report</a></li>
                                 <li><a href="IRList.cfm">Incident Report List</a></li>
-        					    <li><a title="Injury Report" href="http://www.jrgm.biz/forms/injury.php" target="_blank">Injury Report</a></li>
+        					    <li><a title="Injury Report" href="/forms/injury.php" target="_blank">Injury Report</a></li>
         						<li><a href="InjuryList.cfm">Injury Report List</a></li>
        							<li><a title="PTO Request" href="https://docs.google.com/a/jrgm.com/forms/d/1YxbZHPSg6Iw8Ke-SOoJ3j92LTPJsQ0_6CuhzBoHrzOk/viewform" target="_blank">PTO Request</a></li>
      							<li><a href="https://docs.google.com/a/jrgm.com/forms/d/1RLdgrKjQrwSokB1khL0bVsV5c1vj-Q-MwZotzxrm6GU/viewform?usp=send_form" target="_blank">Quality Control Audit</a></li>

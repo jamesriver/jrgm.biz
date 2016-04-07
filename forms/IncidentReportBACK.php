@@ -754,8 +754,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			    $recordsetImgListEml->movefirst();
 			    while (!$recordsetImgListEml->EOF){ //will automatically return false when out of records
 				    $msgBody .= "<tr><td align='center'>$ImageCnt</td> ";
-				    $msgBody .= "<td><a target='_blank' href='http://jrgm.biz/forms/photos/".$recordsetImgListEml->fields['ImageName']->value."'>".$recordsetImgListEml->fields['ImageName']->value."</a></td>";
-				    $msgBody .= "<td><Img src='http://jrgm.biz/forms/photos/". $recordsetImgListEml->fields['ImageName']->value."' width='55px' height='30px'></img></td></tr>";
+				    $msgBody .= "<td><a target='_blank' href='/forms/photos/".$recordsetImgListEml->fields['ImageName']->value."'>".$recordsetImgListEml->fields['ImageName']->value."</a></td>";
+				    $msgBody .= "<td><Img src='/forms/photos/". $recordsetImgListEml->fields['ImageName']->value."' width='55px' height='30px'></img></td></tr>";
 		    
 				    $recordsetImgListEml->MoveNext(); 
 				    $ImageCnt = $ImageCnt + 1;
@@ -767,7 +767,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	    }
 
     //$msgBody .= "<a href='http://localhost:8081/uat/incidentreport_bo.php?id=".$IncidentRpt_ID."'> Click here to complete the incident report!</a>";
-    $msgBody .= "<a href='http://jrgm.biz/forms/incidentreport_bo.php?id=".$IncidentRpt_ID."'> Click here to complete the incident report!</a>";
+    $msgBody .= "<a href='/forms/incidentreport_bo.php?id=".$IncidentRpt_ID."'> Click here to complete the incident report!</a>";
     $msgBody .= "</br> ";
     $msgBody .= "</br> ";
     $msgBody .= "<div style='padding-top:30px;'><h3>Thanks</h3></div>";                   

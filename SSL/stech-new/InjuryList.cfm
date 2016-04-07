@@ -123,7 +123,7 @@ SELECT  * FROM Form_InjuryReport   ORDER  by  IR_ID DESC
     <td><div align="left">#Branch#</div></td>  
     <td nowrap="nowrap">#DateFormat("#ReportedDate#", "mm/dd/yyyy")#</td>
     <td><div align="right">#BO_Status#</div></td>
-     <td><div align="center"><a href="http://www.jrgm.biz/forms/injury_bo.php?id=#IR_ID#" target="_blank">View</a></div></td>
+     <td><div align="center"><a href="/forms/injury_bo.php?id=#IR_ID#" target="_blank">View</a></div></td>
  
  
  <cfquery name="injury_reports" dbtype="query">
@@ -134,7 +134,7 @@ SELECT  * FROM Form_InjuryReport   ORDER  by  IR_ID DESC
 <cfif  injury_reports.recordcount GT 0>
 
   <td><div align="right">
-         <a href="http://www.jrgm.biz/forms/photos/injury_reports/#IR_ID#.pdf">  <img src="assets/admin/layout3/img/pdf_file.png" width="24" height="24" /> </a>
+         <a href="/forms/photos/injury_reports/#IR_ID#.pdf">  <img src="assets/admin/layout3/img/pdf_file.png" width="24" height="24" /> </a>
      </div></td>
      <cfelse>
        <td><div align="center"> - </div></td>

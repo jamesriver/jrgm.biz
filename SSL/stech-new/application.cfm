@@ -1,4 +1,4 @@
-﻿ <cflocation url="http://www.jrgm.biz/">
+﻿ <cflocation url="/">
  
  
  
@@ -15,7 +15,7 @@
 <cfinclude template="../../application.cfm">
 
 <cfif NOT IsDefined("Session.USERID")>
-  <cflocation url="http://www.jrgm.biz/">
+  <cflocation url="/">
 </cfif>
 
 

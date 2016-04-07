@@ -8,7 +8,7 @@
                              <a href="/ssl/mechanic/forms.cfm"><img src="images/icon_forms.png" width="60" height="60" alt="Forms" class="icons" /></a>
          </td><!--- <td width="500"></td>  --->
        <td align="right"> 
-        <a href="default.cfm"><img src="images/icon_home.png" alt="Home" width="60" height="60" class="icons" /></a> <a href="http://www.jrgm.biz/index.cfm"><img src="images/icon_logout.png" alt="Logout" width="60" height="60" class="icons" /></a> </td>
+        <a href="default.cfm"><img src="images/icon_home.png" alt="Home" width="60" height="60" class="icons" /></a> <a href="/index.cfm"><img src="images/icon_logout.png" alt="Logout" width="60" height="60" class="icons" /></a> </td>
     </tr>
   </table>
 </div>

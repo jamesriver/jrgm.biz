@@ -25,7 +25,7 @@ SELECT t1.*, t2.service_name FROM job_services_clock AS T1 INNER JOIN services_l
         <td align="right"><a href="/ssl/crew_leaders/daily_sheet.cfm" class="formsb">Daily Sheet</a>
           <!--  <a href="/ssl/crew_leaders/forms.cfm" class="formsb">Forms</a>
 -->
-          <a  href="/ssl/crew_leaders/default.cfm"class="formsb">Home</a> <a  href="http://www.jrgm.biz/index.cfm"class="formsb">Log Out</a> </td>
+          <a  href="/ssl/crew_leaders/default.cfm"class="formsb">Home</a> <a  href="/index.cfm"class="formsb">Log Out</a> </td>
         <td><img src="images/clear.gif" width="10" height="1" /></td>
         <!---   <td><div id="google_translate_element"></div><script type="text/javascript">
 function googleTranslateElementInit() {

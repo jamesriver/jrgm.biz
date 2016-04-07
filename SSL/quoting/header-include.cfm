@@ -7,7 +7,7 @@
  
 	 
 	  <div class="top-menu">
-      <span class="separator"></span>  <a href="default.cfm" class="btn btn-default"><i class="fa fa-home"></i> Home </a> <a href="http://www.jrgm.biz/indexnew.cfm" class="btn btn-default"><i class="fa fa-sign-out"></i> Logout </a> 
+      <span class="separator"></span>  <a href="default.cfm" class="btn btn-default"><i class="fa fa-home"></i> Home </a> <a href="/indexnew.cfm" class="btn btn-default"><i class="fa fa-sign-out"></i> Logout </a>
       </div></div>
   </div>
 

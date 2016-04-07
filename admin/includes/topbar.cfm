@@ -18,7 +18,7 @@
             </ul>
           </div> --->
         <a href=""><img src="images/icon_payroll.png"  width="60" height="60"  class="icons"/></a> <a href="/ssl/admin/daily_sheet_listing.cfm"><img src="images/icon_dailysheet.png" width="60" height="60"  class="icons"/></a> <cfoutput><a href="/ssl/admin/scheduler_select.cfm"><img src="images/icon_jobs.png" width="60" height="60" alt="Jobs" class="icons" /></a></cfoutput> <cfoutput><a href="/ssl/admin/scheduler_select.cfm"><img src="images/icon_crews.png" width="60" height="60" alt="Crews" class="icons" /></a></cfoutput> <cfoutput><a href="/ssl/admin/inventory.cfm"><img src="images/icon_inventory.png" width="60" height="60" alt="Crews" class="icons" /></a></cfoutput> </td>
-      <td align="right"><a href="default.cfm"><img src="images/icon_home.png" alt="Home" width="60" height="60" class="icons" /></a> <a href="http://www.jrgm.biz/index.cfm"><img src="images/icon_logout.png" alt="Logout" width="60" height="60" class="icons" /></a> </td>
+      <td align="right"><a href="default.cfm"><img src="images/icon_home.png" alt="Home" width="60" height="60" class="icons" /></a> <a href="/index.cfm"><img src="images/icon_logout.png" alt="Logout" width="60" height="60" class="icons" /></a> </td>
     </tr>
   </table>
 </div>

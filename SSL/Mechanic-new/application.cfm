@@ -57,5 +57,5 @@
  
  
 <cfif NOT IsDefined("Session.USERID")>
-  <cflocation url="http://www.jrgm.biz/">
+  <cflocation url="/">
 </cfif>

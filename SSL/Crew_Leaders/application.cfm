@@ -17,14 +17,14 @@
   --->
 
 <!---<cfif NOT IsDefined("SESSION.USERID")>
-  <cflocation url="http://www.jrgm.biz/">
+  <cflocation url="/">
 </cfif>
 ---><cfset todayDate_DS = DateFormat(Now(),"mm/dd/yyyy")>
 
 <!--- See if Session Daily Sheet exists from yesterday- if so logout  --->
 <!---<cfif  IsDefined("Session.DS_ID") AND IsDefined("Session.logindate")>
 <cfif Session.logindate NEQ todayDate_DS>
-<cflocation url="http://www.jrgm.biz/">
+<cflocation url="/">
 </cfif>
 </cfif>
 

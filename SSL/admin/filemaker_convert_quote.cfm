@@ -153,5 +153,5 @@
         )
     </cfquery>
 
-    <cflocation url="http://www.jrgm.biz/SSL/quoting-new/quote_data_entry.cfm?ID=#result_insert_quote_start["GENERATEDKEY"]#">
+    <cflocation url="/SSL/quoting-new/quote_data_entry.cfm?ID=#result_insert_quote_start["GENERATEDKEY"]#">
 </cfif>

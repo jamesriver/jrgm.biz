@@ -803,14 +803,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
      //                $tempFile = explode(".", $recordsetImgListEml->fields["ImageName"]->value);
      //                $fileextension = mb_strtolower(end($tempFile));
 				 //    $msgBody .= "<tr><td align='center'>$ImageCnt</td> ";
-				 //    $msgBody .= "<td><a target='_blank' href='http://jrgm.biz/forms/photos/".$recordsetImgListEml->fields['ImageName']->value."'>".$recordsetImgListEml->fields['ImageName']->value."</a></td>";
+				 //    $msgBody .= "<td><a target='_blank' href='/forms/photos/".$recordsetImgListEml->fields['ImageName']->value."'>".$recordsetImgListEml->fields['ImageName']->value."</a></td>";
      //                if ($fileextension == "pdf") {
-     //                    $msgBody .= "<td><Img src='http://jrgm.biz/forms/images/pdf.jpg' width='55px' height='30px'></img></td></tr>";
+     //                    $msgBody .= "<td><Img src='/forms/images/pdf.jpg' width='55px' height='30px'></img></td></tr>";
      //                } else if (in_array($fileextension, array('png','jpeg','jpg','gif','pjpeg'))) {
-     //                    $msgBody .= "<td><Img src='http://jrgm.biz/forms/photos/". $recordsetImgListEml->fields['ImageName']->value."' width='55px' height='30px'></img></td></tr>";
+     //                    $msgBody .= "<td><Img src='/forms/photos/". $recordsetImgListEml->fields['ImageName']->value."' width='55px' height='30px'></img></td></tr>";
      //                }
      //                else {
-     //                    $msgBody .= "<td><Img src='http://jrgm.biz/forms/images/file.jpg' width='55px' height='30px'></img></td></tr>";
+     //                    $msgBody .= "<td><Img src='/forms/images/file.jpg' width='55px' height='30px'></img></td></tr>";
      //                }
 				     
 				 //    $recordsetImgListEml->MoveNext(); 
@@ -823,7 +823,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	    // }
 
         //$msgBody .= "<a href='http://localhost:8081/uat/incidentreport_bo.php?id=".$IncidentRpt_ID."'> Click here to complete the incident report!</a>";
-        $msgBody .= "<a href='http://jrgm.biz/forms/incidentreport_bo.php?id=".$IR_ID."'> Click here to complete the incident report!</a>";
+        $msgBody .= "<a href='/forms/incidentreport_bo.php?id=".$IR_ID."'> Click here to complete the incident report!</a>";
         $msgBody .= "</br> ";
         $msgBody .= "</br> ";
         $msgBody .= "<div style='padding-top:30px;'><h3>Thanks</h3></div>";                   

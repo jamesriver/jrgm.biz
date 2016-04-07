@@ -115,8 +115,8 @@
        <table border="0" cellspacing="0" cellpadding="0">
         <tr>
           <td><ul class="list">
-        <li><a title="Incident Report" href="http://www.jrgm.biz/forms/IncidentReport.php" target="_blank">Incident Report</a></li>
-        <li><a title="Injury Report" href="http://www.jrgm.biz/forms/injury.php" target="_blank">Injury Report</a></li>
+        <li><a title="Incident Report" href="/forms/IncidentReport.php" target="_blank">Incident Report</a></li>
+        <li><a title="Injury Report" href="/forms/injury.php" target="_blank">Injury Report</a></li>
          <li><a title="PTO Request" href="https://docs.google.com/a/jrgm.com/forms/d/1YxbZHPSg6Iw8Ke-SOoJ3j92LTPJsQ0_6CuhzBoHrzOk/viewform" target="_blank">PTO Request</a></li>
       </ul></td>
         </tr>

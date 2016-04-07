@@ -13,7 +13,7 @@
   <cfset todayDate = Now()>
 </CFIF>
  <cfif  IsDefined("Session.USERID")  AND Session.USERID EQ  '3298' >
-  <cflocation url="http://www.jrgm.biz/">
+  <cflocation url="/">
 </cfif>
 
  

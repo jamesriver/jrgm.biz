@@ -156,7 +156,7 @@ WHERE Employee_ID = #SESSION.userid#
  <cfelseif  username EQ 'crewleader' AND password EQ 'jrgm'  >
  <cflocation url="/ssl/crew_leaders/services.htm?pw=yes">
   <cfelse>
- <cflocation url="http://www.jrgm.biz/index.cfm?message=invalid">
+ <cflocation url="/index.cfm?message=invalid">
 </cfif>
 </body>
 </html>

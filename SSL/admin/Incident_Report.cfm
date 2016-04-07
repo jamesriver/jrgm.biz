@@ -174,7 +174,7 @@ table.sortable tbody td {
     <td align="right">Yes</td>
     <td align="right">$1,200.00</td>
     <td align="right">No</td>
-    <td align="right"><a href="http://www.jrgm.biz/forms/Incident_Report_full.htm" target="_blank">View Report</a></td>
+    <td align="right"><a href="/forms/Incident_Report_full.htm" target="_blank">View Report</a></td>
        </tr>
  </tbody>
 </table>

@@ -165,7 +165,7 @@ table.sortable tbody td {
     <td align="left">Oscar Jones</td>  
         <td align="left">Chesterfield</td>
        <td align="right">11/18/13</td>
-       <td align="right"><a href="http://www.jrgm.biz/forms/injury_Report_full.htm" target="_blank">View Report</a></td>
+       <td align="right"><a href="/forms/injury_Report_full.htm" target="_blank">View Report</a></td>
        </tr>
  </tbody>
 </table>

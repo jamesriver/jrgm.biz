@@ -121,11 +121,11 @@
     <td class="details_desc">&nbsp;</td>
   </tr>
   <tr>
-    <td class="details_desc"><a href="http://www.jrgm.biz/forms/IncidentReport.php" title="Incident Report" target="_blank" >Incident Report</a></td>
+    <td class="details_desc"><a href="/forms/IncidentReport.php" title="Incident Report" target="_blank" >Incident Report</a></td>
     <td class="details_desc"><a href="IRList.cfm">Incident Report List</a></td>
   </tr>
   <tr>
-    <td class="details_desc"><a title="Injury Report" href="http://www.jrgm.biz/forms/injury.php" target="_blank">Injury Report</a></td>
+    <td class="details_desc"><a title="Injury Report" href="/forms/injury.php" target="_blank">Injury Report</a></td>
     <td class="details_desc"><a href="InjuryList.php">Injury Report List</a></td>
   </tr>
   <tr>
