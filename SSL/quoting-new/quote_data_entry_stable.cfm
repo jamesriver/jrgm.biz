@@ -245,12 +245,6 @@
 <cfinclude template="../quoting-new/include_cffunctions.cfm">
 <cfinclude template="../quoting-new/include_sql_quote_data_entry_calculations.cfm">
 
-<!--- FORCE EDIT AN APPROVED QUOTE --->
-<cfset force_edit = 1>
-<!---cfif IsDefined('url.edit')>
-    <cfset force_edit = 1>
-</cfif--->
-
 <!--- GET LIST OF JOBS TO SHOW ASSOCIATION --->
 <cfquery name="get_all_jobs" datasource="jrgm"  >
     SELECT aj.[Job ID] as Job_ID, aj.[Wk Location Name] as Project_Name, aj.Status FROM app_jobs aj
@@ -420,14 +414,14 @@ i.mysize {
       <div class="button-boxer">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="quote_data_entry_print.cfm?ID=<cfoutput>#url.id#</cfoutput>" class="btn btn-success blue-chambray" target="_blank">Print Pricing Sheet</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="dimensions_entry.cfm?ID=<cfoutput>#url.id#</cfoutput>" class="btn btn-success" target="_blank">Dimensions Sheet</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="quote_notes.cfm?opportunity_id_original=<cfoutput>#url.id#&opportunity_id=#url.id#</cfoutput>" class="btn btn-success purple" >Notes</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <input type="hidden" name="submittedForm" value="1">
         <input type="hidden" name="opportunity_id" value="<cfoutput>#url.id#</cfoutput>">
-        <cfif get_quote_start.quote_approved NEQ 1 OR force_edit EQ 1>
+        <cfif get_quote_start.quote_approved NEQ 1>
             <input type="submit" class="btn btn-primary" id="btnSumit" value="Save Changes"/>
         </cfif>
       </div>
       <br />
       <br />
       <div class="container-table"
-      <cfif get_quote_start.quote_approved EQ 1 AND force_edit EQ 0>
+      <cfif get_quote_start.quote_approved EQ 1>
         style="pointer-events: none"
       </cfif>
       >
@@ -532,7 +526,7 @@ i.mysize {
                 </select>
               </td>
             </tr>
-            <cfif (get_quote_start.quote_approved NEQ 1 OR force_edit EQ 1) AND highest_version_ID GT version_ID>
+            <cfif get_quote_start.quote_approved NEQ 1 AND highest_version_ID GT version_ID>
                 <tr>
                     <td colspan="6">
                         <span style="color: ##00AA00">(optional) New Calculations Version: #highest_version_ID# (created #dateformat(highest_version_date_created,"mm/dd/yyyy")#) is available!</span>  <input id="btn_previewversionupdate" type="button" value="Preview Update">&nbsp;<span id="icon_ajaxloading" style="display: none"><i>Loading... please wait.</i></span>
@@ -544,7 +538,7 @@ i.mysize {
 
 <!--- BEGIN OUTPUT --->
   <table width="98%" border="0" cellspacing="0" cellpadding="0"
-  <cfif get_quote_start.quote_approved EQ 1 AND force_edit EQ 0>
+  <cfif get_quote_start.quote_approved EQ 1>
       style="pointer-events: none"
   </cfif>
   >
@@ -735,7 +729,7 @@ i.mysize {
 </script>
 
 <table   width="98%"border="0" cellspacing="0" cellpadding="0"
-<cfif get_quote_start.quote_approved EQ 1 AND force_edit EQ 0>
+<cfif get_quote_start.quote_approved EQ 1>
     style="pointer-events: none"
 </cfif>
 >

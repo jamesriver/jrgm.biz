@@ -15,6 +15,10 @@
 <cfset insightly_response=DeserializeJSON(httpResp.filecontent)>
 
 <cfset preview_data = ArrayNew(1)>
+<cfif IsDefined('insightly_response.error')>
+    <cfoutput>#insightly_response.error#</cfoutput>
+    <cfabort>
+</cfif>
 <cfif IsDefined('insightly_response.data')>
     <cftry>
         <cfset preview_data = insightly_response.data>
