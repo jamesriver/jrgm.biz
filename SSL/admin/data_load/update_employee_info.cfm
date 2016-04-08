@@ -104,7 +104,7 @@ Step 3 Done
  </cfquery>
 <cfdump var="#get_new_records#">
 <!---This email address needs to be changed to Maria--->
-<cfmail to="patrick.hutchinson2@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="New Employees"  type="html">
+<cfmail to="patrick.hutchinson2@gmail.com,benchanviolin@gmail.com,mcandler@jrgm.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="New Employees in todays ADP File"  type="html">
   <cfif get_new_records.recordcount EQ 0>
     There are no new records in today's ADP data load.
     <cfelse>
@@ -127,7 +127,7 @@ ORDER by branch
 </cfquery>
 <cfdump var="#get_inactivated_records#">
 <!---This email address needs to be changed to Maria--->
-<cfmail to="patrick.hutchinson2@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="Inactivated Employees"  type="html">
+<cfmail to="patrick.hutchinson2@gmail.com,benchanviolin@gmail.com,mcandler@jrgm.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="Inactivated Employees in todays ADP File"  type="html">
   <cfif get_inactivated_records.recordcount EQ 0>
     There are no inactivated records in today's ADP data load.
     <cfelse>
@@ -250,16 +250,17 @@ WHERE ID  = #get_equipment_allocated_to_inactive_employee.ID#
 </cfloop>
 <!------END Step 9--------------------- Job is  loaded into app_events table----------------------------------->--->
 
+
+<cfquery name="drop_test" datasource="JRGM" >
+DROP TABLE app_employees_test_backup;
+</cfquery>
+
 <!---Step 10 make sure that time_worked is updated in APP_Employee_Payroll_Clock --->
 <cfquery name="update_employee_time" datasource="jrgm">
 UPDATE APP_Employee_Payroll_Clock SET time_worked = DATEDIFF(mi,time_in,time_out), in_out_status=2
 WHERE time_out IS NOT NULL  AND  ds_date > #daysago14#
 </cfquery>
 <!---END Step 10 make sure that time_worked is updated in APP_Employee_Payroll_Clock --->
-<cfquery name="drop_test" datasource="JRGM" >
-DROP TABLE app_employees_test_backup;
-</cfquery>
-
 
 CHECK app_events_backup!!!
 </body>
