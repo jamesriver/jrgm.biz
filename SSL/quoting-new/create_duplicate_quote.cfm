@@ -50,7 +50,7 @@
 
         <cfquery name="get_quote_main" datasource="jrgm">
             SELECT * FROM quote_main
-            WHERE opportunity_id=#original_opportunity_id#
+            WHERE opportunity_id=#get_quote_start.opportunity_id#
         </cfquery>
         <cfif get_quote_main.recordcount GT 0>
             <cfset quote_main_data = QueryToStruct(get_quote_main)>
@@ -77,7 +77,7 @@
 
         <cfquery name="get_quote_services" datasource="jrgm">
             SELECT * FROM quote_services
-            WHERE opportunity_id=#original_opportunity_id#
+            WHERE opportunity_id=#get_quote_start.opportunity_id#
         </cfquery>
         <cfif get_quote_services.recordcount GT 0>
             <cfset quote_services_data = QueryToStruct(get_quote_services)>
@@ -99,7 +99,7 @@
         
         <cfquery name="get_quote_materials" datasource="jrgm">
             SELECT * FROM quote_materials
-            WHERE opportunity_id=#original_opportunity_id#
+            WHERE opportunity_id=#get_quote_start.opportunity_id#
         </cfquery>
         <cfif get_quote_materials.recordcount GT 0>
             <cfset quote_materials_data = QueryToStruct(get_quote_materials)>
@@ -119,7 +119,7 @@
 
         <cfquery name="get_quote_services_dimensions" datasource="jrgm">
             SELECT * FROM quote_services_dimensions
-            WHERE quote_start_id=#original_ID#
+            WHERE quote_start_id=#get_quote_start.ID#
         </cfquery>
         <cfif get_quote_services_dimensions.recordcount GT 0>
             <cfset quote_services_dimensions_data = QueryToStruct(get_quote_services_dimensions)>
