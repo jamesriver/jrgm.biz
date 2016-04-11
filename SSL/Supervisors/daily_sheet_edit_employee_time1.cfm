@@ -187,7 +187,7 @@ SELECT   [Employee ID], [Employee ID] AS empid,[Name FirstLast] AS employeename 
 <cfif IsDefined("url.addrow") >
  <cfquery name="insert_time" datasource="jrgm">
  INSERT INTO app_employee_payroll_clock (Employee_ID,crew_leader,supervisor,ds_id, In_Out_Status, time_worked,entry_method,ds_date) 
- VALUES (#url.Employee_ID#,#get_crew_leader.empid#,#get_supervisor.empid#,#url.ds_id#,2,0,2,#ds_date#)
+ VALUES (#url.Employee_ID#,#get_crew_leader.empid#,#get_supervisor.empid#,#url.ds_id#,2,0,2,'#ds_date#')
  </cfquery>
  </cfif>
  <cfquery name="get_employee_time" datasource="jrgm">
