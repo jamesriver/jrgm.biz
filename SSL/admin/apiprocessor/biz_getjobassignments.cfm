@@ -3,7 +3,10 @@
 <!--- ======= get Biz Job Assignments data in a uniform format for use with job assignment report ======= --->
 <cfquery name="main_query" datasource="jrgm">
     SELECT [Wk Loc ID] as Wk_Loc_ID, [Job ID] as Job_ID, [Wk Location Name] as Wk_Location_Name, branch, responsible_user_Employee_ID, Crew_Leader_ID, total_project_value, CONVERT(varchar, [project_end_date], 121) AS project_end_date FROM dbo.app_jobs aj
-    WHERE aj.Status='IN PROGRESS'
+    WHERE 1=1
+    <cfif !IsDefined('form.showall')>
+        AND aj.Status='IN PROGRESS'
+    </cfif>
     <cfif IsDefined('form.project_name')>
         <cfif form.project_name NEQ ''>
             AND aj.[Wk Location Name] LIKE '%#form.project_name#%'

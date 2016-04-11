@@ -1,5 +1,11 @@
 <cfinclude template="include_authorization.cfm">
 <cfset multi_delimiter = ''>
+<cfif IsDefined('form.Wk_Loc_ID')>
+    <cfset form['Wk Loc ID'] = form.Wk_Loc_ID>
+</cfif>
+<cfif IsDefined('form.Job_ID')>
+    <cfset form['Job ID'] = form.Job_ID>
+</cfif>
 
 <!--- ======= insert new Insightly Opportunity into Biz ======= --->
 <cfif structKeyExists(form, 'Wk Loc ID')>
@@ -16,10 +22,24 @@
             , [Job ID]='#form['Job ID']#'
             , project_start_date='#form['project_start_date']#'
             , project_end_date='#form['project_end_date']#'
-            , project_type='#form['project_type']#'
-            , project_details='#form['project_details']#'
-            , Responsible_User_Employee_ID=#form['Responsible_User_Employee_ID']#
-            , sales_contact_Employee_ID=#form['sales_contact_Employee_ID']#
+            <cfif IsDefined('form.project_type')>
+                , project_type='#form['project_type']#'
+            </cfif>
+            <cfif IsDefined('form.project_details')>
+                <cfif form.project_details NEQ ''>
+                    , project_details='#form['project_details']#'
+                </cfif>
+            </cfif>
+            <cfif IsDefined('form.Responsible_User_Employee_ID')>
+                <cfif form.Responsible_User_Employee_ID NEQ ''>
+                    , Responsible_User_Employee_ID=#form['Responsible_User_Employee_ID']#
+                </cfif>
+            </cfif>
+            <cfif IsDefined('form.sales_contact_Employee_ID')>
+                <cfif form.sales_contact_Employee_ID NEQ ''>
+                    , sales_contact_Employee_ID=#form['sales_contact_Employee_ID']#
+                </cfif>
+            </cfif>
             , total_project_value='#form['total_project_value']#'
             <cfif structKeyExists(form, 'renewal')>
                 , last_renewed_date=GETUTCDATE()
@@ -37,10 +57,24 @@
             , [Job ID]=<cfqueryparam value="#form['Job ID']#" CFSQLType="CF_SQL_TEXT">
             , project_start_date=<cfqueryparam value="#form['project_start_date']#" CFSQLType="CF_SQL_TEXT">
             , project_end_date=<cfqueryparam value="#form['project_end_date']#" CFSQLType="CF_SQL_TEXT">
-            , project_type=<cfqueryparam value="#form['project_type']#" CFSQLType="CF_SQL_TEXT">
-            , project_details=<cfqueryparam value="#form['project_details']#" CFSQLType="CF_SQL_TEXT">
-            , Responsible_User_Employee_ID=<cfqueryparam value="#form['Responsible_User_Employee_ID']#" CFSQLType="CF_SQL_TEXT">
-            , sales_contact_Employee_ID=<cfqueryparam value="#form['sales_contact_Employee_ID']#" CFSQLType="CF_SQL_TEXT">
+            <cfif IsDefined('form.project_type')>
+                , project_type=<cfqueryparam value="#form['project_type']#" CFSQLType="CF_SQL_TEXT">
+            </cfif>
+            <cfif IsDefined('form.project_details')>
+                <cfif form.project_details NEQ ''>
+                    , project_details=<cfqueryparam value="#form['project_details']#" CFSQLType="CF_SQL_TEXT">
+                </cfif>
+            </cfif>
+            <cfif IsDefined('form.Responsible_User_Employee_ID')>
+                <cfif form.Responsible_User_Employee_ID NEQ ''>
+                    , Responsible_User_Employee_ID=<cfqueryparam value="#form['Responsible_User_Employee_ID']#" CFSQLType="CF_SQL_TEXT">
+                </cfif>
+            </cfif>
+            <cfif IsDefined('form.sales_contact_Employee_ID')>
+                <cfif form.sales_contact_Employee_ID NEQ ''>
+                    , sales_contact_Employee_ID=<cfqueryparam value="#form['sales_contact_Employee_ID']#" CFSQLType="CF_SQL_TEXT">
+                </cfif>
+            </cfif>
             , total_project_value=<cfqueryparam value="#form['total_project_value']#" CFSQLType="CF_SQL_TEXT">
             <cfif structKeyExists(form, 'renewal')>
                 , last_renewed_date=GETUTCDATE()

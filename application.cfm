@@ -44,6 +44,9 @@ SetClientCookies="Yes">
 <cfif theDate GT '06/04/2016'><CFSET pay_period_number = "56"> </cfif>
 <cfif theDate GT '06/18/2016'><CFSET pay_period_number = "57"> </cfif>
 <cfif theDate GT '07/02/2016'><CFSET pay_period_number = "58"> </cfif>
+<cfif theDate GT '07/16/2016'><CFSET pay_period_number = "59"> </cfif>
+<cfif theDate GT '07/30/2016'><CFSET pay_period_number = "60"> </cfif>
+
 
 <!---Change This to 75 on  9/24 before 9/28 because pay_period_week 75 starts then --->
 <!---Change This to 76 on  10/1 before 10/5 because pay_period_week 76 starts then --->
@@ -89,7 +92,11 @@ SetClientCookies="Yes">
 <cfif theDate GT '06/04/2016'><CFSET pay_period_week = "111"> </cfif>
 <cfif theDate GT '06/11/2016'><CFSET pay_period_week = "112"> </cfif>
 <cfif theDate GT '06/18/2016'><CFSET pay_period_week = "113"> </cfif>
+<cfif theDate GT '06/25/2016'><CFSET pay_period_week = "114"> </cfif>
 <cfif theDate GT '07/02/2016'><CFSET pay_period_week = "115"> </cfif>
+<cfif theDate GT '07/09/2016'><CFSET pay_period_week = "116"> </cfif>
+<cfif theDate GT '07/16/2016'><CFSET pay_period_week = "117"> </cfif>
+
 
 <!---Get accurate dates--->
 <!--- END These 2 control Bettys page  --->
@@ -100,14 +107,7 @@ SetClientCookies="Yes">
  
 
  
-<!---<CFSET APPLICATION.blockdate ='02/27/2016'>
-<CFSET APPLICATION.pay_period_week1 =97>
-<CFSET APPLICATION.pay_period_week2 =98>
-<CFSET APPLICATION.pay_period_number =49>
-<CFSET APPLICATION.week1_date_available ='03/05/2016'>
-<CFSET APPLICATION.week2_date_available ='03/12/2016'>
-<CFSET APPLICATION.pay_period_week1_date ='03/05/2016'>
-<CFSET APPLICATION.pay_period_week2_date ='03/12/2016'>--->
+
 
 <!---
 <CFSET APPLICATION.blockdate ='03/12/2016'>
@@ -120,25 +120,30 @@ SetClientCookies="Yes">
 <CFSET APPLICATION.pay_period_week2_date ='03/26/2016'>--->
 
 <CFSET APPLICATION.pay_period_number_current_calendar = #pay_period_number#>
-
-<CFSET APPLICATION.blockdate ='03/26/2016'>
+<cfquery name="get_block_info" datasource="jrgm"   maxrows="1">
+SELECT         ID, block_date, date_changed, pay_period_week1, pay_period_week2, pay_period_number, week1_date_available, week2_date_available, pay_period_week1_date, pay_period_week2_date
+FROM            payroll_block
+ORDER BY ID DESC
+ </cfquery>
+<cfoutput  query="get_block_info">
+   <!---<CFSET APPLICATION.blockdate ='03/26/2016'> 
 <CFSET APPLICATION.pay_period_week1 =101>
 <CFSET APPLICATION.pay_period_week2 =102>
 <CFSET APPLICATION.pay_period_number =51>
 <CFSET APPLICATION.week1_date_available ='04/02/2016'>
 <CFSET APPLICATION.week2_date_available ='04/09/2016'>
 <CFSET APPLICATION.pay_period_week1_date ='04/02/2016'>
-<CFSET APPLICATION.pay_period_week2_date ='04/09/2016'>
+<CFSET APPLICATION.pay_period_week2_date ='04/09/2016'>--->
+   
+   <CFSET APPLICATION.blockdate  =#DateFormat(block_date, "mm/dd/yyyy")#>
+   <CFSET APPLICATION.pay_period_week1 =#pay_period_week1#>
+   <CFSET APPLICATION.pay_period_week2 =#pay_period_week2#>
+   <CFSET APPLICATION.week1_date_available =#DateFormat(week1_date_available, "mm/dd/yyyy")#>
+   <CFSET APPLICATION.week2_date_available = #DateFormat(week2_date_available, "mm/dd/yyyy")#>
+   <CFSET APPLICATION.pay_period_week1_date =#DateFormat(pay_period_week1_date, "mm/dd/yyyy")#>
+   <CFSET APPLICATION.pay_period_week2_date = #DateFormat(pay_period_week2_date, "mm/dd/yyyy")#>
+ </cfoutput>
 
+ 
 
-<!--- This ENDS  info is for the current pay period  for ALL non Betty--->
-
-<!--- 
- <cfelseif theDate GTE createdatetime(2015,02,28,15,0,1) AND theDate LTE createdatetime(2015,03,07,15,0,0)>
-<CFSET pay_period_number = "23">  
-<CFSET pay_period_week = "45"> 
- <cfelseif theDate GTE createdatetime(2015,03,07,15,0,1) AND theDate LTE createdatetime(2015,03,14,15,0,0)>
-<CFSET pay_period_number = "23">  
-<CFSET pay_period_week = "46"> 
- </cfif> 
-  --->
+ 
