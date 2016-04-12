@@ -18,7 +18,7 @@
  FROM         quote_services
  </cfquery>
 <cfquery name="get_quote_start" datasource="jrgm">
- SELECT    ID, opportunity_id, opportunity_name, opportunity_state, bid_amount,
+ SELECT    ID, opportunity_id, CONCAT(LEFT(opportunity_name, 40), CASE WHEN LEN(opportunity_name) > 30 THEN '...' ELSE '' END) as opportunity_name, opportunity_state, bid_amount,
  opportunity_field_1 AS q_branch, 
  opportunity_field_18 AS q_start_date ,
  opportunity_field_19 AS q_end_date,
