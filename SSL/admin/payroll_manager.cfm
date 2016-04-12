@@ -103,19 +103,22 @@ ORDER by time_IN ASC
               <CFSET thisone = #get_many_hours_DSD.ds_id#>
               <CFSET thisoneamtime = #get_many_hours_DSD.Time_In#>
               <CFSET thisonepmtime = #get_many_hours_DSD.Time_Out#></td>
-            <cfquery name="get_many_hours_DSD2" datasource="jrgm">
+   <cfquery name="get_many_hours_DSD2" datasource="jrgm">
 SELECT     ds_id, Time_In, Time_Out
 FROM         app_employee_payroll_clock
 WHERE    ds_date =#ds_date#  AND Employee_ID = #Employee_ID#  AND ds_ID <> #thisone#
 </cfquery>
             <CFSET nextoneamtime = #get_many_hours_DSD2.Time_In#>
             <CFSET nextonepmtime = #get_many_hours_DSD2.Time_Out#>
-            <td><a href="../admin/daily_sheet.cfm?dsid=#get_many_hours_DSD2.ds_id#"  target="_blank">#get_many_hours_DSD2.ds_id#</a><br />
+            <td><a href="../admin/daily_sheet.cfm?dsid=#get_many_hours_DSD2.ds_id#"  target="_blank">#get_many_hours_DSD2.ds_id# <br />
+ 
+
               <cfif  (nextoneamtime LT thisonepmtime)  OR   (nextonepmtime LT thisonepmtime) >
                 <span class="redarial">#TimeFormat(get_many_hours_DSD2.time_in, "HH:mm:ss")# - #TimeFormat(get_many_hours_DSD2.time_out, "HH:mm:ss")#</span>
                 <cfelse>
                 #TimeFormat(get_many_hours_DSD2.time_in, "HH:mm:ss")# - #TimeFormat(get_many_hours_DSD2.time_out, "HH:mm:ss")#
-              </cfif></td>
+              </cfif></a></td>
+              
           </tr>
         </cfoutput>
       </table>

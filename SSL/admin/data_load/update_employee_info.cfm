@@ -42,6 +42,13 @@ Phone_Cell =  '#get_records_from_app_employees_test.Phone_Cell#',
  last_modified_date = <cfqueryparam cfsqltype="cf_sql_date" value="#get_records_from_app_employees_test.last_modified_date#">
   WHERE  [Employee ID] =#get_records_from_app_employees_test.employee_id#
   </cfquery>
+  
+<!---  Added 04/11/2016--->
+  <cfquery name="update_password email_records"   datasource="jrgm">
+  UPDATE app_employee_passwords SET  email =    '#get_records_from_app_employees_test.email#'  WHERE Employee_ID =#get_records_from_app_employees_test.employee_id#
+  </cfquery>
+  
+  
 </cfloop>
 <!---END Step 1 - UPDATE app-employee table with data from app_employees_test table---> 
 Step 1 Done 

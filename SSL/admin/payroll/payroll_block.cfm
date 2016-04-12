@@ -1,5 +1,8 @@
 <!---<cfoutput>#APPLICATION.pay_period_number_current_calendar#</cfoutput> --->
-<CFPARAM name="random" default="0">
+
+<cfset todayDate1 = Now()>
+ <cfset todaydate =#DateFormat("#todayDate1#", "mm/dd/yyyy")#>
+  <CFPARAM name="random" default="0">
 <cfquery name="get_payroll_block_info" datasource="jrgm" maxrows="1">
 SELECT * FROM payroll_block 
 ORDER by ID DESC
@@ -45,9 +48,12 @@ pay_period_number =#pay_period_number_prior#,
 week1_date_available=  #week1_date_available_prior#,
 week2_date_available=  #week2_date_available_prior#, 
 pay_period_week1_date =  #pay_period_week1_date_prior#, 
-pay_period_week2_date =  #pay_period_week2_date_prior#
+pay_period_week2_date =  #pay_period_week2_date_prior#,
+date_changed = '#todaydate#'
 </cfquery>
-
+<cfmail to="patrick.hutchinson2@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="Payroll Block Implemented"  type="html">
+  Payroll Block implemented to prior period.  <strong>#DateFormat("#block_date_prior#", "mm/dd/yyyy")#</strong>
+  </cfmail>
 <!---ADD CF MAIL--->
 <cflocation url="payroll_block.cfm">
 </cfif>
@@ -63,9 +69,13 @@ pay_period_number =#pay_period_number_next#,
 week1_date_available=  #week1_date_available_next#,
 week2_date_available=  #week2_date_available_next#, 
 pay_period_week1_date =  #pay_period_week1_date_next#, 
-pay_period_week2_date =  #pay_period_week2_date_next#
+pay_period_week2_date =  #pay_period_week2_date_next#,
+date_changed = '#todaydate#'
 </cfquery>
 <!---ADD CF MAIL--->
+<cfmail to="patrick.hutchinson2@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="Payroll Block Implemented"  type="html">
+  Payroll Block implemented to next period.   <strong>#DateFormat("#block_date_next#", "mm/dd/yyyy")#</strong>
+  </cfmail>
 <cflocation url="payroll_block.cfm">
 </cfif>
 <cfquery name="get_payroll_block_info" datasource="jrgm" maxrows="1">

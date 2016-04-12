@@ -205,6 +205,16 @@
                 <cfelseif  get_employees_with_time.Employee_ID EQ  15581><td>1558</td>
                  <cfelseif  get_employees_with_time.Employee_ID EQ  10581><td>1058</td>
                     <cfelseif  get_employees_with_time.Employee_ID EQ  11261><td>1126</td>
+                    <cfelseif  get_employees_with_time.Employee_ID EQ  103013>
+              <td>3013</td>
+              <cfelseif  get_employees_with_time.Employee_ID EQ  104081>
+              <td>4081</td>
+              <cfelseif  get_employees_with_time.Employee_ID EQ  101327>
+              <td>1327</td>
+              <cfelseif  get_employees_with_time.Employee_ID EQ  103435>
+              <td>3435</td>
+              <cfelseif  get_employees_with_time.Employee_ID EQ  104083>
+              <td>4083</td>
               <cfelse>
 		<td> #get_employees_with_time.Employee_ID#</td></cfif>
     <!---            <td>#get_employees_with_time.Employee_ID#</td> --->
