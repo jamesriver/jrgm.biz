@@ -23,7 +23,7 @@ SELECT *  FROM app_employee_payroll_clock
       <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_employee_payroll_clock 
    (Employee_ID,ds_id,crew_leader,DS_DATE,SUPERVISOR ,TIME_IN ,TIME_OUT, 	TIME_WORKED,ENTRY_METHOD,In_Out_Status) VALUES 
-   ('#get_all_employees_onthisDS.employee_id#',#get_one_time.ds_id#,#get_one_time.CREW_LEADER#,#get_one_time.ds_date#,
+   ('#get_all_employees_onthisDS.employee_id#',#get_one_time.ds_id#,#get_one_time.CREW_LEADER#,'#get_one_time.ds_date#',
    #get_one_time.SUPERVISOR#,
    '#get_one_time.TIME_IN#',
    '#get_one_time.TIME_OUT#',
