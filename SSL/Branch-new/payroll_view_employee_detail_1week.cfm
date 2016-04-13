@@ -44,19 +44,20 @@
 
  
 <cfparam name="employee_total" default="0">
- <cfif IsDefined("form.SUBMIT") AND IsDefined("form.employee_ID") > 
+ <cfif IsDefined("form.SUBMIT") AND IsDefined("form.employee_ID") >
  <cfquery name="update_time_null" datasource="jrgm">
  UPDATE App_Employee_Payroll_Clock SET payroll_approved = NULL, approved_by = NULL WHERE   Employee_ID IN (#employeelist#)  AND (app_employee_payroll_clock.Time_In > '#DateFormat(pay_period_start, "yyyy-mm-dd")# 00:00:00.000' AND app_employee_payroll_clock.Time_Out < '#DateFormat(pay_period_end_week_plusone, 'yyyy-mm-dd')# 00:00:00.000')
  </cfquery>
  <CFSET mylist = #Form.EMPLOYEE_ID#>
 <cfloop  list = "#mylist#"   index = "i" >
- 
+
+
   <cfquery name="update_time" datasource="jrgm">
  UPDATE App_Employee_Payroll_Clock SET payroll_approved = 1, approved_by = #SESSION.userid#  WHERE   Employee_ID = #i# AND (app_employee_payroll_clock.Time_In > '#DateFormat(pay_period_start, "yyyy-mm-dd")# 00:00:00.000' AND app_employee_payroll_clock.Time_Out < '#DateFormat(pay_period_end_week_plusone, 'yyyy-mm-dd')# 00:00:00.000')
  </cfquery></cfloop>
  <CFSET flag = 'uncheck'>
    <CFSET message = 'These pay periods have been approved'>
- </cfif> 
+ </cfif>
  
 
 <!DOCTYPE html>

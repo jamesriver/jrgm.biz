@@ -163,7 +163,7 @@ License: You must have a valid license purchased only from themeforest(the above
 		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
 		WHERE branch = '#SESSION.branch#'  
         AND 
-        (app_employee_payroll_clock.Time_In > #app_payroll_periods1.pay_period_start# AND app_employee_payroll_clock.Time_Out < #pay_period_end_week1#)
+        (app_employee_payroll_clock.Time_In > '#app_payroll_periods1.pay_period_start# 00:00:00.000' AND app_employee_payroll_clock.Time_Out < #pay_period_end_week1#)
 		ORDER by APP_employees.last_name
   </cfquery>
               <CFSET mylist ="0">
@@ -179,7 +179,7 @@ License: You must have a valid license purchased only from themeforest(the above
 		INNER JOIN APP_employees
 		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
 		WHERE    
-         ( app_employee_payroll_clock.Time_In > #app_payroll_periods1.pay_period_start# AND  app_employee_payroll_clock.Time_Out < #pay_period_end_week1#)
+         ( app_employee_payroll_clock.Time_In > '#app_payroll_periods1.pay_period_start# 00:00:00.000' AND  app_employee_payroll_clock.Time_Out < #pay_period_end_week1#)
    AND Employee_ID IN (#mylist#)  AND payroll_approved IS NULL
 		ORDER by APP_employees.last_name
  </cfquery>
