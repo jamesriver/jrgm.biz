@@ -45,10 +45,27 @@ ORDER by ID ASC
 </cfquery>
 <cfif get_employee_time_from_device.recordcount GT 0>
   <cfloop query="get_employee_time_from_device">
+  <cfoutput>
+  INSERT INTO app_employee_payroll_clock_backup
+   (Employee_ID,crew_leader,supervisor,ds_id, In_Out_Status,entry_method , ds_date,time_in,time_out,CompleteHours, IsEmpInjury,time_worked)
+   VALUES (#get_employee_time_from_device.Employee_ID#,#get_employee_time_from_device.crew_leader#,#get_employee_time_from_device.supervisor#,#get_employee_time_from_device.ds_id#,#get_employee_time_from_device.In_Out_Status#,#get_employee_time_from_device.In_Out_Status#,'#get_employee_time_from_device.ds_date#','#get_employee_time_from_device.time_in#','#get_employee_time_from_device.time_out#'
+   ,
+   <cfif get_employee_time_from_device.CompleteHours IS "">NULL,<cfelse>
+   #get_employee_time_from_device.CompleteHours#,</cfif>
+
+    <cfif get_employee_time_from_device.IsEmpInjury IS "">NULL,<cfelse>
+   #get_employee_time_from_device.IsEmpInjury#,</cfif>
+
+    <cfif get_employee_time_from_device.time_worked IS "">NULL<cfelse>
+   #get_employee_time_from_device.time_worked#</cfif>
+
+   )
+   </cfoutput>
+   <cfabort>
     <cfquery name="insert_time" datasource="jrgm">
  INSERT INTO app_employee_payroll_clock_backup 
  (Employee_ID,crew_leader,supervisor,ds_id, In_Out_Status,entry_method , ds_date,time_in,time_out,CompleteHours, IsEmpInjury,time_worked) 
- VALUES (#get_employee_time_from_device.Employee_ID#,#get_employee_time_from_device.crew_leader#,#get_employee_time_from_device.supervisor#,#get_employee_time_from_device.ds_id#,#get_employee_time_from_device.In_Out_Status#,#get_employee_time_from_device.In_Out_Status#,#get_employee_time_from_device.ds_date#,'#get_employee_time_from_device.time_in#','#get_employee_time_from_device.time_out#'
+ VALUES (#get_employee_time_from_device.Employee_ID#,#get_employee_time_from_device.crew_leader#,#get_employee_time_from_device.supervisor#,#get_employee_time_from_device.ds_id#,#get_employee_time_from_device.In_Out_Status#,#get_employee_time_from_device.In_Out_Status#,'#get_employee_time_from_device.ds_date#','#get_employee_time_from_device.time_in#','#get_employee_time_from_device.time_out#'
  , 
  <cfif get_employee_time_from_device.CompleteHours IS "">NULL,<cfelse>
  #get_employee_time_from_device.CompleteHours#,</cfif>
