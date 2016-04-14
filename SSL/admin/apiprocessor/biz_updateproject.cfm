@@ -19,7 +19,7 @@
             SET last_modified_date_external=GETUTCDATE()
             , last_modified_date=GETUTCDATE()
             , last_modified_by=NULL
-            , [Job ID]='#form['Job ID']#'
+
             , project_start_date='#form['project_start_date']#'
             , project_end_date='#form['project_end_date']#'
             <cfif IsDefined('form.project_type')>
