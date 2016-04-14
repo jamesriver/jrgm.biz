@@ -290,7 +290,7 @@ AND Inspection_Type ='Morning'
             <cfelse>
             <cfquery name="get_EI" datasource="#request.dsn#"   >
 SELECT  *
-FROM         app_Inspection_Master WHERE Crew_LeaderID =#get_daily_sheets.crew_leader_id# AND Inspection_Date = '#DateFormat(ds_date, 'yyyy-mm-dd')#' 
+FROM         app_Inspection_Master WHERE Crew_LeaderID =#get_daily_sheets.crew_leader_id# AND Inspection_Date = '#DateFormat(ds_date, 'yyyy-mm-dd')#'
 AND Inspection_Type ='Evening'
         </cfquery>
             <cfif get_EI.recordcount EQ 1>

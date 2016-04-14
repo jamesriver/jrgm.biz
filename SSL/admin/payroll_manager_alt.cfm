@@ -116,7 +116,7 @@ WHERE   employee_id = #Employee_ID#
             <!---<cfquery name="get_many_hours_DSD"  dbtype="query">
 SELECT    ds_id, Time_In, Time_Out
 FROM         get_all_payroll
-WHERE    ds_date =#ds_date#  AND Employee_ID = #Employee_ID# 
+WHERE    ds_date ='#DateFormat(ds_date, 'yyyy-mm-dd')#'  AND Employee_ID = #Employee_ID#
 ORDER by time_IN ASC
 </cfquery>--->
             <td align="center"><a href="../admin/daily_sheet.cfm?dsid=#ds_id#"  target="_blank">#ds_id#</a></td>
