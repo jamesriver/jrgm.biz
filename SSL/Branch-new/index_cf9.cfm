@@ -294,7 +294,7 @@ SELECT  * FROM APP_daily_sheets  WHERE ((Supervisor_ID IN (#mylistsupers#)  OR  
 		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
 		WHERE branch = '#SESSION.branch#'  
         AND 
-        (app_employee_payroll_clock.Time_In > #app_payroll_periods1.pay_period_start# AND app_employee_payroll_clock.Time_Out < #pay_period_end_week1#)
+        (app_employee_payroll_clock.Time_In > '#app_payroll_periods1.pay_period_start# 00:00:00.000' AND app_employee_payroll_clock.Time_Out < #pay_period_end_week1#)
 		ORDER by APP_employees.last_name
   </cfquery>
               <CFSET mylist ="0">
@@ -310,7 +310,7 @@ SELECT  * FROM APP_daily_sheets  WHERE ((Supervisor_ID IN (#mylistsupers#)  OR  
 		INNER JOIN APP_employees
 		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
 		WHERE    
-         ( app_employee_payroll_clock.Time_In > #app_payroll_periods1.pay_period_start# AND  app_employee_payroll_clock.Time_Out < #pay_period_end_week1#)
+         ( app_employee_payroll_clock.Time_In > '#app_payroll_periods1.pay_period_start# 00:00:00.000' AND  app_employee_payroll_clock.Time_Out < #pay_period_end_week1#)
    AND Employee_ID IN (#mylist#)  AND payroll_approved IS NULL
 		ORDER by APP_employees.last_name
  </cfquery>
@@ -334,7 +334,7 @@ SELECT  * FROM APP_daily_sheets  WHERE ((Supervisor_ID IN (#mylistsupers#)  OR  
 		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
 		WHERE branch = '#SESSION.branch#'  
         AND 
-        (app_employee_payroll_clock.Time_In > #app_payroll_periods2.pay_period_start# AND app_employee_payroll_clock.Time_Out < #pay_period_end_week2#)
+        (app_employee_payroll_clock.Time_In > '#app_payroll_periods2.pay_period_start# 00:00:00.000' AND app_employee_payroll_clock.Time_Out < #pay_period_end_week2#)
 		ORDER by APP_employees.last_name
   </cfquery>
               <CFSET mylist ="0">
@@ -350,7 +350,7 @@ SELECT  * FROM APP_daily_sheets  WHERE ((Supervisor_ID IN (#mylistsupers#)  OR  
 		INNER JOIN APP_employees
 		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
 		WHERE    
-         ( app_employee_payroll_clock.Time_In > #app_payroll_periods2.pay_period_start# AND  app_employee_payroll_clock.Time_Out < #pay_period_end_week2#)
+         ( app_employee_payroll_clock.Time_In > '#app_payroll_periods2.pay_period_start# 00:00:00.000' AND  app_employee_payroll_clock.Time_Out < #pay_period_end_week2#)
    AND Employee_ID IN (#mylist#)  AND payroll_approved IS NULL
 		ORDER by APP_employees.last_name
  </cfquery>
@@ -398,7 +398,7 @@ WHERE  employee_ID = #Employee_ID#
                         <cfquery name="get_ds_id" datasource="jrgm">
 SELECT     Employee_ID, ds_date, ID,ds_id,Time_In, Time_Out
 FROM         app_employee_payroll_clock
-WHERE    ds_date =#ds_date#  AND Employee_ID = #Employee_ID# 
+WHERE    ds_date ='#DateFormat(ds_date, 'yyyy-mm-dd')#'  AND Employee_ID = #Employee_ID#
 ORDER by time_IN ASC
  </cfquery>
                         <td> DSID: <a href="daily_sheet.cfm?dsid=#get_ds_id.ds_id#"  target="_blank">#get_ds_id.ds_id#</a><br>
@@ -406,7 +406,7 @@ ORDER by time_IN ASC
                         <cfquery name="get_ds_id_other" datasource="jrgm">
 SELECT     Employee_ID, ds_date, ID,ds_id,Time_In, Time_Out
 FROM         app_employee_payroll_clock
-WHERE    ds_date =#ds_date#  AND Employee_ID = #Employee_ID#  AND ds_id <> #get_ds_id.ds_id#
+WHERE    ds_date ='#DateFormat(ds_date, 'yyyy-mm-dd')#'  AND Employee_ID = #Employee_ID#  AND ds_id <> #get_ds_id.ds_id#
  </cfquery>
                         <td> DSID: <a href="daily_sheet.cfm?dsid=#get_ds_id_other.ds_id#"  target="_blank">#get_ds_id_other.ds_id#</a><br>
                           #TimeFormat(get_ds_id_other.time_in, "HH:mm")# - #TimeFormat(get_ds_id_other.time_out, "HH:mm")#</td>

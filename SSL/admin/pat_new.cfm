@@ -545,7 +545,7 @@ FROM         get_all_equipment_info WHERE Crew_assignment_last =#get_info_CL.emp
         </cfquery>
                   <cfquery name="get_MI"   dbtype="query"  >
 SELECT  *
-FROM         get_all_ei WHERE Crew_LeaderID =#get_info_CL.empid# AND Inspection_Date = #ds_date# 
+FROM         get_all_ei WHERE Crew_LeaderID =#get_info_CL.empid# AND Inspection_Date = '#DateFormat(ds_date, 'yyyy-mm-dd')#'
 AND Inspection_Type ='Morning'
         </cfquery>
                   <cfif get_MI.recordcount EQ 1>
@@ -561,7 +561,7 @@ AND Inspection_Type ='Morning'
                   <cfelse>
                   <cfquery name="get_EI"  dbtype="query"  >
 SELECT  *
-FROM         get_all_ei WHERE Crew_LeaderID =#get_info_CL.empid# AND Inspection_Date = #ds_date# 
+FROM         get_all_ei WHERE Crew_LeaderID =#get_info_CL.empid# AND Inspection_Date = '#DateFormat(ds_date, 'yyyy-mm-dd')#'
 AND Inspection_Type ='Evening'
         </cfquery>
                   <cfif get_EI.recordcount EQ 1>

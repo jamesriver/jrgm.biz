@@ -82,7 +82,7 @@
 		INNER JOIN APP_employees
 		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
 		WHERE branch = '#branch#'  AND
-        (app_employee_payroll_clock.Time_In > #app_payroll_periods_L.pay_period_start# AND app_employee_payroll_clock.Time_Out < #pay_period_end_week_plusone#)
+        (app_employee_payroll_clock.Time_In > #app_payroll_periods_L.pay_period_start# AND app_employee_payroll_clock.Time_Out < '#DateFormat(pay_period_end_week_plusone, 'yyyy-mm-dd')# 00:00:00.000')
 		ORDER by APP_employees.last_name
  	</cfquery>
       <CFSET employeelist ="">
@@ -92,7 +92,7 @@
       <cfquery name="get_all_employee_time_for_period" datasource="jrgm"      >
 SELECT Employee_ID,  time_worked, in_out_status,ds_date,ds_id 
  FROM app_employee_payroll_clock
- WHERE Employee_ID IN (#employeelist#) AND app_employee_payroll_clock.Time_In > #app_payroll_periods_L.pay_period_start# AND  app_employee_payroll_clock.Time_Out < #pay_period_end_week_plusone#
+ WHERE Employee_ID IN (#employeelist#) AND app_employee_payroll_clock.Time_In > #app_payroll_periods_L.pay_period_start# AND  app_employee_payroll_clock.Time_Out < '#DateFormat(pay_period_end_week_plusone, 'yyyy-mm-dd')# 00:00:00.000'
  AND in_out_status =2 AND payroll_approved IS NULL
   </cfquery>
       <table width="100%" border="0" cellspacing="0" cellpadding="0">

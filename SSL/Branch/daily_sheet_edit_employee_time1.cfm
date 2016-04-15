@@ -23,7 +23,7 @@ SELECT *  FROM app_employee_payroll_clock
       <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_employee_payroll_clock 
    (Employee_ID,ds_id,crew_leader,DS_DATE,SUPERVISOR ,TIME_IN ,	TIME_OUT, 	TIME_WORKED,ENTRY_METHOD, In_Out_Status) VALUES 
-   ('#get_all_employees_onthisDS.employee_id#',#get_one_time.ds_id#,#get_one_time.CREW_LEADER#,#get_one_time.ds_date#,
+   ('#get_all_employees_onthisDS.employee_id#',#get_one_time.ds_id#,#get_one_time.CREW_LEADER#,'#get_one_time.ds_date#',
    #get_one_time.SUPERVISOR#,
    '#get_one_time.TIME_IN#',
    '#get_one_time.TIME_OUT#',
@@ -48,7 +48,7 @@ ORDER by ID ASC
     <cfquery name="insert_time" datasource="jrgm">
  INSERT INTO app_employee_payroll_clock_backup 
  (Employee_ID,crew_leader,supervisor,ds_id, In_Out_Status,entry_method , ds_date,time_in,time_out,CompleteHours, IsEmpInjury,time_worked) 
- VALUES (#get_employee_time_from_device.Employee_ID#,#get_employee_time_from_device.crew_leader#,#get_employee_time_from_device.supervisor#,#get_employee_time_from_device.ds_id#,#get_employee_time_from_device.In_Out_Status#,#get_employee_time_from_device.In_Out_Status#,#get_employee_time_from_device.ds_date#,'#get_employee_time_from_device.time_in#','#get_employee_time_from_device.time_out#'
+ VALUES (#get_employee_time_from_device.Employee_ID#,#get_employee_time_from_device.crew_leader#,#get_employee_time_from_device.supervisor#,#get_employee_time_from_device.ds_id#,#get_employee_time_from_device.In_Out_Status#,#get_employee_time_from_device.In_Out_Status#,'#get_employee_time_from_device.ds_date#','#get_employee_time_from_device.time_in#','#get_employee_time_from_device.time_out#'
  , 
  <cfif get_employee_time_from_device.CompleteHours IS "">NULL,<cfelse>
  #get_employee_time_from_device.CompleteHours#,</cfif>
