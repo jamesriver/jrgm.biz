@@ -66,7 +66,7 @@
 </cfif>
 
 <!---Erin--->
-<cfif SESSION.userid EQ 999999>
+<cfif SESSION.userid EQ 4086>
   <cfset branchlist = "'Richmond','Chesterfield','Charlottesville'">
   <cfset branchlist2  = "Richmond,Chesterfield,Charlottesville">
   <cfset branchcodelist = "10,80,30">
