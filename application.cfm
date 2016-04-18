@@ -46,7 +46,11 @@ SetClientCookies="Yes">
 <cfif theDate GT '07/02/2016'><CFSET pay_period_number = "58"> </cfif>
 <cfif theDate GT '07/16/2016'><CFSET pay_period_number = "59"> </cfif>
 <cfif theDate GT '07/30/2016'><CFSET pay_period_number = "60"> </cfif>
-
+<cfif theDate GT '08/13/2016'><CFSET pay_period_number = "61"> </cfif>
+<cfif theDate GT '08/27/2016'><CFSET pay_period_number = "62"> </cfif>
+<cfif theDate GT '09/10/2016'><CFSET pay_period_number = "63"> </cfif>
+<cfif theDate GT '09/24/2016'><CFSET pay_period_number = "64"> </cfif>
+<cfif theDate GT '10/08/2016'><CFSET pay_period_number = "65"> </cfif>
 
 <!---Change This to 75 on  9/24 before 9/28 because pay_period_week 75 starts then --->
 <!---Change This to 76 on  10/1 before 10/5 because pay_period_week 76 starts then --->
@@ -96,6 +100,17 @@ SetClientCookies="Yes">
 <cfif theDate GT '07/02/2016'><CFSET pay_period_week = "115"> </cfif>
 <cfif theDate GT '07/09/2016'><CFSET pay_period_week = "116"> </cfif>
 <cfif theDate GT '07/16/2016'><CFSET pay_period_week = "117"> </cfif>
+<cfif theDate GT '07/23/2016'><CFSET pay_period_week = "118"> </cfif>
+<cfif theDate GT '07/30/2016'><CFSET pay_period_week = "119"> </cfif>
+<cfif theDate GT '08/06/2016'><CFSET pay_period_week = "120"> </cfif>
+<cfif theDate GT '08/13/2016'><CFSET pay_period_week = "121"> </cfif>
+<cfif theDate GT '08/20/2016'><CFSET pay_period_week = "122"> </cfif>
+<cfif theDate GT '08/27/2016'><CFSET pay_period_week = "123"> </cfif>
+<cfif theDate GT '09/03/2016'><CFSET pay_period_week = "124"> </cfif>
+<cfif theDate GT '09/10/2016'><CFSET pay_period_week = "125"> </cfif>
+<cfif theDate GT '09/17/2016'><CFSET pay_period_week = "126"> </cfif>
+<cfif theDate GT '09/24/2016'><CFSET pay_period_week = "127"> </cfif>
+<cfif theDate GT '10/01/2016'><CFSET pay_period_week = "128"> </cfif>
 
 
 <!---Get accurate dates--->

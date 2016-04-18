@@ -975,12 +975,12 @@ ORDER by ID ASC
 <style type="text/css">
 <!--
 .smallfont {
-	font-size: .7em;
+	font-size: .85em;
 	color: #000000;
 	font-weight: bold;
 }
 .smallerfont {
-	font-size: .7em;
+	font-size: .9em;
 	font-weight: bold;
 }
 .table {

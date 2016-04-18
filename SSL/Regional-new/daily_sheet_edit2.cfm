@@ -1,13 +1,31 @@
  
-
-
-
- <!--- This code is for the prior day timeout issue --->
+<cfquery name="get_all_employee_minutes_for_DS" datasource="jrgm"  >
+					SELECT * FROM APP_job_services_actual_employee  
+					WHERE  ds_id = #dsid#
+                  </cfquery>
+<cfquery name="get_all_employee_clock_info" datasource="jrgm"  >
+					SELECT * FROM app_employee_payroll_clock  
+					WHERE  ds_id = #dsid#
+                  </cfquery>
+<cfquery name="get_all_employees_onthisDS" datasource="jrgm">
+SELECT DISTINCT employee_id  FROM app_employee_payroll_clock
+ WHERE  ds_id = #url.dsid#  
+  </cfquery>
+<CFSET mylist ="0">
+<cfloop query="get_all_employees_onthisDS">
+  <cfset myList = ListAppend(mylist,Employee_ID)>
+</cfloop>
+<cfquery name="get_all_employees" datasource="jrgm"  >
+SELECT first_name,last_name,branch,position,[Employee ID] As employee_id,  [Name FirstLast] AS fullname  FROM APP_employees
+WHERE   [Employee ID]  IN (#mylist#)
+ ORDER by  Last_name ASC,first_name ASC
+</cfquery>
+<!--- This code is for the prior day timeout issue --->
 <cfset todayDate = Now()>
 <cfset today_datex = #DateFormat(todayDate, "mm/dd/yyyy")#>
 <cfset mytime = timeFormat(now(), "hh:mm tt")>
 <cfset daysago7 = dateadd("d",-7,today_datex)>
-<!---   EMPLOYEES --->
+<!---<!---   EMPLOYEES --->
 <cfquery name="time_me_out" datasource="jrgm">
  SELECT * FROM APP_Employee_Payroll_Clock WHERE In_out_status = 1 AND ds_date < '#today_datex#'  AND ds_date > #daysago7#
  </cfquery>
@@ -59,7 +77,94 @@
     UPDATE APP_Job_Clock SET job_time_worked = DATEDIFF(mi,job_time_in,job_time_out), in_out_status=2
     WHERE job_time_out IS NOT NULL   AND Job_Time_In > #daysago7#
      </cfquery>
-<!--- This code is for the prior day timeout issue --->
+<!--- This code is for the prior day timeout issue --->--->
+
+<!---This code was commented out on April 11 , 2016 to address SQL deadlock problem--->
+<!---This code was commented out on April 11 , 2016 to address SQL deadlock problem--->
+<!---   EMPLOYEES --->
+<!---<cfquery name="time_me_out" datasource="jrgm">
+ SELECT * FROM APP_Employee_Payroll_Clock WHERE In_out_status = 1 AND ds_date < '#today_datex#'  AND ds_date > #daysago7#
+ </cfquery>--->
+<!---  <cfdump  var="#time_me_out#"> --->
+
+
+<!---<cfif  time_me_out.recordcount GT 0>--->
+ <!--- <cfmail to="patrick.hutchinson2@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="Timed in Prior Branch"  type="html">
+    Timed in Prior Branch  -#time_me_out.ds_id#
+  </cfmail>--->
+<!---  <cfloop query="time_me_out">
+    <cfset y = year(time_me_out.ds_date)>
+    <cfset m = month(time_me_out.ds_date)>
+    <cfset d = day(time_me_out.ds_date)>
+    <cfset thatday_5PM = createDatetime(y,m,d,17,0,0)>
+    <CFSET outtime = thatday_5PM>
+    <cfquery name="time_me_out_update" datasource="jrgm">
+ UPDATE APP_Employee_Payroll_Clock 
+ SET   Time_Out =  #outtime#
+  WHERE ID = #time_me_out.ID#
+ </cfquery>
+  </cfloop>
+</cfif>
+<cfquery name="update_employee_time" datasource="jrgm">
+    UPDATE APP_Employee_Payroll_Clock SET time_worked = DATEDIFF(mi,time_in,time_out)   WHERE ds_date > #daysago7#
+      </cfquery>
+<cfquery name="update_employee_time" datasource="jrgm">
+    UPDATE APP_Employee_Payroll_Clock SET time_worked = DATEDIFF(mi,time_in,time_out), in_out_status=2
+    WHERE time_out IS NOT NULL  AND  ds_date > #daysago7#
+     </cfquery>--->
+     
+<!---END this code was commented out on April 11 , 2016 to address SQL deadlock problem--->
+<!---END this code was commented out on April 11 , 2016 to address SQL deadlock problem--->
+     
+ <cfquery name="update_employee_time" datasource="jrgm">
+UPDATE APP_Employee_Payroll_Clock SET time_worked = DATEDIFF(mi,time_in,time_out), in_out_status=2
+WHERE   ds_id =#dsid#
+</cfquery>
+
+<!---This code was commented out on April 11 , 2016 to address SQL deadlock problem--->
+<!---This code was commented out on April 11 , 2016 to address SQL deadlock problem--->
+<!---<cfquery name="time_me_outj" datasource="jrgm">
+  SELECT * FROM APP_Job_Clock WHERE In_out_status = 1 AND job_time_in < '#today_datex#'
+    </cfquery>
+<!---     <cfdump  var="#time_me_outj#"> --->
+<cfif  time_me_outj.recordcount GT 0>
+  <cfloop query="time_me_outj">
+    <cfset y = year(time_me_outj.Job_Time_In)>
+    <cfset m = month(time_me_outj.Job_Time_In)>
+    <cfset d = day(time_me_outj.Job_Time_In)>
+    <cfset thatday_5PM = createDatetime(y,m,d,17,0,0)>
+    <CFSET outtime = thatday_5PM>
+    <cfquery name="time_me_out_update" datasource="jrgm">
+ UPDATE APP_job_Clock 
+ SET   Job_Time_Out =  #outtime#
+  WHERE ID = #time_me_outj.ID#
+ </cfquery>
+  </cfloop>
+</cfif>
+
+<cfquery name="update_job_clock" datasource="jrgm">
+    UPDATE APP_Job_Clock SET job_time_worked = DATEDIFF(mi,job_time_in,job_time_out), in_out_status=2
+    WHERE job_time_out IS NOT NULL   AND Job_Time_In > #daysago7#
+     </cfquery>--->
+     
+ <!---END this code was commented out on April 11 , 2016 to address SQL deadlock problem--->
+<!---END this code was commented out on April 11 , 2016 to address SQL deadlock problem--->
+ 
+<!---This is new code added April 11 , 2016 to address SQL deadlock problem--->
+<!---This is new code added April 11 , 2016 to address SQL deadlock problem--->
+<cftransaction >
+<!---<cfquery name="update_job_clock" datasource="jrgm">
+UPDATE APP_Job_Clock SET job_time_worked = DATEDIFF(mi,job_time_in,job_time_out), in_out_status=2
+WHERE job_time_out IS NOT NULL   AND Job_Time_In > #daysago7#
+</cfquery>
+--->
+<cfquery name="update_job_clock" datasource="jrgm">
+UPDATE APP_Job_Clock SET job_time_worked = DATEDIFF(mi,job_time_in,job_time_out), in_out_status=2
+WHERE ds_id =#dsid#
+</cfquery>
+</cftransaction>
+<!---This is new code added April 11 , 2016 to address SQL deadlock problem--->
+<!---This is new code added April 11, 2016 to address SQL deadlock problem--->
 
 <cfif IsDefined("url.unapprove")>
   <cfquery name="approve_ds" datasource="jrgm">

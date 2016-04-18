@@ -1104,7 +1104,7 @@ ORDER by ID ASC
 <style type="text/css">
 <!--
 .smallfont {
-	font-size: 8px;
+	font-size: 9px;
 	color: #000000;
 	font-weight: bold;
 }
