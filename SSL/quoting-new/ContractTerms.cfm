@@ -154,11 +154,10 @@ h4 {font:  18px  medium Helvetica, sans-serif; }
             <tr>
               <td valign="top">CONTRACTOR:</td>
               <td valign="top">JAMES RIVER GROUNDS MANAGEMENT, INC.<br />
-                <cfoutput> #street_address#<br />
+                #street_address#<br />
                   #city_state_zip# <br />
-                  Phone: #Phone# Fax: #Fax#</cfoutput> <br /></td>
+                  Phone: #Phone# Fax: #Fax# <br /></td>
               </tr>
-            <cfoutput>
               <tr>
                 <td valign="top">CLIENT:</td>
                 <td valign="top">#Bill_To_Company_Name#<br />
@@ -173,7 +172,6 @@ h4 {font:  18px  medium Helvetica, sans-serif; }
                   </cfif>
                   #Billing_City#, #Billing_State# #Billing_Zip#<br /></td>
               </tr>
-            </cfoutput>
             <tr>
               <td valign="top">WORK LOCATION:</td>
               <td valign="top">#opportunity_name#<br />
