@@ -24,17 +24,28 @@ WHERE   [Employee ID]  IN (#mylist#)
 <cfset today_datex = #DateFormat(todayDate, "mm/dd/yyyy")#>
 <cfset mytime = timeFormat(now(), "hh:mm tt")>
 <cfset daysago7 = dateadd("d",-7,today_datex)>
+<!---This is new code added April 11 , 2016 to address SQL deadlock problem--->
+<!---This is new code added April 11 , 2016 to address SQL deadlock problem--->
+<cfquery name="update_employee_time" datasource="jrgm">
+UPDATE APP_Employee_Payroll_Clock SET time_worked = DATEDIFF(mi,time_in,time_out), in_out_status=2
+WHERE   ds_id =#dsid#
+</cfquery>
+<!---END This is new code added April 11 , 2016 to address SQL deadlock problem--->
+<!---END This is new code added April 11 , 2016 to address SQL deadlock problem--->
 <!---   EMPLOYEES --->
-<cfquery name="time_me_out" datasource="jrgm">
+<!---<cfquery name="time_me_out" datasource="jrgm">
  SELECT * FROM APP_Employee_Payroll_Clock WHERE In_out_status = 1 AND ds_date < '#today_datex#'  AND ds_date > #daysago7#
- </cfquery>
+ </cfquery>--->
 <!---  <cfdump  var="#time_me_out#"> --->
 
-<cfif  time_me_out.recordcount GT 0>
- <!--- <cfmail to="patrick.hutchinson2@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="Timed in Prior Branch"  type="html">
+<!---This code was commented out on April 11 , 2016 to address SQL deadlock problem--->
+<!---This code was commented out on April 11 , 2016 to address SQL deadlock problem--->
+<!---<cfif  time_me_out.recordcount GT 0>--->
+<!--- <cfmail to="patrick.hutchinson2@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="Timed in Prior Branch"  type="html">
     Timed in Prior RA  -#time_me_out.ds_id#
   </cfmail>--->
-  <cfloop query="time_me_out">
+
+<!---<cfloop query="time_me_out">
     <cfset y = year(time_me_out.ds_date)>
     <cfset m = month(time_me_out.ds_date)>
     <cfset d = day(time_me_out.ds_date)>
@@ -53,9 +64,12 @@ WHERE   [Employee ID]  IN (#mylist#)
 <cfquery name="update_employee_time" datasource="jrgm">
     UPDATE APP_Employee_Payroll_Clock SET time_worked = DATEDIFF(mi,time_in,time_out), in_out_status=2
     WHERE time_out IS NOT NULL  AND  ds_date > #daysago7#
-     </cfquery>
+     </cfquery>--->
 <!---  <strong>JOBS</strong> --->
-<cfquery name="time_me_outj" datasource="jrgm">
+
+<!---END This code was commented out on April 11 , 2016 to address SQL deadlock problem--->
+<!---END This code was commented out on April 11 , 2016 to address SQL deadlock problem--->
+<!---<cfquery name="time_me_outj" datasource="jrgm">
   SELECT * FROM APP_Job_Clock WHERE In_out_status = 1 AND job_time_in < '#today_datex#'
     </cfquery>
 <!---     <cfdump  var="#time_me_outj#"> --->
@@ -76,9 +90,20 @@ WHERE   [Employee ID]  IN (#mylist#)
 <cfquery name="update_job_clock" datasource="jrgm">
     UPDATE APP_Job_Clock SET job_time_worked = DATEDIFF(mi,job_time_in,job_time_out), in_out_status=2
     WHERE job_time_out IS NOT NULL   AND Job_Time_In > #daysago7#
-     </cfquery>
+     </cfquery>--->
 <!--- This code is for the prior day timeout issue --->
-
+<!---END code was commented out on April 11 , 2016 to address SQL deadlock problem--->
+<!---END code was commented out on April 11 , 2016 to address SQL deadlock problem--->
+<!---This is new code added April 11 , 2016 to address SQL deadlock problem--->
+<!---This is new code added April 11 , 2016 to address SQL deadlock problem--->
+<cftransaction >
+  <cfquery name="update_job_clock" datasource="jrgm">
+UPDATE APP_Job_Clock SET job_time_worked = DATEDIFF(mi,job_time_in,job_time_out), in_out_status=2
+WHERE ds_id =#dsid#
+</cfquery>
+</cftransaction>
+<!---END this is new code added April 11 , 2016 to address SQL deadlock problem--->
+<!---END this is new code added April 11 , 2016 to address SQL deadlock problem--->
 <cfif IsDefined("url.unapprove")>
   <cfquery name="approve_ds" datasource="jrgm">
  UPDATE  app_daily_sheets SET ds_approved =NULL, ds_approved_date=NULL,ds_approved_by = #SESSION.userid#  WHERE ID = #dsid#
@@ -254,46 +279,8 @@ H4 {
     </div>
   </div>
   <!-- END PAGE HEAD --> 
-  <!-- BEGIN PAGE CONTENT --> 
-  <!--- <div class="page-content">
-    <div class="container-fluid">
-    
-    <!-- BEGIN PAGE CONTENT INNER -->
-    <div class="row">
-      <div class="col-md-5">
-        <table class="table large">
-          <tr>
-            <td nowrap="nowrap"><strong>Date : <cfoutput>#DateFormat(ds_date, "mmmm dd, yyyy")#</cfoutput></strong></td>
-            <td nowrap="nowrap">&nbsp;</td>
-             <td nowrap="nowrap">&nbsp;&nbsp;&nbsp;<strong>DSID: <cfoutput query="get_ds">#ID#</cfoutput></strong></td>
-            <td align="left" nowrap="nowrap"><strong>Branch : <cfoutput>#branchname#</cfoutput></strong></td>
-          </tr>
-          <tr>
-           
-            <td align="left" nowrap="nowrap"><strong>Production Manager : <cfoutput>#get_crew_leader.employeename#</cfoutput></strong></td>
-            <td align="left" nowrap="nowrap">&nbsp;</td>
-            <td align="left" nowrap="nowrap">&nbsp;&nbsp;&nbsp;<strong>Supervisor/Crew Leader  : <cfoutput>#get_supervisor.employeename#</cfoutput></strong></td>
-              <td nowrap="nowrap">&nbsp;</td>
-          </tr>
-        </table>
-      </div>
-      <div class="col-md-4"> <span class="text-dsadd">
-        <cfif get_ds.ds_approved EQ 1>
-          Approved as of <cfoutput>#DateFormat(get_ds.ds_approved_date, "mm/dd/yyyy")#</cfoutput>
-        </cfif>
-        </span>
-        <cfif ((ds_date LTE  yesterday) OR  ((ds_date EQ  todaydate_DS))  AND timenow GT today_3PM) AND get_open_workers.recordcount  EQ 0>
-          <cfif get_ds.ds_approved EQ 1>
-            <cfoutput><a href="daily_sheet_edit2.cfm?dsid=#get_ds.ID#&email=yes&unapprove=yes" class="btn red">Unapprove</a></cfoutput>
-            <cfelse>
-            <cfoutput><a href="daily_sheet2.cfm?dsid=#get_ds.ID#&email=yes&approve=yes" class="btn green">Approve</a></cfoutput>
-          </cfif>
-        </cfif>
-      </div>
-      <div class="col-md-2"> <a href="dailysheet_help2.cfm?" onclick="javascript:void window.open('dailysheet_help2.cfm','1384819222444','width=800,height=725,toolbar=0,menubar=0,location=0,status=0,scrollbars=0,resizable=1,right=0,top=20');return false;"><i class="fa-red fa-question-circle"></i></a> <cfoutput><a href="daily_sheet_edit2.cfm?dsid=#dsid#"><i class="fa-green fa-refresh"></i></a></cfoutput> <cfoutput><a href="daily_sheet_edit_add_job2.cfm?ds_id=#dsid#" class="btn green">Add a Job</a></cfoutput> </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12">--->
+  <!-- BEGIN PAGE CONTENT -->
+  
   <div class="page-content">
     <div class="container-fluid"> 
       
@@ -353,13 +340,6 @@ H4 {
               </tr>
             </thead>
             <tbody>
-              <!---  <cfquery name="get_employees_for_Crew_Leader" datasource="jrgm">
-				SELECT DISTINCT [Employee ID] As employee_id,[Name FirstLast] AS employee_name, position,last_name  FROM APP_employees
-				WHERE [Employee ID] IN 
-				(SELECT Employee_ID FROM  app_employee_payroll_clock WHERE  ds_id = #dsid#) 
-				 ORDER by last_name ASC
-		        </cfquery>--->
-              
               <cfquery name="get_employees_for_Crew_Leader"  dbtype="query">
 				SELECT   employee_id,fullname AS employee_name, last_name  FROM get_all_employees
 				WHERE employee_id IN 
@@ -441,22 +421,6 @@ WHERE Employee_ID =#get_employees_for_Crew_Leader.Employee_ID# AND ds_id = #dsid
   		WHERE Crew_Leader_ID =#crew_leader_id#   AND ds_id = #dsid# 
         ORDER BY  Job_Time_Out ASC
   	          </CFQUERY>
-          <!---  <H4> Job Service Detail Information </h4> 
-       
-        
-        
-        <!--- <cfdump var="#get_this_job#">    --->
-        <cfloop query="get_this_job" >
-          <cfquery name="get_this_job_name" datasource="jrgm">
-		SELECT [Wk Location Name] AS event_name FROM app_jobs
-			WHERE [Job ID] ='#get_this_job.job_id#'
-			    </cfquery>
-          <CFQUERY name="get_this_job_lunch" datasource="jrgm">
-		  SELECT * FROM app_lunch   
- 		 WHERE ds_id = #dsid# AND job_clock_id =#get_this_job.ID# ORDER BY  ID ASC
- 		        </CFQUERY>
-          <!---   <cfdump var="#get_this_job_lunch#">   --->
-          <table class="table table-striped table-hover">--->
           <H4> Job Service Detail Information </h4>
           <div class="panel-body">
             <cfloop query="get_this_job" >

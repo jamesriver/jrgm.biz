@@ -3,11 +3,11 @@
   <CFSET session.Crew_Leader_IDR = form.Crew_Leader_ID>
 </cfif>
 <CFSET allchecked ='Yes'>
-<cfquery name="get_all_employee_info" datasource="jrgm">
+<cfquery name="get_all_employee_info" datasource="jrgm"   cachedWithin="#createTimeSpan( 0, 8, 0, 0 )#">
 SELECT  [Employee ID] AS Employee_ID,[Name FirstLast] AS employee_name, first_name ,  last_name,branch     FROM app_employees WHERE Branch IN   (#PreserveSingleQuotes(branchlist)#)
  </cfquery>
 <cfquery name="get_all_employee_PR_info" datasource="jrgm">
- SELECT   ds_id, supervisor, in_out_status, time_out FROM APP_Employee_Payroll_Clock   WHERE  Time_Out   > '2015-10-01 12:00:00.000' AND  Time_Out IS NOT NULL
+ SELECT   ds_id, supervisor, in_out_status, time_out FROM APP_Employee_Payroll_Clock   WHERE  Time_Out   > '2016-04-01 12:00:00.000' AND  Time_Out IS NOT NULL
   </cfquery>
 <CFIF IsDefined("url.work_date")>
   <cfset todayDate = #url.work_date#>
@@ -23,7 +23,7 @@ SELECT  [Employee ID] AS Employee_ID,[Name FirstLast] AS employee_name, first_na
 <cfset somedate = todayDate>
 <cfset yesterday = dateadd("d",-1,somedate)>
 <cfset tomorrow = dateadd("d",1,somedate)>
-<cfquery name="get_daily_sheets" datasource="jrgm"    maxrows="500">
+<cfquery name="get_daily_sheets" datasource="jrgm"    maxrows="400">
  SELECT  * FROM app_daily_sheets 
 WHERE <!---ds_date < '#todaydate_DS#'   AND---> branch_code IN (#branchcodelist#) 
 <cfif IsDefined("form.submitted")  AND form.dsid NEQ "" >AND    ID = #form.dsid#</cfif>
