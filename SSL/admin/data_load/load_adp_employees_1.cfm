@@ -17,7 +17,10 @@ Delete_this_crews_backup is where the current app_crews table gets backed up to.
 <CFSET checkdate = '#DateFormat(DateAdd('d', -30,Now()),'mm/dd/yyyy')#'>
 
 <!---<cfabort>--->
-
+<!---<cfquery name="drop_test3" datasource="JRGM" >
+DROP TABLE app_employees_test_backup;
+</cfquery>
+<cfabort>--->
 
 <cfquery name="make_copy"   datasource="jrgm">
 SELECT * INTO app_employees_test_backup  FROM app_employees_test
