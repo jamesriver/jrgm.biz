@@ -4,10 +4,6 @@
 <CFSET PAY_PERIOD_WEEK2_DATE =APPLICATION.pay_period_week2_date >
 <CFSET PAY_PERIOD_NUMBER =APPLICATION.pay_period_number >--->
 
-
-
-
-
 <cfquery name="get_all_employee_info" datasource="jrgm"  >
 SELECT   [Employee ID] AS employee_ID,[Name FirstLast] AS fullname, [Name FirstLast] AS  [employee_name], first_name ,  last_name,branch     
 FROM app_employees WHERE Branch IN   (#PreserveSingleQuotes(branchlist)#)
