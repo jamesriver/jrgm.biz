@@ -153,6 +153,7 @@ ORDER BY ID DESC
    <CFSET APPLICATION.blockdate  =#DateFormat(block_date, "mm/dd/yyyy")#>
    <CFSET APPLICATION.pay_period_week1 =#pay_period_week1#>
    <CFSET APPLICATION.pay_period_week2 =#pay_period_week2#>
+   <CFSET APPLICATION.pay_period_number = #pay_period_number#>
    <CFSET APPLICATION.week1_date_available =#DateFormat(week1_date_available, "mm/dd/yyyy")#>
    <CFSET APPLICATION.week2_date_available = #DateFormat(week2_date_available, "mm/dd/yyyy")#>
    <CFSET APPLICATION.pay_period_week1_date =#DateFormat(pay_period_week1_date, "mm/dd/yyyy")#>

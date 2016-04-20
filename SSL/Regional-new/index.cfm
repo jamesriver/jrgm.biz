@@ -3,6 +3,11 @@
 <CFSET PAY_PERIOD_WEEK1_DATE =APPLICATION.pay_period_week1_date >
 <CFSET PAY_PERIOD_WEEK2_DATE =APPLICATION.pay_period_week2_date >
 <CFSET PAY_PERIOD_NUMBER =APPLICATION.pay_period_number >--->
+
+
+
+
+
 <cfquery name="get_all_employee_info" datasource="jrgm"  >
 SELECT   [Employee ID] AS employee_ID,[Name FirstLast] AS fullname, [Name FirstLast] AS  [employee_name], first_name ,  last_name,branch     
 FROM app_employees WHERE Branch IN   (#PreserveSingleQuotes(branchlist)#)
@@ -401,7 +406,7 @@ WHERE  employee_ID = #Employee_ID#
                         <cfquery name="get_ds_id" datasource="jrgm">
 SELECT     Employee_ID, ds_date, ID,ds_id,time_in,time_out
 FROM         app_employee_payroll_clock
-WHERE    ds_date =#ds_date#  AND Employee_ID = #Employee_ID#
+WHERE    ds_date ='#DateFormat(ds_date, "yyyy-mm-dd")#'  AND Employee_ID = #Employee_ID#
 ORDER by time_IN ASC
  </cfquery>
                         <td> DSID: <a href="daily_sheet.cfm?dsid=#get_ds_id.ds_id#"  target="_blank">#get_ds_id.ds_id#</a><br>
@@ -409,7 +414,7 @@ ORDER by time_IN ASC
                         <cfquery name="get_ds_id_other" datasource="jrgm">
 SELECT     Employee_ID, ds_date, ID,ds_id,time_in,time_out
 FROM         app_employee_payroll_clock
-WHERE    ds_date =#ds_date#  AND Employee_ID = #Employee_ID#  AND ds_id <> #get_ds_id.ds_id#
+WHERE    ds_date ='#DateFormat(ds_date, "yyyy-mm-dd")#'  AND Employee_ID = #Employee_ID#  AND ds_id <> #get_ds_id.ds_id#
  </cfquery>
                         <td> DSID: <a href="daily_sheet.cfm?dsid=#get_ds_id_other.ds_id#"  target="_blank">#get_ds_id_other.ds_id#</a><br>
                           #TimeFormat(get_ds_id_other.time_in, "HH:mm")# - #TimeFormat(get_ds_id_other.time_out, "HH:mm")#</td>
