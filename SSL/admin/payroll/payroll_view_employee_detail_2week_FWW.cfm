@@ -66,7 +66,7 @@
 		app_employee_payroll_clock  
 		INNER JOIN APP_employees
 		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
-		WHERE  app_employee_payroll_clock.Time_In > #app_payroll_periods_Week1.pay_period_start# AND  app_employee_payroll_clock.Time_In < #pay_period_endPLUS1_DATE_week1#  AND FWW =1
+		WHERE  app_employee_payroll_clock.Time_In > '#DateFormat(app_payroll_periods_Week1.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000' AND  app_employee_payroll_clock.Time_In < #pay_period_endPLUS1_DATE_week1#  AND FWW =1
 		ORDER by APP_employees.last_name
  </cfquery>
       <cfif get_employees_with_time.recordcount EQ 0>
@@ -114,7 +114,7 @@
         <cfquery name="get_all_employee_time_for_period" datasource="jrgm"      >
 	SELECT Employee_ID,  time_worked, in_out_status,ds_date 
  FROM app_employee_payroll_clock
- WHERE Employee_ID IN (#mylist#) AND app_employee_payroll_clock.Time_In > #app_payroll_periods_Week1.pay_period_start# AND  app_employee_payroll_clock.Time_In < #pay_period_endPLUS1_DATE_week1#
+ WHERE Employee_ID IN (#mylist#) AND app_employee_payroll_clock.Time_In > '#DateFormat(app_payroll_periods_Week1.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000' AND  app_employee_payroll_clock.Time_In < #pay_period_endPLUS1_DATE_week1#
  AND in_out_status =2
   </cfquery>
         <cfparam name="current_date" default="1">
@@ -174,7 +174,7 @@
             </cfoutput>
             <cfquery name="get_employee_time_sum_w1" datasource="jrgm" >
 				SELECT Employee_ID,SUM(time_worked) AS sumtime FROM 
-				app_employee_payroll_clock WHERE Employee_ID =#get_employees_with_time.Employee_ID#  AND app_employee_payroll_clock.Time_In > #app_payroll_periods_Week1.pay_period_start# AND  app_employee_payroll_clock.Time_In < #pay_period_endPLUS1_DATE_week1# AND in_out_status =2  GROUP by Employee_ID
+				app_employee_payroll_clock WHERE Employee_ID =#get_employees_with_time.Employee_ID#  AND app_employee_payroll_clock.Time_In > '#DateFormat(app_payroll_periods_Week1.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000' AND  app_employee_payroll_clock.Time_In < #pay_period_endPLUS1_DATE_week1# AND in_out_status =2  GROUP by Employee_ID
       		   </cfquery >
             <cfif  get_employee_time_sum_w1.recordcount EQ 0>
               <td align="center" class="yellowaltrt">-</td>
