@@ -16,11 +16,10 @@ Delete_this_crews_backup is where the current app_crews table gets backed up to.
 
 <CFSET checkdate = '#DateFormat(DateAdd('d', -30,Now()),'mm/dd/yyyy')#'>
 
-<!---<cfabort>--->
-<!---<cfquery name="drop_test3" datasource="JRGM" >
-DROP TABLE app_employees_test_backup;
+<cfquery name="drop_app_employees_test_backup" datasource="JRGM" >
+IF OBJECT_ID('dbo.app_employees_test_backup', 'U') IS NOT NULL 
+  DROP TABLE dbo.app_employees_test_backup; 
 </cfquery>
-<cfabort>--->
 
 <cfquery name="make_copy"   datasource="jrgm">
 SELECT * INTO app_employees_test_backup  FROM app_employees_test
@@ -95,7 +94,7 @@ DROP TABLE Delete_this_crews_backup;
 </head>
 <body bgcolor="#FFFFFF">
 <!--- Convert file to XML document object --->
-<cffile action="read" file="C:\inetpub\websites\jrgm.biz\SSL\admin\data_load\ADP_JRGM.xml" variable="myxml">
+<cffile action="read" file="C:\inetpub\websites\test.jrgm.biz\SSL\admin\data_load\ADP_JRGM.xml" variable="myxml">
 <cfset mydoc = XmlParse(myxml)>
 <!--- get an array of employees --->
 <cfset emp = mydoc.ROWSET.XmlChildren>
