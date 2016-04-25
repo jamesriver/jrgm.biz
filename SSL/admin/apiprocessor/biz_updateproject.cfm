@@ -3,9 +3,6 @@
 <cfif IsDefined('form.Wk_Loc_ID')>
     <cfset form['Wk Loc ID'] = form.Wk_Loc_ID>
 </cfif>
-<cfif IsDefined('form.Job_ID')>
-    <cfset form['Job ID'] = form.Job_ID>
-</cfif>
 
 <!--- ======= insert new Insightly Opportunity into Biz ======= --->
 <cfif structKeyExists(form, 'Wk Loc ID')>
@@ -54,7 +51,6 @@
             UPDATE app_jobs
             SET last_modified_date_external=GETUTCDATE()
             , last_modified_by=NULL
-            , [Job ID]=<cfqueryparam value="#form['Job ID']#" CFSQLType="CF_SQL_TEXT">
             , project_start_date=<cfqueryparam value="#form['project_start_date']#" CFSQLType="CF_SQL_TEXT">
             , project_end_date=<cfqueryparam value="#form['project_end_date']#" CFSQLType="CF_SQL_TEXT">
             <cfif IsDefined('form.project_type')>

@@ -176,6 +176,7 @@ h4 {font:  18px  medium Helvetica, sans-serif; }
               <td valign="top">WORK LOCATION:</td>
               <td valign="top">#opportunity_name#<br />
                 #q_address1#<br />
+                <cfif q_address2 NEQ ''>#q_address2#<br /></cfif>
                 #q_city#, #q_address_state# #q_address_zip#<br /></td>
             </tr>
           </table>

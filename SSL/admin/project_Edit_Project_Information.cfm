@@ -18,6 +18,47 @@
     </cfif>
 
 <!--- ====== update project info in database ====== --->
+<!---cfoutput>
+UPDATE app_jobs SET
+Status = '#Form.Status#"     ' ,
+billing_contact_name =  '#Form.billing_contact_name#' ,
+billing_contact_phone =  '#Form.billing_contact_phone#' ,
+<!---billing_contact_phone2 =  '#Form.billing_contact_phone2#',--->
+[Service Address] =   '#Form.project_work_location_address#',
+billto_company_name =   '#Form.billto_company_name#',
+billing_contact_email_address  =   '#Form.billing_contact_email_address#',
+[Wk Location Name]  =   '#Form.projectname#',
+project_type  =   '#Form.project_type#',
+branch =   '#Form.branch#',
+[Service State] =   '#Form.project_work_location_state#',
+billing_state =   '#Form.billing_state#',
+[Service City] = '#Form.project_work_location_city#',
+ billing_address2=   '#Form.billing_address2#',
+ billing_city =   '#Form.billing_city#',
+ billing_address  =   '#Form.billing_address#',
+[Service Zip]  =   '#Form.project_work_location_zip#',
+ billing_zip  =   '#Form.billing_zip#',
+ [Service Address2]   =   '#Form.project_work_location_address2#',
+ active_record =   '#Form.active_record#'   ,
+ project_start_date = '#DateFormat(Form.project_start_date, "mm/dd/yyyy")#',
+ project_end_date = '#DateFormat(Form.project_end_date, "mm/dd/yyyy")#',
+ contract_installments = '#Form.contract_installments#',
+ total_project_value = '#Form.total_project_value#',
+ sales_contact_Employee_ID = #Form.sales_contact_Employee_ID#,
+ responsible_user_Employee_ID = #Form.responsible_user_Employee_ID#,
+ Crew_leader_ID = #Form.Crew_Leader_ID#,
+ Spray_Tech_ID = #Form.Spray_Tech_ID#,
+ Irrigation_Tech_ID = #Form.Irrigation_Tech_ID#,
+ project_status_checkbox = #project_status_checkbox_value#,
+ project_details = '#Form.project_details#',
+ irrigation_services_included = '#Form.irrigation_services_included#',
+ last_modified_date = GETUTCDATE(),
+ last_modified_date_external = GETUTCDATE(),
+ last_modified_by = #SESSION.userid#,
+ last_quote_id = #form.last_quote_id#
+    WHERE  [Job ID]  = '#form.ProjectID#'
+</cfoutput>
+<cfabort--->
   <CFQUERY name="update_app_jobs" datasource="#request.dsn#">
 UPDATE app_jobs SET
 Status = <cfqueryparam value="#Form.Status#"     CFSQLType="CF_SQL_VARCHAR"> ,
@@ -535,7 +576,7 @@ input {
                 <td>
                     <cfif IsDefined('intacct_project.billing_address')>
                         <input name="billing_address" type="hidden"  value="#intacct_project.billing_address#"   />
-                        <cfoutput>#intacct_project.billing_address#</cfoutput>
+                        #intacct_project.billing_address#
                     <cfelse>
                         <input name="billing_address" type="text"  value="#get_project_info.billing_address#"   />
                     </cfif>
@@ -548,7 +589,7 @@ input {
                 <td>
                     <cfif IsDefined('intacct_project.billing_address2')>
                         <input name="billing_address2" type="hidden"  value="#intacct_project.billing_address2#"   />
-                        <cfoutput>#intacct_project.billing_address2#</cfoutput>
+                        #intacct_project.billing_address2#
                     <cfelse>
                         <input name="billing_address2" type="text"  value="#get_project_info.billing_address2#"   />
                     </cfif>
@@ -561,7 +602,7 @@ input {
                 <td>
                     <cfif IsDefined('intacct_project.billing_city')>
                         <input name="billing_city" type="hidden"  value="#intacct_project.billing_city#"   />
-                        <cfoutput>#intacct_project.billing_city#</cfoutput>
+                        #intacct_project.billing_city#
                     <cfelse>
                         <input name="billing_city" type="text"  value="#get_project_info.billing_city#"   />
                     </cfif>
@@ -574,7 +615,7 @@ input {
                 <td>
                     <cfif IsDefined('intacct_project.billing_state')>
                         <input name="billing_state" type="hidden"  value="#intacct_project.billing_state#"   />
-                        <cfoutput>#intacct_project.billing_state#</cfoutput>
+                        #intacct_project.billing_state#
                     <cfelse>
                         <input name="billing_state" type="text"  value="#get_project_info.billing_state#"   />
                     </cfif>
@@ -587,7 +628,7 @@ input {
                 <td>
                     <cfif IsDefined('intacct_project.billing_zip')>
                         <input name="billing_zip" type="hidden"  value="#intacct_project.billing_zip#"   />
-                        <cfoutput>#intacct_project.billing_zip#</cfoutput>
+                        #intacct_project.billing_zip#
                     <cfelse>
                         <input name="billing_zip" type="text"  value="#get_project_info.billing_zip#"   />
                     </cfif>
@@ -637,7 +678,7 @@ input {
                       <cfif get_project_info.sales_contact_Employee_ID EQ employees[i][1]>
                         <cfset value = ' selected="selected"'>
                       </cfif>
-                      <option value="<cfoutput>#employees[i][1]#</cfoutput>"<cfoutput>#value#</cfoutput>> <cfoutput>#employees[i][2]#</cfoutput> </option>
+                      <option value="#employees[i][1]#"#value#> #employees[i][2]# </option>
                     </cfloop>
                   </select></td>
               </tr>
@@ -657,7 +698,7 @@ input {
                     <cfif get_project_info.responsible_user_Employee_ID EQ employees[i][1]>
                       <cfset value = ' selected="selected"'>
                     </cfif>
-                    <option value="<cfoutput>#employees[i][1]#</cfoutput>"<cfoutput>#value#</cfoutput>> <cfoutput>#employees[i][2]#</cfoutput> </option>
+                    <option value="#employees[i][1]#"#value#> #employees[i][2]# </option>
                   </cfloop>
                 </select></td>
               </tr>
@@ -670,7 +711,7 @@ input {
                       <cfif get_project_info.Crew_Leader_ID EQ employees[i][1]>
                         <cfset value = ' selected="selected"'>
                       </cfif>
-                      <option value="<cfoutput>#employees[i][1]#</cfoutput>"<cfoutput>#value#</cfoutput>> <cfoutput>#employees[i][2]#</cfoutput> </option>
+                      <option value="#employees[i][1]#"#value#> #employees[i][2]# </option>
                     </cfloop>
                   </select></td>
               </tr>
@@ -683,7 +724,7 @@ input {
                     <cfif get_project_info.Spray_Tech_ID EQ employees[i][1]>
                       <cfset value = ' selected="selected"'>
                     </cfif>
-                    <option value="<cfoutput>#employees[i][1]#</cfoutput>"<cfoutput>#value#</cfoutput>> <cfoutput>#employees[i][2]#</cfoutput> </option>
+                    <option value="#employees[i][1]#"#value#> #employees[i][2]# </option>
                   </cfloop>
                 </select></td>
               </tr>
@@ -696,7 +737,7 @@ input {
                       <cfif get_project_info.Irrigation_Tech_ID EQ employees[i][1]>
                         <cfset value = ' selected="selected"'>
                       </cfif>
-                      <option value="<cfoutput>#employees[i][1]#</cfoutput>"<cfoutput>#value#</cfoutput>> <cfoutput>#employees[i][2]#</cfoutput> </option>
+                      <option value="#employees[i][1]#"#value#> #employees[i][2]# </option>
                     </cfloop>
                   </select></td>
               </tr>

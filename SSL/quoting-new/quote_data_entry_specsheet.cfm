@@ -164,6 +164,7 @@ where qs.opportunity_id  =#url.id#
   <cfset value = get_quote_rows.row_defaultvalue>
   <cfif get_quote_rows.quote_services_field NEQ ''>
     <cfset value = '<span id="' & LCase(get_quote_rows.quote_services_field) & '"></span>'>
+    <!---cfoutput>#get_quote_rows.quote_services_field#<br /></cfoutput--->
   </cfif>
   <cfset ArrayAppend(quote_rows[row_order], value)>
 </cfloop>
@@ -390,10 +391,18 @@ SELECT  [Employee ID] as employee_id, [Name FirstLast] AS employee_Name FROM app
                     <cfabort--->
                     <cfswitch expression="#iii#">
                         <cfcase value="1">
-                            <cfset row_column = quote_rows_cache[quote_data_entry_row_order_array[ii]][1]['row_defaultvalue']>
+                            <cfif row_ID CONTAINS 'BlankService'>
+                                <cfset row_column = 'Additional Service ' & blank_count>
+                            <cfelse>
+                                <cfset row_column = quote_rows_cache[quote_data_entry_row_order_array[ii]][1]['row_defaultvalue']>
+                            </cfif>
                         </cfcase>
                         <cfcase value="2">
-                            <cfset row_column = quote_rows_cache[quote_data_entry_row_order_array[ii]][19]['row_defaultvalue']>
+                            <cfif row_ID CONTAINS 'BlankService'>
+                                <cfset row_column = '<span id="blank' & blank_count & '_service"></span>'>
+                            <cfelse>
+                                <cfset row_column = quote_rows_cache[quote_data_entry_row_order_array[ii]][19]['row_defaultvalue']>
+                            </cfif>
                         </cfcase>
                         <cfcase value="5">
                             <cfset row_column = quote_rows_cache[quote_data_entry_row_order_array[ii]][8]['row_defaultvalue']>
@@ -504,7 +513,9 @@ FROM         quote_notes  WHERE  opportunity_id = #url.id# AND  opportunity_id_o
                     <cfoutput>
                         initial_element = document.getElementById('#field#');
                         if (initial_element)
+                        {
                             initial_element.innerHTML = '#value#';
+                        }
                     </cfoutput>
                 </cfif>
             </cfloop>

@@ -194,7 +194,11 @@ varchar
   <cfif Len(mydoc.rowset.ROW[i].REHIRE_DATE.XmlText)>
     <cfset  QuerySetCell(orderquery, "REHIRE_DATE",mydoc.rowset.ROW[i].REHIRE_DATE.XmlText, i)>
   </cfif>
-  <cfset  QuerySetCell(orderquery, "CUSTOM_AREA_2",mydoc.rowset.ROW[i].CUSTOM_AREA_2.XmlText, i)>
+  <cfif StructKeyExists(mydoc.rowset.ROW[i], 'CUSTOM_AREA_2')>
+      <cfif Len(mydoc.rowset.ROW[i].CUSTOM_AREA_2.XmlText)>
+          <cfset  QuerySetCell(orderquery, "CUSTOM_AREA_2",mydoc.rowset.ROW[i].CUSTOM_AREA_2.XmlText, i)>
+      </cfif>
+    </cfif>
   <cfif Len(mydoc.rowset.ROW[i].REGULAR_PAY_RATE_AMOUNT.XmlText)>
     <cfset  QuerySetCell(orderquery, "REGULAR_PAY_RATE_AMOUNT",mydoc.rowset.ROW[i].REGULAR_PAY_RATE_AMOUNT.XmlText, i)>
   </cfif>

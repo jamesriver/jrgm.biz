@@ -63,7 +63,7 @@ BIRTH_DATE,
 POSITION_EFFECTIVE_DATE,
 STATUS_EFFECTIVE_DATE,
 REHIRE_DATE,
-CUSTOM_AREA_2, 
+CUSTOM_AREA_2,
 REGULAR_PAY_RATE_AMOUNT"
 , "
 varchar,
@@ -128,7 +128,11 @@ varchar
   <cfif Len(mydoc.rowset.ROW[i].REGULAR_PAY_RATE_AMOUNT.XmlText)>
     <cfset  QuerySetCell(orderquery, "REGULAR_PAY_RATE_AMOUNT",mydoc.rowset.ROW[i].REGULAR_PAY_RATE_AMOUNT.XmlText, i)>
   </cfif>
-  <cfset  QuerySetCell(orderquery, "CUSTOM_AREA_2",mydoc.rowset.ROW[i].CUSTOM_AREA_2.XmlText, i)>
+  <cfif StructKeyExists(mydoc.rowset.ROW[i], 'CUSTOM_AREA_2')>
+        <cfif Len(mydoc.rowset.ROW[i].CUSTOM_AREA_2.XmlText)>
+            <cfset  QuerySetCell(orderquery, "CUSTOM_AREA_2",mydoc.rowset.ROW[i].CUSTOM_AREA_2.XmlText, i)>
+        </cfif>
+      </cfif>
 </cfloop>
 <!--- <cfdump var=#orderquery#> ---> 
 <!---Modified this query 3/16/2016--->

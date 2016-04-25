@@ -463,7 +463,7 @@ i.mysize {
             </tr>
             <tr>
               <td>Job Location : </td>
-              <td colspan="4">#q_address1#, #q_city#, #q_address_state#, #q_address_zip#</td>
+              <td colspan="4">#q_address1#, <cfif q_address2 NEQ ''>#q_address2#, </cfif>#q_city#, #q_address_state#, #q_address_zip#</td>
             </tr>
             <tr>
               <td>Estimator :</td>
@@ -477,9 +477,9 @@ i.mysize {
               <td>&nbsp;</td>
               <cfif curated_opportunity_id NEQ 0>
                   <td><a href="https://googleapps.insight.ly/Opportunities/Details/#curated_opportunity_id#"  target="_blank">Insightly Link</a></td>
-                  <cfif quote_approved NEQ 1>
-                    <td><a href="quote_edit_opportunity.cfm?ID=#opportunity_id#"  target="_blank">Edit Quote Information</a></td>
-                  </cfif>
+              </cfif>
+              <cfif quote_approved NEQ 1>
+                <td><a href="quote_edit_opportunity.cfm?ID=#opportunity_id#"  target="_blank">Edit Quote Information</a></td>
               </cfif>
             </tr>
           </table>
