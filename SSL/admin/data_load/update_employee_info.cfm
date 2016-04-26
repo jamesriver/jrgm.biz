@@ -147,6 +147,11 @@ ORDER by branch
     </cfloop>
   </cfif>
 </cfmail>
+
+<cfquery name="drop_app_employees_test_backup" datasource="JRGM" >
+IF OBJECT_ID('dbo.app_employees_test_backup', 'U') IS NOT NULL
+  DROP TABLE dbo.app_employees_test_backup;
+</cfquery>
 <!---END Step 5 Get new records---> 
 Step 5 Done 
 
@@ -218,6 +223,10 @@ ORDER by ID
  
 <cfif get_equipment_allocated_to_inactive_employee.recordcount GT 0>
  <!---create backup of equipment table--->
+ <cfquery name="drop_app_employees_test_backup" datasource="JRGM" >
+ IF OBJECT_ID('dbo.equipment_backup', 'U') IS NOT NULL
+   DROP TABLE dbo.equipment_backup;
+ </cfquery>
 <cfquery name="make_copy_of_equipment_table"   datasource="jrgm">
 SELECT * INTO equipment_backup  FROM equipment
 </cfquery>
@@ -259,10 +268,6 @@ WHERE ID  = #get_equipment_allocated_to_inactive_employee.ID#
 </cfloop>
 <!------END Step 9--------------------- Job is  loaded into app_events table----------------------------------->--->
 
-
-<cfquery name="drop_test" datasource="JRGM" >
-DROP TABLE app_employees_test_backup;
-</cfquery>
 
 <!---Step 10 make sure that time_worked is updated in APP_Employee_Payroll_Clock --->
 <cfquery name="update_employee_time" datasource="jrgm">
