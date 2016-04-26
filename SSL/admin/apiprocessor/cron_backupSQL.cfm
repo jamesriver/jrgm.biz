@@ -3,7 +3,7 @@
 
 <!--- ======= create 8 1-hour backups of the most important tables that I've been using ======= --->
 <cfif IsDefined('form.timestamp_new') AND IsDefined('form.timestamp_old')>
-    <cfset table_names = ["app_jobs", "quote_start", "quote_main", "quote_data_entry_headers", "quote_data_entry_row"]>
+    <cfset table_names = ["app_jobs", "quote_start", "quote_main", "quote_data_entry_headers", "quote_data_entry_row", "app_employees", "app_employee_passwords", "app_crews", "app_events"]>
     <cfloop from="1" to="#arrayLen(table_names)#" index="i">
         <cfif IsDefined('url.test')>
             <cfoutput>
