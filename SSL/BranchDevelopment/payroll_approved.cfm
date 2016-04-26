@@ -30,7 +30,7 @@
 		app_employee_payroll_clock  
 		INNER JOIN APP_employees
 		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
-		WHERE branch = '#SESSION.branch#'  AND (app_employee_payroll_clock.Time_In > '#DateFormat(pay_period_start, "yyyy-mm-dd")# 00:00:00.000' AND app_employee_payroll_clock.Time_Out < #pay_period_end#) AND (payroll_approved = 0 OR payroll_approved IS NULL)
+		WHERE branch = '#SESSION.branch#'  AND (app_employee_payroll_clock.Time_In > '#DateFormat(pay_period_start, "yyyy-mm-dd")# 00:00:00.000' AND app_employee_payroll_clock.Time_Out < '#DateFormat(pay_period_end, "yyyy-mm-dd")# 00:00:00.000') AND (payroll_approved = 0 OR payroll_approved IS NULL)
 		ORDER by APP_employees.last_name
  	</cfquery>
     
@@ -212,7 +212,7 @@
            </cfif>
              <cfquery name="get_employee_time_sum_w2" datasource="jrgm" >
 				SELECT Employee_ID,SUM(time_worked) AS sumtime FROM 
-			app_employee_payroll_clock WHERE Employee_ID =#get_employees_with_time.Employee_ID#  AND app_employee_payroll_clock.Time_In > '#DateFormat(midplus1_date, "yyyy-mm-dd")# 00:00:00.000'   AND app_employee_payroll_clock.Time_Out <  				#end_date#
+			app_employee_payroll_clock WHERE Employee_ID =#get_employees_with_time.Employee_ID#  AND app_employee_payroll_clock.Time_In > '#DateFormat(midplus1_date, "yyyy-mm-dd")# 00:00:00.000'   AND app_employee_payroll_clock.Time_Out < '#DateFormat(end_date, "yyyy-mm-dd")# 00:00:00.000'
 AND in_out_status =2
 GROUP by Employee_ID
          </cfquery >
