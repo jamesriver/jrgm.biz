@@ -1,0 +1,145 @@
+﻿<html>
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <title>Scheduler</title>
+    <script src="js/jquery-1.9.1.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/jquery-ui-1.10.3.custom.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="codebase/dhtmlxscheduler.js" type="text/javascript" charset="utf-8"></script>
+    <script src="codebase/ext/dhtmlxscheduler_units.js" type="text/javascript" charset="utf-8"></script>
+    <script src="codebase/ext/dhtmlxscheduler_readonly.js" type="text/javascript" charset="utf-8"></script>
+    <script src="codebase/ext/dhtmlxscheduler_pdf.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/ScriptEvents.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="http://52.35.20.44/ssl/supervisors/js/twitter-bootstrap-hover-dropdown.js"
+        type="text/javascript" charset="utf-8"></script>
+    <script src="http://52.35.20.44/ssl/supervisors/js/jquery.accordion-a-1.1.min.js"
+        type="text/javascript" charset="utf-8"></script>
+    <script src="js/jquery.blockUI.js" type="text/javascript" charset="utf-8"></script>
+    <!--link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" / -->
+    <link rel="stylesheet" href="codebase/dhtmlxscheduler.css" type="text/css" title="no title"
+        charset="utf-8" />
+    <link rel="stylesheet" href="css/style.css" type="text/css" title="no title" charset="utf-8" />
+    <link href="http://52.35.20.44/ssl/supervisors/css/styles.css" rel="stylesheet"
+        type="text/css" />
+    <link href="css/bootstrap.css" rel="stylesheet" />
+    <link href="http://52.35.20.44/ssl/supervisors/css/accordion-a/accordion-a.css"
+        rel="stylesheet" />
+    <link href="http://52.35.20.44/ssl/supervisors/css/accordion-a/themes/minimal.css"
+        rel="stylesheet" />
+</head>
+<body onload="init();">
+    <div id="outerfull">
+        <div id="centrecontent">
+            <div class="subbar">
+                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td width="57">
+                            <a href="http://52.35.20.44/ssl/supervisors/default.cfm">
+                                <img src="http://52.35.20.44/ssl/supervisors/images/logosm.png" width="57" height="36"
+                                    alt="James River Grounds Management" /></a>
+                        </td>
+                        <td class="subbartxt">
+                            Welcome: <span id="loginName"></span>
+                        </td>
+                        <td width="42">
+                            <!--<a href="supervisors/setting.cfm" class="first"><img src="images/icon_settings.png" width="42" height="36" alt="Settings" /></a>-->
+                        </td>
+                        <td width="20">
+                            <img src="http://52.35.20.44/ssl/supervisors/images/clear.gif" width="20" height="2"
+                                alt="" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="topbar">
+                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td class="jobbutton">
+                          
+                               <a href="do_login.cfm?schedchoice=payroll" >
+                                    <img src="http://52.35.20.44/ssl/supervisors/images/icon_payroll.png" width="60"
+                                        height="60" />
+                                </a>
+                               
+                                <a href="do_login.cfm?schedchoice=dailysheet" >
+                                    <img src="http://52.35.20.44/ssl/supervisors/images/icon_dailysheet.png" width="60"
+                                        height="60" class="icons10" /></a>
+                               
+                            <a href="http://52.35.20.44/ssl/scheduler/schedulerevents.html">
+                                <img src="http://52.35.20.44/ssl/supervisors/images/icon_jobs.png" width="60" height="60"
+                                    alt="Jobs" class="icons_" /></a> <a href="http://52.35.20.44/ssl/scheduler/scheduler.html">
+                                        <img src="http://52.35.20.44/ssl/supervisors/images/icon_crews.png" width="60"
+                                            height="60" alt="Crews" class="icons_" /></a>
+                      <a href="do_login.cfm?schedchoice=inventory" ><img src="http://52.35.20.44/ssl/supervisors/images/icon_inventory.png" width="60" height="60" alt="Inventory" class="icons10" /></a> 
+           <a href="do_login.cfm?schedchoice=directory" ><img src="http://52.35.20.44/ssl/supervisors/images/directory_icon.png" width="60" height="60" alt="Inventory" class="icons10" /></a> 
+                         </td>
+                        
+                        <td align="right">
+                            
+                                <a href="do_login.cfm?schedchoice=home" >
+                                <img src="http://52.35.20.44/ssl/supervisors/images/icon_home.png" alt="Home" width="60"
+                                    height="60" class="icons_"></a> <a href="http://www.jrgm.biz/index.cfm">
+                                        <img src="http://52.35.20.44/ssl/supervisors/images/icon_logout.png" alt="Logout"
+                                            width="60" height="60" class="icons_" /></a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+           
+        </div>
+        <!-- end outer div -->
+        <script>
+            $(document).ready(function () {
+
+                $('.accordion-a').accordionA();
+		$('#loginName').text($.cookie("EMPLOYEE_NAME"));
+
+            });
+        </script>
+        <script src="http://52.35.20.44/ssl/supervisors/js/jquery.pageslide.min.js" type="text/javascript"
+            charset="utf-8"></script>
+        <script>
+            /* Default pageslide, moves to the right */
+            $(".first").pageslide();
+
+            /* Slide to the left, and make it model (you'll have to call $.pageslide.close() to close) */
+            $(".second").pageslide({ direction: "left", modal: true });
+        </script>
+        <script scr="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/js/bootstrap.min.js"
+            type="text/javascript" charset="utf-8"></script>
+        <script src="http://52.35.20.44/ssl/supervisors/js/twitter-bootstrap-hover-dropdown.js"
+            type="text/javascript" charset="utf-8"></script>
+    </div>
+    <div>
+        <div id="scheduler_here" class="dhx_cal_container" style='top: 125px; width: 100%;
+            height: 100%;'>
+            <div class="dhx_cal_navline">
+                <div class='dhx_cal_export pdf' id='export_pdf' title='Export to PDF' onclick='scheduler.toPDF("http://dhtmlxscheduler.appspot.com/export/pdf", "color")'>
+                    &nbsp;</div>
+<div class='dhx_cal_refresh' id='refresh' title='Refresh' onclick="getRefreshData();" >&nbsp;</div>
+                <div class="dhx_cal_prev_button">
+                    &nbsp;</div>
+                <div class="dhx_cal_next_button">
+                    &nbsp;</div>
+                <div class="dhx_cal_today_button">
+                </div>
+                <div class="dhx_cal_date">
+                </div>
+                <!--div class="dhx_cal_tab" name="day_tab" style="right: 204px;">
+                </div-->
+                <div class="dhx_cal_tab" name="week_tab" style="right: 140px;">
+                </div>
+                <div class="dhx_cal_tab" name="unit_tab" style="right: 280px;">
+                </div>
+                <!--div class="dhx_cal_tab" name="month_tab" style="right: 76px;">
+                </div-->
+            </div>
+            <div class="dhx_cal_header">
+            </div>
+            <div class="dhx_cal_data" style="height:68% !important">
+            </div>
+        </div>
+    </div>
+</body>
+</html>
