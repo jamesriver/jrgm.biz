@@ -139,7 +139,7 @@ app_employee_payroll_clock WHERE Employee_ID =#get_employees_with_time.Employee_
         <cfset employee_total = 0>
 <cfquery name="get_employee_time_sum_w2" datasource="jrgm" >
 SELECT Employee_ID,SUM(time_worked) AS sumtime FROM 
-app_employee_payroll_clock WHERE Employee_ID =#get_employees_with_time.Employee_ID#  AND app_employee_payroll_clock.Time_In > '#DateFormat(pay_period_start_week2, "yyyy-mm-dd")# 00:00:00.000' AND  app_employee_payroll_clock.Time_In < '#DateFormat(pay_period_start_week2, "yyyy-mm-dd")# 00:00:00.000'  AND in_out_status =2  GROUP by 				Employee_ID
+app_employee_payroll_clock WHERE Employee_ID =#get_employees_with_time.Employee_ID#  AND app_employee_payroll_clock.Time_In > '#DateFormat(pay_period_start_week2, "yyyy-mm-dd")# 00:00:00.000' AND  app_employee_payroll_clock.Time_In < '#DateFormat(pay_period_end_week2, "yyyy-mm-dd")# 00:00:00.000'  AND in_out_status =2  GROUP by 				Employee_ID
 </cfquery >
         <cfif  get_employee_time_sum_w2.recordcount EQ 0>
           <cfelse>
