@@ -15,6 +15,7 @@ Delete_this_crews_backup is where the current app_crews table gets backed up to.
 
 
 <CFSET checkdate = '#DateFormat(DateAdd('d', -30,Now()),'mm/dd/yyyy')#'>
+<CFSET currentdate = DateFormat(Now(), 'yyyymmdd')>
 
 <cfquery name="drop_app_employees_test_backup" datasource="JRGM" >
 IF OBJECT_ID('dbo.app_employees_test_backup', 'U') IS NOT NULL 
@@ -94,7 +95,7 @@ DROP TABLE Delete_this_crews_backup;
 </head>
 <body bgcolor="#FFFFFF">
 <!--- Convert file to XML document object --->
-<cffile action="read" file="C:\inetpub\websites\test.jrgm.biz\SSL\admin\data_load\ADP_JRGM.xml" variable="myxml">
+<cffile action="read" file="C:\inetpub\websites\test.jrgm.biz\SSL\admin\data_load\ADP_JRGM_#currentdate#.xml" variable="myxml">
 <cfset mydoc = XmlParse(myxml)>
 <!--- get an array of employees --->
 <cfset emp = mydoc.ROWSET.XmlChildren>
