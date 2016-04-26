@@ -168,7 +168,7 @@ SELECT  * FROM APP_daily_sheets  WHERE    Supervisor_ID = #SESSION.userid#  AND 
 		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
 		WHERE branch = '#SESSION.branch#' AND  supervisor = #SESSION.userid#
         AND 
-        (app_employee_payroll_clock.Time_In > '#app_payroll_periods1.pay_period_start# 00:00:00.000' AND app_employee_payroll_clock.Time_Out < #pay_period_end_week1#)
+        (app_employee_payroll_clock.Time_In > '#app_payroll_periods1.pay_period_start# 00:00:00.000' AND app_employee_payroll_clock.Time_Out < '#DateFormat(pay_period_end_week1, "yyyy-mm-dd")# 00:00:00.000')
 		ORDER by APP_employees.last_name
   </cfquery>
   <CFSET mylist ="0">
@@ -185,7 +185,7 @@ SELECT  * FROM APP_daily_sheets  WHERE    Supervisor_ID = #SESSION.userid#  AND 
 		INNER JOIN APP_employees
 		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
 		WHERE    
-         ( app_employee_payroll_clock.Time_In > '#app_payroll_periods1.pay_period_start# 00:00:00.000' AND  app_employee_payroll_clock.Time_Out < #pay_period_end_week1#)
+         ( app_employee_payroll_clock.Time_In > '#app_payroll_periods1.pay_period_start# 00:00:00.000' AND  app_employee_payroll_clock.Time_Out < '#DateFormat(pay_period_end_week1, "yyyy-mm-dd")# 00:00:00.000')
    AND Employee_ID IN (#mylist#)  AND payroll_approved IS NULL    AND  supervisor = #SESSION.userid#
 		ORDER by APP_employees.last_name
  </cfquery>
