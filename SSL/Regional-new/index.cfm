@@ -1,3 +1,7 @@
+<cfif IsDefined('form.branch')>
+    <cfset SESSION.branch = form.branch>
+</cfif>
+
 <!---<CFSET pay_period_week1 =APPLICATION.pay_period_week1 >
 <CFSET pay_period_week2 =APPLICATION.pay_period_week2>
 <CFSET PAY_PERIOD_WEEK1_DATE =APPLICATION.pay_period_week1_date >
@@ -209,6 +213,21 @@ SELECT  last_name AS employee_name,branch
         </div>
       </cfif>
       <div class="row margin-top-10">
+        <div class="col-sm-12 text-center">
+            <form id="form_branch" method="post">
+            Switch to view a different branch:
+                <select name="branch"   tabindex="5" onChange="document.getElementById('form_branch').submit()">
+                    <option value="Corporate" <cfif SESSION.branch EQ 'Corporate'> selected="selected"</cfif>>Corporate</option>
+                    <option value="Charlottesville" <cfif SESSION.branch EQ 'Charlottesville'> selected="selected"</cfif>>Charlottesville</option>
+                    <option value="Chesterfield" <cfif SESSION.branch EQ 'Chesterfield'> selected="selected"</cfif>>Chesterfield</option>
+                    <option value="Newport News" <cfif SESSION.branch EQ 'Newport News'> selected="selected"</cfif>>Newport News</option>
+                    <option value="Portsmouth" <cfif SESSION.branch EQ 'Portsmouth'> selected="selected"</cfif>>Portsmouth</option>
+                    <option value="Richmond" <cfif SESSION.branch EQ 'Richmond'> selected="selected"</cfif>>Richmond</option>
+                </select>
+            </form>
+            </br ><br />
+        </div>
+
         <div class="col-md-6 col-sm-12"> 
           <!-- BEGIN PORTLET-->
           <div class="portlet box blue-hoki">
@@ -965,7 +984,22 @@ FROM   get_all_employee_info WHERE employee_ID =#get_employees_injury.supervisor
               <li><a href="javascript:window.open('http://api.jrgm.com/biz/?EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=csv_snowremoval&nocostrates=1');">Snow Removal - No Cost Rates (CSV)</a></li>
               <li><a href="javascript:window.open('http://api.jrgm.com/biz/?EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=view_jobcost');">Job Cost Report</a></li>
             </ul>
-            
+
+            <cfquery name="see_if_pended" datasource="jrgm">
+              SELECT * FROM inventory_report_list
+              WHERE  inventory_user =  #SESSION.userid#  AND  inventory_status = 0
+            </cfquery>
+            <h5>Equipment Inventory Reports</h5>
+            <ul>
+              <li><a href="inventory_report_printable.cfm" target="_blank">Equipment Inventory Report (Printable)</a></li>
+              <cfif see_if_pended.recordcount EQ 0>
+                <li><a href="inventory_report_printable_eversion1.cfm" target="_blank">Start an Equipment Inventory Report (Electronic)</a></li>
+                <cfelse>
+                <li><a href="inventory_report_printable_eversion1.cfm?Inventory_Report_ID=<cfoutput>#see_if_pended.ID#</cfoutput>" target="_blank">Continue with Pended Equipment  Inventory Report -(<cfoutput>#see_if_pended.ID#</cfoutput>)</a></li>
+              </cfif>
+              <li><a href="inventory_reports_list.cfm">View Prior Equipment Inventory Report (Electronic)</a></li>
+            </ul>
+
             <!--- <cfif  Session.userid EQ 1433  > --->
             <h5>Inspection Reports</h5>
             <ul>
@@ -973,8 +1007,7 @@ FROM   get_all_employee_info WHERE employee_ID =#get_employees_injury.supervisor
               <li><a href="Evening_Inspection_List.cfm">End of Day Inspection Forms</a></li>
               <li><a href="Weekly_Equipment_Maintenance_List.cfm">Weekly Equipment Maintenance Forms</a></li>
             </ul>
-            <!---     </cfif> ---> 
-            
+            <!---     </cfif> --->
           </div>
         </div>
       </div>

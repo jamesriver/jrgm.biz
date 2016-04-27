@@ -1,3 +1,6 @@
+<cfif IsDefined('form.branch')>
+    <cfset SESSION.branch = form.branch>
+</cfif>
 <CFIF IsDefined("url.work_date")>
   <cfset todayDate = #url.work_date#>
   <cfelse>
@@ -95,7 +98,24 @@ FROM app_employees
   <!-- END PAGE HEAD --> 
   <!-- BEGIN PAGE CONTENT -->
   <div class="page-content">
-    <div class="container-fluid"> 
+    <div class="container-fluid">
+
+    <div class="row">
+       <div class="col-md-7">
+            <form id="form_branch" method="post">
+            Switch to view a different branch:
+                <select name="branch"   tabindex="5" onChange="document.getElementById('form_branch').submit()">
+                    <option value="Corporate" <cfif SESSION.branch EQ 'Corporate'> selected="selected"</cfif>>Corporate</option>
+                    <option value="Charlottesville" <cfif SESSION.branch EQ 'Charlottesville'> selected="selected"</cfif>>Charlottesville</option>
+                    <option value="Chesterfield" <cfif SESSION.branch EQ 'Chesterfield'> selected="selected"</cfif>>Chesterfield</option>
+                    <option value="Newport News" <cfif SESSION.branch EQ 'Newport News'> selected="selected"</cfif>>Newport News</option>
+                    <option value="Portsmouth" <cfif SESSION.branch EQ 'Portsmouth'> selected="selected"</cfif>>Portsmouth</option>
+                    <option value="Richmond" <cfif SESSION.branch EQ 'Richmond'> selected="selected"</cfif>>Richmond</option>
+                </select>
+            </form>
+            </br ><br />
+        </div>
+      </div>
       
       <!-- BEGIN PAGE CONTENT INNER -->
       <div class="row">

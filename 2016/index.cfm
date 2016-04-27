@@ -1,0 +1,1 @@
+<cfinclude template="#APPLICATION.basePath#controller/index_controller.cfm">

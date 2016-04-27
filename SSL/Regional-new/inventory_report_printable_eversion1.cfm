@@ -1,3 +1,7 @@
+<cfif IsDefined('form.branch')>
+    <cfset SESSION.branch = form.branch>
+</cfif>
+
 <cfparam name="yes_list" default="0">
 <cfparam name="no_list" default="0">
 <cfparam name="notes_list" default="0">
@@ -214,7 +218,20 @@ AND Product_description LIKE '%#form.criteria#%' OR Product_name LIKE '%#form.cr
       <table class="table large">
                   <tbody>
                     <tr>
-                    <td>Branch: <cfoutput>#session.BRANCH#</cfoutput></td>
+                    <td>
+                        <form id="form_branch" method="post">
+                        Branch:
+                            <select name="branch"   tabindex="5" onChange="document.getElementById('form_branch').submit()">
+                                <option value="Corporate" <cfif SESSION.branch EQ 'Corporate'> selected="selected"</cfif>>Corporate</option>
+                                <option value="Charlottesville" <cfif SESSION.branch EQ 'Charlottesville'> selected="selected"</cfif>>Charlottesville</option>
+                                <option value="Chesterfield" <cfif SESSION.branch EQ 'Chesterfield'> selected="selected"</cfif>>Chesterfield</option>
+                                <option value="Newport News" <cfif SESSION.branch EQ 'Newport News'> selected="selected"</cfif>>Newport News</option>
+                                <option value="Portsmouth" <cfif SESSION.branch EQ 'Portsmouth'> selected="selected"</cfif>>Portsmouth</option>
+                                <option value="Richmond" <cfif SESSION.branch EQ 'Richmond'> selected="selected"</cfif>>Richmond</option>
+                            </select>
+                        </form>
+                        </br ><br />
+                    </td>
                     <td>Report ID: <cfoutput>#Inventory_Report_ID#</cfoutput></td>
                     <td>
 					<cfif  IsDefined("form.filter")  AND (IsDefined("CREW_ASSIGNMENT_LAST")  AND CREW_ASSIGNMENT_LAST NEQ 'All')>

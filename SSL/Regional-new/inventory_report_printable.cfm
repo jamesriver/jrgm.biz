@@ -1,3 +1,7 @@
+<cfif IsDefined('form.branch')>
+    <cfset SESSION.branch = form.branch>
+</cfif>
+
  <cfparam name="session.Categorysearch" default="All">
 <cfparam name="session.branchsearch" default="All">
 <cfparam name="session.yearsearch" default="All">
@@ -103,7 +107,18 @@ AND Product_description LIKE '%#form.criteria#%' OR Product_name LIKE '%#form.cr
       <!-- BEGIN PAGE TITLE -->
      
       <div class="page-title">
-        <h1>Printable Inventory Sheet - <cfoutput>#session.BRANCH#</cfoutput></h1>
+      <form id="form_branch" method="post">
+        <h1>Printable Inventory Sheet -
+            <select name="branch"   tabindex="5" onChange="document.getElementById('form_branch').submit()">
+                <option value="Corporate" <cfif SESSION.branch EQ 'Corporate'> selected="selected"</cfif>>Corporate</option>
+                <option value="Charlottesville" <cfif SESSION.branch EQ 'Charlottesville'> selected="selected"</cfif>>Charlottesville</option>
+                <option value="Chesterfield" <cfif SESSION.branch EQ 'Chesterfield'> selected="selected"</cfif>>Chesterfield</option>
+                <option value="Newport News" <cfif SESSION.branch EQ 'Newport News'> selected="selected"</cfif>>Newport News</option>
+                <option value="Portsmouth" <cfif SESSION.branch EQ 'Portsmouth'> selected="selected"</cfif>>Portsmouth</option>
+                <option value="Richmond" <cfif SESSION.branch EQ 'Richmond'> selected="selected"</cfif>>Richmond</option>
+            </select>
+        </h1>
+        </form>
       </div>
        <div class="searchbar">
      <form action="inventory_report_printable.cfm" method="post">

@@ -1,3 +1,8 @@
+<cfif CGI.HTTP_HOST CONTAINS "test.jrgm.biz">
+    <cflocation url="http://test.jrgm.biz/2016/index.cfm" addtoken="no">
+<cfelseif CGI.HTTP_HOST CONTAINS "staging.jrgm.biz">
+    <cflocation url="http://staging.jrgm.biz/2016/index.cfm" addtoken="no">
+</cfif>
 
 <cfset tempvariable = StructClear(session)>
 

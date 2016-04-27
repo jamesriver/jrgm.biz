@@ -17,24 +17,24 @@
 <cfset todayDate_button = DateFormat(Now(),"mmm-dd-yyyy")>
 <cfif NOT IsDefined("Form.Submit")  AND NOT IsDefined("Form.Pend")  AND NOT IsDefined("url.Inventory_Report_ID")>
   <cfquery name="insert_new_report" datasource="jrgm">
-  INSERT INTO inventory_report_list 
+  INSERT INTO inventory_report_list
   (inventory_date,inventory_branch,inventory_user ) VALUES ('#todayDate#','#SESSION.branch#',#SESSION.userid#)
 </cfquery>
   <cfquery name="getmaxid" datasource="jrgm">
- SELECT MAX(ID) AS newid FROM inventory_report_list  
+ SELECT MAX(ID) AS newid FROM inventory_report_list
 </cfquery>
   <CFSET  Inventory_Report_ID = getmaxid.newid>
 </cfif>
 <cfif   IsDefined("Form.Submit")  OR   IsDefined("Form.Pend")>
   <CFSET  Inventory_Report_ID = form.Inventory_Report_ID>
   <cfquery name="delete_report" datasource="jrgm">
-  DELETE FROM inventory_report_results 
+  DELETE FROM inventory_report_results
   WHERE  Inventory_Report_ID =#Inventory_Report_ID#
 </cfquery>
   <cfif   IsDefined("Form.CHECKBOX1")>
     <cfloop index="i" list="#Form.CHECKBOX1#" delimiters=",">
       <cfquery name="insert_yes_info" datasource="jrgm">
-  INSERT INTO inventory_report_results 
+  INSERT INTO inventory_report_results
   (inventory_report_id,equipment_db_id,equipment_yn) VALUES (#inventory_report_id#, #i#, 1)
 </cfquery>
     </cfloop>
@@ -43,7 +43,7 @@
   <cfif   IsDefined("Form.CHECKBOX0")>
     <cfloop index="i" list="#Form.CHECKBOX0#" delimiters=",">
       <cfquery name="insert_yes_info" datasource="jrgm">
-  INSERT INTO inventory_report_results 
+  INSERT INTO inventory_report_results
   (inventory_report_id,equipment_db_id,equipment_yn) VALUES (#inventory_report_id#, #i#, 0)
 </cfquery>
     </cfloop>
@@ -64,7 +64,7 @@
   </cfloop>
 </cfif>
 <cfquery name="get_report_info_notes" datasource="jrgm">
-  SELECT * FROM inventory_report_results 
+  SELECT * FROM inventory_report_results
   WHERE Inventory_Report_ID = #Inventory_Report_ID# AND equipment_notes IS NOT NULL
 </cfquery>
 <cfloop query="get_report_info_notes">
@@ -88,21 +88,21 @@
 <cfif   IsDefined("url.Inventory_Report_ID")  >
   <CFSET  Inventory_Report_ID = #url.Inventory_Report_ID#>
   <cfquery name="get_report_info1" datasource="jrgm">
-  SELECT * FROM inventory_report_list 
+  SELECT * FROM inventory_report_list
   WHERE ID = #Inventory_Report_ID#
 </cfquery>
   <cfif  get_report_info1.inventory_filter NEQ "">
     <CFSET form.crew_assignment_last = get_report_info1.inventory_filter>
   </cfif>
   <cfquery name="get_report_info_yes" datasource="jrgm">
-  SELECT * FROM inventory_report_results 
+  SELECT * FROM inventory_report_results
   WHERE Inventory_Report_ID = #Inventory_Report_ID# AND equipment_yn =1
 </cfquery>
   <cfloop query="get_report_info_yes">
     <cfset yes_list = ListAppend(yes_list,equipment_db_id)>
   </cfloop>
   <cfquery name="get_report_info_no" datasource="jrgm">
-  SELECT * FROM inventory_report_results 
+  SELECT * FROM inventory_report_results
   WHERE Inventory_Report_ID = #Inventory_Report_ID# AND equipment_yn =0
 </cfquery>
   <cfloop query="get_report_info_no">
@@ -110,7 +110,7 @@
   </cfloop>
 </cfif>
 <cfquery name="get_employees" datasource="jrgm">
-SELECT DISTINCT Employee_ID, crew_name AS employee_name,supervisor_id,Employee_Position_ID FROM APP_crews 
+SELECT DISTINCT Employee_ID, crew_name AS employee_name,supervisor_id,Employee_Position_ID FROM APP_crews
 WHERE Employee_branch = '#SESSION.branch#' AND Employee_Position_ID
  IN (1) AND active_record =1
  ORDER by  Employee_Position_ID ASC
@@ -175,12 +175,12 @@ WHERE  [Employee ID] = #form.crew_assignment_last#
 <!-- DOC: Apply "page-header-top-fixed" class to set the top menu fixed  -->
 
 <body>
-<!-- BEGIN HEADER SECTION  --> 
+<!-- BEGIN HEADER SECTION  -->
 
-<!-- END HEADER SECTION --> 
+<!-- END HEADER SECTION -->
 
 <!-- BEGIN PAGE CONTAINER -->
-<div class="page-container-fluid"> 
+<div class="page-container-fluid">
   <!-- BEGIN PAGE HEAD -->
   <div class="page-head">
     <div class="container-fluid">
@@ -188,9 +188,9 @@ WHERE  [Employee ID] = #form.crew_assignment_last#
 SELECT inventory_status ,ID,Product_description,Product_name,Serial_Number,Equipment_ID,category,License_Plate,Equipment_Year, engine_cycle, mileage_eq,hours_eq,BRANCH_NAME,ISNULL(CREW_ASSIGNMENT_LAST,0)
   FROM equipment WHERE 0=0 AND branch_name ='#Session.branch#'
 <cfif IsDefined("form.criteria")  AND form.criteria NEQ "" >
-AND Product_description LIKE '%#form.criteria#%' OR Product_name LIKE '%#form.criteria#%' OR Serial_Number LIKE '%#form.criteria#%' 
+AND Product_description LIKE '%#form.criteria#%' OR Product_name LIKE '%#form.criteria#%' OR Serial_Number LIKE '%#form.criteria#%'
  OR Branch_name LIKE '%#form.criteria#%'  OR Equipment_ID LIKE '%#form.criteria#%'   OR category LIKE '%#form.criteria#%'  OR License_Plate LIKE '%#form.criteria#%'
-</cfif> <cfif IsDefined("form.category") AND form.category NEQ "All" > AND category ='#form.category#'</cfif> <cfif IsDefined("form.Equipment_year") AND form.Equipment_year NEQ "All" > AND Equipment_year =#form.Equipment_year#</cfif>  <cfif IsDefined("form.BRANCH_NAME") AND form.BRANCH_NAME NEQ "All" > AND BRANCH_NAME ='#form.BRANCH_NAME#'</cfif>  
+</cfif> <cfif IsDefined("form.category") AND form.category NEQ "All" > AND category ='#form.category#'</cfif> <cfif IsDefined("form.Equipment_year") AND form.Equipment_year NEQ "All" > AND Equipment_year =#form.Equipment_year#</cfif>  <cfif IsDefined("form.BRANCH_NAME") AND form.BRANCH_NAME NEQ "All" > AND BRANCH_NAME ='#form.BRANCH_NAME#'</cfif>
 <cfif NOT IsDefined("form.inventory_status")  > AND inventory_status =1</cfif> <cfif IsDefined("form.inventory_status") AND form.inventory_status EQ 4 > AND inventory_status > 0</cfif>
 <cfif IsDefined("form.inventory_status") AND form.inventory_status LT 4 > AND inventory_status ='#form.inventory_status#'</cfif>
  <cfif IsDefined("form.crew_assignment_last") AND form.crew_assignment_last NEQ "All" > AND crew_assignment_last ='#form.crew_assignment_last#'</cfif>
@@ -207,7 +207,7 @@ AND Product_description LIKE '%#form.criteria#%' OR Product_name LIKE '%#form.cr
         <cfabort>
       </cfif>
       <!-- BEGIN PAGE TITLE -->
-      
+
       <div class="page-title">
         <h1>Equipment Inventory Report</h1>
       </div>

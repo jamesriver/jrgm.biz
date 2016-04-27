@@ -57,4 +57,10 @@
     <cfset cv++>
 </cfloop>
 
+<cfquery name="fixer_query" datasource="jrgm">
+    UPDATE quote_start
+    SET quote_data_entry_versions_ID=3
+    WHERE quote_data_entry_versions_ID=1
+</cfquery>
+
 <cfinclude template="include_output.cfm">
