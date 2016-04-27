@@ -13,7 +13,7 @@
  SELECT * FROM APP_Employee_Payroll_Clock WHERE In_out_status = 1 AND ds_date < '#today_datex#'  AND ds_date > #daysago7#
  </cfquery>
 <cfif  time_me_out.recordcount GT 0>
-  <!---<cfmail to="patrick.hutchinson2@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="Timed in Prior Branch"  type="html">
+  <!---<cfmail to="benchanviolin@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="Timed in Prior Branch"  type="html">
     Timed in Prior Branch  -#time_me_out.ds_id#
   </cfmail>--->
   <cfloop query="time_me_out">

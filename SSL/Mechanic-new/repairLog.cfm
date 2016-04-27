@@ -202,7 +202,7 @@ VALUES (#ID#,#repair_log_id#,'#parts1#','#parts2#','#parts3#','#parts4#',
 UPDATE equipment SET  repair_log_ip =1 WHERE ID = #ID#
 </cfquery>
   <cfif IsDefined("form.recommend_replace")  AND  form.recommend_replace EQ 1>
-    <cfmail to="jbatterson@jrgm.com"    FROM="JRGM Alerts"   cc="patrick.hutchinson2@gmail.com" subject="Equipment Recommended for Replacement " type="html">
+    <cfmail to="jbatterson@jrgm.com"    FROM="JRGM Alerts"   cc="benchanviolin@gmail.com" subject="Equipment Recommended for Replacement " type="html">
       <style type="text/css">
        .arialfont {
 	  font: normal .9em Arial, Helvetica, sans-serif;

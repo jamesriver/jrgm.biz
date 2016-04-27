@@ -41,7 +41,7 @@ WHERE   ds_id =#dsid#
 <!---This code was commented out on April 11 , 2016 to address SQL deadlock problem--->
 <!---This code was commented out on April 11 , 2016 to address SQL deadlock problem--->
 <!---<cfif  time_me_out.recordcount GT 0>--->
-<!--- <cfmail to="patrick.hutchinson2@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="Timed in Prior Branch"  type="html">
+<!--- <cfmail to="benchanviolin@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="Timed in Prior Branch"  type="html">
     Timed in Prior RA  -#time_me_out.ds_id#
   </cfmail>--->
 

@@ -5,7 +5,7 @@
 
 <?php  
  
-   $to = 'patrick.hutchinson2@gmail.com,sherri.hutchinson@gmail.com,pat@1design.com'; 
+   $to = 'benchanviolin@gmail.com,sherri.hutchinson@gmail.com,pat@1design.com';
        $subject = 'Injury Report MAIL';
        $message = 'Test';
        $headers = "From: alerts@jrgm.com\r\n";

@@ -140,7 +140,7 @@ WHERE branch = '#SESSION.branch#'  AND    active_record = 1
           </cfif>
           <cfif IsDefined("form.CREW_LEADER_ID") AND  IsDefined("form.submit") AND  IsDefined("form.ds_date") AND  form.ds_date NEQ "" AND  IsDefined("form.SUPERVISOR_ID")>
             <br />
-           <!--- <cfmail to="patrick.hutchinson2@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="BM Create New DS"  type="html">
+           <!--- <cfmail to="benchanviolin@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="BM Create New DS"  type="html">
               dsid= #getmaxid.newid#
             </cfmail>--->
             <h2>Daily Sheet ID : <cfoutput>#getmaxid.newid# has been created.</cfoutput></span><cfoutput><br />

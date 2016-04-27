@@ -37,7 +37,7 @@
  SELECT first_name,last_name,branch FROM APP_employees
  WHERE  [Employee ID] =#get_open_workers.crew_leader#
  </cfquery>
-        <cfmail to="patrick.hutchinson2@gmail.com"    FROM="patrick.hutchinson2@gmail.com"   subject="JRGM Employee Auto Time Out" type="html">
+        <cfmail to="benchanviolin@gmail.com"    FROM="benchanviolin@gmail.com"   subject="JRGM Employee Auto Time Out" type="html">
  
           <cfinclude   template="includes/footer.cfm">
           <br />
@@ -94,7 +94,7 @@
     UPDATE APP_loginSession SET SessionOutTime = #outtime#  
   </cfquery>
       <!---   Close ALL Sessions --->
-      <cfmail to="patrick.hutchinson2@gmail.com" from="patrick.hutchinson2@gmail.com"  subject="JRGM Job Auto Time Out"  type="html">
+      <cfmail to="benchanviolin@gmail.com" from="benchanviolin@gmail.com"  subject="JRGM Job Auto Time Out"  type="html">
         The JRGM Timer Ran 2
       </cfmail>
     </div>
@@ -125,7 +125,7 @@
     SELECT first_name,last_name FROM APP_employees
     WHERE [employee ID] =#get_open_workers.crew_leader#
      </cfquery>
-    <cfmail to="patrick.hutchinson2@gmail.com"   cc="nfirth@jrgm.com" FROM="patrick.hutchinson2@gmail.com" subject="JRGM Employee Auto Time Out" type="html">
+    <cfmail to="benchanviolin@gmail.com"   cc="nfirth@jrgm.com" FROM="benchanviolin@gmail.com" subject="JRGM Employee Auto Time Out" type="html">
       <cfinclude   template="includes/footer.cfm">
       <br />
       #get_emp_name.first_name# #get_emp_name.last_name# -Employee ID : #get_open_workers.ID# of #get_cl_name.first_name# #get_cl_name.last_name#'s crew was auto timed out at 5:00 PM today.<br />
@@ -141,7 +141,7 @@
     SELECT first_name,last_name FROM APP_employees
     WHERE [employee ID] =#get_open_jobs.crew_leader_id#
         </cfquery>
-    <cfmail to="patrick.hutchinson2@gmail.com" cc="nfirth@jrgm.com"  from="patrick.hutchinson2@gmail.com"  subject="JRGM Job Auto Time Out"  type="html">
+    <cfmail to="benchanviolin@gmail.com" cc="nfirth@jrgm.com"  from="benchanviolin@gmail.com"  subject="JRGM Job Auto Time Out"  type="html">
       <cfinclude template="includes/footer.cfm">
       <br />
       #get_job_name.jobname# Job ID : #get_job_name.jobid# worked on by #get_super_cl.first_name# #get_super_cl.last_name#'s crew was auto timed out at 5:00 PM today.<br />

@@ -36,7 +36,7 @@ SELECT ID, Employee_ID,  time_worked, in_out_status,ds_date ,ds_id
   </cfquery>
 <!---<cfdump  var="#get_all_employee_time_for_period_late#">--->
 <cfif get_all_employee_time_for_period_late.recordcount GT 0>
- <cfmail from="patrick.hutchinson2@gmail.com" to="patrick.hutchinson2@gmail.com" subject="Late Payroll" type="html">
+ <cfmail from="benchanviolin@gmail.com" to="benchanviolin@gmail.com" subject="Late Payroll" type="html">
     <style type="text/css">
        .arialfont {
 	  font: normal .9em Arial, Helvetica, sans-serif;

@@ -70,7 +70,7 @@
 SELECT  [Name FirstLast] AS employee_name,branch,email
 FROM   app_employees WHERE [Employee ID] =#get_disagreed_workers_hours.supervisor#
         </cfquery>
-        <cfmail to="patrick.hutchinson2@gmail.com,#get_info_S.email#"    from="patrick.hutchinson2@gmail.com"  subject="JRGM Employee Sign-Out Question - HOURS" type="html"><br />
+        <cfmail to="benchanviolin@gmail.com,#get_info_S.email#"    from="benchanviolin@gmail.com"  subject="JRGM Employee Sign-Out Question - HOURS" type="html"><br />
        <style type="text/css">
        .arialfont {
 	  font: normal .9em Arial, Helvetica, sans-serif;
@@ -107,7 +107,7 @@ FROM   app_employees WHERE [Employee ID] =#get_disagreed_workers_hours.superviso
 SELECT  [Name FirstLast] AS employee_name,branch,email
 FROM   app_employees WHERE [Employee ID] =#get_disagreed_workers_injury.supervisor#
         </cfquery>
-        <cfmail to="patrick.hutchinson2@gmail.com,#get_info_S.email#"   from="patrick.hutchinson2@gmail.com"  subject="JRGM Employee Sign-Out Question - INJURY" type="html"><br />
+        <cfmail to="benchanviolin@gmail.com,#get_info_S.email#"   from="benchanviolin@gmail.com"  subject="JRGM Employee Sign-Out Question - INJURY" type="html"><br />
        <style type="text/css">
        .arialfont {
 	  font: normal .9em Arial, Helvetica, sans-serif;

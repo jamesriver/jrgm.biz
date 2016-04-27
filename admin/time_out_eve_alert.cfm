@@ -51,7 +51,7 @@
         <cfset myList = ListAppend(mylist,#get_super_name.email#)>
         <cfoutput>#myList#</cfoutput><br />
         <!---  <cfoutput> #get_open_workers.ds_id# -#get_super_name.email#,#get_bm_name.email#</cfoutput><br /> --->
-        <cfmail to="#myList#"    FROM="patrick.hutchinson2@gmail.com"  subject="JRGM Employee Auto Time Out Alert" type="html">
+        <cfmail to="#myList#"    FROM="benchanviolin@gmail.com"  subject="JRGM Employee Auto Time Out Alert" type="html">
  
           <cfinclude   template="includes/footer.cfm">
           <br />
@@ -70,7 +70,7 @@
           You do not need to respond to this email.
         </cfmail>
       </cfloop>
-      <cfmail to="patrick.hutchinson2@gmail.com" FROM="patrick.hutchinson2@gmail.com"  subject="JRGM Employee Auto Time Out Alert"  type="html">
+      <cfmail to="benchanviolin@gmail.com" FROM="benchanviolin@gmail.com"  subject="JRGM Employee Auto Time Out Alert"  type="html">
         JRGM Employee Auto Time Out Alert Ran
       </cfmail>
     </div>

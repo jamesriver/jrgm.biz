@@ -51,7 +51,7 @@ pay_period_week1_date =  #pay_period_week1_date_prior#,
 pay_period_week2_date =  #pay_period_week2_date_prior#,
 date_changed = '#todaydate#'
 </cfquery>
-<cfmail to="patrick.hutchinson2@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="Payroll Block Implemented"  type="html">
+<cfmail to="benchanviolin@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="Payroll Block Implemented"  type="html">
   Payroll Block implemented to prior period.  <strong>#DateFormat("#block_date_prior#", "mm/dd/yyyy")#</strong>
   </cfmail>
 <!---ADD CF MAIL--->
@@ -73,7 +73,7 @@ pay_period_week2_date =  #pay_period_week2_date_next#,
 date_changed = '#todaydate#'
 </cfquery>
 <!---ADD CF MAIL--->
-<cfmail to="patrick.hutchinson2@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="Payroll Block Implemented"  type="html">
+<cfmail to="benchanviolin@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="Payroll Block Implemented"  type="html">
   Payroll Block implemented to next period.   <strong>#DateFormat("#block_date_next#", "mm/dd/yyyy")#</strong>
   </cfmail>
 <cflocation url="payroll_block.cfm">

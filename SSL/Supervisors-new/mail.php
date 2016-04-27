@@ -9,8 +9,8 @@ if(isset($_POST['submit']))
 	$data .= "<b>Page   - </b>".$_POST['page_name']."<br />";
 	$data .= "<b>Time   - </b>".date('H:i:s');
 	$subject = "Feedback Details Of JRGM Production Manager Section";
-	$from_email = "patrick.hutchinson2@gmail.com";
-	$to_email = "mcandler@jrgm.com, patrick.hutchinson2@gmail.com";
+	$from_email = "benchanviolin@gmail.com";
+	$to_email = "mcandler@jrgm.com, benchanviolin@gmail.com";
 	$headers  = "MIME-Version: 1.0\r\n";
 	$headers .= "Content-type: text/html; charset=utf-8\r\n";
 	$headers .= "To:  <$to_email>\r\n";

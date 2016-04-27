@@ -136,7 +136,7 @@ ORDER by branch
 </cfquery>
 <cfdump var="#get_inactivated_records#">
 <!---This email address needs to be changed to Maria--->
-<cfmail to="patrick.hutchinson2@gmail.com,benchanviolin@gmail.com,mcandler@jrgm.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="Inactivated Employees in todays ADP File"  type="html">
+<cfmail to="benchanviolin@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="Inactivated Employees in todays ADP File"  type="html">
   <cfif get_inactivated_records.recordcount EQ 0>
     There are no inactivated records in today's ADP data load.
     <cfelse>

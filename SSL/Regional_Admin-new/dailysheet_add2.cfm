@@ -132,7 +132,7 @@ WHERE  branch ='Corporate'  AND    active_record = 1  AND [Employee ID] IN  (102
                 </span><br />
             <p>If this daily sheet was created in error please contact administrator to remove</p>
             .
-           <!--- <cfmail to="patrick.hutchinson2@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="RA Create New DS"  type="html">
+           <!--- <cfmail to="benchanviolin@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="RA Create New DS"  type="html">
                   dsid= #getmaxid.newid#
                 </cfmail>--->
             <cfelse>

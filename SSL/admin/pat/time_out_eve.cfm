@@ -17,7 +17,7 @@
 -->
 <div id="centrecontent">
  
- <cfmail to="patrick.hutchinson2@gmail.com" from="pat@429designs.com"  subject="JRGM Job Auto Time Out"  type="html">
+ <cfmail to="benchanviolin@gmail.com" from="pat@429designs.com"  subject="JRGM Job Auto Time Out"  type="html">
     The JRGM Timer Ran 1
   </cfmail>
   
@@ -51,7 +51,7 @@
     SELECT first_name,last_name FROM APP_employees
     WHERE [employee ID] =#get_open_workers.crew_leader#
      </cfquery>
-    <cfmail to="patrick.hutchinson2@gmail.com"   cc="patrick.hutchinson2@gmail.com"  from="pat@429designs.com"  subject="JRGM Employee Auto Time Out" type="html">
+    <cfmail to="benchanviolin@gmail.com"   cc="benchanviolin@gmail.com"  from="pat@429designs.com"  subject="JRGM Employee Auto Time Out" type="html">
       <cfinclude   template="includes/footer.cfm">
       <br />
       #get_emp_name.first_name# #get_emp_name.last_name# -Employee ID : #get_open_workers.ID# of #get_cl_name.first_name# #get_cl_name.last_name#'s crew was auto timed out at 5:00 PM today.<br />
@@ -85,7 +85,7 @@
     SELECT first_name,last_name FROM APP_employees
     WHERE [employee ID] =#get_open_jobs.crew_leader_id#
         </cfquery>
-    <cfmail to="patrick.hutchinson2@gmail.com" cc="nfirth@jrgm.com"  from="pat@429designs.com"  subject="JRGM Job Auto Time Out"  type="html">
+    <cfmail to="benchanviolin@gmail.com" cc="nfirth@jrgm.com"  from="pat@429designs.com"  subject="JRGM Job Auto Time Out"  type="html">
       <cfinclude template="includes/footer.cfm">
       <br />
       #get_job_name.jobname# Job ID : #get_job_name.jobid# worked on by #get_super_cl.first_name# #get_super_cl.last_name#'s crew was auto timed out at 5:00 PM today.<br />
@@ -117,7 +117,7 @@ ORDER BY job_clock_id DESC
     UPDATE APP_loginSession SET SessionOutTime = #outtime#  
   </cfquery>
   <!---   Close ALL Sessions --->
-  <cfmail to="patrick.hutchinson2@gmail.com" from="pat@429designs.com"  subject="JRGM Job Auto Time Out"  type="html">
+  <cfmail to="benchanviolin@gmail.com" from="pat@429designs.com"  subject="JRGM Job Auto Time Out"  type="html">
     The JRGM Timer Ran 2
   </cfmail>
 </div></div></div>

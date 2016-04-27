@@ -18,7 +18,7 @@ UPDATE app_crews SET   Employee_Position_ID= 0   WHERE employee_id=#url.employee
   <CFQUERY name="update_pw_table" datasource="#request.dsn#">
 UPDATE app_employee_passwords SET   employee_active =0  WHERE employee_id=#url.employee_id#
 </CFQUERY>
-  <cfmail to="patrick.hutchinson2@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="MC Crew Leader Change- Remove"  type="html">
+  <cfmail to="benchanviolin@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="MC Crew Leader Change- Remove"  type="html">
     App_crews table changed (Removed) for employee_id=#url.employee_id#<br>
     App_employee_passwords table changed (Removed) for employee_id=#url.employee_id#(Should be inactive(0))
   </cfmail>
@@ -52,7 +52,7 @@ SELECT first_name,last_name, branch, [Name FirstLast] AS employee_name,email,[Em
     <cfquery name="insert_user_pwtable" datasource="#request.dsn#">
  INSERT INTO  app_employee_passwords (Employee_ID, username, password, employee_name, access_role, employee_active, firstname, lastname, date_added, employee_branch,password_date,email) VALUES (#url.Employee_ID#, '#username#', '#password#', '#get_emp_info.employee_name#', 2, 1, '#get_emp_info.first_name#', '#get_emp_info.last_name#', #todayDate#, '#get_emp_info.branch#',#todayDate#,'#get_emp_info.email#' )
 </cfquery>
-    <cfmail to="patrick.hutchinson2@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="MC Crew Leader Change - Add"  type="html">
+    <cfmail to="benchanviolin@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="MC Crew Leader Change - Add"  type="html">
       App_crews table changed (Add) for employee_id=#url.employee_id#<br>
       App_employee_passwords table changed (Add-New) for employee_id=#url.employee_id#(Should be active(1)) New username =#username#
     </cfmail>
@@ -60,7 +60,7 @@ SELECT first_name,last_name, branch, [Name FirstLast] AS employee_name,email,[Em
     <CFQUERY name="update_pw_table" datasource="#request.dsn#">
 UPDATE app_employee_passwords SET   employee_active =1  WHERE employee_id=#url.employee_id#
 </CFQUERY>
-    <cfmail to="patrick.hutchinson2@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="MC Crew Leader Change - Add"  type="html">
+    <cfmail to="benchanviolin@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="MC Crew Leader Change - Add"  type="html">
       App_employee_passwords table changed (Add-Prior) for employee_id=#url.employee_id#(Should be active(1))
     </cfmail>
   </cfif>
@@ -79,12 +79,12 @@ SELECT [Employee ID] AS EmployeeID,position,[Name FirstLast] AS employeename,[Ph
   <cfset todayDate = Now()>
 </CFIF>
 <cfif IsDefined("url.remove")>
-  <cfmail to="patrick.hutchinson2@gmail.com"   from="patrick.hutchinson2@gmail.com"  subject="JRGM Crew Leader Change-Remove"  type="html">
+  <cfmail to="benchanviolin@gmail.com"   from="benchanviolin@gmail.com"  subject="JRGM Crew Leader Change-Remove"  type="html">
     #get_employee_info.employeename# has been removed as a crew leader.
   </cfmail>
 </cfif>
 <cfif IsDefined("url.add")>
-  <cfmail to="patrick.hutchinson2@gmail.com"   from="patrick.hutchinson2@gmail.com"  subject="JRGM Crew Leader Change-Add"  type="html">
+  <cfmail to="benchanviolin@gmail.com"   from="benchanviolin@gmail.com"  subject="JRGM Crew Leader Change-Add"  type="html">
     #get_employee_info.employeename# has been added as a crew leader.
   </cfmail>
 </cfif>

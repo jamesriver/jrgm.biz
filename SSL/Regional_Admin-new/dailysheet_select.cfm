@@ -158,7 +158,7 @@ WHERE <!---ds_date < '#todaydate_DS#'   AND---> branch_code IN (#branchcodelist#
                 <cfquery name="delete_ds" datasource="jrgm">
    DELETE   FROM APP_Lunch WHERE DS_ID =#url.dsid#
     </cfquery>
-              <!---  <cfmail to="patrick.hutchinson2@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="Daily Sheet Deleted"  type="html">
+              <!---  <cfmail to="benchanviolin@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="Daily Sheet Deleted"  type="html">
                   DSID : #url.dsid# was deleted by #SESSION.screenname#
                 </cfmail>--->
                 <table width="100%" border="0" cellspacing="0" cellpadding="0">

@@ -45,7 +45,7 @@ SELECT firstname,lastname,email FROM app_employee_passwords
 WHERE  employee_ID =#get_super_id.Supervisor_ID#
 </cfquery>
         <cfoutput> #get_closed_jobs15.ds_id# -#get_super_name.firstname# #get_super_name.lastname# - #get_super_name.email# -#get_JOB_name.jobname# -#get_CL_name.first_name# #get_CL_name.last_name# -#get_JOB_name.jobname#-#TimeFormat(get_closed_jobs15.Job_Time_Out, "hh:mm tt")# </cfoutput><br />
-        <cfmail to="#get_super_name.email#"    FROM="patrick.hutchinson2@gmail.com"  subject="JRGM Job Time Out Alert" type="html">
+        <cfmail to="#get_super_name.email#"    FROM="benchanviolin@gmail.com"  subject="JRGM Job Time Out Alert" type="html">
           <cfinclude   template="includes/footer.cfm">
           <br />
           This is a message from the JRGM alert system.<br />
@@ -59,7 +59,7 @@ WHERE  employee_ID =#get_super_id.Supervisor_ID#
           You do not need to respond to this email.
         </cfmail>
       </cfloop>
-      <!---  <cfmail to="patrick.hutchinson2@gmail.com" FROM="patrick.hutchinson2@gmail.com"  subject="JRGM Job Time Out Alert"  type="html">
+      <!---  <cfmail to="benchanviolin@gmail.com" FROM="benchanviolin@gmail.com"  subject="JRGM Job Time Out Alert"  type="html">
         JRGM Employee Auto Time Out Alert Ran
       </cfmail> ---> 
     </div>

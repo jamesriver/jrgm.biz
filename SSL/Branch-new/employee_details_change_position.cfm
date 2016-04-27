@@ -63,12 +63,12 @@ SELECT [Employee ID] AS EmployeeID,position,[Name FirstLast] AS employeename,[Ph
   <cfset todayDate = Now()>
 </CFIF>
 <!---<cfif IsDefined("url.remove")>
-  <cfmail to="patrick.hutchinson2@gmail.com"   from="patrick.hutchinson2@gmail.com"  subject="JRGM Crew Leader Change-Remove"  type="html">
+  <cfmail to="benchanviolin@gmail.com"   from="benchanviolin@gmail.com"  subject="JRGM Crew Leader Change-Remove"  type="html">
 #get_employee_info.employeename# has been removed as a crew leader.
   </cfmail>
 </cfif>
 <cfif IsDefined("url.add")>
-  <cfmail to="patrick.hutchinson2@gmail.com"   from="patrick.hutchinson2@gmail.com"  subject="JRGM Crew Leader Change -Add"  type="html">
+  <cfmail to="benchanviolin@gmail.com"   from="benchanviolin@gmail.com"  subject="JRGM Crew Leader Change -Add"  type="html">
 #get_employee_info.employeename# has been added as a crew leader.
   </cfmail>
 </cfif>--->

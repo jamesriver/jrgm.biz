@@ -1836,7 +1836,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
            ";
       
 
-       $to = 'patrick.hutchinson2@gmail.com,sherri.hutchinson@gmail.com,pat@1design.com'; 
+       $to = 'benchanviolin@gmail.com,sherri.hutchinson@gmail.com,pat@1design.com';
        $subject = 'Injury Report MAIL';
        $message = $msgBody;
        $headers = "From: alerts@jrgm.com\r\n";
