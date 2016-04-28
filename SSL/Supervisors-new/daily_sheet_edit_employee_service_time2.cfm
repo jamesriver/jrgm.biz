@@ -10,28 +10,28 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) 
    VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1000,#SERVICE1000#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1000,#SERVICE1000#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
    </cfquery>
   </cfif>
   <cfif IsDefined("form.SERVICE1010") AND form.SERVICE1010 NEQ "">
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1010,#SERVICE1010#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1010,#SERVICE1010#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   <cfif IsDefined("form.SERVICE1020") AND form.SERVICE1020 NEQ "">
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1020,#SERVICE1020#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1020,#SERVICE1020#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   <cfif IsDefined("form.SERVICE1040") AND form.SERVICE1040 NEQ "">
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1040,#SERVICE1040#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1040,#SERVICE1040#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   <!---  <cfloop index = "ListElement" list = "1000,1010,1020,1040,1070,1080,1090,2000,2030,2050,2060,2090,3030,4000">  --->
@@ -39,70 +39,70 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1070,#SERVICE1070#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1070,#SERVICE1070#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   <cfif IsDefined("form.SERVICE1080") AND form.SERVICE1080 NEQ "">
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1080,#SERVICE1080#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1080,#SERVICE1080#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   <cfif IsDefined("form.SERVICE1090") AND form.SERVICE1090 NEQ "">
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1090,#SERVICE1090#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1090,#SERVICE1090#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   <cfif IsDefined("form.SERVICE2000") AND form.SERVICE2000 NEQ "">
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',2000,#SERVICE2000#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',2000,#SERVICE2000#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   <cfif IsDefined("form.SERVICE2030") AND form.SERVICE2030 NEQ "">
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',2030,#SERVICE2030#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',2030,#SERVICE2030#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   <cfif IsDefined("form.SERVICE2050") AND form.SERVICE2050 NEQ "">
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',2050,#SERVICE2050#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',2050,#SERVICE2050#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   <cfif IsDefined("form.SERVICE2060") AND form.SERVICE2060 NEQ "">
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',2060,#SERVICE2060#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',2060,#SERVICE2060#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   <cfif IsDefined("form.SERVICE2090") AND form.SERVICE2090 NEQ "">
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',2090,#SERVICE2090#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',2090,#SERVICE2090#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   <cfif IsDefined("form.SERVICE3030") AND form.SERVICE3030 NEQ "">
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',3030,#SERVICE3030#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',3030,#SERVICE3030#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   <cfif IsDefined("form.SERVICE4000") AND form.SERVICE4000 NEQ "">
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',4000,#SERVICE4000#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',4000,#SERVICE4000#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>--->
   
@@ -111,14 +111,14 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) 
    VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1000,#SERVICE1000#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1000,#SERVICE1000#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
    </cfquery>
   </cfif>
   <cfif IsDefined("form.SERVICE1101") AND form.SERVICE1101 NEQ "">
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1101,#SERVICE1101#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1101,#SERVICE1101#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -126,7 +126,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1102,#SERVICE1102#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1102,#SERVICE1102#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -135,7 +135,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1103,#SERVICE1103#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1103,#SERVICE1103#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -143,7 +143,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1104,#SERVICE1104#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1104,#SERVICE1104#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -152,7 +152,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1105,#SERVICE1105#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1105,#SERVICE1105#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -161,7 +161,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1106,#SERVICE1106#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1106,#SERVICE1106#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -170,7 +170,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1107,#SERVICE1107#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1107,#SERVICE1107#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -178,7 +178,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1108,#SERVICE1108#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1108,#SERVICE1108#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -186,7 +186,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1109,#SERVICE1109#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1109,#SERVICE1109#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -195,7 +195,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1110,#SERVICE1110#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1110,#SERVICE1110#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -204,7 +204,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1111,#SERVICE1111#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1111,#SERVICE1111#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -213,7 +213,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1201,#SERVICE1201#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1201,#SERVICE1201#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -221,7 +221,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1202,#SERVICE1202#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1202,#SERVICE1202#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -230,7 +230,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1203,#SERVICE1203#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1203,#SERVICE1203#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -239,7 +239,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1204,#SERVICE1204#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1204,#SERVICE1204#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -247,7 +247,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1205,#SERVICE1205#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1205,#SERVICE1205#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -255,7 +255,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1301,#SERVICE1301#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1301,#SERVICE1301#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -263,7 +263,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1302,#SERVICE1302#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1302,#SERVICE1302#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -272,7 +272,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1303,#SERVICE1303#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1303,#SERVICE1303#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -281,7 +281,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1304,#SERVICE1304#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1304,#SERVICE1304#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -290,7 +290,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1305,#SERVICE1305#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1305,#SERVICE1305#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -299,7 +299,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1306,#SERVICE1306#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1306,#SERVICE1306#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -308,7 +308,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1307,#SERVICE1307#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1307,#SERVICE1307#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -317,14 +317,14 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1308,#SERVICE1308#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1308,#SERVICE1308#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   <cfif IsDefined("form.SERVICE1401") AND form.SERVICE1401 NEQ "">
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1401,#SERVICE1401#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1401,#SERVICE1401#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -332,7 +332,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1402,#SERVICE1402#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1402,#SERVICE1402#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -340,7 +340,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1500,#SERVICE1500#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1500,#SERVICE1500#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -348,7 +348,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1600,#SERVICE1600#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1600,#SERVICE1600#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -356,7 +356,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1701,#SERVICE1701#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1701,#SERVICE1701#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -364,7 +364,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',1702,#SERVICE1702#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',1702,#SERVICE1702#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -373,7 +373,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',2001,#SERVICE2001#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',2001,#SERVICE2001#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -381,7 +381,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',2002,#SERVICE2002#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',2002,#SERVICE2002#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -389,7 +389,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',2003,#SERVICE2003#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',2003,#SERVICE2003#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -399,7 +399,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',3001,#SERVICE3001#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',3001,#SERVICE3001#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -407,7 +407,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',3002,#SERVICE3002#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',3002,#SERVICE3002#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -415,7 +415,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',3003,#SERVICE3003#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',3003,#SERVICE3003#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -423,7 +423,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',3004,#SERVICE3004#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',3004,#SERVICE3004#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -431,7 +431,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',3005,#SERVICE3005#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',3005,#SERVICE3005#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -440,7 +440,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',7001,#SERVICE7001#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',7001,#SERVICE7001#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -448,7 +448,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',7002,#SERVICE7002#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',7002,#SERVICE7002#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -457,7 +457,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',7003,#SERVICE7003#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',7003,#SERVICE7003#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -465,7 +465,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',7004,#SERVICE7004#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',7004,#SERVICE7004#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -474,7 +474,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',7005,#SERVICE7005#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',7005,#SERVICE7005#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -483,7 +483,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',7006,#SERVICE7006#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',7006,#SERVICE7006#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -492,7 +492,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',7007,#SERVICE7007#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',7007,#SERVICE7007#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -518,14 +518,14 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) 
    VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1000,#SERVICE1000#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1000,#SERVICE1000#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
    </cfquery>
   </cfif>
   <cfif IsDefined("form.SERVICE1101") AND form.SERVICE1101 NEQ "">
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1101,#SERVICE1101#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1101,#SERVICE1101#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -533,7 +533,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1102,#SERVICE1102#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1102,#SERVICE1102#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -542,7 +542,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1103,#SERVICE1103#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1103,#SERVICE1103#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -550,7 +550,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1104,#SERVICE1104#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1104,#SERVICE1104#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -559,7 +559,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1105,#SERVICE1105#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1105,#SERVICE1105#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -568,7 +568,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1106,#SERVICE1106#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1106,#SERVICE1106#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -577,7 +577,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1107,#SERVICE1107#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1107,#SERVICE1107#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -585,7 +585,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1108,#SERVICE1108#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1108,#SERVICE1108#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -593,7 +593,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1109,#SERVICE1109#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1109,#SERVICE1109#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -602,7 +602,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1110,#SERVICE1110#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1110,#SERVICE1110#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -611,7 +611,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1111,#SERVICE1111#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1111,#SERVICE1111#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -620,7 +620,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1201,#SERVICE1201#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1201,#SERVICE1201#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -628,7 +628,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1202,#SERVICE1202#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1202,#SERVICE1202#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -637,7 +637,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1203,#SERVICE1203#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1203,#SERVICE1203#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -646,7 +646,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1204,#SERVICE1204#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1204,#SERVICE1204#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -654,7 +654,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1205,#SERVICE1205#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1205,#SERVICE1205#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -662,7 +662,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1301,#SERVICE1301#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1301,#SERVICE1301#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -670,7 +670,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1302,#SERVICE1302#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1302,#SERVICE1302#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -679,7 +679,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1303,#SERVICE1303#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1303,#SERVICE1303#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -688,7 +688,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1304,#SERVICE1304#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1304,#SERVICE1304#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -697,7 +697,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1305,#SERVICE1305#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1305,#SERVICE1305#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -706,7 +706,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1306,#SERVICE1306#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1306,#SERVICE1306#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -715,7 +715,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1307,#SERVICE1307#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1307,#SERVICE1307#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -724,14 +724,14 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1308,#SERVICE1308#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1308,#SERVICE1308#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   <cfif IsDefined("form.SERVICE1401") AND form.SERVICE1401 NEQ "">
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1401,#SERVICE1401#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1401,#SERVICE1401#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -739,7 +739,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1402,#SERVICE1402#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1402,#SERVICE1402#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -747,7 +747,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1500,#SERVICE1500#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1500,#SERVICE1500#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 
 
 </cfquery>
@@ -757,7 +757,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1600,#SERVICE1600#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1600,#SERVICE1600#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -765,7 +765,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1701,#SERVICE1701#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1701,#SERVICE1701#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -773,7 +773,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1702,#SERVICE1702#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1702,#SERVICE1702#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -782,7 +782,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',2001,#SERVICE2001#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',2001,#SERVICE2001#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -790,7 +790,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',2002,#SERVICE2002#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',2002,#SERVICE2002#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -798,7 +798,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',2003,#SERVICE2003#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',2003,#SERVICE2003#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -808,7 +808,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',3001,#SERVICE3001#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',3001,#SERVICE3001#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -816,7 +816,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',3002,#SERVICE3002#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',3002,#SERVICE3002#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -824,7 +824,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',3003,#SERVICE3003#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',3003,#SERVICE3003#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -832,7 +832,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',3004,#SERVICE3004#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',3004,#SERVICE3004#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -840,7 +840,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',3005,#SERVICE3005#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',3005,#SERVICE3005#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -849,7 +849,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',7001,#SERVICE7001#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',7001,#SERVICE7001#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -857,7 +857,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',7002,#SERVICE7002#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',7002,#SERVICE7002#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -866,7 +866,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',7003,#SERVICE7003#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',7003,#SERVICE7003#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -874,7 +874,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',7004,#SERVICE7004#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',7004,#SERVICE7004#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -883,7 +883,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',7005,#SERVICE7005#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',7005,#SERVICE7005#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -892,7 +892,7 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',7006,#SERVICE7006#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',7006,#SERVICE7006#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
   
@@ -901,105 +901,105 @@ AND JOB_clock_ID = #form.JOB_clock_ID#
     <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',7007,#SERVICE7007#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',7007,#SERVICE7007#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
   </cfif>
    <!--- <cfif IsDefined("form.SERVICE1000") AND form.SERVICE1000 NEQ "">
       <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1000,#SERVICE1000#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1000,#SERVICE1000#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
     </cfif>
     <cfif IsDefined("form.SERVICE1010") AND form.SERVICE1010 NEQ "">
       <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1010,#SERVICE1010#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1010,#SERVICE1010#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
     </cfif>
     <cfif IsDefined("form.SERVICE1020") AND form.SERVICE1020 NEQ "">
       <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1020,#SERVICE1020#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1020,#SERVICE1020#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
     </cfif>
     <cfif IsDefined("form.SERVICE1040") AND form.SERVICE1040 NEQ "">
       <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1040,#SERVICE1040#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1040,#SERVICE1040#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
     </cfif>
     <cfif IsDefined("form.SERVICE1070") AND form.SERVICE1070 NEQ "">
       <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1070,#SERVICE1070#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1070,#SERVICE1070#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
     </cfif>
     <cfif IsDefined("form.SERVICE1080") AND form.SERVICE1080 NEQ "">
       <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1080,#SERVICE1080#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1080,#SERVICE1080#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
     </cfif>
     <cfif IsDefined("form.SERVICE1090") AND form.SERVICE1090 NEQ "">
       <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1090,#SERVICE1090#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',1090,#SERVICE1090#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
     </cfif>
     <cfif IsDefined("form.SERVICE2000") AND form.SERVICE2000 NEQ "">
       <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',2000,#SERVICE2000#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',2000,#SERVICE2000#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
     </cfif>
     <cfif IsDefined("form.SERVICE2030") AND form.SERVICE2030 NEQ "">
       <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',2030,#SERVICE2030#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',2030,#SERVICE2030#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
     </cfif>
     <cfif IsDefined("form.SERVICE2050") AND form.SERVICE2050 NEQ "">
       <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',2050,#SERVICE2050#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',2050,#SERVICE2050#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
     </cfif>
     <cfif IsDefined("form.SERVICE2060") AND form.SERVICE2060 NEQ "">
       <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',2060,#SERVICE2060#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',2060,#SERVICE2060#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
     </cfif>
     <cfif IsDefined("form.SERVICE2090") AND form.SERVICE2090 NEQ "">
       <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#form.employee_id#','#form.job_id_J#',2090,#SERVICE2090#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#form.employee_id#','#form.job_id_J#',2090,#SERVICE2090#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
     </cfif>
     <cfif IsDefined("form.SERVICE3030") AND form.SERVICE3030 NEQ "">
       <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',3030,#SERVICE3030#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',3030,#SERVICE3030#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
     </cfif>
     <cfif IsDefined("form.SERVICE4000") AND form.SERVICE4000 NEQ "">
       <cfquery name="insert_time" datasource="jrgm">
    INSERT INTO app_job_services_actual_employee 
    (Employee_ID,Job_ID,Service_ID,Total_Time,ds_id,crew_leader,job_clock_id,Service_Time_In) VALUES 
-   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',4000,#SERVICE4000#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', #form.ds_date# )
+   ('#getallemployeesonthisjob.employee_id#','#form.job_id_J#',4000,#SERVICE4000#,#form.ds_id#,#form.crew_Leader_id#,'#form.job_clock_id#', '#DateFormat(form.ds_date, 'yyyy-mm-dd')# 00:00:00.000' )
 </cfquery>
     </cfif>--->
   </cfloop>
