@@ -32,7 +32,10 @@ DROP TABLE app_employees_test_backup;
 </head>
 <body bgcolor="#FFFFFF">
 <!--- Convert file to XML document object --->
-<CFSET currentdate = DateFormat(DateAdd('d', -1, Now()), 'yyyymmdd')>
+<CFSET currentdate = DateFormat(DateAdd('d', 0, Now()), 'yyyymmdd')>
+<cfif IsDefined('url.currentdate')>
+    <cfset currentdate = url.currentdate>
+</cfif>
 <cffile action="read" file="C:\inetpub\websites\test.jrgm.biz\SSL\admin\data_load\ADP_JRGM_#currentdate#.xml" variable="myxml">
 <cfset mydoc = XmlParse(myxml)>
 <!--- get an array of employees --->
