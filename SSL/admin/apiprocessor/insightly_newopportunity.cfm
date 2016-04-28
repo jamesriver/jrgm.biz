@@ -57,9 +57,19 @@
     <cfset cv++>
 </cfloop>
 
+<!--- GET QUOTE COLUMN HEADERS AND ROWS FROM VERSIONS CACHE --->
+<cfquery name="get_quote_column_headers" datasource="jrgm">
+    SELECT TOP 1 ID FROM quote_data_entry_versions
+    ORDER BY ID DESC
+</cfquery>
+
+<cfloop query="get_quote_column_headers">
+    <cfset version_ID = ID>
+</cfloop>
+
 <cfquery name="fixer_query" datasource="jrgm">
     UPDATE quote_start
-    SET quote_data_entry_versions_ID=3
+    SET quote_data_entry_versions_ID=#version_ID#
     WHERE quote_data_entry_versions_ID=1
 </cfquery>
 
