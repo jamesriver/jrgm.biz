@@ -12,6 +12,9 @@
 
 <cfhttp url="http://api.jrgm.com/external_api/insightly.php?auth=jrgmAPI!&type=contractapproved&quote_id=#get_quote_start.ID#&preview=1" method="get" result="httpResp" timeout="30">
 </cfhttp>
+<!---cfdump var="#httpResp.filecontent#">
+<cfabort--->
+
 <cfset insightly_response=DeserializeJSON(httpResp.filecontent)>
 
 <cfset preview_data = ArrayNew(1)>

@@ -150,6 +150,7 @@
         </cfif>
       </cfif>
     </cfloop>
+
     <!---cfoutput>
         UPDATE quote_main
         SET #preserveSingleQuotes(query_quote_main_parameters)#
@@ -235,7 +236,8 @@
       <cfquery name="update_quote_start" datasource="jrgm">
             UPDATE quote_start SET
             date_quote_updated = GETUTCDATE(),
-            user_id =  '#SESSION.userid#'
+            user_id =  '#SESSION.userid#',
+
             WHERE opportunity_id = #opportunity_id#
         </cfquery>
     </cfif>
@@ -525,9 +527,7 @@ i.mysize {
                 <select name="Job_ID">
                     <option value="0">[ Create a new one when quote is approved ]</option>
                     <cfloop from="1" to="#arrayLen(active_jobs)#" index="i">
-                        <cfoutput>
-                            <option value="#active_jobs[i][1]#"<cfif get_quote_start.job_id EQ active_jobs[i][1]> selected</cfif>>#active_jobs[i][2]#<cfif LCase(active_jobs[i][3]) NEQ 'in progress'> (#active_jobs[i][3]#)</cfif></option>
-                        </cfoutput>
+                        <option value="#active_jobs[i][1]#"<cfif get_quote_start.job_id EQ active_jobs[i][1]> selected</cfif>>#active_jobs[i][2]#<cfif LCase(active_jobs[i][3]) NEQ 'in progress'> (#active_jobs[i][3]#)</cfif></option>
                     </cfloop>
                 </select>
               </td>
