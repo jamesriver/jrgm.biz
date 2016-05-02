@@ -20,8 +20,13 @@ Delete_this_crews_backup is where the current app_crews table gets backed up to.
     <cfset currentdate = url.currentdate>
 </cfif>
 
+<cfquery name="drop_delete_this_crews_backup" datasource="jrgm">
+IF OBJECT_ID('dbo.app_employees_test_backup', 'U') IS NOT NULL
+  DROP TABLE dbo.app_employees_test_backup;
+</cfquery>
+
 <cfquery name="make_copy"   datasource="jrgm">
-SELECT * INTO app_employees_test_backup  FROM app_employees_test
+SELECT * INTO app_employees_test_backup  FROM app_employees
 </cfquery>
 
 

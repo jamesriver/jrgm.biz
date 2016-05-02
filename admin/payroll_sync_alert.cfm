@@ -1,3 +1,4 @@
+<cfabort>
 <cfset todayDate = Now()>
 <CFSET date2015 = '02/28/2015'>
 

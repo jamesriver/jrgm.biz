@@ -236,8 +236,7 @@
       <cfquery name="update_quote_start" datasource="jrgm">
             UPDATE quote_start SET
             date_quote_updated = GETUTCDATE(),
-            user_id =  '#SESSION.userid#',
-
+            user_id =  '#SESSION.userid#'
             WHERE opportunity_id = #opportunity_id#
         </cfquery>
     </cfif>
