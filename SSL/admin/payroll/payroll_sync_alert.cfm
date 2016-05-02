@@ -1,4 +1,3 @@
-<cfabort>
 <CFSET pay_period_end_week_L  =  pay_period_number-1>
 <CFSET pay_period_week_week1  =  pay_period_week-1>
 <CFSET pay_period_end_week  =  pay_period_number>

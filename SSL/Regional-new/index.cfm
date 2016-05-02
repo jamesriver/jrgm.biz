@@ -145,7 +145,7 @@ License: You must have a valid license purchased only from themeforest(the above
       <!---<cfif  get_first_time_in.first_id_oftheday EQ "">
   <cfquery name="get_first_time_in" datasource="jrgm">
  SELECT MIN(ID) AS  first_id_oftheday  
- FROM APP_Employee_Payroll_Clock WHERE entry_method IS NULL AND ds_date = '#today_datexy#'  
+ FROM APP_Employee_Payroll_Clock WHERE entry_method IS NULL AND ds_date = '#today_datexy#'
  </cfquery>
 </cfif>
 --->
@@ -156,7 +156,7 @@ License: You must have a valid license purchased only from themeforest(the above
  </cfquery>
       </cfif>
       <cfquery name="get_APK_time_after_DSID" datasource="jrgm">
- SELECT  DISTINCT ds_id   FROM APP_Employee_Payroll_Clock WHERE entry_method IS NULL AND ds_date < '#today_datex#' AND ID > #get_first_time_in.first_id_oftheday#      AND ds_date > '09/30/2015' 
+ SELECT  DISTINCT ds_id   FROM APP_Employee_Payroll_Clock WHERE entry_method IS NULL AND ds_date < '#today_datex#' AND ID > #get_first_time_in.first_id_oftheday#      AND ds_date > '09/30/2015'
   </cfquery>
       <CFSET mylist ="0">
       <cfloop query="get_APK_time_after_DSID" >
