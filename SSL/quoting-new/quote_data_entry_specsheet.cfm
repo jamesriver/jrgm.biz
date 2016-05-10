@@ -235,17 +235,76 @@ i.mysize {
 .table2 {
 	border-top-color: rgba(244,10,10,1.00)
 }
+.td_left {
+    text-align: right;
+    padding-right: 10px;
+    padding-bottom: 5px;
+}
+.td_right {
+    padding-right: 10px;
+    padding-bottom: 5px;
+}
 </style>
 </head>
 
+<cfquery name="get_employees" datasource="jrgm">
+    SELECT  [Employee ID] as employee_id, [Name FirstLast] AS employee_Name FROM app_employees WHERE active_record=1 AND [Employee ID] < 9999
+</cfquery>
+
 <body>
+<cfoutput query="get_quote_start">
+<div style="float: left">
+    <h1>&nbsp;&nbsp;&nbsp;Quote Spec Sheet</h1>
+</div>
+<div style="float: right; margin-top: 10px">
+    <table><tr><td>
+        <table>
+            <tr>
+                <td class="td_left"><b>Branch</b>:</td>
+                <td class="td_right">#q_branch#</td>
+            </tr>
+            <tr>
+                <td class="td_left"><b>Customer</b>:</td>
+                <td class="td_right">#opportunity_name#</td>
+            </tr>
+            <tr>
+                <td class="td_left"><b>Job Location</b>:</td>
+                <td class="td_right">#q_address1#, #q_city#, #q_address_state#, #q_address_zip#</td>
+            </tr>
+        </table>
+    </td>
+    <td>
+        <table>
+            <tr>
+                <td class="td_left"><b>Contract Dates</b>:</td>
+                <td class="td_right">#dateformat(get_quote_main.contract_start_date,"mm/dd/yyyy")# - #dateformat(get_quote_main.contract_end_date,"mm/dd/yyyy")#</td>
+            </tr>
+            <tr>
+                <td class="td_left"><b>Manager</b>:</td>
+                <td class="td_right">
+                    <cfif responsible_user_Employee_ID NEQ "">
+                        <cfquery name="get_pm"   dbtype="query">
+                            SELECT employee_Name AS PM_Name FROM get_employees WHERE  employee_id = #responsible_user_Employee_ID#
+                        </cfquery>
+                        #get_pm.PM_Name#
+                    <cfelse>
+                        --
+                    </cfif>
+                </td>
+            </tr>
+            <tr>
+                <td class="td_left"><b>Quote Modified</b>:</td>
+                <td class="td_right">#dateformat(date_quote_updated,"mm/dd/yyyy")#</td>
+            </tr>
+        </table>
+    </td></tr></table>
+</div>
+</cfoutput>
+
 <div class="page-content">
   <div class="container-fluid">
     <div class="container-table">
-      <cfquery name="get_employees" datasource="jrgm">
-SELECT  [Employee ID] as employee_id, [Name FirstLast] AS employee_Name FROM app_employees WHERE active_record=1 AND [Employee ID] < 9999  
-</cfquery>
-      <cfoutput query="get_quote_start">
+      <!---cfoutput query="get_quote_start">
         <table width="98%" border="0" cellspacing="0" cellpadding="0"  align="center">
         <tr>
         <td valign="top">
@@ -349,9 +408,9 @@ SELECT  [Employee ID] as employee_id, [Name FirstLast] AS employee_Name FROM app
             <td>#q_end_date#</td>
           </tr-->
         </table>
-      </cfoutput> <br />
-      <table   width="100%" cellpadding="20" cellspacing="0" border="1" class="table2">
-        <tr  height="30">
+      </cfoutput> <br /--->
+      <table   width="100%" cellpadding="2" cellspacing="0" border="1" class="table2">
+        <tr>
           <td align="left"  style="font-size: 14px; font-weight: bold;">Svc Id</td>
           <td align="left"   style="font-size: 14px; font-weight: bold;">Service Description</td>
           <td align="left"   style="font-size: 14px; font-weight: bold;">Times</td>
@@ -374,7 +433,7 @@ SELECT  [Employee ID] as employee_id, [Name FirstLast] AS employee_Name FROM app
             <cfset blank_count = 0>
             <cfloop from="1" to="#arrayLen(quote_specsheet)#" index="i">
               <tr style="background-color: ##ECECEC; color: black">
-                <td colspan="6"  height="30"><strong>#quote_specsheet[i][1]#</strong></td>
+                <td colspan="6"><strong>#quote_specsheet[i][1]#</strong></td>
               </tr>
               <cfset quote_data_entry_row_order_array = ListToArray(quote_specsheet[i][2])>
               <cfset seasonal_hours = 0>
@@ -440,8 +499,8 @@ FROM         quote_notes  WHERE  opportunity_id = #url.id# AND  opportunity_id_o
 </cfquery>
       <table width="98%"   align="center" border="1"  class="table2">
         <tr      bgcolor="#EDF3F8">
-          <td width="125" height="30" nowrap="nowrap" bgcolor="#E9E9E9"><strong>General Notes :</strong></td>
-          <td height="30" colspan="2" align="right" bgcolor="#E9E9E9"><strong><cfoutput>Total SF Bed: #NumberFormat(get_quote_main.bed_sqft ,"999,999,999")# &nbsp;&nbsp;&nbsp;&nbsp;Total SF Turf: #NumberFormat(get_quote_main.turf_sqft ,"999,999,999")#&nbsp;</cfoutput></strong></td>
+          <td width="125" nowrap="nowrap" bgcolor="#E9E9E9"><strong>General Notes :</strong></td>
+          <td colspan="2" align="right" bgcolor="#E9E9E9"><strong><cfoutput>Total SF Bed: #NumberFormat(get_quote_main.bed_sqft ,"999,999,999")# &nbsp;&nbsp;&nbsp;&nbsp;Total SF Turf: #NumberFormat(get_quote_main.turf_sqft ,"999,999,999")#&nbsp;</cfoutput></strong></td>
         </tr>
         <CFIF get_all_notes_3.recordcount GT 0>
           <cfoutput query="get_all_notes_3">

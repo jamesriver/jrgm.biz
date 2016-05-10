@@ -57,17 +57,68 @@
   </div>
 </div>--->
 <!-- END HEADER SECTION -->
-<div class="page-head">
+<cfoutput query="get_quote_start">
+<!---div class="page-head">
   <div class="container-fluid">
     <!-- BEGIN PAGE TITLE -->
     <div class="page-title">
-      <h1>Quote Pricing Sheet</h1>
+      <h1>Quote Pricing Sheet: #opportunity_name#</h1>
     </div>
   </div>
+</div--->
+
+<style>
+    .td_left {
+        text-align: right;
+        padding-right: 10px;
+        padding-bottom: 5px;
+    }
+    .td_right {
+        padding-right: 10px;
+        padding-bottom: 5px;
+    }
+</style>
+
+<div style="float: left">
+    <h1>&nbsp;&nbsp;&nbsp;Quote Pricing Sheet</h1>
 </div>
-<div class="page-content">
+<div style="float: right; margin-top: 10px">
+    <table><tr><td>
+        <table>
+            <tr>
+                <td class="td_left"><b>Branch</b>:</td>
+                <td class="td_right">#q_branch#</td>
+            </tr>
+            <tr>
+                <td class="td_left"><b>Customer</b>:</td>
+                <td class="td_right">#opportunity_name#</td>
+            </tr>
+            <tr>
+                <td class="td_left"><b>Job Location</b>:</td>
+                <td class="td_right">#q_address1#, #q_city#, #q_address_state#, #q_address_zip#</td>
+            </tr>
+        </table>
+    </td>
+    <td>
+        <table>
+            <tr>
+                <td class="td_left"><b>Contract Dates</b>:</td>
+                <td class="td_right">#dateformat(get_quote_main.contract_start_date,"mm/dd/yyyy")# - #dateformat(get_quote_main.contract_end_date,"mm/dd/yyyy")#</td>
+            </tr>
+            <tr>
+                <td class="td_left"><b>Annual Contract Price</b>:</td>
+                <td class="td_right"><span class="adjusted_contract_price_formatted"></span></td>
+            </tr>
+            <tr>
+                <td class="td_left"><b>Bill Price</b>:</td>
+                <td class="td_right"><span id="monthly_contract_price_formatted"></span> (#get_quote_main.contract_installments#<input type="hidden" id="contract_installments" value="#get_quote_main.contract_installments#"> times per year)</td>
+            </tr>
+        </table>
+    </td></tr></table>
+</div>
+<!---div class="page-content">
   <div class="container-fluid">
-    <div class="left-table2"> <cfoutput query="get_quote_start">
+    <div class="left-table2">
         <table class="table">
           <tr>
             <td><strong>Quote ID : #opportunity_id# &nbsp;&nbsp;&nbsp;Branch : #q_branch#</strong></td>
@@ -116,10 +167,10 @@
             <td>&nbsp;</td>
           </tr>
         </table>
-      </cfoutput></div>
   </div>
-  <div class="clearfix"></div>
-  <div class="spacer40"></div>
+  </div--->
+
+  </cfoutput>
 
   <!--- BEGIN OUTPUT --->
   <style>
@@ -302,7 +353,7 @@
 
   <table   width="98%"border="0" cellspacing="0" cellpadding="0" >
       <tr>
-        <td><table class="table"  >
+        <td valign="top"><table class="table"  >
             <cfoutput>
               <cfoutput>
               <tr>
@@ -412,8 +463,9 @@
             </cfoutput>
           </table>
           <p>&nbsp;</p></td>
-        <td  width="60%">&nbsp;</td>
-        <td align="top"><br />
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td valign="top">
+          <!---br />
           <br />
           <br />
           <br />
@@ -427,27 +479,29 @@
 
               </cfif>
             </div>
-          </div>
-          </td>
+          </div--->
+
+          <cfquery name="get_quote_notes" datasource="jrgm">
+               SELECT * FROM quote_notes qn
+               INNER JOIN note_type nt ON nt.note_type=qn.note_type
+               WHERE qn.opportunity_id_original=#url.ID#
+
+            </cfquery>
+            <cfif get_quote_notes.recordcount GT 0>
+              <div class="page-title">
+                <h3>&nbsp;&nbsp;&nbsp;Notes</h3>
+              </div>
+              <table class="table">
+                <cfoutput query="get_quote_notes">
+                  <tr>
+                    <td><b>#note_name#</b>: #note_body#</td>
+                  </tr>
+                </cfoutput>
+              </table>
+            </cfif>
+        </td>
       </tr>
     </table>
-
-  <cfquery name="get_quote_notes" datasource="jrgm">
- SELECT     *
- FROM         quote_notes WHERE  opportunity_id_original=#url.ID#
- </cfquery>
-  <cfif get_quote_notes.recordcount GT 0>
-    <div class="page-title">
-      <h3>Notes</h3>
-    </div>
-    <table class="table">
-      <cfoutput query="get_quote_notes">
-        <tr>
-          <td>#note_body#</td>
-        </tr>
-      </cfoutput>
-    </table>
-  </cfif>
 </div>
 </div>
 <!--Html-->
