@@ -5,7 +5,8 @@
  opportunity_field_18 AS q_start_date ,
  opportunity_field_19 AS q_end_date, 
  stage_id, 
- date_created_utc, 
+ date_created_utc,
+ date_quote_updated,
  bid_currency, 
  bid_type, 
  bid_duration, 
@@ -177,7 +178,7 @@ H3 {
 <body><table width="95%" border="0">
   <tbody>
     <tr>
-      <td  align="right"> <cfoutput>#DateFormat(get_price_quote_dollars.date_updated, "medium")#</cfoutput></td>
+      <td  align="right"> <cfoutput>#DateFormat(get_quote_info.date_quote_updated, "medium")#</cfoutput></td>
     </tr>
   </tbody>
 </table>

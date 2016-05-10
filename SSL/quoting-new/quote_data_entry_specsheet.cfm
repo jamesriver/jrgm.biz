@@ -333,7 +333,7 @@ SELECT  [Employee ID] as employee_id, [Name FirstLast] AS employee_Name FROM app
             --->
             <td width="150" nowrap="nowrap" bgcolor="##E9E9E9">&nbsp;</td>
             <td width="125">&nbsp;</td>
-            <td><strong>Day : </strong></td>
+            <td><strong>Start Date: </strong></td>
             <td>#dateformat(q_start_date,"mm/dd/yyyy")#</td>
             <td><strong>Expires:</strong></td>
             <td>#dateformat(q_end_date,"mm/dd/yyyy")#</td>

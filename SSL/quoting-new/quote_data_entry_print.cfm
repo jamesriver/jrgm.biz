@@ -97,13 +97,6 @@
     <div class="right-table2"> <cfoutput query="get_quote_start">
         <table class="table">
           <tr>
-            <td  nowrap="nowrap"><strong>Date Opportunty Created : #dateformat(date_created_utc,"mm/dd/yyyy")#</strong></td>
-            <td>&nbsp;</td>
-            <td  nowrap="nowrap"><strong>Date Opportunty Modified : #dateformat(date_updated_utc,"mm/dd/yyyy")#</strong></td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-          </tr>
-          <tr>
             <td><strong>Date Quote Created : #dateformat(date_quote_started,"mm/dd/yyyy")#</strong></td>
             <td>&nbsp;</td>
             <td><strong>Date Quote Modified : #dateformat(date_quote_updated,"mm/dd/yyyy")#</strong></td>
@@ -262,10 +255,10 @@
                       <table>
                           <tr>
                               <td>Turf Sq. Footage:&nbsp;</td>
-                              <td><input  name="turf_sqft"  type="text" size="5"  value="#get_quote_main.turf_sqft#" /></td>
+                              <td><input  name="turf_sqft"  type="text" size="8"  value="#get_quote_main.turf_sqft#" /></td>
                               <td width="100">&nbsp;</td>
                               <td>Bed Sq. Footage:&nbsp;</td>
-                              <td><input  name="bed_sqft"  type="text" size="5"  value="#get_quote_main.bed_sqft#" /></td>
+                              <td><input  name="bed_sqft"  type="text" size="8"  value="#get_quote_main.bed_sqft#" /></td>
                               <td width="100">&nbsp;</td>
                           </tr>
                       </table>

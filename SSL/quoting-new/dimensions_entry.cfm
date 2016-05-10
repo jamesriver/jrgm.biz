@@ -163,7 +163,7 @@ where quote_start_id=#get_quote_start.ID#
                                                 <td align="center"><a class="btn btn-success btn-xs" onclick="recalculate_mulch_rings(#mulch_rings_count#, 1, 1)">+</a></td>
                                                 <td align="center"><a class="btn btn-danger btn-xs" onclick="recalculate_mulch_rings(#mulch_rings_count#, -1, 1)">-</a></td>
                                                 <td align="center">=</td>
-                                                <td align="center"><input class="column_entry" size="1" id="#dim[2]#_#mulch_rings_count#" name="#dim[2]#_#mulch_rings_count#" oninput="recalculate_mulch_rings(#mulch_rings_count#, 0, 1)"></td>
+                                                <td align="center"><input class="column_entry" size="3" id="#dim[2]#_#mulch_rings_count#" name="#dim[2]#_#mulch_rings_count#" oninput="recalculate_mulch_rings(#mulch_rings_count#, 0, 1)"></td>
                                             </cfoutput>
                                         </cfloop>
                                     </tr>

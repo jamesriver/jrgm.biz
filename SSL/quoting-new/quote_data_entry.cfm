@@ -674,10 +674,10 @@ i.mysize {
                     <table>
                         <tr>
                             <td>Turf Sq. Footage:&nbsp;</td>
-                            <td><input  name="turf_sqft"  type="text" size="5"  value="#get_quote_main.turf_sqft#" /></td>
+                            <td><input  name="turf_sqft"  type="text" size="8"  value="#get_quote_main.turf_sqft#" /></td>
                             <td width="100">&nbsp;</td>
                             <td>Bed Sq. Footage:&nbsp;</td>
-                            <td><input  name="bed_sqft"  type="text" size="5"  value="#get_quote_main.bed_sqft#" /></td>
+                            <td><input  name="bed_sqft"  type="text" size="8"  value="#get_quote_main.bed_sqft#" /></td>
                             <td width="100">&nbsp;</td>
                         </tr>
                     </table>
