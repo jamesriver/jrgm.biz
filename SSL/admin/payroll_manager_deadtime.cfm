@@ -13,10 +13,6 @@
 SELECT     [Employee ID] AS employee_id, branch,[Name FirstLast] AS empname
 FROM         app_employees
  </cfquery>
-<cfquery name="get_all_app_job_services_actual_employee" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
-SELECT * FROM app_job_services_actual_employee
-WHERE Job_ID IS NULL
-</cfquery>
 <cfquery name="sum_all_app_job_services_actual_employee" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
 SELECT SUM(Total_Time) as sum FROM app_job_services_actual_employee
 WHERE Job_ID IS NULL
@@ -79,6 +75,7 @@ Total Hours: #sum_all_app_job_services_actual_employee.sum/60#, Average Hours Pe
 
 <table class="sortable" border="0" cellspacing="0" cellpadding="0"   width="80%">
         <tr height="40" >
+          <td><strong>ID</strong></td>
           <td><strong>Employee ID</strong></td>
           <td><strong>   Name</strong></td>
           <td><strong>Branch</strong></td>
@@ -91,6 +88,7 @@ Total Hours: #sum_all_app_job_services_actual_employee.sum/60#, Average Hours Pe
         </tr>
         <cfoutput query="get_all_app_job_services_actual_employee">
           <tr>
+            <td>#ID#</td>
             <td>#Employee_ID#</td>
  <cfquery name="get_many_hours_name" dbtype="query" >
 SELECT    employee_id, branch,  empname

@@ -259,7 +259,7 @@ varchar
     <cfelse>
     <CFSET branchname ='Unknown'>
   </cfif>
-  <cfif CUSTOM_AREA_2 EQ 'FWW'>
+  <cfif CUSTOM_AREA_2 EQ 'FWW' OR FILE_NUMBER EQ 2347 OR FILE_NUMBER EQ 2541>
     <cfset fww = 1>
     <cfelse>
     <cfset fww = 0>

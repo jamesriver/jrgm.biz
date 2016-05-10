@@ -88,6 +88,8 @@
         value_raw = contract_subtotal + 1*$('#contract_adjustment').val() + 1*$('#discount_adjustment').val();
         $('.adjusted_contract_price_formatted').html(formatDollars(value_raw));
         $('#adjusted_contract_price').val(value_raw);
+        var adjusted_contract_price = value_raw;
+
         var installments = 1*$('#contract_installments').val();
         if (!installments || isNaN(installments))
         {
@@ -105,7 +107,7 @@
         $('#irrigation_contract_formatted').html(formatDollars(irrigation_contract_total));
         $('#Irrigation_Contract').val(irrigation_contract_total);
 
-        var grounds_maintenance_contract_total = contract_subtotal - irrigation_contract_total;
+        var grounds_maintenance_contract_total = adjusted_contract_price - irrigation_contract_total;
         $('#grounds_maintenance_contract_formatted').html(formatDollars(grounds_maintenance_contract_total));
         $('#Grounds_Maintenance_Contract').val(grounds_maintenance_contract_total);
         

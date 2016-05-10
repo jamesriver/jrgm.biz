@@ -25,6 +25,7 @@
                     <cfif (quote_row_field EQ 'QUOTE_SERVICES_FIELD' OR quote_row_field EQ 'QUOTE_SERVICES_FIELD_SPECSHEET') AND quote_rows_temp[quote_row_index][i][quote_row_field] NEQ ''>
                         <cfset sql_field = quote_rows_temp[quote_row_index][i][quote_row_field]>
                     </cfif>
+                    <cfoutput>#sql_field#</br ></cfoutput>
                     <cfif sql_field NEQ '' AND sql_field NEQ last_sql_field>
                         <cfset last_sql_field = sql_field>
                         <cfif sql_field DOES NOT CONTAIN 'blank' AND sql_field DOES NOT CONTAIN '_qty'>
@@ -47,8 +48,7 @@
         </cfloop>
     </cfloop>
 
-    <!---
-    <cfoutput>
+    <!---cfoutput>
         UPDATE quote_start
         SET quote_data_entry_versions_ID=#version_ID#
         WHERE opportunity_id=#url.id#
@@ -65,8 +65,7 @@
         SET #PreserveSingleQuotes(quote_materials_parameters)#
         WHERE opportunity_id=#url.id#
     </cfoutput>
-    <cfabort>
-    --->
+    <cfabort--->
 
     <cfquery name="update_quote_start" datasource="jrgm">
         UPDATE quote_start
@@ -75,7 +74,8 @@
     </cfquery>
     <cfquery name="update_quote_services" datasource="jrgm">
         UPDATE quote_services
-        SET #PreserveSingleQuotes(quote_services_parameters)#
+        SET #PreserveSingleQuotes(quote_services_parameters)#,
+            Irrigation_SU_gm=50, Irrigation_W_gm=50, Irrigation_I_gm=50, Irrigation_TM_gm=50, Irrigation_BFI_gm=50
         WHERE opportunity_id=#url.id#
     </cfquery>
     <cfquery name="update_quote_materials" datasource="jrgm">
@@ -593,7 +593,7 @@ i.mysize {
                                         <input class="column#current_column.ID# #current_row.quote_services_field# subtotal#current_row.row_order# totaltype_#current_row.row_totaltype#" type="hidden" id="#current_row.quote_services_field#" name="#current_row.quote_services_field#">
                                     <cfelse>
                                         <cfif current_row.quote_services_field NEQ ''>
-                                            <cfif (current_column.column_editable EQ 1 AND (current_column.ID NEQ 18 OR current_row.row_defaultvalue NEQ 40)) OR (current_row.row_order GT 55 AND (current_column.ID EQ 1 OR current_column.ID EQ 3 OR current_column.ID EQ 4 OR current_column.ID EQ 6))>
+                                            <cfif (current_column.column_editable EQ 1 AND (current_column.ID NEQ 18 OR current_row.row_order LT 42 OR current_row.row_order GT 46)) OR (current_row.row_order GT 55 AND (current_column.ID EQ 1 OR current_column.ID EQ 3 OR current_column.ID EQ 4 OR current_column.ID EQ 6))>
                                                 <input class="column#current_column.ID#" id="#current_row.quote_services_field#" name="#current_row.quote_services_field#" type="text" size="6" value="#current_row.row_defaultvalue#" oninput="recalculate_row#quote_row_index#(); recalculate_totals();" />
                                             <cfelse>
                                                 <input disabled="true" class="column#current_column.ID# #current_row.quote_services_field#" type="text" size="6" value="#current_row.row_defaultvalue#" />
@@ -772,28 +772,28 @@ i.mysize {
                   <td align="right" nowrap="nowrap"><strong><span class="adjusted_contract_price_formatted"></span></strong><input type="hidden" id="adjusted_contract_price" name="adjusted_contract_price"></td>
                   <td width="150" align="right" nowrap="nowrap">&nbsp;</td>
                   <td>Bill To Company</td>
-                  <td align="right" nowrap="nowrap">&nbsp;</td>
+                  <td align="right" nowrap="nowrap">#get_quote_start.q_bill_to_company#</td>
                 </tr>
                 <tr>
                   <td nowrap="nowrap">&nbsp;</td>
                   <td align="right" nowrap="nowrap"></td>
                   <td width="150" align="right" nowrap="nowrap"></td>
                   <td>Billing Contact</td>
-                  <td align="right" nowrap="nowrap"></td>
+                  <td align="right" nowrap="nowrap">#get_quote_start.q_billing_contact#</td>
                 </tr>
                 <tr>
                   <td nowrap="nowrap">Total Labor</td>
                   <td align="right" nowrap="nowrap"><span id="total_labor_formatted" class="total14"></span></td>
                   <td width="150" align="right" nowrap="nowrap">&nbsp;</td>
                   <td>Billing Contact Phone</td>
-                  <td align="right" nowrap="nowrap">&nbsp;</td>
+                  <td align="right" nowrap="nowrap">#get_quote_start.q_billing_contact_phone#</td>
                 </tr>
                 <tr>
                   <td nowrap="nowrap">Total Materials</td>
                   <td align="right" nowrap="nowrap"><span id="total_materials_formatted"></span></td>
                   <td width="150" align="right" nowrap="nowrap">&nbsp;</td>
                   <td nowrap="nowrap">Billing Contact Email Address</td>
-                  <td align="right" nowrap="nowrap">&nbsp;</td>
+                  <td align="right" nowrap="nowrap">#get_quote_start.q_billing_contact_email#</td>
                 </tr>
                 <tr>
                   <td nowrap="nowrap"><strong>Total Direct Costs</strong></td>
@@ -807,35 +807,35 @@ i.mysize {
                   <td align="right" nowrap="nowrap"></td>
                   <td width="150" align="right" nowrap="nowrap"></td>
                   <td>Billing Address</td>
-                  <td align="right" nowrap="nowrap"></td>
+                  <td align="right" nowrap="nowrap">#get_quote_start.q_address1#</td>
                 </tr>
                 <tr>
                   <td nowrap="nowrap">Gross Profit</td>
                   <td align="right" nowrap="nowrap"><span id="gross_profit_formatted"></span></td>
                   <td width="150" align="right" nowrap="nowrap">&nbsp;</td>
                   <td>Billing Address2</td>
-                  <td align="right" nowrap="nowrap">&nbsp;</td>
+                  <td align="right" nowrap="nowrap">#get_quote_start.q_address2#</td>
                 </tr>
                 <tr>
                   <td nowrap="nowrap">OH Recovery (40%)</td>
                   <td align="right" nowrap="nowrap"><span id="margin_formatted"></span></td>
                   <td width="150" align="right" nowrap="nowrap">&nbsp;</td>
                   <td>Billing City </td>
-                  <td align="right" nowrap="nowrap">&nbsp;</td>
+                  <td align="right" nowrap="nowrap">#get_quote_start.q_city#</td>
                 </tr>
                 <tr>
                   <td nowrap="nowrap"><strong>Operating Profit</strong></td>
                   <td align="right" nowrap="nowrap"><strong><span id="operating_profit_formatted"></span></strong></td>
                   <td width="150" align="right" nowrap="nowrap">&nbsp;</td>
                   <td>Billing State</td>
-                  <td align="right" nowrap="nowrap">&nbsp;</td>
+                  <td align="right" nowrap="nowrap">#get_quote_start.q_address_state#</td>
                 </tr>
                 <tr>
                   <td nowrap="nowrap">Operating Profit %</td>
                   <td align="right" nowrap="nowrap"><span id="net_cash_flow_percentage_formatted"></span></td>
                   <td align="right" nowrap="nowrap">&nbsp;</td>
                   <td>Billing Zip</td>
-                  <td align="right" nowrap="nowrap">&nbsp;</td>
+                  <td align="right" nowrap="nowrap">#get_quote_start.q_address_zip#</td>
                 </tr>
                 <tr>
                   <td nowrap="nowrap">&nbsp;</td>
@@ -863,11 +863,11 @@ i.mysize {
                         <cfoutput>
 
                             <a class="btn btn-warning" href="quote_data_entry_approve_contract.cfm?ID=#url.id#">Preview Contract Approval</a>
-                            &nbsp;&nbsp;&nbsp;&nbsp;
-                            <div class="button-box"><a href="create_duplicate_quote.cfm?ID=#url.id#" class="btn btn-success" >Duplicate this Quote</a> </div>
                         </cfoutput>
                     </cfif>
                 </cfif>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <div class="button-box"><a href="create_duplicate_quote.cfm?ID=<cfoutput>#url.id#</cfoutput>" class="btn btn-success" >Duplicate this Quote</a> </div>
               </div>
             </div>
             </td>

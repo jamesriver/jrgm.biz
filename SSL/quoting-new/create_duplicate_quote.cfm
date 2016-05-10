@@ -136,6 +136,30 @@
                 #PreserveSingleQuotes(SQLOutput)#
             </cfquery>
         </cfif>
+
+        <cfquery name="get_quote_notes" datasource="jrgm">
+            SELECT * FROM quote_notes
+            WHERE opportunity_id=#get_quote_start.opportunity_id#
+        </cfquery>
+        <cfif get_quote_notes.recordcount GT 0>
+            <cfset quote_notes_data_master = QueryToStruct(get_quote_notes)>
+            <cfloop from="1" to="#arrayLen(quote_notes_data_master)#" index="i">
+                <cfset quote_notes_data = quote_notes_data_master[i]>
+                <cfset quote_notes_data.opportunity_id = new_opportunity_id>
+                <cfset quote_notes_data.opportunity_id_original = new_opportunity_id>
+                <cfset quote_notes_data.note_date = SQLToday>
+                <cfset quote_notes_data.duplicate_quote = 1>
+                <cfset quote_notes_fields_raw = get_quote_notes.getMetaData().getColumnLabels()>
+                <cfset SQLOutput = getSQLToDuplicateRow('quote_notes', quote_notes_data, quote_notes_fields_raw)>
+                <!---cfoutput>
+                    #SQLOutput#
+                </cfoutput--->
+                <cfquery name="insert_quote_notes" datasource="jrgm">
+                    #PreserveSingleQuotes(SQLOutput)#
+                </cfquery>
+            </cfloop>
+        </cfif>
+
         <cflocation url="quote_data_entry.cfm?ID=#new_opportunity_id#">
         <cfabort>
     <cfelse>

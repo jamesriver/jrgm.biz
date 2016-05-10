@@ -129,6 +129,11 @@
               <li><a href="report_signout_questions_injury.cfm">Daily Sheet Sign Out Question Injury</a></li>
               <li><a href="daily_sheet_listing.cfm">Daily Sheet Listing</a></li>
             </ul>
+            <div class="dashboardHeader">Exception Reports</div>
+            <ul class="dashboard">
+              <li><a href="payroll_manager_deadtime.cfm">Dead Time Report</a></li>
+              <li><a href="payroll_manager_misctime.cfm">Miscellaneous Job Time Report</a></li>
+            </ul>
             <cfif SESSION.userid EQ 1001  >
               <div class="dashboardHeader">Quoting Admin</div>
               <ul class="dashboard">

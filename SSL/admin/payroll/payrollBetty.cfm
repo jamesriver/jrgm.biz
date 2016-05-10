@@ -686,7 +686,11 @@ tr>
       </tr>--->
   </tbody>
 </table>
-
+<br />
+<center>
+<div id="div_overlappingsheets">Detecting daily sheets with overlapping times that need correcting within the last 30 days...</div>
+</center>
+<br />
 <br />
 <cfquery name="get_managers_with_time" datasource="jrgm"  >
 		SELECT DISTINCT  Employee_ID , APP_employees.last_name, APP_employees.first_name FROM 
@@ -762,13 +766,19 @@ Regional Managers, Branch Managers, Production Managers</td>
 <script src="../assets/admin/pages/scripts/dropdown-header-menu.js"></script> 
 <script>
 jQuery(document).ready(function() {
+    jQuery.ajax({
+           url: 'payrollBetty_ajax.cfm',
+           type: 'post',
+           data: { 'authorized': 1 },
+           success: function(data) {
+               $('#div_overlappingsheets').html(data);
+           }
+       });
 
    Metronic.init(); // init metronic core components
 Layout.init(); // init current layout
 Demo.init(); // init demo features
    TableAdvanced.init();
-   
-   
 });
 </script>
 </body>

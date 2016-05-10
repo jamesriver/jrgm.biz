@@ -181,7 +181,7 @@ $(document).ready(function() {
                 <td  align="left">#OPPORTUNITY_stateX#</td>
                 <td  align="left" ><div class="red">#dateformat(biz_approved_date,"mm/dd/yy")#</div></td>
                 <cfif  quote_approved EQ '1'  AND OPPORTUNITY_state EQ 'Won' >
-                  <td align="left"><a href="quote_data_entry.cfm?ID=#opportunity_id#&edit=1" class="green">Revise</a></td>
+                  <td align="left"><a href="create_duplicate_quote.cfm?ID=#opportunity_id#" class="green">Duplicate</a></td>
                   <cfelseif   date_quote_started EQ "">
                   <td align="left"><a href="quote_data_entry.cfm?ID=#opportunity_id#">Start</a></td>
                   <cfelse>
