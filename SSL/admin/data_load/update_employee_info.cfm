@@ -39,7 +39,8 @@ Phone_Cell =  '#get_records_from_app_employees_test.Phone_Cell#',
  employee_dob = <cfqueryparam cfsqltype="cf_sql_date" value="#get_records_from_app_employees_test.employee_dob#"> ,
  employee_hire_date = <cfqueryparam cfsqltype="cf_sql_date" value="#get_records_from_app_employees_test.employee_hire_date#"> ,
  employee_rehire_date =<cfqueryparam cfsqltype="cf_sql_date" value="#get_records_from_app_employees_test.employee_rehire_date#"> ,
- last_modified_date = <cfqueryparam cfsqltype="cf_sql_date" value="#get_records_from_app_employees_test.last_modified_date#">
+ last_modified_date = <cfqueryparam cfsqltype="cf_sql_date" value="#get_records_from_app_employees_test.last_modified_date#">,
+ Direct_Supervisor_ID = <cfqueryparam cfsqltype="cf_sql_numeric" value="#get_records_from_app_employees_test.Direct_Supervisor_ID#">
   WHERE  [Employee ID] =#get_records_from_app_employees_test.employee_id#
   </cfquery>
   

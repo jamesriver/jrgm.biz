@@ -92,9 +92,9 @@ where opportunity_id  =#url.id#
 <cfloop from="1" to="#arrayLen(current_quote_materials)#" index="i">
     <cfloop collection=#current_quote_materials[i]# item="index">
         <cfset field = current_quote_materials_nameassoc[index]>
-        <!---cfif !structKeyExists(current_quote_services_materials, field)>
+        <cfif field CONTAINS 'blank' AND !structKeyExists(current_quote_services_materials, field)>
             <cfset StructInsert(current_quote_services_materials, field, current_quote_materials[i][field])>
-        </cfif--->
+        </cfif>
     </cfloop>
 </cfloop>
 

@@ -464,7 +464,11 @@ i.mysize {
                             </cfif>
                         </cfcase>
                         <cfcase value="5">
-                            <cfset row_column = quote_rows_cache[quote_data_entry_row_order_array[ii]][8]['row_defaultvalue']>
+                            <cfif row_ID CONTAINS 'BlankService'>
+                                <cfset row_column = '<span id="blank' & blank_count & '_material"></span>'>
+                            <cfelse>
+                                <cfset row_column = quote_rows_cache[quote_data_entry_row_order_array[ii]][19]['row_defaultvalue']>
+                            </cfif>
                         </cfcase>
                         <cfdefaultcase>
                             <cfset row_column = current_row[iii]>
@@ -586,7 +590,7 @@ FROM         quote_notes  WHERE  opportunity_id = #url.id# AND  opportunity_id_o
                     <cfset current_row = quote_rows[quote_data_entry_row_order_array[ii]]>
                     <cfset SQL_field = getSQLField(current_row[3])>
                     <cfset row_ID = getRowID(current_row[1])>
-                    <cfif row_ID NEQ 'spanidblankservicespan'>
+                    <cfif row_ID NEQ 'spanidblankservicespan' AND row_ID NEQ 'spanidblankmaterialspan'>
                         <cfoutput>
                             if (document.getElementById(#SQL_field#).innerHTML*1 == 0)
                                 document.getElementById('#row_ID#').style.display = 'none';
@@ -601,6 +605,10 @@ FROM         quote_notes  WHERE  opportunity_id = #url.id# AND  opportunity_id_o
                 document.getElementById('BlankService2').style.display = 'none';
             if (document.getElementById('blank3_times').innerHTML*1 == 0)
                 document.getElementById('BlankService3').style.display = 'none';
+            if (document.getElementById('blank4_times').innerHTML*1 == 0)
+                document.getElementById('BlankService4').style.display = 'none';
+            if (document.getElementById('blank5_times').innerHTML*1 == 0)
+                document.getElementById('BlankService5').style.display = 'none';
 
             <!--- CALCULATE SEASONAL HOURS --->
             var seasonal_hours_total = 0;

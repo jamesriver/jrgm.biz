@@ -28,50 +28,14 @@ where  [Employee ID]   =#get_quote_info.user_id#
 </cfquery>
 </cfif>
 <cfquery name="get_price_quote_info" datasource="jrgm">
-SELECT       ID, quote_id, opportunity_id, push_mow_qty, push_mow_rate, push_mow_times, push_mow_cost, turf_preg_qty, turf_preg_rate, turf_preg_times, 
-                      turf_preg_cost, walk_behind_qty, walk_behind_rate, walk_behind_times, walk_behind_cost, ride_mow_qty, ride_mow_rate, ride_mow_times, ride_mow_cost, 
-                      hard_edge_qty, hard_edge_rate, hard_edge_times, hard_edge_cost, bed_edge_qty, bed_edge_rate, bed_edge_times, bed_edge_cost, trim_o_qty, trim_o_rate, 
-                      trim_o_times, trim_o_cost, trim_s_qty, trim_s_rate, trim_s_times, trim_s_cost, spraying_qty, spraying_rate, spraying_times, spraying_cost, weeding_qty, 
-                      weeding_rate, weeding_times, weeding_cost, blowing_qty, blowing_rate, blowing_times, blowing_cost, trash_s_qty, trash_s_rate, trash_s_times, trash_s_cost, 
-                      traveltime_qty, traveltime_rate, traveltime_times, traveltime_cost, trash_o_qty, trash_o_rate, trash_o_times, trash_o_cost, leafrem_qty, leafrem_rate, leafrem_times, 
-                      leafrem_cost, cleanup_qty, cleanup_rate, cleanup_times, cleanup_cost, turf_prel_qty, turf_prel_rate, turf_prel_times, turf_prel_cost, turf_post_qty, turf_post_rate, 
-                      turf_post_times, turf_post_cost, turf_fert_qty, turf_fert_rate, turf_fert_times, turf_fert_cost, turf_lime_qty, turf_lime_rate, turf_lime_times, turf_lime_cost, turf_aer_h_qty, 
-                      turf_aer_h_rate, turf_aer_h_times, turf_aer_h_cost, turf_aer_t_qty, turf_aer_t_rate, turf_aer_t_times, turf_aer_t_cost, turf_seed_qty, turf_seed_rate, turf_seed_times, 
-                      turf_seed_cost, pruning_tp_qty, pruning_tp_rate, pruning_tp_times, pruning_tp_cost, pruning_s_qty, pruning_s_rate, pruning_s_times, pruning_s_cost, TS_Fert_qty, 
-                      TS_Fert_rate, TS_Fert_times, TS_Fert_cost, TS_Insect_qty, TS_Insect_rate, TS_Insect_times, TS_Insect_cost, Mulch_pre_qty, Mulch_pre_rate, Mulch_pre_times, 
-                      Mulch_pre_cost, Mulch_edging_qty, Mulch_edging_rate, Mulch_edging_times, Mulch_edging_cost, Mulch_s_dyed_qty, Mulch_s_dyed_rate, Mulch_s_dyed_times, 
-                      Mulch_s_dyed_cost, Mulch_f_dyed_qty, Mulch_f_dyed_rate, Mulch_f_dyed_times, Mulch_f_dyed_cost, Annuals_S_qty, Annuals_S_rate, Annuals_S_times, 
-                      Annuals_S_cost, Annuals_F_qty, Annuals_F_rate, Annuals_F_times, Annuals_F_cost, Irrigation_SU_qty, Irrigation_SU_rate, Irrigation_SU_times, Irrigation_SU_cost, 
-                      Irrigation_W_qty, Irrigation_W_rate, Irrigation_W_times, Irrigation_W_cost, Irrigation_I_qty, Irrigation_I_rate, Irrigation_I_times, Irrigation_I_cost, Mulch_F_Reg_qty, 
-                      Mulch_F_Reg_rate, Mulch_F_Reg_times, Mulch_F_Reg_cost, Mulch_S_Reg_qty, Mulch_S_Reg_rate, Mulch_S_Reg_times, Mulch_S_Reg_cost, Pond_maint_qty, 
-                      Pond_maint_rate, Pond_maint_times, Pond_maint_cost, Trim_Hillside_qty, Trim_Hillside_rate, Trim_Hillside_times, Trim_Hillside_cost, Pine_Tags_qty, 
-                      Pine_Tags_rate, Pine_Tags_times, Pine_Tags_cost, TS_hort_oil_qty, TS_hort_oil_rate, TS_hort_oil_times, TS_hort_oil_cost, Addtl_Mowing_qty, Addtl_Mowing_rate, 
-                      Addtl_Mowing_times, Addtl_Mowing_cost, Day_Porter_qty, Day_Porter_rate, Day_Porter_times, Day_Porter_cost, Bush_Hog_qty, Bush_Hog_rate, Bush_Hog_times, 
-                      Bush_Hog_cost, Lot_Sweeping_qty, Lot_Sweeping_rate, Lot_Sweeping_times, Lot_Sweeping_cost, Trail_Maint_qty, Trail_Maint_rate, Trail_Maint_times, 
-                      Trail_Maint_cost, Irrigation_TM_qty, Irrigation_TM_rate, Irrigation_TM_times, Irrigation_TM_cost, Irrigation_BFI_qty, Irrigation_BFI_rate, Irrigation_BFI_times, 
-                      Irrigation_BFI_cost, Natural_Area_qty, Natural_Area_rate, Natural_Area_times, Natural_Area_cost, Trash_Receptacle_qty, Trash_Receptacle_rate, 
-                      Trash_Receptacle_times, Trash_Receptacle_cost, Playground_mulch_qty, Playground_mulch_rate, Playground_mulch_times, Playground_mulch_cost, 
-                      Turf_nutsedge_qty, Turf_nutsedge_rate, Turf_nutsedge_times, Turf_nutsedge_cost, Turf_fungicide_qty, Turf_fungicide_rate, Turf_fungicide_times, Turf_fungicide_cost, 
-                      Turf_insecticide_qty, Turf_insecticide_rate, Turf_insecticide_times, Turf_insecticide_cost, blank1_service, blank1_unit, blank1_service_rate, blank1_qty, blank1_rate, 
-                      blank1_times, blank1_cost, blank2_service, blank2_unit, blank2_service_rate, blank2_qty, blank2_rate, blank2_times, blank2_cost, blank3_service, blank3_unit, 
-                      blank3_service_rate, blank3_qty, blank3_rate, blank3_times, blank3_cost,contract_installments
-
+SELECT *
 FROM         quote_services WHERE  opportunity_id = #url.ID#
 </cfquery>
 
 
 <cfif  get_price_quote_info.recordcount EQ 0> Quote has not been started. No MSS available.<cfabort></cfif>
 <cfquery name="get_price_quote_dollars" datasource="jrgm">
-SELECT       ID, date_created, gross_margin, opportunity_id, date_updated, user_id, push_mow_contract_price, walk_behind_contract_price, ride_mow_contract_price, 
-                      hard_edge_contract_price, bed_edge_contract_price, TRIM_O_contract_price, TRIM_S_contract_price, spraying_contract_price, weeding_contract_price, 
-                      blowing_contract_price, Trash_S_contract_price, traveltime_contract_price, Trash_O_contract_price, leafrem_contract_price, cleanup_contract_price, 
-                      turf_preg_contract_price, turf_prel_contract_price, turf_post_contract_price, turf_fert_contract_price, turf_lime_contract_price, Turf_Aer_H_contract_price, 
-                      Turf_Aer_T_contract_price, Turf_Seed_contract_price, Pruning_TP_contract_price, Pruning_S_contract_price, TS_Fert_contract_price, TS_Insect_contract_price, 
-                      Annuals_S_contract_price, Annuals_F_contract_price, Irrigation_SU_contract_price, Irrigation_W_contract_price, Irrigation_I_contract_price, 
-                      Mulch_F_Reg_contract_price, Mulch_S_Reg_contract_price, mulch_s_dyed_contract_price, mulch_f_dyed_contract_price, Mulch_edging_contract_price, mulch_pre_contract_price, Pond_maint_contract_price, Trim_Hillside_contract_price, Pine_Tags_contract_price, TS_hort_oil_contract_price, Addtl_Mowing_contract_price, Day_Porter_contract_price, 
-                      Bush_Hog_contract_price, Lot_Sweeping_contract_price, Trail_Maint_contract_price, Irrigation_TM_contract_price, Irrigation_BFI_contract_price, 
-                      Natural_Area_contract_price, Trash_Receptacle_contract_price, Playground_mulch_contract_price, Turf_Nutsedge_contract_price, Turf_Fungicide_contract_price, 
-                      Turf_Insecticide_contract_price, blank1_contract_price, blank2_contract_price, blank3_contract_price, total_contract_price,contract_installments
+SELECT *
 FROM         quote_main  WHERE  opportunity_id = #url.ID#
 </cfquery>
 
@@ -770,6 +734,22 @@ H3 {
                   <td>&nbsp;</td>
                 </tr>
               </cfif>
+               <cfif  get_price_quote_info.blank4_times GT 0>
+                  <tr>
+                    <td>&nbsp;</td>
+                    <td><span class="price">#get_price_quote_info.blank4_times#</span></td>
+                    <td align="left" >#get_price_quote_info.blank4_service#</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                </cfif>
+                 <cfif  get_price_quote_info.blank5_times GT 0>
+                                <tr>
+                                  <td>&nbsp;</td>
+                                  <td><span class="price">#get_price_quote_info.blank5_times#</span></td>
+                                  <td align="left" >#get_price_quote_info.blank5_service#</td>
+                                  <td>&nbsp;</td>
+                                </tr>
+                              </cfif>
                  </cfif>
               
               <!---  <tr>

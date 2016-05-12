@@ -214,7 +214,11 @@
                           <cfset current_column = quote_column_headers[quote_column_ID_index[current_row.quote_data_entry_headers_ID]]>
                           <cfif current_column.column_active EQ 1>
                               <cfif current_row.row_active EQ 1>
-                                  <td align="<cfoutput>#quote_column_headers[i].column_displayalign#</cfoutput>">
+                                <cfset displayalign = quote_column_headers[i].column_displayalign>
+                                <cfif current_row.row_order GT 55 AND (current_column.ID EQ 9 OR current_column.ID EQ 10)>
+                                    <cfset displayalign = 'right'>
+                                </cfif>
+                                  <td align="<cfoutput>#displayalign#</cfoutput>">
                                     <cfif current_column.ID EQ 18>
                                         <cfoutput><input type="text" style="border: none" id="#current_row.quote_services_field#" name="#current_row.quote_services_field#" type="text" size="6" value="#current_row.row_defaultvalue#" /></cfoutput>
                                     <cfelse>
@@ -223,8 +227,11 @@
                                           <cfoutput><input class="column<cfoutput>#current_column.ID#</cfoutput> #current_row.quote_services_field# subtotal<cfoutput>#current_row.row_order#</cfoutput> totaltype_<cfoutput>#current_row.row_totaltype#</cfoutput>" type="hidden" id="#current_row.quote_services_field#" name="#current_row.quote_services_field#"></cfoutput>
                                       <cfelse>
                                           <cfif current_row.quote_services_field NEQ ''>
-                                              <cfif (current_column.column_editable EQ 1 AND (current_column.ID NEQ 18 OR current_row.row_defaultvalue NEQ 40)) OR (current_row.row_order GT 55 AND (current_column.ID EQ 1 OR current_column.ID EQ 3 OR current_column.ID EQ 4 OR current_column.ID EQ 6))>
+                                              <cfif (current_column.column_editable EQ 1 AND (current_column.ID NEQ 18 OR current_row.row_defaultvalue NEQ 40)) OR (current_row.row_order GT 55 AND (current_column.ID EQ 1 OR current_column.ID EQ 3 OR current_column.ID EQ 4 OR current_column.ID EQ 6 OR current_column.ID EQ 8 OR current_column.ID EQ 9 OR current_column.ID EQ 10))>
                                                   <cfoutput><span class="column<cfoutput>#current_column.ID#</cfoutput>" id="#current_row.quote_services_field#" name="#current_row.quote_services_field#"></span></cfoutput>
+                                                  <cfif current_column.ID EQ 9 OR current_column.ID EQ 10>
+                                                    &nbsp;
+                                                  </cfif>
                                               <cfelse>
                                                   <cfoutput><input style="text-align: right" class="column<cfoutput>#current_column.ID#</cfoutput> #current_row.quote_services_field#" type="text" size="6" value="#current_row.row_defaultvalue#" /></cfoutput>
                                                   <cfoutput><input type="hidden" class="column<cfoutput>#current_column.ID#</cfoutput> #current_row.quote_services_field# totaltype_<cfoutput>#current_row.row_totaltype#</cfoutput>" id="#current_row.quote_services_field#" name="#current_row.quote_services_field#" value="#current_row.row_defaultvalue#" /></cfoutput>

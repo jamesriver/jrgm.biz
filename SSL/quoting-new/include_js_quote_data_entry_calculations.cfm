@@ -1,3 +1,4 @@
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/2.6.0/math.min.js"></script>
   <script>
     function recalculate_totals()

@@ -213,15 +213,35 @@ varchar
     <cfset REGULAR_PAY_RATE_AMOUNT1  = RemoveChars(REGULAR_PAY_RATE_AMOUNT, 1, 2)>
     <cfset REGULAR_PAY_RATE_AMOUNT2 = replace(REGULAR_PAY_RATE_AMOUNT1,",","","all")>
   </cfif>
+  <cfset SUPERVISOR_ID = 0>
+    <cfif REPORTS_TO_NAME NEQ ''>
+       <cfset reports_to_name_spl = ListToArray(REPORTS_TO_NAME, ',')>
+       <cfset reports_to_last_name = Trim(reports_to_name_spl[1])>
+       <cfset reports_to_first_name = Trim(reports_to_name_spl[2])>
+
+       <cfquery name="get_supervisor" datasource="JRGM">
+          SELECT *, [Employee ID] as Employee_ID FROM app_employees_test WHERE Last_name='#reports_to_last_name#'
+       </cfquery>
+       <cfif get_supervisor.recordcount EQ 1>
+          <cfset SUPERVISOR_ID = get_supervisor.Employee_ID>
+       <cfelse>
+          <cfloop query="get_supervisor">
+              <cfif First_name EQ reports_to_first_name>
+                  <cfset SUPERVISOR_ID = Employee_ID>
+              </cfif>
+          </cfloop>
+       </cfif>
+    </cfif>
   <cfquery name="insert_into_SQL" datasource="JRGM">
  Insert INTO app_employees ([Employee ID],first_name,last_name,employee_address, employee_city, employee_state, 
- employee_zip_code,  employee_phone,MIDDLE_NAME,position,[Ph Cell],phone_cell,[Ph Home],[Direct Supervisor],[Name FirstLast],email,active_record,branch, export_date,employee_hire_date,employee_dob,employee_rehire_date,fww,regular_pay_rate)
+ employee_zip_code,  employee_phone,MIDDLE_NAME,position,[Ph Cell],phone_cell,[Ph Home],[Direct Supervisor],[Name FirstLast],email,active_record,branch, export_date,employee_hire_date,employee_dob,employee_rehire_date,fww,regular_pay_rate,Direct_Supervisor_ID)
  VALUES ('#FILE_NUMBER#','#get_all_records.first_name#','#get_all_records.last_name#','#get_all_records.LEGAL___PREFERRED_ADDRESS__ADDRESS_LINE_1#','#get_all_records.LEGAL___PREFERRED_ADDRESS__CITY#',	'#get_all_records.LEGAL___PREFERRED_ADDRESS__STATE___TERRITORY_CODE#', '#get_all_records.LEGAL___PREFERRED_ADDRESS__ZIP___POSTAL_CODE#', '#get_all_records.PERSONAL_CONTACT__HOME_PHONE#',
 '#get_all_records.MIDDLE_NAME#','#get_all_records.JOB_TITLE_DESCRIPTION#','#get_all_records.PERSONAL_CELL#','#get_all_records.WORK_CONTACT__WORK_MOBILE#','#get_all_records.PERSONAL_CONTACT__HOME_PHONE#','#get_all_records.REPORTS_TO_NAME#','#fullname#','#get_all_records.WORK_CONTACT__WORK_EMAIL#'
-,#active_record#,'#branchname#',CURRENT_TIMESTAMP,<cfqueryparam cfsqltype="cf_sql_date" value="#get_all_records.HIRE_DATE#">,<cfqueryparam cfsqltype="cf_sql_date" value="#get_all_records.BIRTH_DATE#">,<cfqueryparam cfsqltype="cf_sql_date" value="#get_all_records.REHIRE_DATE#">,'#FWW#',#REGULAR_PAY_RATE_AMOUNT2#)
+,#active_record#,'#branchname#',CURRENT_TIMESTAMP,<cfqueryparam cfsqltype="cf_sql_date" value="#get_all_records.HIRE_DATE#">,<cfqueryparam cfsqltype="cf_sql_date" value="#get_all_records.BIRTH_DATE#">,<cfqueryparam cfsqltype="cf_sql_date" value="#get_all_records.REHIRE_DATE#">,'#FWW#',#REGULAR_PAY_RATE_AMOUNT2#,#SUPERVISOR_ID#)
  </cfquery>
 </cfloop>
 <!--- Get Supervisors ID for Crew Leaders & Supervisors --->
+<!---
 <cfquery name="get_all_CL_records"   datasource="jrgm">
    SELECT [Employee ID], [Direct Supervisor] AS DirectSupervisor, [Name FirstLast] AS employee_name ,ID, last_name,first_name FROM app_employees 
    WHERE  Position IN ('Crew Leader','Maintenance Supervisor','Production Manager','Account Manager')
@@ -241,6 +261,7 @@ varchar
   WHERE  ID =#get_all_CL_records.ID#
   </cfquery>
 </cfloop>
+--->
 <!-----------------  This is the end of step 1 ----------------------> 
 <!-----------------  This is the end of step 1 ----------------------> 
 <!-----------------  This is the end of step 1 ---------------------->
@@ -295,7 +316,7 @@ WHERE employee_id = #getrecords_Inactivate.empid#
   <!--- Do this Check for Crew_leader_id and supervisor_id in APP_CREWS ---> 
   <cfoutput>(#getrecords_Inactivate.empname#) (#getrecords_Inactivate.empid#) have been inactivated in app_employees table</cfoutput><br>
   
-  
+
 </cfloop>
 <!-----------------  This is the end of step 3 ----------------------> 
 <!-----------------    This is the end of step 3 ----------------------> 
