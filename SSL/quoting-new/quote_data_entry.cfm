@@ -523,12 +523,24 @@ i.mysize {
               <td>Calculations Version: #version_ID# (created #dateformat(version_date_created,"mm/dd/yyyy")#)</td>
               <td>&nbsp;</td>
               <td colspan="4">Associated Project:
+                <cfset doesprojectexist = 0>
                 <select name="Job_ID">
-                    <option value="0">[ Create a new one when quote is approved ]</option>
+                    <option value="0">[ Create a new project when quote is approved ]</option>
                     <cfloop from="1" to="#arrayLen(active_jobs)#" index="i">
                         <option value="#active_jobs[i][1]#"<cfif get_quote_start.job_id EQ active_jobs[i][1]> selected</cfif>>#active_jobs[i][2]#<cfif LCase(active_jobs[i][3]) NEQ 'in progress'> (#active_jobs[i][3]#)</cfif></option>
+                        <cftry>
+                            <cfif LCase(active_jobs[i][2]) EQ LCase(get_quote_start.opportunity_name)>
+                                <cfset doesprojectexist = active_jobs[i][1]>
+                            </cfif>
+                        <cfcatch>
+                        </cfcatch>
+                        </cftry>
                     </cfloop>
                 </select>
+                <br />
+                <cfif doesprojectexist NEQ 0 AND doesprojectexist NEQ get_quote_start.job_id>
+                    <font color=##AA0000>An existing project with the same name as this quote has been detected.  Choose the project in the dropdown above, then click Save Changes to link it to this quote.</font>
+                </cfif>
               </td>
             </tr>
             <cfif (get_quote_start.quote_approved NEQ 1 OR force_edit EQ 1) AND highest_version_ID GT version_ID>

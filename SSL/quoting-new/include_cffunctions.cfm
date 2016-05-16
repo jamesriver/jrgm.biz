@@ -72,7 +72,12 @@
     }
 
     function getRowID(str) {
-        return REReplace(str, "[^A-Za-z]", "", "ALL");
+        str = REReplace(str, "[^A-Z_a-z]", "", "ALL");
+        if (Left(str, 6) EQ 'spanid')
+            str = Right(str, Len(str)-6);
+        if (Right(str, 4) EQ 'span')
+            str = Left(str, Len(str)-4);
+        return str;
     }
 
     function getSQLField(str) {

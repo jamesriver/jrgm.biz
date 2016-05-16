@@ -94,6 +94,11 @@ $(document).ready(function() {
       <!-- END PAGE TOOLBAR --> 
     </div>
   </div>
+
+  <center>This quote will automatically be linked to the initial opportunity chosen on the left.</center>
+  <center>Approving a renewal quote will <font color=#00AA00><b>create a new Project in Biz and Insightly</b></font>.</center>
+  <br />
+
   <!-- END PAGE HEAD --> 
   <!-- BEGIN PAGE CONTENT -->
   <div class="page-content">

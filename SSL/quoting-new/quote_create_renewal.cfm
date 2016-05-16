@@ -68,8 +68,8 @@ $(document).ready(function() {
 <body>
 <!-- BEGIN HEADER SECTION  -->
 <div class="page-header">
-  <!---cfinclude template="header-include.cfm">
-  <cfinclude template="header-menu.cfm"--->
+  <cfinclude template="header-include.cfm">
+  <cfinclude template="header-menu.cfm">
 </div>
 <!-- BEGIN PAGE CONTAINER -->
 <div class="page-container-fluid"> 
@@ -94,6 +94,10 @@ $(document).ready(function() {
       <!-- END PAGE TOOLBAR --> 
     </div>
   </div>
+    <center>This quote will automatically be linked to the initial project chosen on the left.</center>
+    <center>Approving a renewal quote will <font color=#0000AA><b>update the existing Project in Biz and Insightly</b></font>.</center>
+    <br />
+
   <!-- END PAGE HEAD --> 
   <!-- BEGIN PAGE CONTENT -->
   <div class="page-content">
