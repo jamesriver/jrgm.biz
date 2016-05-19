@@ -1,7 +1,8 @@
 ﻿<?php
+require_once('../sharedclass.php');
 
-require_once "extends.php";
-require_once "db_config.php";
+//require_once "extends.php";
+//require_once "db_config.php";
 
 $ImageName ="";
 $hdVehicleNo = "";
@@ -32,10 +33,10 @@ $a .= "
 </title>
 "; 
 
-$conn = new COM("ADODB.Connection");
+/*$conn = new COM("ADODB.Connection");
 $recordset = new COM("ADODB.RecordSet") or die("Cannot start ADO");
 $recordsetImgList = new COM("ADODB.RecordSet") or die("Cannot start ADO");
-$recordsetImg = new COM("ADODB.RecordSet") or die("Cannot start ADO");
+$recordsetImg = new COM("ADODB.RecordSet") or die("Cannot start ADO");*/
 
 $BO_Status = "";
 $BO_DrugTest = "";
@@ -69,10 +70,11 @@ $AccidentPrev  = "";
 $EmployeeSex  = "";
 $Note = "";
 
-$connStr = "PROVIDER=SQLOLEDB;SERVER=".$myServer.";UID=".$myUser.";PWD=".$myPass.";DATABASE=".$myDB; 
-$conn->open($connStr); //Open the connection to the database
+/*$connStr = "PROVIDER=SQLOLEDB;SERVER=".$myServer.";UID=".$myUser.";PWD=".$myPass.";DATABASE=".$myDB;
+$conn->open($connStr); //Open the connection to the database*/
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+//DISABLED FOR NOW - READ ONLY
+if (0 && $_SERVER['REQUEST_METHOD'] == 'POST') {
     $IR_ID = $_GET['id']; 
     
     $sql_Select = "";
@@ -86,49 +88,49 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     if(!$recordset->EOF) {
         $recordset->movefirst();
-        $IR_ID = $recordset->fields["IR_ID"]->value;
-        $InjuryID = $recordset->fields["InjuryRpt_ID"]->value;
-        $InjuryRpt_Date = $recordset->fields["InjuryRpt_Date"]->value; 
-        $InjuryTime = $recordset->fields["InjuryTime"]->value;
-        $Location = $recordset->fields["Location"]->value;
-        $Branch = $recordset->fields["Branch"]->value;
-        $Employee = $recordset->fields["Employee"]->value;
-        $ReportedTo = $recordset->fields["ReportedTo"]->value;
-        $Position = $recordset->fields["Position"]->value;
-        $ReportedDate = $recordset->fields["ReportedDate"]->value;
-        $BeganTime = $recordset->fields["BeganTime"]->value;
-        $Supervisor = $recordset->fields["Supervisor"]->value;
-        $NatureOfInjury = $recordset->fields["NatureOfInjury"]->value;
-        $HarmObject = $recordset->fields["HarmObject"]->value;
-        $ImmActionTaken = $recordset->fields["ImmActionTaken"]->value;
-        $EmployeeStatement = $recordset->fields["EmployeeStatement"]->value;
-        $WitnessStatement = $recordset->fields["WitnessStatement"]->value;
-        $EmployeePhoneNo = $recordset->fields["EmployeePhoneNo"]->value;
-        $EmployeeAddress = $recordset->fields["EmployeeAddress"]->value;
-        $EmpDOB = $recordset->fields["EmpDOB"]->value;
-        $EmployeeSex = $recordset->fields["EmployeeSex"]->value;
-        $EmpDOH = $recordset->fields["EmpDOH"]->value;
-        $SafetyFeature = $recordset->fields["SafetyFeature"]->value;
-        $PanelofPhysicians = $recordset->fields["PanelofPhysicians"]->value;
-        $MedicalReleaseForm = $recordset->fields["MedicalReleaseForm"]->value;
-        $DutiesTOA = $recordset->fields["DutiesTOA"]->value;
-        $DutiesTOAYes = $recordset->fields["DutiesTOAYes"]->value;
-        $AccidentPrev = $recordset->fields["AccidentPrev"]->value;
-        $Explain = $recordset->fields["Explain"]->value;
-        $Note = $recordset->fields["Note"]->value;
-        $BO_Status = $recordset->fields["BO_Status"]->value;    
-        $BO_MedicalReq = $recordset->fields["BO_MedicalReq"]->value;
-        $BO_DrugTest = $recordset->fields["BO_DrugTest"]->value;
-        $BO_AccInv = $recordset->fields["BO_AccInv"]->value;
-        $BO_Hospitalized = $recordset->fields["BO_Hospitalized"]->value;
-        $BO_WorkerComp = $recordset->fields["BO_WorkerComp"]->value;
-        $BO_WorkerCompNo = $recordset->fields["BO_WorkerCompNo"]->value;
-        $BO_Restrictions = $recordset->fields["BO_Restrictions"]->value;
-        $BO_ListRestrictions = $recordset->fields["BO_ListRestrictions"]->value;
-        $BO_LightDuty = $recordset->fields["BO_LightDuty"]->value;
-        $BO_Facility = $recordset->fields["BO_Facility"]->value;
-        $BO_Physician = $recordset->fields["BO_Physician"]->value;
-        $InjuryRpt_File = $recordset->fields["InjuryRpt_File"]->value;
+        $IR_ID = $recordset["IR_ID"];
+        $InjuryID = $recordset["InjuryRpt_ID"];
+        $InjuryRpt_Date = $recordset["InjuryRpt_Date"]; 
+        $InjuryTime = $recordset["InjuryTime"];
+        $Location = $recordset["Location"];
+        $Branch = $recordset["Branch"];
+        $Employee = $recordset["Employee"];
+        $ReportedTo = $recordset["ReportedTo"];
+        $Position = $recordset["Position"];
+        $ReportedDate = $recordset["ReportedDate"];
+        $BeganTime = $recordset["BeganTime"];
+        $Supervisor = $recordset["Supervisor"];
+        $NatureOfInjury = $recordset["NatureOfInjury"];
+        $HarmObject = $recordset["HarmObject"];
+        $ImmActionTaken = $recordset["ImmActionTaken"];
+        $EmployeeStatement = $recordset["EmployeeStatement"];
+        $WitnessStatement = $recordset["WitnessStatement"];
+        $EmployeePhoneNo = $recordset["EmployeePhoneNo"];
+        $EmployeeAddress = $recordset["EmployeeAddress"];
+        $EmpDOB = $recordset["EmpDOB"];
+        $EmployeeSex = $recordset["EmployeeSex"];
+        $EmpDOH = $recordset["EmpDOH"];
+        $SafetyFeature = $recordset["SafetyFeature"];
+        $PanelofPhysicians = $recordset["PanelofPhysicians"];
+        $MedicalReleaseForm = $recordset["MedicalReleaseForm"];
+        $DutiesTOA = $recordset["DutiesTOA"];
+        $DutiesTOAYes = $recordset["DutiesTOAYes"];
+        $AccidentPrev = $recordset["AccidentPrev"];
+        $Explain = $recordset["Explain"];
+        $Note = $recordset["Note"];
+        $BO_Status = $recordset["BO_Status"];    
+        $BO_MedicalReq = $recordset["BO_MedicalReq"];
+        $BO_DrugTest = $recordset["BO_DrugTest"];
+        $BO_AccInv = $recordset["BO_AccInv"];
+        $BO_Hospitalized = $recordset["BO_Hospitalized"];
+        $BO_WorkerComp = $recordset["BO_WorkerComp"];
+        $BO_WorkerCompNo = $recordset["BO_WorkerCompNo"];
+        $BO_Restrictions = $recordset["BO_Restrictions"];
+        $BO_ListRestrictions = $recordset["BO_ListRestrictions"];
+        $BO_LightDuty = $recordset["BO_LightDuty"];
+        $BO_Facility = $recordset["BO_Facility"];
+        $BO_Physician = $recordset["BO_Physician"];
+        $InjuryRpt_File = $recordset["InjuryRpt_File"];
     }
     
     if(isset($_POST['BO_DrugTest'])) { $BO_DrugTest = $_POST['BO_DrugTest']; }
@@ -212,7 +214,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $recordsetImg->open($sql_Select, $conn, 3);
         if (!$recordsetImg->EOF) {
             $recordsetImg->movefirst();
-            $ImageCount = $recordsetImg->fields["ImageCount"]->value + 1;
+            $ImageCount = $recordsetImg["ImageCount"] + 1;
         }
         /*
         $datetime = new DateTime($incidentRpt_Date);
@@ -280,64 +282,71 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 //else
 if ($DisplayReport == "true") {
-    $IR_ID = $_GET['id']; 
-
-    $sql_Select = "";
-    $sql_Select = "Select * from Form_InjuryReport where IR_ID='{$IR_ID}'";
+    $IR_ID = $_GET['id'];
 
     try {
-        $recordset->open($sql_Select, $conn, 3);
+        $edata = sharedclass::callAPIReceiver('biz_getinjuryreport', array('id'=>$IR_ID));
+        $spl = explode('`', $edata);
+        foreach($spl as $sp)
+        {
+            $s = explode('|', $sp);
+            if (count($s) == 3)
+            {
+                $emps[$s[0]] = $s[1];
+                if ($s[2])
+                    $production_managers[$s[0]] = $s[1];
+            }
+        }
 
         $errMessage = "";
 
         $Inspection_Id = 0;
         
-        if(!$recordset->EOF) {
-            $recordset->movefirst();
-            $IR_ID = $recordset->fields["IR_ID"]->value;
-            $InjuryID = $recordset->fields["InjuryRpt_ID"]->value;
-            $InjuryRpt_Date = $recordset->fields["InjuryRpt_Date"]->value; 
-            $InjuryTime = $recordset->fields["InjuryTime"]->value;
-            $Location = $recordset->fields["Location"]->value;
-            $Branch = $recordset->fields["Branch"]->value;
-            $Employee = $recordset->fields["Employee"]->value;
-            $ReportedTo = $recordset->fields["ReportedTo"]->value;
-            $Position = $recordset->fields["Position"]->value;
-            $ReportedDate = $recordset->fields["ReportedDate"]->value;
-            $BeganTime = $recordset->fields["BeganTime"]->value;
-            $Supervisor = $recordset->fields["Supervisor"]->value;
-            $NatureOfInjury = $recordset->fields["NatureOfInjury"]->value;
-            $HarmObject = $recordset->fields["HarmObject"]->value;
-            $ImmActionTaken = $recordset->fields["ImmActionTaken"]->value;
-            $EmployeeStatement = $recordset->fields["EmployeeStatement"]->value;
-            $WitnessStatement = $recordset->fields["WitnessStatement"]->value;
-            $EmployeePhoneNo = $recordset->fields["EmployeePhoneNo"]->value;
-            $EmployeeAddress = $recordset->fields["EmployeeAddress"]->value;
-            $EmpDOB = $recordset->fields["EmpDOB"]->value;
-            $EmployeeSex = $recordset->fields["EmployeeSex"]->value;
-            $EmpDOH = $recordset->fields["EmpDOH"]->value;
-            $SafetyFeature = $recordset->fields["SafetyFeature"]->value;
-            $PanelofPhysicians = $recordset->fields["PanelofPhysicians"]->value;
-            $MedicalReleaseForm = $recordset->fields["MedicalReleaseForm"]->value;
-            $DutiesTOA = $recordset->fields["DutiesTOA"]->value;
-            $DutiesTOAYes = $recordset->fields["DutiesTOAYes"]->value;
-            $AccidentPrev = $recordset->fields["AccidentPrev"]->value;
-            $Explain = $recordset->fields["Explain"]->value;
-            $Note = $recordset->fields["Note"]->value;
-            $BO_Status = $recordset->fields["BO_Status"]->value;	
-            $BO_MedicalReq = $recordset->fields["BO_MedicalReq"]->value;
-            $BO_DrugTest = $recordset->fields["BO_DrugTest"]->value;
-            $BO_AccInv = $recordset->fields["BO_AccInv"]->value;
-            $BO_Hospitalized = $recordset->fields["BO_Hospitalized"]->value;
-            $BO_WorkerComp = $recordset->fields["BO_WorkerComp"]->value;
-            $BO_WorkerCompNo = $recordset->fields["BO_WorkerCompNo"]->value;
-            $BO_Restrictions = $recordset->fields["BO_Restrictions"]->value;
-            $BO_ListRestrictions = $recordset->fields["BO_ListRestrictions"]->value;
-            $BO_LightDuty = $recordset->fields["BO_LightDuty"]->value;
-            $BO_Facility = $recordset->fields["BO_Facility"]->value;
-            $BO_Physician = $recordset->fields["BO_Physician"]->value;
-            $NatureOfInjury = $recordset->fields["NatureOfInjury"]->value;
-            $InjuryRpt_File = $recordset->fields["InjuryRpt_File"]->value;
+        if($recordset) {
+            $IR_ID = $recordset["IR_ID"];
+            $InjuryID = $recordset["InjuryRpt_ID"];
+            $InjuryRpt_Date = $recordset["InjuryRpt_Date"]; 
+            $InjuryTime = $recordset["InjuryTime"];
+            $Location = $recordset["Location"];
+            $Branch = $recordset["Branch"];
+            $Employee = $recordset["Employee"];
+            $ReportedTo = $recordset["ReportedTo"];
+            $Position = $recordset["Position"];
+            $ReportedDate = $recordset["ReportedDate"];
+            $BeganTime = $recordset["BeganTime"];
+            $Supervisor = $recordset["Supervisor"];
+            $NatureOfInjury = $recordset["NatureOfInjury"];
+            $HarmObject = $recordset["HarmObject"];
+            $ImmActionTaken = $recordset["ImmActionTaken"];
+            $EmployeeStatement = $recordset["EmployeeStatement"];
+            $WitnessStatement = $recordset["WitnessStatement"];
+            $EmployeePhoneNo = $recordset["EmployeePhoneNo"];
+            $EmployeeAddress = $recordset["EmployeeAddress"];
+            $EmpDOB = $recordset["EmpDOB"];
+            $EmployeeSex = $recordset["EmployeeSex"];
+            $EmpDOH = $recordset["EmpDOH"];
+            $SafetyFeature = $recordset["SafetyFeature"];
+            $PanelofPhysicians = $recordset["PanelofPhysicians"];
+            $MedicalReleaseForm = $recordset["MedicalReleaseForm"];
+            $DutiesTOA = $recordset["DutiesTOA"];
+            $DutiesTOAYes = $recordset["DutiesTOAYes"];
+            $AccidentPrev = $recordset["AccidentPrev"];
+            $Explain = $recordset["Explain"];
+            $Note = $recordset["Note"];
+            $BO_Status = $recordset["BO_Status"];	
+            $BO_MedicalReq = $recordset["BO_MedicalReq"];
+            $BO_DrugTest = $recordset["BO_DrugTest"];
+            $BO_AccInv = $recordset["BO_AccInv"];
+            $BO_Hospitalized = $recordset["BO_Hospitalized"];
+            $BO_WorkerComp = $recordset["BO_WorkerComp"];
+            $BO_WorkerCompNo = $recordset["BO_WorkerCompNo"];
+            $BO_Restrictions = $recordset["BO_Restrictions"];
+            $BO_ListRestrictions = $recordset["BO_ListRestrictions"];
+            $BO_LightDuty = $recordset["BO_LightDuty"];
+            $BO_Facility = $recordset["BO_Facility"];
+            $BO_Physician = $recordset["BO_Physician"];
+            $NatureOfInjury = $recordset["NatureOfInjury"];
+            $InjuryRpt_File = $recordset["InjuryRpt_File"];
             
             $hdRptDate = $InjuryRpt_Date;
         } else {//echo "$InjuryID";
