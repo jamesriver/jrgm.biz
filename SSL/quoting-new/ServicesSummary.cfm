@@ -271,7 +271,8 @@ FROM         quote_notes  WHERE  opportunity_id = #url.id# AND  opportunity_id_o
                 document.getElementById('BlankService5').style.display = 'none';
 
             <!---APPLY CONTRACT PRICE SUMS TO ALL SERVICE LINES--->
-            <cfif IsDefined('url.prices')>
+            if (confirm('Press OK to show prices.  Press Cancel to keep prices hidden.  (Refresh this page to show this choice again at any time.)'))
+            {
                 <cfoutput>
                 <cfloop from="1" to="#arrayLen(quote_specsheet)#" index="i">
                     <cfset contract_price_ID = getRowID(quote_specsheet[i][1])>
@@ -288,7 +289,7 @@ FROM         quote_notes  WHERE  opportunity_id = #url.id# AND  opportunity_id_o
                     </cftry>
                 </cfloop>
                 </cfoutput>
-            </cfif>
+            }
         });
     }
   </script>
