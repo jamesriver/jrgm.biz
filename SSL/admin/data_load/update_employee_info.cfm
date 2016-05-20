@@ -279,6 +279,11 @@ WHERE time_out IS NOT NULL  AND  ds_date > #daysago14#
 </cfquery>
 <!---END Step 10 make sure that time_worked is updated in APP_Employee_Payroll_Clock --->
 
+<cfquery name="clear_out_invalid_app_crews" datasource="jrgm">
+DELETE FROM app_crews
+WHERE (supervisor_id IS NULL OR supervisor_id=0) AND  (crew_leader_id IS NULL OR crew_leader_id=0)
+</cfquery>
+
 CHECK app_events_backup!!!
 </body>
 </html>

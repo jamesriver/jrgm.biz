@@ -57,10 +57,10 @@ $InjuryRpt_File = $recordset["InjuryRpt_File"];
             <cfset output_str = output_str & multi_delimiter>
         </cfif>
         <cfset output_str = output_str & IR_ID & '|' & InjuryRpt_ID & '|' & InjuryRpt_Date & '|' & InjuryTime & '|' & Location & '|' & Branch & '|' & Employee & '|' & ReportedTo & '|' & Position & '|' & ReportedDate & '|' & BeganTime
-             & '|' & Supervisor & '|' & NatureOfInjury & '|' & HarmObject & '|' & ImmActionTaken & '|' & EmployeeStatement & '|' & EmployeePhoneNo & '|' & EmployeeAddress & '|' & EmpDOB & '|' & EmployeeSex & '|' & EmpDOH
+             & '|' & Supervisor & '|' & NatureOfInjury & '|' & HarmObject & '|' & ImmActionTaken & '|' & EmployeeStatement & '|' & WitnessStatement & '|' & EmployeePhoneNo & '|' & EmployeeAddress & '|' & EmpDOB & '|' & EmployeeSex & '|' & EmpDOH
              & '|' & SafetyFeature & '|' & PanelOfPhysicians & '|' & MedicalReleaseForm & '|' & DutiesTOA & '|' & DutiesTOAYes & '|' & AccidentPrev & '|' & Explain & '|' & Note & '|' & BO_Status & '|' & BO_MedicalReq
              & '|' & BO_DrugTest & '|' & BO_AccInv & '|' & BO_Hospitalized & '|' & BO_WorkerComp & '|' & BO_WorkerCompNo & '|' & BO_Restrictions & '|' & BO_ListRestrictions & '|' & BO_LightDuty & '|' & BO_Facility
-             & '|' & BO_Physician>
+             & '|' & BO_Physician & '|' & InjuryRpt_File>
         <cfset cv++>
     </cfloop>
     <cfinclude template="include_output.cfm">

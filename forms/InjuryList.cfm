@@ -181,7 +181,7 @@ Select * from Form_InjuryReport  ORDER BY CreatedDate DESC
 	<td align="right">#BO_WorkerComp#</td>
 	<td align="right">#BO_WorkerCompNo#</td>
     <td align="right">#BO_Status#</td>
-	<td align="right"><a href="/forms/injury_bo.cfm?id=#IR_ID#" target="_blank">View Report</a></td>
+	<td align="right"><a href="http://api.jrgm.com/biz/injury_bo.php?id=#IR_ID#" target="_blank">View Report</a></td>
 	<td align="right">
       <cfif InjuryRpt_File NEQ ''>
         <a href='photos/injury_reports/#InjuryRpt_File#' target="_blank"><img src="images/pdf_file.png" width="24" height="24" />

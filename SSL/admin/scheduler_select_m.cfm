@@ -198,7 +198,8 @@ SELECT * FROM   app_employee_passwords   WHERE  access_role= 8 AND employee_acti
             <br /></td>
           <td>&nbsp;</td>
           <cfquery name="get_supervisors" datasource="jrgm">
-SELECT * FROM   app_crews   WHERE  Employee_Position_ID= 1 AND active_record =1
+SELECT employee_id, employee_branch, crew_name, last_name FROM   app_crews   WHERE  Employee_Position_ID= 1 AND active_record =1
+GROUP BY employee_id, employee_branch, crew_name, last_name
 ORDER by employee_branch, last_name
 </cfquery>
           <td valign="top"><div class="dailysheet_header">Production Managers (<cfoutput>#get_supervisors.recordcount#</cfoutput>)</div>
@@ -283,7 +284,8 @@ ORDER by employee_branch, last_name
             </table></td>
           <td>&nbsp;</td>
           <cfquery name="get_CL" datasource="jrgm">
-SELECT * FROM   app_crews   WHERE  Employee_Position_ID= 2 AND active_record =1 AND employee_branch <>'Test'
+SELECT employee_id, employee_branch, crew_name, last_name FROM   app_crews   WHERE  Employee_Position_ID= 2 AND active_record =1 AND employee_branch <>'Test'
+GROUP BY employee_id, employee_branch, crew_name, last_name
 ORDER by employee_branch, last_name
         </cfquery>
           <cfquery name="get_techCLD" datasource="jrgm">
