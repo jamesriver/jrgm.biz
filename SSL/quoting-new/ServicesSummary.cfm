@@ -77,7 +77,7 @@ H3 {
                     <cfset quote_data_entry_row_order_array = ListToArray(quote_specsheet[i][2])>
                     <cfset contract_price_ID = getRowID(quote_specsheet[i][1])>
                     <cfset StructInsert(contract_price_array, contract_price_ID, 0)>
-                    <tr>
+                    <tr id="tr_#contract_price_ID#">
                       <td colspan="3" ><h3>#quote_specsheet[i][1]#<span id="contract_price_#contract_price_ID#"></span></h3></td>
                     </tr>
                     <cfloop from="1" to="#arrayLen(quote_data_entry_row_order_array)#" index="ii">
@@ -269,6 +269,24 @@ FROM         quote_notes  WHERE  opportunity_id = #url.id# AND  opportunity_id_o
                 document.getElementById('BlankService4').style.display = 'none';
             if (document.getElementById('blank5_times').innerHTML*1 == 0)
                 document.getElementById('BlankService5').style.display = 'none';
+
+            <!---HIDE EMPTY CATEGORIES--->
+            <cfoutput>
+                <cfloop from="1" to="#arrayLen(quote_specsheet)#" index="i">
+                    <cfset contract_price_ID = getRowID(quote_specsheet[i][1])>
+
+                    <cftry>
+                        <cfif contract_price_array[contract_price_ID] EQ 0>
+                            try
+                            {
+                                document.getElementById('tr_#contract_price_ID#').style.display = 'none';
+                            }
+                            catch(ob){}
+                        </cfif>
+                    <cfcatch></cfcatch>
+                    </cftry>
+                </cfloop>
+            </cfoutput>
 
             <!---APPLY CONTRACT PRICE SUMS TO ALL SERVICE LINES--->
             if (confirm('Press OK to show prices.  Press Cancel to keep prices hidden.  (Refresh this page to show this choice again at any time.)'))
