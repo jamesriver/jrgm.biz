@@ -71,7 +71,7 @@ td {
 <br />
 <cfoutput>
 <strong class="arialfontbold">DEAD TIME (no associated Job ID)<b>: #get_all_app_job_services_actual_employee.recordcount# records<br />
-Total Hours: #sum_all_app_job_services_actual_employee.sum/60#, Average Hours Per Entry: #(sum_all_app_job_services_actual_employee.sum/60/sum_all_app_job_services_actual_employee.recordcount)#<br />
+Total Hours: #sum_all_app_job_services_actual_employee.sum/60#, Average Hours Per Entry: #(sum_all_app_job_services_actual_employee.sum/60/get_all_app_job_services_actual_employee.recordcount)#<br />
 <br />
 </cfoutput>
 <span style="font-family: Gotham, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-style: italic;">No Dates or Daily Sheets are associated with these entries<br />
