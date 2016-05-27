@@ -308,10 +308,10 @@ ORDER by branch
 UPDATE app_employees SET active_record = 0,last_modified_date =CURRENT_TIMESTAMP
 WHERE [Employee ID] = #getrecords_Inactivate.empid#
 </cfquery>
-  <cfquery name="delete_from_crews"   datasource="jrgm">
+  <!---cfquery name="delete_from_crews"   datasource="jrgm">
 DELETE FROM app_crews
 WHERE employee_id = #getrecords_Inactivate.empid#
-</cfquery>
+</cfquery--->
   <!--- Do this Inactivate Password  ---> 
   <!--- Do this Check for Crew_leader_id and supervisor_id in APP_CREWS ---> 
   <cfoutput>(#getrecords_Inactivate.empname#) (#getrecords_Inactivate.empid#) have been inactivated in app_employees table</cfoutput><br>
