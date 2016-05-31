@@ -135,6 +135,18 @@
 <!-- END FOOTER -->
 
 <div class="scroll-to-top"> <i class="icon-arrow-up"></i> </div>
+
+<!--jQuery popup loader-->
+<div id="div_popupWindowSheen" style="background: no-repeat 50% 50% rgba(255, 255, 255, 1); left: 0; top: 0; width: 100%; height: 100%; text-align: center; display: none; position: fixed; z-index: 1001;">
+    <div id="div_popupWindow" style="top: 50%; text-align: center; position: relative; transform: translatey(-50%); -webkit-transform: translatey(-50%); max-height: 80%; overflow: auto;">
+        <center>
+            <div id="div_popupWindowContent"></div>
+        </center>
+    </div>
+</div>
+<!--end popup loader-->
+
+
 <!-- END FOOTER -->
 <!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->
 <!-- BEGIN CORE PLUGINS -->
@@ -179,6 +191,7 @@
     var supervisors = [];
     var crew_leaders = [];
     var crew_members = [];
+    var employees = [];
 
     var user_branch = '<cfoutput>#SESSION.branch#</cfoutput>';
     var user_access_role = <cfoutput>#user_access_role#</cfoutput>;
@@ -228,6 +241,13 @@
                     supervisors = [];
                     crew_leaders = [];
                     crew_members = [];
+                    employees = [];
+
+                    for(i=0; i<obj.length; i++)
+                    {
+                        ob = obj[i];
+                        employees[ob[2]] = { employee_name: ob[1], employee_id: ob[2], crew_leader_id: ob[3], supervisor_id: ob[4] };
+                    }
 
                     switch(user_access_role)
                     {
@@ -271,6 +291,11 @@
         });
     }
 
+    function showEmployeeName(employee_id)
+    {
+        return employees[employee_id].employee_name+' ('+employees[employee_id].employee_id+')';
+    }
+
     function buildBranchManagerVersion()
     {
         $('#tr_crews').html('');
@@ -282,7 +307,7 @@
             var html = '';
             html += '<table style="border: 1px solid black">';
             html += '<tr>';
-            html += '<td style="cursor: pointer; padding: 15px; background-color: #999999; color: #FFFFFF; font-weight: bold; border-bottom: 1px solid black">'+s.employee_name+'</td>';
+            html += '<td style="cursor: pointer; padding: 15px; background-color: #999999; color: #FFFFFF; font-weight: bold; border-bottom: 1px solid black" onmouseover="this.style.backgroundColor=\'#0000AA\'" onmouseout="this.style.backgroundColor=\'#999999\'">'+showEmployeeName(s.employee_id)+'</td>';
             html += '</tr>';
 
             var cl = crew_leaders[s.employee_id];
@@ -290,11 +315,9 @@
             {
                 for(var ii=0; ii<cl.length; ii++)
                 {
-                    var bgcolor = '';
-                    if (ii % 2 == 0) bgcolor = '#e5e5e5';
                     var cm = cl[ii];
                     html += '<tr>';
-                    html += '<td style="cursor: pointer; padding: 15px; background-color: '+bgcolor+'">'+cm.employee_name+' ('+cm.employee_id+')</td>';
+                    html += '<td style="cursor: pointer; padding: 15px" onmouseover="this.style.backgroundColor=\'#00AA00\'" onmouseout="this.style.backgroundColor=\'#FFFFFF\'" onClick="popUpMoveCrewLeader('+cm.employee_id+')">'+showEmployeeName(cm.employee_id)+'</td>';
                     html += '</tr>';
                 }
             }
@@ -304,6 +327,38 @@
             fullhtml += '<td valign="top" style="padding: 5px">'+html+'</td>';
         }
         $('#tr_crews').append(fullhtml);
+    }
+
+    function popUpMoveCrewLeader(employee_id)
+    {
+        var e = employees[employee_id];
+
+        var pophtml = '';
+        pophtml += '<table align="center" style="width: 80%; border: 1px solid black">';
+        pophtml += '<tr>';
+        pophtml += '<td align="center" style="padding: 10px; border-bottom: 1px solid black; background-color: #e5e5e5"><b>'+showEmployeeName(employee_id)+'</b></td>';
+        pophtml += '</tr>';
+        pophtml += '<tr>';
+        pophtml += '<td align="center" style="padding: 10px;">Click/Touch a supervisor below to move this crew leader.</td>';
+        pophtml += '</tr>';
+        pophtml += '<tr>';
+        pophtml += '<td align="center" style="padding: 10px;"><input type="button" value="Cancel and Go Back" onClick="hidePopup()"></td>';
+        pophtml += '</tr>';
+
+        for(var i=0; i<supervisors.length; i++)
+        {
+            var s = supervisors[i];
+            pophtml += '<tr>';
+            pophtml += '<td align="center" style="padding: 10px"><div style="cursor: pointer; font-weight: bold; padding: 10px; border: 1px solid black; background-color: #999999; width: 50%; color: white" onmouseover="this.style.backgroundColor=\'#0000AA\'" onmouseout="this.style.backgroundColor=\'#999999\'" onClick="moveCrewLeader('+employee_id+', '+s.employee_id+')">'+showEmployeeName(s.employee_id)+'</div></td>';
+            pophtml += '</tr>';
+        }
+        pophtml += '</table>';
+        showPopup(pophtml);
+    }
+
+    function moveCrewLeader(employee_id, supervisor_id)
+    {
+        alert('Move '+employee_id+' to '+supervisor_id);
     }
 
     function buildSupervisorVersion()
@@ -320,6 +375,20 @@
             success: function(data) {
             }
         });
+    }
+
+    function showPopup(html)
+    {
+        if (html)
+        {
+            $('#div_popupWindowContent').html(html);
+        }
+        document.getElementById('div_popupWindowSheen').style.display = 'block';
+    }
+
+    function hidePopup()
+    {
+        document.getElementById('div_popupWindowSheen').style.display = 'none';
     }
   </script>
 <!--- END OUTPUT --->
