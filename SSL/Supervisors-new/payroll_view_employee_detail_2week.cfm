@@ -194,7 +194,7 @@ There are no employees with time for ths period.
 <cfloop query="get_employees_with_time">
   <cfset myList = ListAppend(mylist,Employee_ID)>
 </cfloop>
- 
+
   <cfquery name="get_all_employee_time_for_period" datasource="jrgm"      >
 	SELECT Employee_ID,  time_worked, in_out_status,ds_date 
  FROM app_employee_payroll_clock
