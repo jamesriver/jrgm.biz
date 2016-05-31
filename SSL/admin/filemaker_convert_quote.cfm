@@ -48,6 +48,10 @@
         FROM app_jobs
         WHERE [Job ID] = '#form.project_id#'
     </cfquery>
+    <cfif get_app_jobs_by_project_id.recordcount EQ 0>
+        <cfoutput>COULD NOT FIND #form.project_id#</cfoutput>
+        <cfabort>
+    </cfif>
     <cfloop query="get_app_jobs_by_project_id">
         <cfset cols    = ListToArray(get_app_jobs_by_project_id.columnList)>
         <cfloop from="1" to="#arrayLen(cols)#" index="i">
@@ -69,6 +73,9 @@
         <cfif field_name eq "bid_amount">
           <cfset field_value = Replace(Replace(field_value, "$", "", "ALL"), ",", "", "ALL")>
         </cfif>
+        <cfif field_name eq "opportunity_name">
+          <cfset field_value = '[FM] ' & field_value>
+        </cfif>
         <cfif field_value eq "">
           <cfset query_parameters = query_parameters & field_name & "=NULL" & ", ">
           <cfelse>
@@ -81,8 +88,8 @@
     <!--- ===================== insert a new quote_start entry =================== --->
     <cfquery name="insert_quote_start" datasource="jrgm" result="result_insert_quote_start">
         INSERT INTO quote_start
-        ([Job ID])
-        VALUES (<cfqueryparam value="#project_id#"     CFSQLType="CF_SQL_VARCHAR">)
+        ([Job ID], quote_data_entry_versions_ID)
+        VALUES (<cfqueryparam value="#project_id#"     CFSQLType="CF_SQL_VARCHAR">, 2)
     </cfquery>
 
     <!--- ===================== insert a new quote_main entry =================== --->
@@ -117,7 +124,9 @@
             lot_sweeping_gm,
             blank1_gm,
             blank2_gm,
-            blank3_gm
+            blank3_gm,
+            blank4_gm,
+            blank5_gm
             <cfloop from="1" to="#arrayLen(fields_quote_services)#" index="i">
                 <cfoutput>, #fields_quote_services[i]#</cfoutput>
             </cfloop>
@@ -125,6 +134,8 @@
         VALUES (<cfoutput>#result_insert_quote_start["GENERATEDKEY"]#</cfoutput>,
             <cfoutput>#result_insert_quote_start["GENERATEDKEY"]#</cfoutput>,
             57.000,
+            0.00,
+            0.00,
             0.00,
             0.00,
             0.00,

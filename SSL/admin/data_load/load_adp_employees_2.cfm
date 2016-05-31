@@ -241,7 +241,6 @@ varchar
  </cfquery>
 </cfloop>
 <!--- Get Supervisors ID for Crew Leaders & Supervisors --->
-<!---
 <cfquery name="get_all_CL_records"   datasource="jrgm">
    SELECT [Employee ID], [Direct Supervisor] AS DirectSupervisor, [Name FirstLast] AS employee_name ,ID, last_name,first_name FROM app_employees 
    WHERE  Position IN ('Crew Leader','Maintenance Supervisor','Production Manager','Account Manager')
@@ -259,9 +258,10 @@ varchar
   <cfquery name="update_supervisor_id"   datasource="jrgm">
   UPDATE app_employees SET  Direct_Supervisor_ID = '#get_supervisor_id.empid#'
   WHERE  ID =#get_all_CL_records.ID#
+  AND Direct_Supervisor_ID IS NULL
   </cfquery>
 </cfloop>
---->
+
 <!-----------------  This is the end of step 1 ----------------------> 
 <!-----------------  This is the end of step 1 ----------------------> 
 <!-----------------  This is the end of step 1 ---------------------->
@@ -308,10 +308,10 @@ ORDER by branch
 UPDATE app_employees SET active_record = 0,last_modified_date =CURRENT_TIMESTAMP
 WHERE [Employee ID] = #getrecords_Inactivate.empid#
 </cfquery>
-  <cfquery name="delete_from_crews"   datasource="jrgm">
+  <!---cfquery name="delete_from_crews"   datasource="jrgm">
 DELETE FROM app_crews
 WHERE employee_id = #getrecords_Inactivate.empid#
-</cfquery>
+</cfquery--->
   <!--- Do this Inactivate Password  ---> 
   <!--- Do this Check for Crew_leader_id and supervisor_id in APP_CREWS ---> 
   <cfoutput>(#getrecords_Inactivate.empname#) (#getrecords_Inactivate.empid#) have been inactivated in app_employees table</cfoutput><br>

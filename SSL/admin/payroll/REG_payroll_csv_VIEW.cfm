@@ -83,7 +83,7 @@
     <cfquery name="get_all_employee_time_for_period" datasource="jrgm" >
 	SELECT Employee_ID,  time_worked, in_out_status,ds_date 
  FROM app_employee_payroll_clock
- WHERE Employee_ID IN (#mylist#) AND app_employee_payroll_clock.Time_In > '#DateFormat(pay_period_start, "yyyy-mm-dd")# 00:00:00.000' AND  app_employee_payroll_clock.Time_In < #end_date_plus1#
+ WHERE Employee_ID IN (#mylist#) AND app_employee_payroll_clock.Time_In > '#DateFormat(pay_period_start, "yyyy-mm-dd")# 00:00:00.000' AND  app_employee_payroll_clock.Time_In < '#DateFormat(end_date_plus1, "yyyy-mm-dd")# 00:00:00.000'
  AND in_out_status =2
   </cfquery>
     <cfparam name="current_date" default="1">

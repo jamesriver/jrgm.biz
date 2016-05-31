@@ -13,6 +13,10 @@
 SELECT     [Employee ID] AS employee_id, branch,[Name FirstLast] AS empname
 FROM         app_employees
  </cfquery>
+<cfquery name="get_all_app_job_services_actual_employee" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
+SELECT * FROM app_job_services_actual_employee
+WHERE Job_ID IS NULL
+</cfquery>
 <cfquery name="sum_all_app_job_services_actual_employee" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
 SELECT SUM(Total_Time) as sum FROM app_job_services_actual_employee
 WHERE Job_ID IS NULL
@@ -61,7 +65,7 @@ td {
     <div class="centrecontent_inner">
       <table border="0" cellspacing="0" cellpadding="0">
         <tr>
-          <td class="header">Payroll Manager</td>
+          <td class="header">Dead Time Report</td>
         </tr>
       </table>     
 <br />

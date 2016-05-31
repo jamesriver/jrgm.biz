@@ -49,6 +49,18 @@
   <tr>
     <cfif  IsDefined("SESSION.access_role")  AND (SESSION.access_role EQ  '1' OR SESSION.access_role EQ  '9' OR SESSION.access_role EQ  '97' OR SESSION.access_role EQ '94')>
       <td valign="top"><div class="subheader">Reports</div>
+        <div class="dashboardHeader">Renewal Management</div>
+          <ul class="dashboard">
+            <!--- <li><a href="project_renewal_management.cfm">Renewal Management</a></li>--->
+            <li><a href="project_list_renewal.cfm">Renewal Management</a></li>
+            <div class="dashboardHeader">Project Management</div>
+            <li><a href="project_list.cfm">Project List / Manage Project Information</a></li>
+            <cfif  IsDefined("SESSION.access_role")  AND  SESSION.access_role NEQ  '1'  >
+              <!---li><a href="project_create_new_project.cfm">Create New Project</a></li--->
+            </cfif>
+            <li><a href="http://api.jrgm.com/cronjob_projectlinks.php">Authorize Insightly Project Links</a></li>
+            <!---    <li><a href="project-View_Project_Information.cfm">Manage Project Information</a> </li>--->
+          </ul>
         <div class="dashboardHeader">Jobs &amp; Materials Reports</div>
         <ul class="dashboard">
           <!--- <li><a href="select_branch_j.cfm">Job Labor &amp; Materials Detail Report</a></li>

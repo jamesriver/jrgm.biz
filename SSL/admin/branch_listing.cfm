@@ -10,6 +10,14 @@
 <cfset recur = dateadd("d",50,somedate)>
 <cfset todayDate_dow = DayOfWeek(todayDate)>
 <cfset todayDate_button = DateFormat(Now(),"mmm-dd-yyyy")>
+
+<cfset idx = 'Charlottesville'>
+<cfoutput>
+SELECT  * FROM   app_crews   WHERE  employee_branch = '#idx#' AND  Employee_Position_ID= 0    AND active_record =1
+AND end_date > #tomorrow#
+ORDER by last_name ASC
+</cfoutput>
+<cfabort>
       
       <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">

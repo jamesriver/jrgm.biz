@@ -67,12 +67,14 @@ Step 1 Done
 SELECT employee_id AS Employee_ID  FROM 
 app_employee_passwords WHERE employee_branch ='#get_employees_not_in_app_crews.Branch#'  AND access_role = 9  AND employee_active =1
 </cfquery>
+<cfif get_BM_ID.recordcount GT 0>
     <cfquery name="insert_into_SQL" datasource="JRGM">
  INSERT INTO APP_crews 
  (Employee_ID ,crew_name,Employee_Branch ,Crew_Leader_ID ,Employee_Position_ID,First_name,Last_name,start_date,end_date,active_record,supervisor_ID)
  VALUES 
  (#get_employees_not_in_app_crews.Employee_ID#, '#get_employees_not_in_app_crews.Employee_Name#','#get_employees_not_in_app_crews.Branch#',NULL,0,'#TRIM(get_employees_not_in_app_crews.First_Name)#','#TRIM(get_employees_not_in_app_crews.Last_Name)#','2016-03-01 16:00:00','2019-12-31 16:30:00',1,'#get_BM_ID.Employee_ID#')
  </cfquery>
+</cfif>
   </cfloop>
   <!--- Query to make active_employees in app_employees are listed in APP_CREWS ----> 
   These employees were added to app_crews
@@ -114,7 +116,7 @@ Step 3 Done
  </cfquery>
 <cfdump var="#get_new_records#">
 <!---This email address needs to be changed to Maria--->
-<cfmail to="benchanviolin@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="New Employees in todays ADP File"  type="html">
+<!---cfmail to="benchanviolin@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="New Employees in todays ADP File"  type="html">
   <cfif get_new_records.recordcount EQ 0>
     There are no new records in today's ADP data load.
     <cfelse>
@@ -124,7 +126,7 @@ Step 3 Done
       #employee_ID#, #employee_name#, #branch#<br>
     </cfloop>
   </cfif>
-</cfmail>
+</cfmail--->
 <!---END Step 4 Get new records---> 
 Step 4 Done 
 
@@ -137,7 +139,7 @@ ORDER by branch
 </cfquery>
 <cfdump var="#get_inactivated_records#">
 <!---This email address needs to be changed to Maria--->
-<cfmail to="benchanviolin@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="Inactivated Employees in todays ADP File"  type="html">
+<!---cfmail to="benchanviolin@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="Inactivated Employees in todays ADP File"  type="html">
   <cfif get_inactivated_records.recordcount EQ 0>
     There are no inactivated records in today's ADP data load.
     <cfelse>
@@ -147,7 +149,7 @@ ORDER by branch
       #employee_ID#, #employee_name#, #branch#<br>
     </cfloop>
   </cfif>
-</cfmail>
+</cfmail--->
 
 <cfquery name="drop_app_employees_test_backup" datasource="JRGM" >
 IF OBJECT_ID('dbo.app_employees_test_backup', 'U') IS NOT NULL
@@ -276,6 +278,11 @@ UPDATE APP_Employee_Payroll_Clock SET time_worked = DATEDIFF(mi,time_in,time_out
 WHERE time_out IS NOT NULL  AND  ds_date > #daysago14#
 </cfquery>
 <!---END Step 10 make sure that time_worked is updated in APP_Employee_Payroll_Clock --->
+
+<cfquery name="clear_out_invalid_app_crews" datasource="jrgm">
+DELETE FROM app_crews
+WHERE (supervisor_id IS NULL OR supervisor_id=0) AND  (crew_leader_id IS NULL OR crew_leader_id=0)
+</cfquery>
 
 CHECK app_events_backup!!!
 </body>
