@@ -25,5 +25,23 @@
             </cfif>
         </cfif>
     </cfif>
+<cfelseif form.ajaxAction EQ 'moveCrewLeader'>
+    <cfif IsDefined('form.crew_leader_id') AND IsDefined('form.supervisor_id')>
+        <cfquery name="update_app_crews_new" datasource="jrgm">
+            UPDATE app_crews_new
+            SET supervisor_id=<cfqueryparam value="#form.supervisor_id#" CFSQLType="CF_SQL_INTEGER">
+            WHERE employee_id=<cfqueryparam value="#form.crew_leader_id#" CFSQLType="CF_SQL_INTEGER">
+            AND Employee_Position_ID=1
+        </cfquery>
+        <cfquery name="update_app_crews" datasource="jrgm">
+            UPDATE app_crews
+            SET supervisor_id=<cfqueryparam value="#form.supervisor_id#" CFSQLType="CF_SQL_INTEGER">
+            WHERE employee_id=<cfqueryparam value="#form.crew_leader_id#" CFSQLType="CF_SQL_INTEGER">
+            AND Employee_Position_ID=1
+        </cfquery>
+    <cfelse>
+        <cfoutput>#serializejson({'error': 'Invalid crew_leader_id or supervisor_id'})#</cfoutput>
+        <cfabort>
+    </cfif>
 </cfif>
 <cfoutput>#serializejson(ArrayNew(1))#</cfoutput>

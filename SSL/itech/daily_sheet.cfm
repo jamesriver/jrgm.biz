@@ -2,7 +2,7 @@
 
  <cfquery name="get_open_workers" datasource="jrgm" >
  SELECT   ds_id, supervisor FROM APP_Employee_Payroll_Clock  
- WHERE in_out_status=1 AND time_out IS NULL AND ds_id = #url.dsid# AND CAST(Time_In as date) = CAST(getdate() as date)
+ WHERE in_out_status=1 AND time_out IS NULL AND ds_id = #url.dsid# AND CAST(Time_In as date) = '#DateFormat(now(), 'yyyy-mm-dd')#'
  </cfquery>
  
  <CFSET todaydate_DS =  DateFormat(now(), "mm/dd/yyyy")>
