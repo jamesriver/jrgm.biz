@@ -209,7 +209,7 @@
 
     function populateBranchSelect(spanId, branch) {
         var html = '';
-        var currentBranch = '';
+        currentBranch = '';
         html += '<select name="'+spanId+'" class="bs-select form-control" onChange="initializeCrews(this.value)">';
         for(var i=0; i<branches.length; i++) {
             var b = branches[i];
@@ -226,6 +226,7 @@
     }
 
     function initializeCrews(branch) {
+        user_branch = branch;
         $.ajax({
             url: 'crew_assignments_ajax.cfm',
             type: 'post',
@@ -287,6 +288,8 @@
                     console.log(ob);
                     alert('An error occurred: '+ob);
                 }
+
+                hidePopup();
             }
         });
     }
@@ -356,25 +359,34 @@
         showPopup(pophtml);
     }
 
-    function moveCrewLeader(employee_id, supervisor_id)
+    function moveCrewLeader(crew_leader_id, supervisor_id)
     {
-        alert('Move '+employee_id+' to '+supervisor_id);
+        var pophtml = '';
+        pophtml = 'Moving '+showEmployeeName(crew_leader_id)+' to '+showEmployeeName(supervisor_id)+'... please wait.';
+        showPopup(pophtml);
+        //alert('Move '+crew_leader_id+' to '+supervisor_id);
+
+        $.ajax({
+            url: 'crew_assignments_ajax.cfm',
+            dataType: 'json',
+            data: { 'ajaxAction': 'moveCrewLeader', 'crew_leader_id': crew_leader_id, 'supervisor_id': supervisor_id },
+            success: function(data) {
+                if (data.error)
+                {
+                    hidePopup();
+                    alert(data.error);
+                }
+                else
+                {
+                    initializeCrews(user_branch);
+                }
+            }
+        });
     }
 
     function buildSupervisorVersion()
     {
 
-    }
-
-    function saveCrew(id, field, value)
-    {
-        $.ajax({
-            url: 'crew_assignments_ajax.cfm',
-            type: 'post',
-            data: { 'id': id, 'field': field, 'value': value },
-            success: function(data) {
-            }
-        });
     }
 
     function showPopup(html)

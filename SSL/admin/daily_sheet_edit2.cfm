@@ -112,7 +112,7 @@ WHERE ds_id =#dsid#
 </cfif>
 <cfquery name="get_open_workers"  dbtype="query">
  SELECT   ds_id, supervisor FROM get_all_employee_clock_info  
- WHERE in_out_status=1 AND time_out IS NULL AND ds_id = #url.dsid# AND CAST(Time_In as date) = CAST(getdate() as date)
+ WHERE in_out_status=1 AND time_out IS NULL AND ds_id = #url.dsid# AND CAST(Time_In as date) = '#DateFormat(now(), 'yyyy-mm-dd')#'
  </cfquery>
 <cfquery name="get_ds" datasource="jrgm">
 SELECT   * FROM app_daily_sheets  WHERE ID=#url.dsid#   
