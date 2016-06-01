@@ -325,6 +325,4 @@ Data Updated
 </body>
 </html>
 
-<cfif IsDefined('url.auto')>
-    <cflocation url="update_employee_info.cfm" />
-</cfif>
+<cfinclude template="update_employee_info.cfm">

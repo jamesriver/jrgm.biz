@@ -90,10 +90,10 @@
                         <th align="left">Crews</th>
                     </cfif>
                     <cfif access_role_id EQ 2 OR access_role_id EQ 6 OR access_role_id EQ 7>
-                        <th align="left">Supervisor</th>
+                        <th align="left">Production Manager</th>
                     </cfif>
                     <cfif access_role_id EQ 0>
-                        <th align="left">Crew Leader</th>
+                        <th align="left">Supervisor/Crew Leader</th>
                     </cfif>
                     <cfif is_admin EQ 1 AND access_role_id NEQ 0>
                         <th align="left">Home</th>

@@ -15,13 +15,13 @@ FROM         app_employees
  </cfquery>
 <cfquery name="get_all_app_job_services_actual_employee" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
 SELECT * FROM app_job_services_actual_employee
-WHERE Job_ID IN ('MISC-IRR-1','1063246','1063244','1063238','1063240','1063232','1427769','1427766','1427765','1427763','1427755','1427753','MISC-IRR-2','MISC-IRR-3','MISC-IRR-4','MISC-IRR-5')
+WHERE Job_ID IN ('MISC-IRR-1','1063246','1063244','1063238','1063240','1063232','MISC-IRR-2','MISC-IRR-3','MISC-IRR-4','MISC-IRR-5')
   AND (Service_Time_In >= '2016-01-01 00:00:00.000')  AND  (Service_Time_In < '#todaydate# 00:00:00.000')
   ORDER BY Service_Time_In DESC
 </cfquery>
 <cfquery name="sum_all_app_job_services_actual_employee" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
 SELECT SUM(Total_Time) as sum FROM app_job_services_actual_employee
-WHERE Job_ID IN ('MISC-IRR-1','1063246','1063244','1063238','1063240','1063232','1427769','1427766','1427765','1427763','1427755','1427753','MISC-IRR-2','MISC-IRR-3','MISC-IRR-4','MISC-IRR-5')
+WHERE Job_ID IN ('MISC-IRR-1','1063246','1063244','1063238','1063240','1063232','MISC-IRR-2','MISC-IRR-3','MISC-IRR-4','MISC-IRR-5')
   AND (Service_Time_In >= '2016-01-01 00:00:00.000')  AND  (Service_Time_In < '#todaydate# 00:00:00.000')
 </cfquery>
 
