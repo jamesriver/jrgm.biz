@@ -1,3 +1,6 @@
+<cflocation url="scheduler_select_m.cfm">
+<cfabort>
+
 <CFIF IsDefined("url.work_date")>
   <cfset todayDate = #url.work_date#>
   <cfelse>

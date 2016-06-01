@@ -322,7 +322,9 @@ WHERE employee_id = #getrecords_Inactivate.empid#
 <!-----------------    This is the end of step 3 ----------------------> 
 <!-----------------    This is the end of step 3 ----------------------> 
 Data Updated
-<cfabort>
-
 </body>
 </html>
+
+<cfif IsDefined('url.auto')>
+    <cflocation url="update_employee_info.cfm" />
+</cfif>

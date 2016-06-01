@@ -303,3 +303,7 @@ varchar
 Done -Data loaded in app_employees_test
 </body>
 </html>
+
+<cfif IsDefined('url.auto')>
+    <cflocation url="load_adp_employees_2.cfm?auto=1" />
+</cfif>

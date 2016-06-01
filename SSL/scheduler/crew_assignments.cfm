@@ -204,7 +204,7 @@
        Demo.init(); // init demo features
        ComponentsPickers.init();
 
-       populateBranchSelect('main', user_branch);
+       populateBranchSelect('main', <cfif IsDefined('url.branch')>'<cfoutput>#url.branch#</cfoutput>'<cfelse>user_branch</cfif>);
     });
 
     function populateBranchSelect(spanId, branch) {
@@ -265,9 +265,6 @@
                                     crew_leaders[ob[4]].push({ employee_name: ob[1], employee_id: ob[2], crew_leader_id: ob[3], supervisor_id: ob[4] });
                                 }
                             }
-                            console.log(supervisors);
-                            console.log(crew_leaders);
-                            console.log(crew_members);
                             buildBranchManagerVersion();
                             break;
                         case 1: //supervisor
@@ -310,7 +307,7 @@
             var html = '';
             html += '<table style="border: 1px solid black">';
             html += '<tr>';
-            html += '<td style="cursor: pointer; padding: 15px; background-color: #999999; color: #FFFFFF; font-weight: bold; border-bottom: 1px solid black" onmouseover="this.style.backgroundColor=\'#0000AA\'" onmouseout="this.style.backgroundColor=\'#999999\'">'+showEmployeeName(s.employee_id)+'</td>';
+            html += '<td style="cursor: pointer; padding: 15px; background-color: #999999; color: #FFFFFF; font-weight: bold; border-bottom: 1px solid black" onmouseover="this.style.backgroundColor=\'#0000AA\'" onmouseout="this.style.backgroundColor=\'#999999\'" onClick="buildSupervisorVersion('+s.employee_id+')">'+showEmployeeName(s.employee_id)+'</td>';
             html += '</tr>';
 
             var cl = crew_leaders[s.employee_id];
@@ -384,9 +381,40 @@
         });
     }
 
-    function buildSupervisorVersion()
+    function buildSupervisorVersion(supervisor_id)
     {
+        alert('todo: make supervisor view for '+supervisor_id);
+        return;
 
+        $('#tr_crews').html('');
+
+        var fullhtml = '';
+        for(var i=0; i<supervisors.length; i++)
+        {
+            var s = supervisors[i];
+            var html = '';
+            html += '<table style="border: 1px solid black">';
+            html += '<tr>';
+            html += '<td style="cursor: pointer; padding: 15px; background-color: #999999; color: #FFFFFF; font-weight: bold; border-bottom: 1px solid black" onmouseover="this.style.backgroundColor=\'#0000AA\'" onmouseout="this.style.backgroundColor=\'#999999\'">'+showEmployeeName(s.employee_id)+'</td>';
+            html += '</tr>';
+
+            var cl = crew_leaders[s.employee_id];
+            if (cl)
+            {
+                for(var ii=0; ii<cl.length; ii++)
+                {
+                    var cm = cl[ii];
+                    html += '<tr>';
+                    html += '<td style="cursor: pointer; padding: 15px" onmouseover="this.style.backgroundColor=\'#00AA00\'" onmouseout="this.style.backgroundColor=\'#FFFFFF\'" onClick="popUpMoveCrewLeader('+cm.employee_id+')">'+showEmployeeName(cm.employee_id)+'</td>';
+                    html += '</tr>';
+                }
+            }
+
+            html += '</table>';
+
+            fullhtml += '<td valign="top" style="padding: 5px">'+html+'</td>';
+        }
+        $('#tr_crews').append(fullhtml);
     }
 
     function showPopup(html)
