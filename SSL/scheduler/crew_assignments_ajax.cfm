@@ -2,27 +2,31 @@
     <cfset form = url>
 </cfif>
 
+<cfif SESSION.access_role EQ 9 OR SESSION.access_role EQ 10 OR SESSION.access_role EQ 94 OR SESSION.access_role EQ 95 OR SESSION.access_role EQ 96 OR SESSION.access_role EQ 98 OR SESSION.access_role EQ 99>
+    <cfset user_is_admin = 1>
+    <cfset user_access_role = 9>
+<cfelseif SESSION.access_role EQ 1> <!---supervisor--->
+    <cfset user_is_admin = 0>
+    <cfset user_access_role = 1>
+<cfelse>
+    <cfoutput>#serializejson(ArrayNew(1))#</cfoutput>
+    <cfabort>
+</cfif>
+
 <cfswitch expression="#form.ajaxAction#">
-    <cfcase value="initializeCrews">
-        <cfif IsDefined('form.branch') AND IsDefined('form.access_role')>
-            <!--- MAKE SURE LOGGED IN USER HAS CORRECT PERMISSION TO GET THIS INFO --->
-            <cfset access_roles = ''>
-            <cfif form.access_role EQ 9 OR form.access_role EQ 10 OR form.access_role EQ 94 OR form.access_role EQ 95 OR form.access_role EQ 96 OR form.access_role EQ 98 OR form.access_role EQ 99>
-                <cfset access_roles = '9,2,1'>
-            <cfelseif form.access_role EQ 1> <!---supervisor--->
-                <cfset access_roles = '1,0,6,7'>
-            </cfif>
-            <cfif access_roles NEQ ''>
-                <!--- RETRIEVE APP_CREWS BY BRANCH AND ACCESS_ROLES --->
-                <cfquery name="get_app_crews" datasource="jrgm">
-                    SELECT Employee_Position_ID, crew_name, employee_id, crew_leader_id, supervisor_id FROM app_crews_new
-                    WHERE employee_branch=<cfqueryparam value="#form.branch#" CFSQLType="CF_SQL_TEXT">
-                    AND Employee_Position_ID IN (#access_roles#)
-                    ORDER BY Employee_Position_ID, crew_name
-                </cfquery>
-                <cfoutput>#serializejson(get_app_crews)#</cfoutput>
-                <cfabort>
-            </cfif>
+    <cfcase value="getSupervisorsAndCrewLeaders">
+        <cfif user_is_admin EQ 1 AND IsDefined('form.branch')>
+            <cfset access_roles = '9,2,1'>
+
+            <!--- RETRIEVE APP_CREWS BY BRANCH AND ACCESS_ROLES --->
+            <cfquery name="get_app_crews" datasource="jrgm">
+                SELECT Employee_Position_ID, crew_name, employee_id, crew_leader_id, supervisor_id FROM app_crews_new
+                WHERE employee_branch=<cfqueryparam value="#form.branch#" CFSQLType="CF_SQL_TEXT">
+                AND Employee_Position_ID IN (#access_roles#)
+                ORDER BY Employee_Position_ID, crew_name
+            </cfquery>
+            <cfoutput>#serializejson(get_app_crews)#</cfoutput>
+            <cfabort>
         </cfif>
     </cfcase>
     <cfcase value="moveCrewLeader">
@@ -41,6 +45,44 @@
             </cfquery>
         <cfelse>
             <cfoutput>#serializejson({'error': 'Invalid crew_leader_id or supervisor_id'})#</cfoutput>
+            <cfabort>
+        </cfif>
+    </cfcase>
+    <cfcase value="getCrewLeadersAndCrewMembers">
+        <cfif IsDefined('form.supervisor_id') AND IsDefined('form.branch')>
+            <cfset access_roles = '1,0,2,6,7'>
+
+            <!--- RETRIEVE APP_CREWS BY BRANCH AND ACCESS_ROLES --->
+            <cfquery name="get_app_crews" datasource="jrgm">
+                SELECT Employee_Position_ID, crew_name, employee_id, crew_leader_id, supervisor_id FROM app_crews_new
+                WHERE ((employee_id=<cfqueryparam value="#form.supervisor_id#" CFSQLType="CF_SQL_INTEGER">
+                       OR supervisor_id=<cfqueryparam value="#form.supervisor_id#" CFSQLType="CF_SQL_INTEGER">
+                       )
+                    OR (employee_branch=<cfqueryparam value="#form.branch#" CFSQLType="CF_SQL_TEXT"> AND Employee_Position_ID = 0)
+                )
+                AND Employee_Position_ID IN (#access_roles#)
+                ORDER BY Employee_Position_ID, crew_name
+            </cfquery>
+            <cfoutput>#serializejson(get_app_crews)#</cfoutput>
+            <cfabort>
+        </cfif>
+    </cfcase>
+    <cfcase value="moveCrewMember">
+        <cfif IsDefined('form.employee_id') AND IsDefined('form.crew_leader_id')>
+            <cfquery name="update_app_crews_new" datasource="jrgm">
+                UPDATE app_crews_new
+                SET crew_leader_id=<cfqueryparam value="#form.crew_leader_id#" CFSQLType="CF_SQL_INTEGER">
+                WHERE employee_id=<cfqueryparam value="#form.employee_id#" CFSQLType="CF_SQL_INTEGER">
+                AND Employee_Position_ID IN (0,6,7)
+            </cfquery>
+            <cfquery name="update_app_crews" datasource="jrgm">
+                UPDATE app_crews
+                SET crew_leader_id=<cfqueryparam value="#form.crew_leader_id#" CFSQLType="CF_SQL_INTEGER">
+                WHERE employee_id=<cfqueryparam value="#form.employee_id#" CFSQLType="CF_SQL_INTEGER">
+                AND Employee_Position_ID IN (0,6,7)
+            </cfquery>
+        <cfelse>
+            <cfoutput>#serializejson({'error': 'Invalid employee_id or crew_leader_id'})#</cfoutput>
             <cfabort>
         </cfif>
     </cfcase>
