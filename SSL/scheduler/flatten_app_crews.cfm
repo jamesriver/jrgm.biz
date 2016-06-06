@@ -50,3 +50,12 @@
     VALUES
     ('#Replace(last_crew_name, "'", "''", "ALL")#', '2016-01-01 00:00:00.000', '2099-12-31 00:00:00', #last_employee_id#, #last_crew_leader_id#, #last_supervisor_id#, '#last_employee_branch#', #last_Employee_Position_ID#, '#Replace(last_first_name, "'", "''", "ALL")#', '#Replace(last_last_name, "'", "''", "ALL")#', 1, '#last_export_id#', '#last_supervisor#', '#last_event_length#', '#last_rec_type#');
 </cfquery>
+app_crews_new flattened<br />
+<br />
+<cfoutput>
+    DROP TABLE app_crews
+</cfoutput>
+<br />
+<cfoutput>
+    SELECT * INTO app_crews FROM app_crews_new
+</cfoutput>

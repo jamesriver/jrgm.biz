@@ -114,7 +114,7 @@ Step 3 Done
 <cfquery name="get_new_records"  datasource="jrgm">
  SELECT [Employee ID] AS employee_ID, [Name FirstLast] AS employee_name, branch FROM app_employees WHERE [Employee ID]  NOT IN (#myList#) AND active_record = 1  AND [Employee ID] < 9993
  </cfquery>
-<cfdump var="#get_new_records#">
+<!---cfdump var="#get_new_records#"--->
 <!---This email address needs to be changed to Maria--->
 <!---cfmail to="benchanviolin@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="New Employees in todays ADP File"  type="html">
   <cfif get_new_records.recordcount EQ 0>

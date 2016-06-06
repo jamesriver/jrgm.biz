@@ -215,9 +215,15 @@ varchar
   </cfif>
   <cfset SUPERVISOR_ID = 0>
     <cfif REPORTS_TO_NAME NEQ ''>
-       <cfset reports_to_name_spl = ListToArray(REPORTS_TO_NAME, ',')>
-       <cfset reports_to_last_name = Trim(reports_to_name_spl[1])>
-       <cfset reports_to_first_name = Trim(reports_to_name_spl[2])>
+       <cftry>
+            <cfset reports_to_name_spl = ListToArray(REPORTS_TO_NAME, ',')>
+            <cfset reports_to_last_name = Trim(reports_to_name_spl[1])>
+            <cfset reports_to_first_name = Trim(reports_to_name_spl[2])>
+           <cfcatch>
+             <cfset reports_to_last_name = ''>
+             <cfset reports_to_first_name = ''>
+           </cfcatch>
+           </cftry>
 
        <cfquery name="get_supervisor" datasource="JRGM">
           SELECT *, [Employee ID] as Employee_ID FROM app_employees_test WHERE Last_name='#reports_to_last_name#'
@@ -324,5 +330,3 @@ WHERE employee_id = #getrecords_Inactivate.empid#
 Data Updated
 </body>
 </html>
-
-<cfinclude template="update_employee_info.cfm">
