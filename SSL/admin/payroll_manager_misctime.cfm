@@ -9,20 +9,31 @@
 <cfset yesterday = dateadd("d",-1,somedate)>
 <cfset tomorrow = dateadd("d",1,somedate)>
 <cfset todayDate_dow = DayOfWeek(todayDate)>
+<cfset pay_period_number_visible = pay_period_number>
+<cfif IsDefined('url.pay_period')>
+    <cfset pay_period_number_visible = url.pay_period>
+</cfif>
+
+<cfquery name="app_payroll_periods_C" datasource="jrgm">
+ SELECT  MIN(pay_period_start) as pay_period_start, MAX(pay_period_end) AS pay_period_end
+ FROM app_pay_periods WHERE pay_period_number = #pay_period_number_visible#
+</cfquery>
+
 <cfquery name="get_all_employees" datasource="jrgm">
 SELECT     [Employee ID] AS employee_id, branch,[Name FirstLast] AS empname
 FROM         app_employees
  </cfquery>
 <cfquery name="get_all_app_job_services_actual_employee" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
 SELECT * FROM app_job_services_actual_employee
-WHERE Job_ID IN ('MISC-IRR-1','1063246','1063244','1063238','1063240','1063232','1427769','1427766','1427765','1427763','1427755','1427753','MISC-IRR-2','MISC-IRR-3','MISC-IRR-4','MISC-IRR-5')
-  AND (Service_Time_In >= '2016-01-01 00:00:00.000')  AND  (Service_Time_In < '#todaydate# 00:00:00.000')
+WHERE Job_ID IN ('MISC-IRR-1','J3033-1014','J3031-1014','J3025-1014','J3027-1014','J3018-1014','MISC-IRR-2','MISC-IRR-3','MISC-IRR-4','MISC-IRR-5')
+  AND (Service_Time_In >= '#DateFormat("#app_payroll_periods_C.pay_period_start#", "yyyy-mm-dd")# 00:00:00.000')  AND  (Service_Time_In < '#DateFormat("#app_payroll_periods_C.pay_period_end#", "yyyy-mm-dd")# 00:00:00.000')
+  AND Total_Time > 0
   ORDER BY Service_Time_In DESC
 </cfquery>
 <cfquery name="sum_all_app_job_services_actual_employee" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
 SELECT SUM(Total_Time) as sum FROM app_job_services_actual_employee
-WHERE Job_ID IN ('MISC-IRR-1','1063246','1063244','1063238','1063240','1063232','1427769','1427766','1427765','1427763','1427755','1427753','MISC-IRR-2','MISC-IRR-3','MISC-IRR-4','MISC-IRR-5')
-  AND (Service_Time_In >= '2016-01-01 00:00:00.000')  AND  (Service_Time_In < '#todaydate# 00:00:00.000')
+WHERE Job_ID IN ('MISC-IRR-1','J3033-1014','J3031-1014','J3025-1014','J3027-1014','J3018-1014','MISC-IRR-2','MISC-IRR-3','MISC-IRR-4','MISC-IRR-5')
+  AND (Service_Time_In >= '#DateFormat("#app_payroll_periods_C.pay_period_start#", "yyyy-mm-dd")# 00:00:00.000')  AND  (Service_Time_In < '#DateFormat("#app_payroll_periods_C.pay_period_end#", "yyyy-mm-dd")# 00:00:00.000')
 </cfquery>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -76,10 +87,14 @@ td {
 <strong class="arialfontbold">Employee Labor records performed against Misc Jobs: #get_all_app_job_services_actual_employee.recordcount# records<br />
 Total Hours: #sum_all_app_job_services_actual_employee.sum/60#, Average Hours Per Entry: #(sum_all_app_job_services_actual_employee.sum/60/get_all_app_job_services_actual_employee.recordcount)#<br />
 <br />
-</cfoutput>
-<span style="font-family: Gotham, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-style: italic;">Pay Period 01/01/2016-<cfoutput>#DateFormat("#yesterday#", "mm/dd/yyyy")#</cfoutput></span><br />
-  <br />
-
+<span style="font-family: Gotham, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-style: italic;">Pay Period ###pay_period_number_visible#: #DateFormat("#app_payroll_periods_C.pay_period_start#", "mm/dd/yyyy")#-<cfoutput>#DateFormat("#app_payroll_periods_C.pay_period_end#", "mm/dd/yyyy")#</cfoutput></span>
+  <input type="button" value="<< Previous" onClick="window.location='payroll_manager_misctime.cfm?pay_period=#(pay_period_number_visible-1)#';">
+  <cfif pay_period_number_visible LT pay_period_number>
+    <input type="button" value="Next >>" onClick="window.location='payroll_manager_misctime.cfm?pay_period=#(pay_period_number_visible+1)#';">
+  </cfif>
+  </cfoutput>
+<br />
+<br />
 <table class="sortable" border="0" cellspacing="0" cellpadding="0"   width="80%">
         <tr height="40" >
           <td><strong>Employee ID</strong></td>

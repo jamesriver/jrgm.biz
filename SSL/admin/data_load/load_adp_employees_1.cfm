@@ -273,9 +273,15 @@ varchar
   </cfif>
   <cfset SUPERVISOR_ID = 0>
   <cfif REPORTS_TO_NAME NEQ ''>
+    <cftry>
      <cfset reports_to_name_spl = ListToArray(REPORTS_TO_NAME, ',')>
      <cfset reports_to_last_name = Trim(reports_to_name_spl[1])>
      <cfset reports_to_first_name = Trim(reports_to_name_spl[2])>
+    <cfcatch>
+      <cfset reports_to_last_name = ''>
+      <cfset reports_to_first_name = ''>
+    </cfcatch>
+    </cftry>
 
      <cfquery name="get_supervisor" datasource="JRGM">
         SELECT *, [Employee ID] as Employee_ID FROM app_employees WHERE Last_name='#reports_to_last_name#'
@@ -303,3 +309,7 @@ varchar
 Done -Data loaded in app_employees_test
 </body>
 </html>
+
+<cfinclude template="load_adp_employees_2.cfm">
+<cfinclude template="update_employee_info.cfm">
+<cfinclude template="../../scheduler/flatten_app_crews.cfm">

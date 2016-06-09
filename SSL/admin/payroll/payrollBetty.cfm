@@ -29,6 +29,41 @@
 <cfset yesterday = dateadd("d",-1,somedate)>
 <cfset tomorrow = dateadd("d",1,somedate)>
 
+<!--- TIME WORKED ON MISCELLANEOUS JOBS --->
+<cfset current_misc_time = StructNew()>
+<cfquery name="sum_all_app_job_services_actual_employee_current_pay_period" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
+  SELECT ae.branch, COUNT(*) as count, SUM(Total_Time) as sum FROM app_job_services_actual_employee ajsae
+  INNER JOIN app_employees ae ON ae.[Employee ID]=ajsae.employee_id
+  WHERE Job_ID IN ('MISC-IRR-1','J3033-1014','J3031-1014','J3025-1014','J3027-1014','J3018-1014','MISC-IRR-2','MISC-IRR-3','MISC-IRR-4','MISC-IRR-5')
+    AND (Service_Time_In >= '#DateFormat("#app_payroll_periods_C.pay_period_start#", "yyyy-mm-dd")# 00:00:00.000')  AND  (Service_Time_In < '#DateFormat("#app_payroll_periods_C.pay_period_end#", "yyyy-mm-dd")# 00:00:00.000')
+    AND Total_Time > 0
+    GROUP BY ae.branch
+</cfquery>
+<cfloop query="sum_all_app_job_services_actual_employee_current_pay_period">
+    <cfset current_misc_time[branch] = { 'sum': sum, 'count': count }>
+</cfloop>
+
+<cfset prior_misc_time = StructNew()>
+<cfquery name="sum_all_app_job_services_actual_employee_prior_pay_period" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
+  SELECT ae.branch, COUNT(*) as count, SUM(Total_Time) as sum FROM app_job_services_actual_employee ajsae
+  INNER JOIN app_employees ae ON ae.[Employee ID]=ajsae.employee_id
+  WHERE Job_ID IN ('MISC-IRR-1','J3033-1014','J3031-1014','J3025-1014','J3027-1014','J3018-1014','MISC-IRR-2','MISC-IRR-3','MISC-IRR-4','MISC-IRR-5')
+    AND (Service_Time_In >= '#DateFormat("#app_payroll_periods_L.pay_period_start#", "yyyy-mm-dd")# 00:00:00.000')  AND  (Service_Time_In < '#DateFormat("#app_payroll_periods_L.pay_period_end#", "yyyy-mm-dd")# 00:00:00.000')
+    AND Total_Time > 0
+    GROUP BY ae.branch
+</cfquery>
+<cfloop query="sum_all_app_job_services_actual_employee_prior_pay_period">
+    <cfset prior_misc_time[branch] = { 'sum': sum, 'count': count }>
+</cfloop>
+
+<!--- BRANCHES --->
+<cfset branches = ArrayNew(1)>
+<cfquery name="get_branches" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
+  SELECT * FROM branches
+  WHERE branch_visible_to_payroll=1
+  ORDER BY branch_name
+</cfquery>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -224,14 +259,15 @@ th {
         #DateFormat("#app_payroll_periods_Week1.pay_period_end#", "mm/dd/yyyy")# </cfoutput></th>
   </tr>
   <tbody style="font-size: 24px">
+  <cfoutput query="get_branches">
     <tr>
-      <td  align="left" height="50">Charlottesville </td>
+      <td  align="left" height="50">#branch_name# </td>
       <cfquery name="get_employees_with_time" datasource="jrgm"  >
 		SELECT DISTINCT  Employee_ID , APP_employees.last_name, APP_employees.first_name FROM 
 		app_employee_payroll_clock  
 		INNER JOIN APP_employees
 		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
-		WHERE branch = 'Charlottesville'  AND 
+		WHERE branch = '#branch_name#'  AND 
         (app_employee_payroll_clock.Time_In > '#DateFormat(app_payroll_periods_L.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000' AND app_employee_payroll_clock.Time_Out < '#DateFormat(pay_period_end_week_plusone, 'yyyy-mm-dd')# 00:00:00.000')
 		ORDER by APP_employees.last_name
  	</cfquery>
@@ -248,34 +284,34 @@ SELECT Employee_ID,  time_worked, in_out_status,ds_date
       <td align="center" ><cfif get_all_employee_time_for_period.recordcount EQ 0>
           <span class="greenText">Approved</span>
           <cfelse>
-          <a style="color:#CC0000" href="payroll_view_employee_detail_2week_unapproved.cfm?branch=Charlottesville&pay_period_number=<cfoutput>#pay_period_end_week_L#</cfoutput>">No</a>
+          <a style="color:##CC0000" href="payroll_view_employee_detail_2week_unapproved.cfm?branch=#branch_name#&pay_period_number=#pay_period_end_week_L#">No</a>
         </cfif></td>
       <td align="center"><cfif get_all_employee_time_for_period.recordcount EQ 0>
-          <a href="REG_payroll_csv.cfm?branch=Charlottesville&pay_period_number=<cfoutput>#pay_period_number_for_csv#</cfoutput>"><img src="images/downloadCSV.gif" width="104" height="20" alt="Download CSV" /></a>
+          <a href="REG_payroll_csv.cfm?branch=#branch_name#&pay_period_number=#pay_period_number_for_csv#"><img src="images/downloadCSV.gif" width="104" height="20" alt="Download CSV" /></a>
         </cfif>
         &nbsp;</td>
       <td align="center" ><cfif get_all_employee_time_for_period.recordcount GT 0>
-          <a href="REG_payroll_csv.cfm?branch=Charlottesville&pay_period_number=<cfoutput>#pay_period_number_for_csv#</cfoutput>"><img src="images/downloadCSV.gif" width="104" height="20" alt="Download CSV" /></a>
+          <a href="REG_payroll_csv.cfm?branch=#branch_name#&pay_period_number=#pay_period_number_for_csv#"><img src="images/downloadCSV.gif" width="104" height="20" alt="Download CSV" /></a>
         </cfif>
         &nbsp;</td>
       <td align="center"><cfif get_all_employee_time_for_period.recordcount EQ 0>
-          <a href="REG_payroll_csv_view.cfm?branch=Charlottesville&pay_period_number=<cfoutput>#pay_period_number_for_csv#</cfoutput>">View</a>
+          <a href="REG_payroll_csv_view.cfm?branch=#branch_name#&pay_period_number=#pay_period_number_for_csv#">View</a>
         </cfif>
         &nbsp;</td>
       <td align="center" ><cfif get_all_employee_time_for_period.recordcount GT 0>
-          <a href="REG_payroll_csv_view.cfm?branch=Charlottesville&pay_period_number=<cfoutput>#pay_period_number_for_csv#</cfoutput>">View</a>
+          <a href="REG_payroll_csv_view.cfm?branch=#branch_name#&pay_period_number=#pay_period_number_for_csv#">View</a>
         </cfif>
         &nbsp;</td>
-      <td align="center" ><a href="payroll_view_employee.cfm?branch=Charlottesville">View</a></td>
-      <td align="center"><a href="payroll_view_employee_detail_2week.cfm?branch=Charlottesville">View</a></td>
-      <td align="center"><a href="payroll_view_employee_detail_2week.cfm?branch=Charlottesville&pay_period_number=<cfoutput>#pay_period_end_week_L#</cfoutput>">View</a></td>
-      <td align="center"><a href="payroll_view_employee_dates.cfm?branch=Charlottesville">View</a></td>
+      <td align="center" ><a href="payroll_view_employee.cfm?branch=#branch_name#">View</a></td>
+      <td align="center"><a href="payroll_view_employee_detail_2week.cfm?branch=#branch_name#">View</a></td>
+      <td align="center"><a href="payroll_view_employee_detail_2week.cfm?branch=#branch_name#&pay_period_number=#pay_period_end_week_L#">View</a></td>
+      <td align="center"><a href="payroll_view_employee_dates.cfm?branch=#branch_name#">View</a></td>
       <cfquery name="get_employees_with_time" datasource="jrgm"  >
 		SELECT DISTINCT  Employee_ID , APP_employees.last_name, APP_employees.first_name FROM 
 		app_employee_payroll_clock  
 		INNER JOIN APP_employees
 		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
-		WHERE branch = 'Charlottesville'  AND 
+		WHERE branch = '#branch_name#'  AND 
         (app_employee_payroll_clock.Time_In > '#DateFormat(app_payroll_periods_Week1.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000' AND app_employee_payroll_clock.Time_Out < #pay_period_end_week1_plusone#)
 		ORDER by APP_employees.last_name
  	</cfquery>
@@ -292,291 +328,10 @@ SELECT Employee_ID,  time_worked, in_out_status,ds_date
       <td align="center" ><cfif get_all_employee_time_for_period.recordcount EQ 0  AND get_employees_with_time.recordcount GT 0 >
           <span class="greenText">Approved</span>
           <cfelse>
-          <a style="color:#CC0000" href="payroll_view_employee_detail_1week_unapproved.cfm?branch=Charlottesville&pay_period_week=<cfoutput>#pay_period_week_week1#</cfoutput>">No</a></span>
+          <a style="color:##CC0000" href="payroll_view_employee_detail_1week_unapproved.cfm?branch=#branch_name#&pay_period_week=#pay_period_week_week1#">No</a></span>
         </cfif></td>
     </tr>
-    <tr>
-      <td  align="left" height="50">Chesterfield</td>
-      <cfquery name="get_employees_with_time" datasource="jrgm"  >
-		SELECT DISTINCT Employee_ID, APP_employees.last_name, APP_employees.first_name FROM 
-		app_employee_payroll_clock  
-		INNER JOIN APP_employees
-		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
-		WHERE branch = 'Chesterfield'  AND (app_employee_payroll_clock.Time_In > '#DateFormat(app_payroll_periods_L.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000' AND app_employee_payroll_clock.Time_Out < '#DateFormat(pay_period_end_week_plusone, 'yyyy-mm-dd')# 00:00:00.000')
-		ORDER by APP_employees.last_name
- 	</cfquery>
-      <CFSET employeelist ="0">
-      <cfloop query="get_employees_with_time">
-        <cfset employeelist = ListAppend(employeelist,Employee_ID)>
-      </cfloop>
-      <cfquery name="get_all_employee_time_for_period" datasource="jrgm" >
-SELECT Employee_ID,  time_worked, in_out_status,ds_date 
- FROM app_employee_payroll_clock
- WHERE Employee_ID IN (#employeelist#) AND app_employee_payroll_clock.Time_In > '#DateFormat(app_payroll_periods_L.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000' AND  app_employee_payroll_clock.Time_Out < '#DateFormat(pay_period_end_week_plusone, 'yyyy-mm-dd')# 00:00:00.000'
- AND in_out_status =2 AND payroll_approved IS NULL
-  </cfquery>
-      <td align="center" ><cfif get_all_employee_time_for_period.recordcount EQ 0>
-          <span class="greenText">Approved</span>
-          <cfelse>
-          <a style="color:#CC0000" href="payroll_view_employee_detail_2week_unapproved.cfm?branch=Chesterfield&pay_period_number=<cfoutput>#pay_period_end_week_L#</cfoutput>">No</a></span>
-        </cfif></td>
-      <td align="center"><cfif get_all_employee_time_for_period.recordcount EQ 0>
-          <a href="REG_payroll_csv.cfm?branch=Chesterfield&pay_period_number=<cfoutput>#pay_period_number_for_csv#</cfoutput>"><img src="images/downloadCSV.gif" width="104" height="20"alt="Download CSV" /></a>
-        </cfif>
-        &nbsp;</td>
-      <td align="center" ><cfif get_all_employee_time_for_period.recordcount GT 0>
-          <a href="REG_payroll_csv.cfm?branch=Chesterfield&pay_period_number=<cfoutput>#pay_period_number_for_csv#</cfoutput>"><img src="images/downloadCSV.gif" width="104" height="20"alt="Download CSV" /></a>
-        </cfif>
-        &nbsp;</td>
-      <td align="center"><cfif get_all_employee_time_for_period.recordcount EQ 0>
-          <a href="REG_payroll_csv_view.cfm?branch=Chesterfield&pay_period_number=<cfoutput>#pay_period_number_for_csv#</cfoutput>">View</a>
-        </cfif>
-        &nbsp;</td>
-      <td align="center" ><cfif get_all_employee_time_for_period.recordcount GT 0>
-          <a href="REG_payroll_csv_view.cfm?branch=Chesterfield&pay_period_number=<cfoutput>#pay_period_number_for_csv#</cfoutput>">View</a>
-        </cfif>
-        &nbsp;</td>
-      <td align="center" ><a href="payroll_view_employee.cfm?branch=Chesterfield">View</a></td>
-      <td align="center"><a href="payroll_view_employee_detail_2week.cfm?branch=Chesterfield">View</a></td>
-      <td align="center"><a href="payroll_view_employee_detail_2week.cfm?branch=Chesterfield&pay_period_number=<cfoutput>#pay_period_end_week_L#</cfoutput>">View</a></td>
-      <td align="center"><a href="payroll_view_employee_dates.cfm?branch=Chesterfield">View</a></td>
-      <cfquery name="get_employees_with_time" datasource="jrgm"  >
-		SELECT DISTINCT  Employee_ID , APP_employees.last_name, APP_employees.first_name FROM 
-		app_employee_payroll_clock  
-		INNER JOIN APP_employees
-		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
-		WHERE branch = 'Chesterfield'  AND 
-        (app_employee_payroll_clock.Time_In > '#DateFormat(app_payroll_periods_Week1.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000' AND app_employee_payroll_clock.Time_Out < #pay_period_end_week1_plusone#)
-		ORDER by APP_employees.last_name
- 	</cfquery>
-      <CFSET employeelist ="0">
-      <cfloop query="get_employees_with_time">
-        <cfset employeelist = ListAppend(employeelist,Employee_ID)>
-      </cfloop>
-      <cfquery name="get_all_employee_time_for_period" datasource="jrgm"      >
-SELECT Employee_ID,  time_worked, in_out_status,ds_date 
- FROM app_employee_payroll_clock
- WHERE Employee_ID IN (#employeelist#) AND app_employee_payroll_clock.Time_In > '#DateFormat(app_payroll_periods_Week1.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000' AND  app_employee_payroll_clock.Time_Out < #pay_period_end_week1_plusone#
- AND in_out_status =2 AND payroll_approved IS NULL
-  </cfquery>
-      <td align="center" ><cfif get_all_employee_time_for_period.recordcount EQ 0   AND get_employees_with_time.recordcount GT 0 >
-          <span class="greenText">Approved</span>
-          <cfelse>
-          <a style="color:#CC0000" href="payroll_view_employee_detail_1week_unapproved.cfm?branch=Chesterfield&pay_period_week=<cfoutput>#pay_period_week_week1#</cfoutput>">No</a></span>
-        </cfif></td>
-    </tr>
-    <tr>
-      <td  align="left" height="50">Newport News</td>
-      <cfquery name="get_employees_with_time" datasource="jrgm"  >
-		SELECT DISTINCT Employee_ID, APP_employees.last_name, APP_employees.first_name FROM 
-		app_employee_payroll_clock  
-		INNER JOIN APP_employees
-		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
-		WHERE branch = 'Newport News'  AND (app_employee_payroll_clock.Time_In > '#DateFormat(app_payroll_periods_L.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000' AND app_employee_payroll_clock.Time_Out < '#DateFormat(pay_period_end_week_plusone, 'yyyy-mm-dd')# 00:00:00.000')
-		ORDER by APP_employees.last_name
- 	</cfquery>
-      <CFSET employeelist ="0">
-      <cfloop query="get_employees_with_time">
-        <cfset employeelist = ListAppend(employeelist,Employee_ID)>
-      </cfloop>
-      <cfquery name="get_all_employee_time_for_period" datasource="jrgm"      >
-SELECT Employee_ID,  time_worked, in_out_status,ds_date 
- FROM app_employee_payroll_clock
- WHERE Employee_ID IN (#employeelist#) AND app_employee_payroll_clock.Time_In > '#DateFormat(app_payroll_periods_L.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000' AND  app_employee_payroll_clock.Time_Out < '#DateFormat(pay_period_end_week_plusone, 'yyyy-mm-dd')# 00:00:00.000'
- AND in_out_status =2 AND payroll_approved IS NULL
-  </cfquery>
-      <td align="center" ><cfif get_all_employee_time_for_period.recordcount EQ 0>
-          <span class="greenText">Approved</span>
-          <cfelse>
-          <a style="color:#CC0000" href="payroll_view_employee_detail_2week_unapproved.cfm?branch=Newport News&pay_period_number=<cfoutput>#pay_period_end_week_L#</cfoutput>">No</a></span>
-        </cfif></td>
-      <td align="center"><cfif get_all_employee_time_for_period.recordcount EQ 0>
-          <a href="REG_payroll_csv.cfm?branch=Newport News&pay_period_number=<cfoutput>#pay_period_number_for_csv#</cfoutput>"><img src="images/downloadCSV.gif" width="104" height="20"alt="Download CSV" /></a>
-        </cfif>
-        &nbsp;</td>
-      <td align="center" ><cfif get_all_employee_time_for_period.recordcount GT 0>
-          <a href="REG_payroll_csv.cfm?branch=Newport News&pay_period_number=<cfoutput>#pay_period_number_for_csv#</cfoutput>"><img src="images/downloadCSV.gif" width="104" height="20"alt="Download CSV" /></a>
-        </cfif>
-        &nbsp;</td>
-      <td align="center"><cfif get_all_employee_time_for_period.recordcount EQ 0>
-          <a href="REG_payroll_csv_view.cfm?branch=Newport News&pay_period_number=<cfoutput>#pay_period_number_for_csv#</cfoutput>">View</a>
-        </cfif>
-        &nbsp;</td>
-      <td align="center" ><cfif get_all_employee_time_for_period.recordcount GT 0>
-          <a href="REG_payroll_csv_view.cfm?branch=Newport News&pay_period_number=<cfoutput>#pay_period_number_for_csv#</cfoutput>">View</a>
-        </cfif>
-        &nbsp;</td>
-      <td align="center" ><a href="payroll_view_employee.cfm?branch=Newport News">View</a></td>
-      <td align="center"><a href="payroll_view_employee_detail_2week.cfm?branch=Newport News">View</a></td>
-      <td align="center"><a href="payroll_view_employee_detail_2week.cfm?branch=Newport News&pay_period_number=<cfoutput>#pay_period_end_week_L#</cfoutput>">View</a></td>
-      <td align="center"><a href="payroll_view_employee_dates.cfm?branch=Newport News">View</a></td>
-      <cfquery name="get_employees_with_time" datasource="jrgm"  >
-		SELECT DISTINCT  Employee_ID , APP_employees.last_name, APP_employees.first_name FROM 
-		app_employee_payroll_clock  
-		INNER JOIN APP_employees
-		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
-		WHERE branch = 'Newport News'  AND 
-        (app_employee_payroll_clock.Time_In > '#DateFormat(app_payroll_periods_Week1.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000' AND app_employee_payroll_clock.Time_Out < #pay_period_end_week1_plusone#)
-		ORDER by APP_employees.last_name
- 	</cfquery>
-      <CFSET employeelist ="0">
-      <cfloop query="get_employees_with_time">
-        <cfset employeelist = ListAppend(employeelist,Employee_ID)>
-      </cfloop>
-      <cfquery name="get_all_employee_time_for_period" datasource="jrgm"      >
-SELECT Employee_ID,  time_worked, in_out_status,ds_date 
- FROM app_employee_payroll_clock
- WHERE Employee_ID IN (#employeelist#) AND app_employee_payroll_clock.Time_In > '#DateFormat(app_payroll_periods_Week1.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000' AND  app_employee_payroll_clock.Time_Out < #pay_period_end_week1_plusone#
- AND in_out_status =2 AND payroll_approved IS NULL
-  </cfquery>
-      <td align="center" ><cfif get_all_employee_time_for_period.recordcount EQ 0  AND get_employees_with_time.recordcount GT 0 >
-          <span class="greenText">Approved</span>
-          <cfelse>
-          <a style="color:#CC0000" href="payroll_view_employee_detail_1week_unapproved.cfm?branch=Newport News&pay_period_week=<cfoutput>#pay_period_week_week1#</cfoutput>">No</a></span>
-        </cfif></td>
-    </tr>
-    <tr>
-      <td  align="left" height="50">Portsmouth</td>
-      <cfquery name="get_employees_with_time" datasource="jrgm"  >
-		SELECT DISTINCT Employee_ID, APP_employees.last_name, APP_employees.first_name FROM 
-		app_employee_payroll_clock  
-		INNER JOIN APP_employees
-		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
-		WHERE branch = 'Portsmouth'  AND (app_employee_payroll_clock.Time_In > '#DateFormat(app_payroll_periods_L.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000' AND app_employee_payroll_clock.Time_Out < '#DateFormat(pay_period_end_week_plusone, 'yyyy-mm-dd')# 00:00:00.000')
-		ORDER by APP_employees.last_name
- 	</cfquery>
-      <CFSET employeelist ="0">
-      <cfloop query="get_employees_with_time">
-        <cfset employeelist = ListAppend(employeelist,Employee_ID)>
-      </cfloop>
-      <cfquery name="get_all_employee_time_for_period" datasource="jrgm"      >
-SELECT Employee_ID,  time_worked, in_out_status,ds_date 
- FROM app_employee_payroll_clock
- WHERE Employee_ID IN (#employeelist#) AND app_employee_payroll_clock.Time_In > '#DateFormat(app_payroll_periods_L.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000' AND  app_employee_payroll_clock.Time_Out < '#DateFormat(pay_period_end_week_plusone, 'yyyy-mm-dd')# 00:00:00.000'
- AND in_out_status =2 AND payroll_approved IS NULL
-  </cfquery>
-      <!---   <cfdump var="#get_all_employee_time_for_period#"> --->
-      <td align="center" ><cfif get_all_employee_time_for_period.recordcount EQ 0>
-          <span class="greenText">Approved</span>
-          <cfelse>
-          <a style="color:#CC0000" href="payroll_view_employee_detail_2week_unapproved.cfm?branch=Portsmouth&pay_period_number=<cfoutput>#pay_period_end_week_L#</cfoutput>">No</a></span>
-        </cfif></td>
-      <td align="center"><cfif get_all_employee_time_for_period.recordcount EQ 0>
-          <a href="REG_payroll_csv.cfm?branch=Portsmouth&pay_period_number=<cfoutput>#pay_period_number_for_csv#</cfoutput>"><img src="images/downloadCSV.gif" width="104" height="20"alt="Download CSV" /></a>
-        </cfif>
-        &nbsp;</td>
-      <td align="center" ><cfif get_all_employee_time_for_period.recordcount GT 0>
-          <a href="REG_payroll_csv.cfm?branch=Portsmouth&pay_period_number=<cfoutput>#pay_period_number_for_csv#</cfoutput>"><img src="images/downloadCSV.gif" width="104" height="20"alt="Download CSV" /></a>
-        </cfif>
-        &nbsp;</td>
-      <td align="center"><cfif get_all_employee_time_for_period.recordcount EQ 0>
-          <a href="REG_payroll_csv_view.cfm?branch=Portsmouth&pay_period_number=<cfoutput>#pay_period_number_for_csv#</cfoutput>">View</a>
-        </cfif>
-        &nbsp;</td>
-      <td align="center" ><cfif get_all_employee_time_for_period.recordcount GT 0>
-          <a href="REG_payroll_csv_view.cfm?branch=Portsmouth&pay_period_number=<cfoutput>#pay_period_number_for_csv#</cfoutput>">View</a>
-        </cfif>
-        &nbsp;</td>
-      <td align="center" ><a href="payroll_view_employee.cfm?branch=Portsmouth">View</a></td>
-      <td align="center"><a href="payroll_view_employee_detail_2week.cfm?branch=Portsmouth">View</a></td>
-      <td align="center"><a href="payroll_view_employee_detail_2week.cfm?branch=Portsmouth&pay_period_number=<cfoutput>#pay_period_end_week_L#</cfoutput>">View</a></td>
-      <td align="center"><a href="payroll_view_employee_dates.cfm?branch=Portsmouth">View</a></td>
-      <cfquery name="get_employees_with_time" datasource="jrgm"  >
-		SELECT DISTINCT  Employee_ID , APP_employees.last_name, APP_employees.first_name FROM 
-		app_employee_payroll_clock  
-		INNER JOIN APP_employees
-		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
-		WHERE branch = 'Portsmouth'  AND 
-        (app_employee_payroll_clock.Time_In > '#DateFormat(app_payroll_periods_Week1.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000' AND app_employee_payroll_clock.Time_Out < #pay_period_end_week1_plusone#)
-		ORDER by APP_employees.last_name
- 	</cfquery>
-      <!--- <cfdump var="#get_employees_with_time#"> --->
-      <CFSET employeelist ="0">
-      <cfloop query="get_employees_with_time">
-        <cfset employeelist = ListAppend(employeelist,Employee_ID)>
-      </cfloop>
-      <cfquery name="get_all_employee_time_for_period" datasource="jrgm"      >
-SELECT Employee_ID,  time_worked, in_out_status,ds_date 
- FROM app_employee_payroll_clock
- WHERE Employee_ID IN (#employeelist#) AND app_employee_payroll_clock.Time_In > '#DateFormat(app_payroll_periods_Week1.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000' AND  app_employee_payroll_clock.Time_Out < #pay_period_end_week1_plusone#
- AND in_out_status =2 AND payroll_approved IS NULL
-  </cfquery>
-      <td align="center" ><cfif get_all_employee_time_for_period.recordcount EQ 0  AND get_employees_with_time.recordcount GT 0 >
-          <span class="greenText">Approved</span>
-          <cfelse>
-          <a style="color:#CC0000" href="payroll_view_employee_detail_1week_unapproved.cfm?branch=Portsmouth&pay_period_week=<cfoutput>#pay_period_week_week1#</cfoutput>">No</a></span>
-        </cfif></td>
-    </tr>
-    <tr>
-      <td  align="left" height="50">Richmond</td>
-      <cfquery name="get_employees_with_time" datasource="jrgm"  >
-		SELECT DISTINCT Employee_ID, APP_employees.last_name, APP_employees.first_name FROM 
-		app_employee_payroll_clock  
-		INNER JOIN APP_employees
-		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
-		WHERE branch = 'Richmond'  AND (app_employee_payroll_clock.Time_In > '#DateFormat(app_payroll_periods_L.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000' AND app_employee_payroll_clock.Time_Out < '#DateFormat(pay_period_end_week_plusone, 'yyyy-mm-dd')# 00:00:00.000')
-		ORDER by APP_employees.last_name
- 	</cfquery>
-      <CFSET employeelist ="0">
-      <cfloop query="get_employees_with_time">
-        <cfset employeelist = ListAppend(employeelist,Employee_ID)>
-      </cfloop>
-      <cfquery name="get_all_employee_time_for_period" datasource="jrgm"      >
-SELECT Employee_ID,  time_worked, in_out_status,ds_date 
- FROM app_employee_payroll_clock
- WHERE Employee_ID IN (#employeelist#) AND app_employee_payroll_clock.Time_In > '#DateFormat(app_payroll_periods_L.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000' AND  app_employee_payroll_clock.Time_Out < '#DateFormat(pay_period_end_week_plusone, 'yyyy-mm-dd')# 00:00:00.000'
- AND in_out_status =2 AND payroll_approved IS NULL
-  </cfquery>
-      <td align="center" ><cfif get_all_employee_time_for_period.recordcount EQ 0>
-          <span class="greenText">Approved</span>
-          <cfelse>
-          <a style="color:#CC0000" href="payroll_view_employee_detail_2week_unapproved.cfm?branch=Richmond&pay_period_number=<cfoutput>#pay_period_end_week_L#</cfoutput>">No</a></span>
-        </cfif></td>
-      <td align="center"><cfif get_all_employee_time_for_period.recordcount EQ 0>
-          <a href="REG_payroll_csv.cfm?branch=Richmond&pay_period_number=<cfoutput>#pay_period_number_for_csv#</cfoutput>"><img src="images/downloadCSV.gif" width="104" height="20"alt="Download CSV" /></a>
-        </cfif>
-        &nbsp;</td>
-      <td align="center" ><cfif get_all_employee_time_for_period.recordcount GT 0>
-          <a href="REG_payroll_csv.cfm?branch=Richmond&pay_period_number=<cfoutput>#pay_period_number_for_csv#</cfoutput>"><img src="images/downloadCSV.gif" width="104" height="20"alt="Download CSV" /></a>
-        </cfif>
-        &nbsp;</td>
-      <td align="center"><cfif get_all_employee_time_for_period.recordcount EQ 0>
-          <a href="REG_payroll_csv_view.cfm?branch=Richmond&pay_period_number=<cfoutput>#pay_period_number_for_csv#</cfoutput>">View</a>
-        </cfif>
-        &nbsp;</td>
-      <td align="center" ><cfif get_all_employee_time_for_period.recordcount GT 0>
-          <a href="REG_payroll_csv_view.cfm?branch=Richmond&pay_period_number=<cfoutput>#pay_period_number_for_csv#</cfoutput>">View</a>
-        </cfif>
-        &nbsp;</td>
-      <td align="center" ><a href="payroll_view_employee.cfm?branch=Richmond">View</a></td>
-      <td align="center"><a href="payroll_view_employee_detail_2week.cfm?branch=Richmond">View</a></td>
-      <td align="center"><a href="payroll_view_employee_detail_2week.cfm?branch=Richmond&pay_period_number=<cfoutput>#pay_period_end_week_L#</cfoutput>">View</a></td>
-      <td align="center"><a href="payroll_view_employee_dates.cfm?branch=Richmond">View</a></td>
-      <cfquery name="get_employees_with_time" datasource="jrgm"  >
-		SELECT DISTINCT  Employee_ID , APP_employees.last_name, APP_employees.first_name FROM 
-		app_employee_payroll_clock  
-		INNER JOIN APP_employees
-		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
-		WHERE branch = 'Richmond'  AND 
-        (app_employee_payroll_clock.Time_In > '#DateFormat(app_payroll_periods_Week1.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000' AND app_employee_payroll_clock.Time_Out < #pay_period_end_week1_plusone#)
-		ORDER by APP_employees.last_name
- 	</cfquery>
-      <CFSET employeelist ="0">
-      <cfloop query="get_employees_with_time">
-        <cfset employeelist = ListAppend(employeelist,Employee_ID)>
-      </cfloop>
-      <cfquery name="get_all_employee_time_for_period" datasource="jrgm"      >
-SELECT Employee_ID,  time_worked, in_out_status,ds_date 
- FROM app_employee_payroll_clock
- WHERE Employee_ID IN (#employeelist#) AND app_employee_payroll_clock.Time_In > '#DateFormat(app_payroll_periods_Week1.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000' AND  app_employee_payroll_clock.Time_Out < #pay_period_end_week1_plusone#
- AND in_out_status =2 AND payroll_approved IS NULL
-  </cfquery>
-      <td align="center" ><cfif get_all_employee_time_for_period.recordcount EQ 0   AND get_employees_with_time.recordcount GT 0 >
-          <span class="greenText">Approved</span>
-          <cfelse>
-          <a style="color:#CC0000" href="payroll_view_employee_detail_1week_unapproved.cfm?branch=Richmond&pay_period_week=<cfoutput>#pay_period_week_week1#</cfoutput>">No</a></span>
-        </cfif></td>
-    </tr>
+  </cfoutput>
     <tr>
       <td  align="left" height="50">Corporate</td>
       <cfquery name="get_employees_with_time" datasource="jrgm"  >

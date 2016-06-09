@@ -118,6 +118,7 @@
       </div>
       <div class="row">
         <div class="col-md-12">
+            <div id="div_supervisor" align="center"></div>
             <table id="table_crews" align="center">
                 <tr id="tr_crews"></tr>
             </table>
@@ -196,6 +197,18 @@
     var user_branch = '<cfoutput>#SESSION.branch#</cfoutput>';
     var user_access_role = <cfoutput>#user_access_role#</cfoutput>;
     var user_is_admin = <cfoutput>#user_is_admin#</cfoutput>;
+    var user_supervisor_id = <cfoutput>#SESSION.userid#</cfoutput>;
+
+    var bgcolors = [
+        '#EF2121','#4EB84A','#FFC221','#39215B',
+        '#A8CE39','#801042','#F78026','#0D6B8B',
+        '#F7EF48','#8C4A9C','#F36321','#0A827A'
+    ];
+    var textcolors = [
+        '#FFFFFF','#000000','#000000','#FFFFFF',
+        '#000000','#FFFFFF','#000000','#FFFFFF',
+        '#000000','#FFFFFF','#000000','#FFFFFF'
+    ];
 
     jQuery(document).ready(function() {
        // initiate layout and plugins
@@ -204,13 +217,13 @@
        Demo.init(); // init demo features
        ComponentsPickers.init();
 
-       populateBranchSelect('main', user_branch);
+       populateBranchSelect('main', <cfif IsDefined('url.branch')>'<cfoutput>#url.branch#</cfoutput>'<cfelse>user_branch</cfif>);
     });
 
     function populateBranchSelect(spanId, branch) {
         var html = '';
         currentBranch = '';
-        html += '<select name="'+spanId+'" class="bs-select form-control" onChange="initializeCrews(this.value)">';
+        html += '<select name="'+spanId+'" class="bs-select form-control" onChange="getSupervisorsAndCrewLeaders(this.value)">';
         for(var i=0; i<branches.length; i++) {
             var b = branches[i];
             if (b.name == branch)
@@ -222,16 +235,19 @@
 
         if (!currentBranch)
             currentBranch = branches[0].name;
-        initializeCrews(currentBranch);
+        getSupervisorsAndCrewLeaders(currentBranch);
     }
 
-    function initializeCrews(branch) {
+    function getSupervisorsAndCrewLeaders(branch) {
         user_branch = branch;
+        $('#tr_crews').html('Loading... please wait.');
+        $('#div_supervisor').html('');
+
         $.ajax({
             url: 'crew_assignments_ajax.cfm',
             type: 'post',
             dataType: 'json',
-            data: { 'ajaxAction': 'initializeCrews', 'branch': branch, 'access_role': user_access_role },
+            data: { 'ajaxAction': 'getSupervisorsAndCrewLeaders', 'branch': branch },
             success: function(data) {
                 try
                 {
@@ -250,38 +266,20 @@
                         employees[ob[2]] = { employee_name: ob[1], employee_id: ob[2], crew_leader_id: ob[3], supervisor_id: ob[4] };
                     }
 
-                    switch(user_access_role)
+                    //branch manager
+                    for(i=0; i<obj.length; i++)
                     {
-                        case 9: //branch manager
-                            for(i=0; i<obj.length; i++)
-                            {
-                                ob = obj[i];
-                                if (ob[0] == 1)
-                                    supervisors.push({ employee_name: ob[1], employee_id: ob[2], crew_leader_id: ob[3], supervisor_id: ob[4] });
-                                else if (ob[0] == 2)
-                                {
-                                    if (!crew_leaders[ob[4]])
-                                        crew_leaders[ob[4]] = [];
-                                    crew_leaders[ob[4]].push({ employee_name: ob[1], employee_id: ob[2], crew_leader_id: ob[3], supervisor_id: ob[4] });
-                                }
-                            }
-                            console.log(supervisors);
-                            console.log(crew_leaders);
-                            console.log(crew_members);
-                            buildBranchManagerVersion();
-                            break;
-                        case 1: //supervisor
-                            for(i=0; i<obj.length; i++)
-                            {
-                                ob = obj[i];
-                                if (ob[0] == 1)
-                                    crew_leaders.push({ employee_name: ob[1], employee_id: ob[2], crew_leader_id: ob[3], supervisor_id: ob[4] });
-                                else if (ob[0] == 2 || ob[0] == 6 || ob[0] == 7)
-                                    crew_members.push({ employee_name: ob[1], employee_id: ob[2], crew_leader_id: ob[3], supervisor_id: ob[4] });
-                            }
-                            buildSupervisorVersion();
-                            break;
+                        ob = obj[i];
+                        if (ob[0] == 1 || ob[0] == 9 || ob[0] == 10)
+                            supervisors.push({ employee_name: ob[1], employee_id: ob[2], crew_leader_id: ob[3], supervisor_id: ob[4] });
+                        else if (ob[0] == 2)
+                        {
+                            if (!crew_leaders[ob[4]])
+                                crew_leaders[ob[4]] = [];
+                            crew_leaders[ob[4]].push({ employee_name: ob[1], employee_id: ob[2], crew_leader_id: ob[3], supervisor_id: ob[4] });
+                        }
                     }
+                    buildBranchManagerVersion();
                 }
                 catch(ob)
                 {
@@ -307,10 +305,12 @@
         for(var i=0; i<supervisors.length; i++)
         {
             var s = supervisors[i];
+            var bgcolor = bgcolors[i];
+            var textcolor = textcolors[i];
             var html = '';
             html += '<table style="border: 1px solid black">';
             html += '<tr>';
-            html += '<td style="cursor: pointer; padding: 15px; background-color: #999999; color: #FFFFFF; font-weight: bold; border-bottom: 1px solid black" onmouseover="this.style.backgroundColor=\'#0000AA\'" onmouseout="this.style.backgroundColor=\'#999999\'">'+showEmployeeName(s.employee_id)+'</td>';
+            html += '<td style="cursor: pointer; padding: 15px; background-color: '+bgcolor+'; color: '+textcolor+'; font-weight: bold; border-bottom: 1px solid black" onmouseover="this.style.backgroundColor=\'#FFFF00\'; this.style.color = \'black\'" onmouseout="this.style.backgroundColor=\''+bgcolor+'\'; this.style.color = \''+textcolor+'\'" onClick="getCrewLeadersAndCrewMembers('+s.employee_id+')">'+showEmployeeName(s.employee_id)+'</td>';
             html += '</tr>';
 
             var cl = crew_leaders[s.employee_id];
@@ -351,8 +351,10 @@
         for(var i=0; i<supervisors.length; i++)
         {
             var s = supervisors[i];
+            var bgcolor = bgcolors[i];
+            var textcolor = textcolors[i];
             pophtml += '<tr>';
-            pophtml += '<td align="center" style="padding: 10px"><div style="cursor: pointer; font-weight: bold; padding: 10px; border: 1px solid black; background-color: #999999; width: 50%; color: white" onmouseover="this.style.backgroundColor=\'#0000AA\'" onmouseout="this.style.backgroundColor=\'#999999\'" onClick="moveCrewLeader('+employee_id+', '+s.employee_id+')">'+showEmployeeName(s.employee_id)+'</div></td>';
+            pophtml += '<td align="center" style="padding: 10px"><div style="cursor: pointer; font-weight: bold; padding: 10px; border: 1px solid black; background-color: '+bgcolor+'; width: 50%; color: '+textcolor+'" onmouseover="this.style.backgroundColor=\'#FFFF00\'; this.style.color = \'black\'" onmouseout="this.style.backgroundColor=\''+bgcolor+'\'; this.style.color = \''+textcolor+'\'" onClick="moveCrewLeader('+employee_id+', '+s.employee_id+')">'+showEmployeeName(s.employee_id)+'</div></td>';
             pophtml += '</tr>';
         }
         pophtml += '</table>';
@@ -378,15 +380,250 @@
                 }
                 else
                 {
-                    initializeCrews(user_branch);
+                    getSupervisorsAndCrewLeaders(user_branch);
                 }
+            }
+        });
+    }
+
+    function getCrewLeadersAndCrewMembers(supervisor_id) {
+        user_supervisor_id = supervisor_id;
+        $('#tr_crews').html('Loading... please wait.');
+        $('#div_supervisor').html('');
+
+        $.ajax({
+            url: 'crew_assignments_ajax.cfm',
+            type: 'post',
+            dataType: 'json',
+            data: { 'ajaxAction': 'getCrewLeadersAndCrewMembers', 'supervisor_id': supervisor_id, 'branch': user_branch },
+            success: function(data) {
+                try
+                {
+                    var obj = data['DATA'];
+                    var i;
+                    var ob;
+
+                    supervisors = [];
+                    crew_leaders = [];
+                    crew_members = [];
+                    employees = [];
+                    unassigned = { employee_name: 'UNASSIGNED', employee_id: 0, crew_leader_id: 0, supervisor_id: 0 };
+
+                    employees[0] = unassigned;
+                    for(i=0; i<obj.length; i++)
+                    {
+                        ob = obj[i];
+                        employees[ob[2]] = { employee_name: ob[1], employee_id: ob[2], crew_leader_id: ob[3], supervisor_id: ob[4] };
+                    }
+
+                    //crew leader
+                    crew_leaders.push(unassigned);
+                    for(i=0; i<obj.length; i++)
+                    {
+                        ob = obj[i];
+                        if (ob[0] == 1 || ob[0] == 9 || ob[0] == 10)
+                            supervisors.push({ employee_name: ob[1], employee_id: ob[2], crew_leader_id: ob[3], supervisor_id: ob[4] });
+                        else if (ob[0] == 2)
+                            crew_leaders.push({ employee_name: ob[1], employee_id: ob[2], crew_leader_id: ob[3], supervisor_id: ob[4] });
+                        else if (ob[0] == 0 || ob[0] == 6 || ob[0] == 7)
+                        {
+                            if (!crew_members[ob[3]])
+                                crew_members[ob[3]] = [];
+                            crew_members[ob[3]].push({ employee_name: ob[1], employee_id: ob[2], crew_leader_id: ob[3], supervisor_id: ob[4] });
+                        }                            
+                    }
+                    buildSupervisorVersion();
+                }
+                catch(ob)
+                {
+                    console.log(ob);
+                    alert('An error occurred: '+ob);
+                }
+
+                hidePopup();
             }
         });
     }
 
     function buildSupervisorVersion()
     {
+        $('#tr_crews').html('');
 
+        var fullhtml = '';
+
+        var s = null;
+        for(var i=0; i<supervisors.length; i++)
+        {
+            if (user_supervisor_id == supervisors[i].employee_id)
+                s = supervisors[i];
+        }
+        if (!s) return;
+        
+        var html = '';
+        html += '<table style="border: 1px solid black">';
+        html += '<tr>';
+        html += '<td style="cursor: pointer; padding: 15px; background-color: #999999; color: #FFFFFF; font-weight: bold; border-bottom: 1px solid black" onmouseover="this.style.backgroundColor=\'#FFFF00\'; this.style.color = \'black\'" onmouseout="this.style.backgroundColor=\'#999999\'" onClick="getSupervisorsAndCrewLeaders(\''+user_branch+'\')">'+showEmployeeName(s.employee_id)+'</td>';
+        html += '</tr>';
+        html += '</table>';
+        html += '<b>NOTE:</b>&nbsp;Click the button above to return to overview view for '+user_branch+'.';
+        html += '<br />';
+        html += '<br />';
+
+        $('#div_supervisor').html(html);
+
+        for(var i=0; i<crew_leaders.length; i++)
+        {
+            var cl = crew_leaders[i];
+            var bgcolor = bgcolors[i];
+            var textcolor = textcolors[i];
+            if (cl.employee_id == 0)
+            {
+                bgcolor = 'white';
+                textcolor = 'black';
+            }
+
+            html = '';
+            html += '<table style="border: 1px solid black">';
+            html += '<tr>';
+            html += '<td style="padding: 15px; background-color: '+bgcolor+'; color: '+textcolor+'; font-weight: bold; border-bottom: 1px solid black">'+showEmployeeName(cl.employee_id)+'</td>';
+            html += '</tr>';
+
+            var cms = crew_members[cl.employee_id];
+            if (cms)
+            {
+                for(var ii=0; ii<cms.length; ii++)
+                {
+                    var cm = cms[ii];
+                    html += '<tr>';
+                    html += '<td style="cursor: pointer; padding: 15px" onmouseover="this.style.backgroundColor=\'#00AA00\'" onmouseout="this.style.backgroundColor=\'#FFFFFF\'" onClick="popUpMoveCrewMember('+cm.employee_id+')">'+showEmployeeName(cm.employee_id)+'</td>';
+                    html += '</tr>';
+                }
+            }
+            if (cl.employee_id != 0)
+            {
+                html += '<tr>';
+                html += '<td style="padding: 15px"><input type="button" value="Other Branch" onClick="getCrewMembersFromOtherBranches('+cl.employee_id+')"></td>';
+                html += '</tr>';
+            }
+            html += '</table>';
+
+            fullhtml += '<td valign="top" style="padding: 5px">'+html+'</td>';
+        }
+        $('#tr_crews').append(fullhtml);
+    }
+    
+    function popUpMoveCrewMember(employee_id)
+    {
+        var e = employees[employee_id];
+
+        var pophtml = '';
+        pophtml += '<table align="center" style="width: 80%; border: 1px solid black">';
+        pophtml += '<tr>';
+        pophtml += '<td align="center" style="padding: 10px; border-bottom: 1px solid black; background-color: #purple"><b>'+showEmployeeName(employee_id)+'</b></td>';
+        pophtml += '</tr>';
+        pophtml += '<tr>';
+        pophtml += '<td align="center" style="padding: 10px;">Click/Touch a crew leader below to move this crew member.</td>';
+        pophtml += '</tr>';
+        pophtml += '<tr>';
+        pophtml += '<td align="center" style="padding: 10px;"><input type="button" value="Cancel and Go Back" onClick="hidePopup()"></td>';
+        pophtml += '</tr>';
+
+        for(var i=0; i<crew_leaders.length; i++)
+        {
+            var cl = crew_leaders[i];
+            var bgcolor = bgcolors[i];
+            var textcolor = textcolors[i];
+            if (cl.employee_id == 0)
+            {
+                bgcolor = 'white';
+                textcolor = 'black';
+            }
+            pophtml += '<tr>';
+            pophtml += '<td align="center" style="padding: 10px"><div style="cursor: pointer; font-weight: bold; padding: 10px; border: 1px solid black; background-color: '+bgcolor+'; width: 50%; color: '+textcolor+'" onmouseover="this.style.backgroundColor=\'#FFFF00\'; this.style.color = \'black\'" onmouseout="this.style.backgroundColor=\''+bgcolor+'\'; this.style.color = \''+textcolor+'\'" onClick="moveCrewMember('+employee_id+', '+cl.employee_id+')">'+showEmployeeName(cl.employee_id)+'</div></td>';
+            pophtml += '</tr>';
+        }
+        pophtml += '</table>';
+        showPopup(pophtml);
+    }
+
+    function moveCrewMember(employee_id, crew_leader_id)
+    {
+        var pophtml = '';
+        pophtml = 'Moving crew member... please wait.';
+        showPopup(pophtml);
+        //alert('Move '+employee_id+' to '+crew_leader_id);
+
+        $.ajax({
+            url: 'crew_assignments_ajax.cfm',
+            dataType: 'json',
+            data: { 'ajaxAction': 'moveCrewMember', 'employee_id': employee_id, 'crew_leader_id': crew_leader_id, 'branch': user_branch },
+            success: function(data) {
+                if (data.error)
+                {
+                    hidePopup();
+                    alert(data.error);
+                }
+                else
+                {
+                    getCrewLeadersAndCrewMembers(user_supervisor_id, user_branch);
+                }
+            }
+        });
+    }
+
+    function getCrewMembersFromOtherBranches(crew_leader_id) {
+        showPopup('Loading... please wait.');
+
+        $.ajax({
+            url: 'crew_assignments_ajax.cfm',
+            type: 'post',
+            dataType: 'json',
+            data: { 'ajaxAction': 'getCrewMembersFromOtherBranches', 'branch': user_branch },
+            success: function(data) {
+                popUpMoveCrewMemberFromAnotherBranch(crew_leader_id, data);
+            }
+        });
+    }
+
+    function popUpMoveCrewMemberFromAnotherBranch(crew_leader_id, data) {
+        var pophtml = '';
+        pophtml += '<table align="center" style="width: 80%; border: 1px solid black">';
+        pophtml += '<tr>';
+        pophtml += '<td align="center" style="padding: 10px; border-bottom: 1px solid black; background-color: #purple"><b>'+showEmployeeName(crew_leader_id)+'</b></td>';
+        pophtml += '</tr>';
+        pophtml += '<tr>';
+        pophtml += '<td align="center" style="padding: 10px;">Select ONE (1) crew member below, then click the corresponding button on the right.</td>';
+        pophtml += '</tr>';
+        pophtml += '<tr>';
+        pophtml += '<td align="center" style="padding: 10px;"><input type="button" value="Cancel and Go Back" onClick="hidePopup()"></td>';
+        pophtml += '</tr>';
+
+        for(var ii=0; ii<branches.length; ii++)
+        {
+            var b = branches[ii];
+            if (b.name != user_branch)
+            {
+                pophtml += '<tr>';
+                pophtml += '<td align="center" style="padding: 10px">';
+                pophtml += '<span style="width: 150px; text-align: right"><b>'+b.name+':</b>&nbsp;&nbsp;</span>';
+                pophtml += '<select id="select_employee_id_'+ii+'">';
+
+                for(var i=0; i<data['DATA'].length; i++)
+                {
+                    var cm = data['DATA'][i];
+                    if (cm[5] == b.name)
+                        pophtml += '<option value="'+cm[2]+'">'+cm[1]+' ('+cm[2]+') ['+(cm[3]?'assigned to '+cm[3]:'==UNASSIGNED==')+']</option>';
+                }
+
+                pophtml += '</select>';
+                pophtml += '&nbsp;&nbsp;<input type="button" value="Assign to '+showEmployeeName(crew_leader_id)+'" onClick="moveCrewMember(document.getElementById(\'select_employee_id_'+ii+'\').value, '+crew_leader_id+')">';
+                pophtml += '</td>';
+                pophtml += '</tr>';
+            }
+        }
+
+        pophtml += '</table>';
+        showPopup(pophtml);
     }
 
     function showPopup(html)

@@ -1,5 +1,6 @@
 <cfinclude template="../quoting-new/include_specsheet_mss.cfm">
-
+<!---cfdump var="#current_quote_services_materials#">
+<cfabort--->
 <!--- ////////////////////////////////////////////////////////////////////// --->
 <!--- /////////////////////////                  ///////////////////////////--->
 <!--- ///////////////////////// CREATE HTML PAGE /////////////////////////// --->
@@ -65,7 +66,7 @@ H3 {
         <div class="col-md-12">
           <table width="95%" border="0" cellpadding="0" cellspacing="0" align="center">
             <tr>
-              <td align="justify">JAMES RIVER GROUNDS MANAGEMENT, INC. SHALL PROVIDE THE FOLLOWING SERVICES AT <strong>#get_quote_start.opportunity_name#</strong>, LOCATED AT <strong>#get_quote_start.q_address1#</strong>, IN <strong>#get_quote_start.q_city#, #get_quote_start.q_address_state#</strong>. PLEASE REFER TO THE 'DEFINITION OF SERVICES' (Attachment B) FOR MORE DETAILED SERVICE SPECIFICATIONS.</td>
+              <td align="justify">JAMES RIVER GROUNDS MANAGEMENT, INC. SHALL PROVIDE THE FOLLOWING SERVICES AT <u>#get_quote_start.opportunity_name#</u>, LOCATED AT <u>#get_quote_start.q_address1#</u>, IN <u>#get_quote_start.q_city#, #get_quote_start.q_address_state#</u>. PLEASE REFER TO THE '<i>DEFINITION OF SERVICES</i>' <i>(Attachment B)</i> FOR MORE DETAILED SERVICE SPECIFICATIONS.</td>
             </tr>
           </table>
 
@@ -78,7 +79,7 @@ H3 {
                     <cfset contract_price_ID = getRowID(quote_specsheet[i][1])>
                     <cfset StructInsert(contract_price_array, contract_price_ID, 0)>
                     <tr id="tr_#contract_price_ID#">
-                      <td colspan="3" ><h3>#quote_specsheet[i][1]#<span id="contract_price_#contract_price_ID#"></span></h3></td>
+                      <td colspan="3" style="padding-top: 15px; padding-bottom: 0px; font-weight: bolder"><span style="color: ##3F9F3F !important"><b><u>#UCase(quote_specsheet[i][1])#</u></b><span id="contract_price_#contract_price_ID#"></span></span></td>
                     </tr>
                     <cfloop from="1" to="#arrayLen(quote_data_entry_row_order_array)#" index="ii">
                       <cfset current_row = quote_rows[quote_data_entry_row_order_array[ii]]>
@@ -95,8 +96,13 @@ H3 {
                               <cfset row_ID = 'BlankService' & blank_count>
                               <cfset row_column2 = current_row[1]>
                           <cfelse>
-
                               <cfset row_column2 = quote_rows_cache[quote_data_entry_row_order_array[ii]][19]['row_defaultvalue']><!---NAME OF SERVICE--->
+                          </cfif>
+
+                          <cfif row_column2 EQ 'Spring Annuals'>
+                            <cfset row_column2 = row_column2 & ' - ' & Round(current_quote_services_materials['Annuals_S_materials_qty'])>
+                          <cfelseif row_column2 EQ 'Fall Annuals'>
+                            <cfset row_column2 = row_column2 & ' - ' & Round(current_quote_services_materials['Annuals_F_materials_qty'])>
                           </cfif>
 
                           <cftry>
@@ -183,6 +189,16 @@ FROM         quote_notes  WHERE  opportunity_id = #url.id# AND  opportunity_id_o
     </cfif>
           <br />
           <br />
+          <br />
+          <br />
+          <br />
+          <br />
+          <table width="95%" border="0" align="center" >
+            <tr>
+                <td>Client Initial: <u>____________________</u></td>
+                <td align="right">Date: <u>____________________</u></td>
+            </tr>
+          </table>
         </div>
       </div>
     </div>
