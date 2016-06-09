@@ -132,7 +132,7 @@
  				GROUP by Employee_ID, ds_date, in_out_status
 				 ORDER by ds_date DESC 
 				</cfquery>
-          <cfif  get_employee_time_by_day.recordcount EQ 0>
+          <cfif  get_employee_time_by_day.sumdailytime EQ ''>
             <cfelse>
             <cfoutput query="get_employee_time_by_day" >
               <cfset hours = int(sumdailytime\60)>
