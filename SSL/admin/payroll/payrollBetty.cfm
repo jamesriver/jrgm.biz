@@ -287,6 +287,26 @@ SELECT Employee_ID,  time_worked, in_out_status,ds_date
  WHERE Employee_ID IN (#employeelist#) AND app_employee_payroll_clock.Time_In > '#DateFormat(app_payroll_periods_L.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000' AND  app_employee_payroll_clock.Time_Out < '#DateFormat(pay_period_end_week_plusone, 'yyyy-mm-dd')# 00:00:00.000'
  AND in_out_status =2 AND payroll_approved IS NULL
   </cfquery>
+
+      <!--- CALCULATE DEAD TIME BY BRANCH, tricky because dead time has no job or date or daily sheet associated with it--->
+      <cfset current_dead_time = 0>
+      <cfquery name="get_current_dead_time_start_id" datasource="jrgm">
+        SELECT TOP 1 ajsae.ID FROM app_job_services_actual_employee ajsae
+        INNER JOIN app_employees ae ON ae.[Employee ID]=ajsae.employee_id
+        WHERE Service_Time_In >= '#DateFormat(app_payroll_periods_C.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000'
+        AND branch='#branch_name#'
+      </cfquery>
+      <cfif get_current_dead_time_start_id.recordcount GT 0>
+        <cfquery name="get_current_dead_time" datasource="jrgm">
+          SELECT FLOOR(SUM(Total_Time)/60) as sum FROM app_job_services_actual_employee ajsae
+          INNER JOIN app_employees ae ON ae.[Employee ID]=ajsae.employee_id
+          WHERE Job_ID IS NULL
+          AND Total_Time > 0
+          AND ajsae.ID>#get_current_dead_time_start_id.ID#
+          AND branch='#branch_name#'
+        </cfquery>
+        <cfset get_current_dead_time = get_current_dead_time.sum>
+      </cfif>
       <td align="center" ><cfif get_all_employee_time_for_period.recordcount EQ 0>
           <span class="greenText">Approved</span>
           <cfelse>
@@ -313,6 +333,9 @@ SELECT Employee_ID,  time_worked, in_out_status,ds_date
         <a href="payroll_view_employee_detail_2week.cfm?branch=#branch_name#" target="_blank">View</a>
         <cfif StructKeyExists(current_misc_time, branch_name)>
             <br /><span style="font-size: 8pt"><i>#current_misc_time[branch_name].sum# hr MISC</i>&nbsp;<a href="../payroll_manager_misctime.cfm?branch=#branch_name#" target="_blank">view</a>
+        </cfif>
+        <cfif get_current_dead_time GT 0>
+            <br /><span style="font-size: 8pt; color: ##AA0000"><i>#get_current_dead_time# hr DEAD</i>&nbsp;<a href="../payroll_manager_deadtime.cfm?branch=#branch_name#" target="_blank">view</a>
         </cfif>
       </td>
       <td align="center">
