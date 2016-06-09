@@ -13,6 +13,25 @@
 <cfif IsDefined('url.pay_period')>
     <cfset pay_period_number_visible = url.pay_period>
 </cfif>
+<cfset branch = ''>
+<cfif IsDefined('url.branch')>
+    <cfif url.branch NEQ 'All'>
+        <cfset branch = url.branch>
+    </cfif>
+</cfif>
+
+<!--- BRANCHES --->
+<cfset branches = ArrayNew(1)>
+<cfset ArrayAppend(branches, 'All')>
+<cfquery name="get_branches" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
+  SELECT * FROM branches
+  WHERE branch_visible_to_payroll=1
+  ORDER BY branch_name
+</cfquery>
+<cfloop query="get_branches">
+    <cfset ArrayAppend(branches, branch_name)>
+</cfloop>
+<cfset ArrayAppend(branches, 'Corporate')>
 
 <cfquery name="app_payroll_periods_C" datasource="jrgm">
  SELECT  MIN(pay_period_start) as pay_period_start, MAX(pay_period_end) AS pay_period_end
@@ -24,17 +43,21 @@ SELECT     [Employee ID] AS employee_id, branch,[Name FirstLast] AS empname
 FROM         app_employees
  </cfquery>
 <cfquery name="get_all_app_job_services_actual_employee" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
-SELECT * FROM app_job_services_actual_employee
+SELECT * FROM app_job_services_actual_employee ajsae
+INNER JOIN app_employees ae ON ae.[Employee ID]=ajsae.employee_id
 WHERE Job_ID IN ('MISC-IRR-1','J3033-1014','J3031-1014','J3025-1014','J3027-1014','J3018-1014','MISC-IRR-2','MISC-IRR-3','MISC-IRR-4','MISC-IRR-5')
   AND (Service_Time_In >= '#DateFormat("#app_payroll_periods_C.pay_period_start#", "yyyy-mm-dd")# 00:00:00.000')  AND  (Service_Time_In < '#DateFormat("#app_payroll_periods_C.pay_period_end#", "yyyy-mm-dd")# 00:00:00.000')
   AND Total_Time > 0
+  <cfif branch NEQ ''>AND ae.branch='#branch#'</cfif>
   ORDER BY Service_Time_In DESC
 </cfquery>
 <cfquery name="sum_all_app_job_services_actual_employee" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
-SELECT COUNT(*) as count, SUM(Total_Time) as sum FROM app_job_services_actual_employee
+SELECT COUNT(*) as count, SUM(Total_Time) as sum FROM app_job_services_actual_employee ajsae
+INNER JOIN app_employees ae ON ae.[Employee ID]=ajsae.employee_id
 WHERE Job_ID IN ('MISC-IRR-1','J3033-1014','J3031-1014','J3025-1014','J3027-1014','J3018-1014','MISC-IRR-2','MISC-IRR-3','MISC-IRR-4','MISC-IRR-5')
   AND (Service_Time_In >= '#DateFormat("#app_payroll_periods_C.pay_period_start#", "yyyy-mm-dd")# 00:00:00.000')  AND  (Service_Time_In < '#DateFormat("#app_payroll_periods_C.pay_period_end#", "yyyy-mm-dd")# 00:00:00.000')
   AND Total_Time > 0
+  <cfif branch NEQ ''>AND ae.branch='#branch#'</cfif>
 </cfquery>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -80,7 +103,17 @@ td {
     <div class="centrecontent_inner">
       <table border="0" cellspacing="0" cellpadding="0">
         <tr>
-          <td class="header">Miscellaneous Job Time Report</td>
+          <td class="header">
+            <cfoutput>
+            Miscellaneous Job Time Report:
+            <select onChange="window.location='payroll_manager_misctime.cfm?branch='+this.value+'&pay_period=#pay_period_number_visible#';">
+                <cfloop from="1" to="#arrayLen(branches)#" index="i">
+                    <cfset branch_name = branches[i]>
+                    <option value="#branch_name#"<cfif branch_name EQ branch> selected</cfif>>#branch_name#</option>
+                </cfloop>
+            </select>
+            </cfoutput>
+          </td>
         </tr>
       </table>     
 <br />
@@ -89,9 +122,9 @@ td {
 Total Hours: #sum_all_app_job_services_actual_employee.sum/60#, Average Hours Per Entry: #(sum_all_app_job_services_actual_employee.sum/60/get_all_app_job_services_actual_employee.recordcount)#<br />
 <br />
 <span style="font-family: Gotham, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-style: italic;">Pay Period ###pay_period_number_visible#: #DateFormat("#app_payroll_periods_C.pay_period_start#", "mm/dd/yyyy")#-<cfoutput>#DateFormat("#app_payroll_periods_C.pay_period_end#", "mm/dd/yyyy")#</cfoutput></span>
-  <input type="button" value="<< Previous" onClick="window.location='payroll_manager_misctime.cfm?pay_period=#(pay_period_number_visible-1)#';">
+  <input type="button" value="<< Previous" onClick="window.location='payroll_manager_misctime.cfm?branch=#branch#&pay_period=#(pay_period_number_visible-1)#';">
   <cfif pay_period_number_visible LT pay_period_number>
-    <input type="button" value="Next >>" onClick="window.location='payroll_manager_misctime.cfm?pay_period=#(pay_period_number_visible+1)#';">
+    <input type="button" value="Next >>" onClick="window.location='payroll_manager_misctime.cfm?branch=#branch#&pay_period=#(pay_period_number_visible+1)#';">
   </cfif>
   </cfoutput>
 <br />
