@@ -52,10 +52,10 @@
 </cfquery>
 app_crews_new flattened<br />
 <br />
-<cfoutput>
+<cfquery name="drop_app_crews" datasource="jrgm">
     DROP TABLE app_crews
-</cfoutput>
+</cfquery>
 <br />
-<cfoutput>
+<cfquery name="insert_app_crews" datasource="jrgm">
     SELECT * INTO app_crews FROM app_crews_new
-</cfoutput>
+</cfquery>
