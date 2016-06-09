@@ -149,7 +149,7 @@ There are no employees with time for ths period.
 				 ORDER by ds_date DESC 
 				</cfquery>
               
-              <cfif  get_employee_time_by_day.recordcount EQ 0>
+              <cfif  get_employee_time_by_day.sumdailytime EQ ''>
              
                 <cfelse>
                 <cfoutput query="get_employee_time_by_day" >

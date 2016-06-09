@@ -224,7 +224,7 @@ SELECT  Employee_ID , SUM(time_worked) As sumdailytime, in_out_status,ds_date
  GROUP by Employee_ID, ds_date, in_out_status
  </cfquery>
   
-                 <cfif  get_employee_time_by_day.recordcount EQ 0>
+                 <cfif  get_employee_time_by_day.sumdailytime EQ ''>
                   <td align="center">-</td>
                   <cfelse>
                   <cfoutput query="get_employee_time_by_day" >
