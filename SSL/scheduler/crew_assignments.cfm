@@ -458,7 +458,7 @@
                 s = supervisors[i];
         }
         if (!s) return;
-        
+
         var html = '';
         html += '<table style="border: 1px solid black">';
         html += '<tr>';
