@@ -301,27 +301,27 @@ SELECT Employee_ID,  time_worked, in_out_status,ds_date
         </cfif>
         &nbsp;</td>
       <td align="center"><cfif get_all_employee_time_for_period.recordcount EQ 0>
-          <a href="REG_payroll_csv_view.cfm?branch=#branch_name#&pay_period_number=#pay_period_number_for_csv#">View</a>
+          <a href="REG_payroll_csv_view.cfm?branch=#branch_name#&pay_period_number=#pay_period_number_for_csv#" target="_blank">View</a>
         </cfif>
         &nbsp;</td>
       <td align="center" ><cfif get_all_employee_time_for_period.recordcount GT 0>
-          <a href="REG_payroll_csv_view.cfm?branch=#branch_name#&pay_period_number=#pay_period_number_for_csv#">View</a>
+          <a href="REG_payroll_csv_view.cfm?branch=#branch_name#&pay_period_number=#pay_period_number_for_csv#" target="_blank">View</a>
         </cfif>
         &nbsp;</td>
-      <td align="center" ><a href="payroll_view_employee.cfm?branch=#branch_name#">View</a></td>
+      <td align="center" ><a href="payroll_view_employee.cfm?branch=#branch_name#" target="_blank">View</a></td>
       <td align="center">
-        <a href="payroll_view_employee_detail_2week.cfm?branch=#branch_name#">View</a>
+        <a href="payroll_view_employee_detail_2week.cfm?branch=#branch_name#" target="_blank">View</a>
         <cfif StructKeyExists(current_misc_time, branch_name)>
             <br /><span style="font-size: 8pt"><i>#current_misc_time[branch_name].sum# hr MISC</i>&nbsp;<a href="../payroll_manager_misctime.cfm?branch=#branch_name#" target="_blank">view</a>
         </cfif>
       </td>
       <td align="center">
-        <a href="payroll_view_employee_detail_2week.cfm?branch=#branch_name#&pay_period_number=#pay_period_end_week_L#">View</a>
+        <a href="payroll_view_employee_detail_2week.cfm?branch=#branch_name#&pay_period_number=#pay_period_end_week_L#" target="_blank">View</a>
         <cfif StructKeyExists(prior_misc_time, branch_name)>
             <br /><span style="font-size: 8pt"><i>#prior_misc_time[branch_name].sum# hr MISC</i>&nbsp;<a href="../payroll_manager_misctime.cfm?branch=#branch_name#&pay_period=#pay_period_end_week_L#" target="_blank">view</a>
         </cfif>
       </td>
-      <td align="center"><a href="payroll_view_employee_dates.cfm?branch=#branch_name#">View</a></td>
+      <td align="center"><a href="payroll_view_employee_dates.cfm?branch=#branch_name#" target="_blank">View</a></td>
       <cfquery name="get_employees_with_time" datasource="jrgm"  >
 		SELECT DISTINCT  Employee_ID , APP_employees.last_name, APP_employees.first_name FROM 
 		app_employee_payroll_clock  
@@ -351,19 +351,19 @@ SELECT Employee_ID,  time_worked, in_out_status,ds_date
   </cfoutput>
     <tr>
       <td colspan="2" nowrap="nowrap" >ALL FWW Employees (Approved & Unapproved)</td>
-      <td align="center"><a href="FWW_payroll_csv.cfm?pay_period_number=<cfoutput>#pay_period_number_for_csv#</cfoutput>"><img src="images/downloadCSV.gif" width="104" height="20"alt="Download CSV" /></a>&nbsp;</td>
+      <td align="center"><a href="FWW_payroll_csv.cfm?pay_period_number=<cfoutput>#pay_period_number_for_csv#</cfoutput>" target="_blank"><img src="images/downloadCSV.gif" width="104" height="20"alt="Download CSV" /></a>&nbsp;</td>
       <td align="center" >&nbsp;</td>
       <td align="center" >&nbsp;</td>
       <td align="center" >&nbsp;</td>
       <td align="center" >&nbsp;</td>
-      <td align="center"><a href="payroll_view_employee_detail_2week_FWW.cfm">View</a></td>
-      <td align="center"><a href="payroll_view_employee_detail_2week_FWW.cfm?pay_period_number=<cfoutput>#pay_period_end_week_L#</cfoutput>">View</a></td>
+      <td align="center"><a href="payroll_view_employee_detail_2week_FWW.cfm" target="_blank">View</a></td>
+      <td align="center"><a href="payroll_view_employee_detail_2week_FWW.cfm?pay_period_number=<cfoutput>#pay_period_end_week_L#</cfoutput>" target="_blank">View</a></td>
       <td colspan="2" align="center">&nbsp;</td>
     </tr>
     <tr>
       <td colspan="2" nowrap="nowrap"  height="35">PTO Hours</td>
       <td colspan="5" align="center">&nbsp;</td>
-      <td align="center"><a href="pto_payroll_view_employee_detail.cfm">View</a></td>
+      <td align="center"><a href="pto_payroll_view_employee_detail.cfm" target="_blank">View</a></td>
       <td colspan="3" align="center">&nbsp;</td>
     </tr>
     <!--- <<tr class="dailysheet_header">
