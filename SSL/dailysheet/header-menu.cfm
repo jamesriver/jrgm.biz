@@ -54,6 +54,7 @@
 			</a>
 				<i class="fa fa-angle-down visible-sm visible-xs downside"></i>
 				<ul class="dropdown-menu pull-left">
+				    <li><a href="/SSL/scheduler/crew_assignments.cfm">Modify Crew Assignments</a></li>
 					<li><a href="employee_notes.cfm">Employee Notes</a></li>
 				</ul>
 		</li>

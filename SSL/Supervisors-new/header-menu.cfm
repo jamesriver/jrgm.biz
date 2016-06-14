@@ -37,6 +37,7 @@
         </li>
         <li class="menu-dropdown classic-menu-dropdown clearfix"> <a data-hover="megamenu-dropdown" data-close-others="true" href="do_login.cfm?employee_ID=<cfoutput>#SESSION.userid#</cfoutput>&schedchoice=crews"class="new-added"> Crews <i class="fa fa-angle-down hidden-sm hidden-xs"></i> </a> <i class="fa fa-angle-down visible-sm visible-xs downside"></i>
           <ul class="dropdown-menu pull-left">
+            <li><a href="/SSL/scheduler/crew_assignments.cfm">Modify Crew Assignments</a></li>
             <li><a href="employee_notes.cfm">Employee Notes</a></li>
           </ul>
         </li>
