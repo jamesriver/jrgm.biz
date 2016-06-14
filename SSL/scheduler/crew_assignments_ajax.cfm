@@ -54,7 +54,7 @@
 
             <!--- RETRIEVE APP_CREWS BY BRANCH AND ACCESS_ROLES --->
             <cfquery name="get_app_crews" datasource="jrgm">
-                SELECT Employee_Position_ID, crew_name, employee_id, crew_leader_id, supervisor_id FROM app_crews_new
+                SELECT Employee_Position_ID, crew_name, employee_id, crew_leader_id, supervisor_id, employee_branch FROM app_crews_new
                 WHERE ((employee_id=<cfqueryparam value="#form.supervisor_id#" CFSQLType="CF_SQL_INTEGER">
                        OR supervisor_id=<cfqueryparam value="#form.supervisor_id#" CFSQLType="CF_SQL_INTEGER">
                        )

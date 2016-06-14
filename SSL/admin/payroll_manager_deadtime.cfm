@@ -9,19 +9,66 @@
 <cfset yesterday = dateadd("d",-1,somedate)>
 <cfset tomorrow = dateadd("d",1,somedate)>
 <cfset todayDate_dow = DayOfWeek(todayDate)>
+<cfset pay_period_number_visible = pay_period_number>
+<cfif IsDefined('url.pay_period')>
+    <cfset pay_period_number_visible = url.pay_period>
+</cfif>
+<cfset branch = ''>
+<cfif IsDefined('url.branch')>
+    <cfif url.branch NEQ 'All'>
+        <cfset branch = url.branch>
+    </cfif>
+</cfif>
+
+<!--- BRANCHES --->
+<cfset branches = ArrayNew(1)>
+<cfset ArrayAppend(branches, 'All')>
+<cfquery name="get_branches" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
+  SELECT * FROM branches
+  WHERE branch_visible_to_payroll=1
+  ORDER BY branch_name
+</cfquery>
+<cfloop query="get_branches">
+    <cfset ArrayAppend(branches, branch_name)>
+</cfloop>
+<cfset ArrayAppend(branches, 'Corporate')>
+
+<cfquery name="app_payroll_periods_C" datasource="jrgm">
+ SELECT  MIN(pay_period_start) as pay_period_start, MAX(pay_period_end) AS pay_period_end
+ FROM app_pay_periods WHERE pay_period_number = #pay_period_number_visible#
+</cfquery>
+
 <cfquery name="get_all_employees" datasource="jrgm">
 SELECT     [Employee ID] AS employee_id, branch,[Name FirstLast] AS empname
 FROM         app_employees
  </cfquery>
-<cfquery name="get_all_app_job_services_actual_employee" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
-SELECT * FROM app_job_services_actual_employee
-WHERE Job_ID IS NULL
-</cfquery>
-<cfquery name="sum_all_app_job_services_actual_employee" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
-SELECT SUM(Total_Time) as sum FROM app_job_services_actual_employee
-WHERE Job_ID IS NULL
-</cfquery>
 
+<!--- CALCULATE DEAD TIME BY BRANCH, tricky because dead time has no job or date or daily sheet associated with it--->
+<cfset current_dead_time = 0>
+<cfquery name="get_current_dead_time_start_id" datasource="jrgm">
+    SELECT TOP 1 ajsae.ID FROM app_job_services_actual_employee ajsae
+    INNER JOIN app_employees ae ON ae.[Employee ID]=ajsae.employee_id
+    WHERE Service_Time_In >= '#DateFormat(app_payroll_periods_C.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000'
+    <cfif branch NEQ ''>AND ae.branch='#branch#'</cfif>
+</cfquery>
+<cfif get_current_dead_time_start_id.recordcount GT 0>
+    <cfquery name="get_all_app_job_services_actual_employee" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
+        SELECT * FROM app_job_services_actual_employee ajsae
+        INNER JOIN app_employees ae ON ae.[Employee ID]=ajsae.employee_id
+        WHERE Job_ID IS NULL
+        AND Total_Time > 0
+        AND ajsae.ID>#get_current_dead_time_start_id.ID#
+        <cfif branch NEQ ''>AND ae.branch='#branch#'</cfif>
+    </cfquery>
+    <cfquery name="sum_all_app_job_services_actual_employee" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
+        SELECT SUM(Total_Time) as sum FROM app_job_services_actual_employee ajsae
+        INNER JOIN app_employees ae ON ae.[Employee ID]=ajsae.employee_id
+        WHERE Job_ID IS NULL
+        AND Total_Time > 0
+        AND ajsae.ID>#get_current_dead_time_start_id.ID#
+        <cfif branch NEQ ''>AND ae.branch='#branch#'</cfif>
+    </cfquery>
+</cfif>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -65,10 +112,24 @@ td {
     <div class="centrecontent_inner">
       <table border="0" cellspacing="0" cellpadding="0">
         <tr>
-          <td class="header">Dead Time Report</td>
+          <td class="header">
+              <cfoutput>
+              Dead Time Report:
+              <select onChange="window.location='payroll_manager_deadtime.cfm?branch='+this.value+'&pay_period=#pay_period_number_visible#';">
+                  <cfloop from="1" to="#arrayLen(branches)#" index="i">
+                      <cfset branch_name = branches[i]>
+                      <option value="#branch_name#"<cfif branch_name EQ branch> selected</cfif>>#branch_name#</option>
+                  </cfloop>
+              </select>
+              </cfoutput>
+          </td>
         </tr>
       </table>     
 <br />
+<cfif get_current_dead_time_start_id.recordcount EQ 0 OR sum_all_app_job_services_actual_employee.sum EQ ''>
+    No dead time found for this branch during the current pay period.
+    <cfabort>
+</cfif>
 <cfoutput>
 <strong class="arialfontbold">DEAD TIME (no associated Job ID)<b>: #get_all_app_job_services_actual_employee.recordcount# records<br />
 Total Hours: #sum_all_app_job_services_actual_employee.sum/60#, Average Hours Per Entry: #(sum_all_app_job_services_actual_employee.sum/60/get_all_app_job_services_actual_employee.recordcount)#<br />

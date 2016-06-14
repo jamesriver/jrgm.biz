@@ -1,15 +1,34 @@
 <!--- get branches for select dropdowns --->
 <!---cfdump var="#SESSION#"><cfabort--->
 
+<cfset user_is_admin = 0>
+<cfset user_access_role = 1>
+<cfset user_employee_id = 0>
+
 <cfif SESSION.access_role EQ 9 OR SESSION.access_role EQ 10 OR SESSION.access_role EQ 94 OR SESSION.access_role EQ 95 OR SESSION.access_role EQ 96 OR SESSION.access_role EQ 98 OR SESSION.access_role EQ 99>
     <cfset user_is_admin = 1>
     <cfset user_access_role = 9>
 <cfelseif SESSION.access_role EQ 1> <!---supervisor--->
-    <cfset user_is_admin = 0>
-    <cfset user_access_role = 1>
+    <!--- keep default values set above --->
 <cfelse>
     Access denied.
     <cfabort>
+</cfif>
+
+<cfif IsDefined('url.employee_id')>
+    <cfset user_employee_id = url.employee_id>
+<cfelseif user_is_admin EQ 0 OR SESSION.access_role EQ 9>
+    <cfset user_employee_id = SESSION.userid>
+</cfif>
+
+<cfif user_employee_id NEQ 0>
+    <cfquery name="get_employee" datasource="jrgm">
+        SELECT [Name FirstLast] as employee_name, branch as employee_branch FROM app_employees
+        WHERE [Employee ID]=#user_employee_id#
+    </cfquery>
+    <cfset user_employee_name = get_employee.employee_name>
+    <cfset user_employee_branch = get_employee.employee_branch>
+<cfelse>
 </cfif>
 
 <cfquery name="get_branches" datasource="jrgm"  >
@@ -104,13 +123,18 @@
 
       <!-- BEGIN PAGE CONTENT INNER -->
 
+      <cfoutput>
       <div class="row">
         <div class="col-md-12">
             <form method="post">
               <table class="table large">
                 <tr>
-                  <td nowrap="nowrap" align="right">Choose Branch&nbsp;</td>
-                  <td><span id="span_main_branch"></span></td>
+                  <cfif user_is_admin EQ 1 AND SESSION.access_role NEQ 9>
+                      <td nowrap="nowrap" align="right">Choose Branch&nbsp;</td>
+                      <td><span id="span_main_branch"></span></td>
+                  <cfelse>
+                      <td nowrap="nowrap" align="center"><b>#user_employee_name# (#user_employee_id#) [#user_employee_branch#]</b></td>
+                  </cfif>
                 </tr>
               </table>
             </form>
@@ -124,6 +148,7 @@
             </table>
         </div>
       </div>
+      </cfoutput>
     </div>
     <!-- END PAGE CONTENT INNER -->
   </div>
@@ -196,6 +221,7 @@
 
     var user_branch = '<cfoutput>#SESSION.branch#</cfoutput>';
     var user_access_role = <cfoutput>#user_access_role#</cfoutput>;
+    var user_employee_id = <cfoutput>#user_employee_id#</cfoutput>;
     var user_is_admin = <cfoutput>#user_is_admin#</cfoutput>;
     var user_supervisor_id = <cfoutput>#SESSION.userid#</cfoutput>;
 
@@ -222,20 +248,23 @@
 
     function populateBranchSelect(spanId, branch) {
         var html = '';
-        currentBranch = '';
+        user_branch = '';
         html += '<select name="'+spanId+'" class="bs-select form-control" onChange="getSupervisorsAndCrewLeaders(this.value)">';
         for(var i=0; i<branches.length; i++) {
             var b = branches[i];
             if (b.name == branch)
-                currentBranch = branch;
+                user_branch = branch;
             html += '<option value="'+b.name+'"'+(b.name == branch?' selected':'')+'>'+b.name+'</option>';
         }
         html += '</select>';
-        document.getElementById('span_'+spanId+'_branch').innerHTML = html;
+        $('#span_'+spanId+'_branch').html(html);
 
-        if (!currentBranch)
-            currentBranch = branches[0].name;
-        getSupervisorsAndCrewLeaders(currentBranch);
+        if (!user_branch)
+            user_branch = branches[0].name;
+        if (user_is_admin)
+            getSupervisorsAndCrewLeaders(user_branch);
+        else
+            getCrewLeadersAndCrewMembers(user_employee_id);
     }
 
     function getSupervisorsAndCrewLeaders(branch) {
@@ -429,7 +458,7 @@
                         {
                             if (!crew_members[ob[3]])
                                 crew_members[ob[3]] = [];
-                            crew_members[ob[3]].push({ employee_name: ob[1], employee_id: ob[2], crew_leader_id: ob[3], supervisor_id: ob[4] });
+                            crew_members[ob[3]].push({ employee_name: ob[1], employee_id: ob[2], crew_leader_id: ob[3], supervisor_id: ob[4], employee_branch: ob[5] });
                         }                            
                     }
                     buildSupervisorVersion();
@@ -460,14 +489,17 @@
         if (!s) return;
 
         var html = '';
-        html += '<table style="border: 1px solid black">';
-        html += '<tr>';
-        html += '<td style="cursor: pointer; padding: 15px; background-color: #999999; color: #FFFFFF; font-weight: bold; border-bottom: 1px solid black" onmouseover="this.style.backgroundColor=\'#FFFF00\'; this.style.color = \'black\'" onmouseout="this.style.backgroundColor=\'#999999\'" onClick="getSupervisorsAndCrewLeaders(\''+user_branch+'\')">'+showEmployeeName(s.employee_id)+'</td>';
-        html += '</tr>';
-        html += '</table>';
-        html += '<b>NOTE:</b>&nbsp;Click the button above to return to overview view for '+user_branch+'.';
-        html += '<br />';
-        html += '<br />';
+        if (user_is_admin)
+        {
+            html += '<table style="border: 1px solid black">';
+            html += '<tr>';
+            html += '<td style="cursor: pointer; padding: 15px; background-color: #999999; color: #FFFFFF; font-weight: bold; border-bottom: 1px solid black" onmouseover="this.style.backgroundColor=\'#FFFF00\'; this.style.color = \'black\'" onmouseout="this.style.backgroundColor=\'#999999\'" onClick="getSupervisorsAndCrewLeaders(\''+user_branch+'\')">'+showEmployeeName(s.employee_id)+'</td>';
+            html += '</tr>';
+            html += '</table>';
+            html += '<b>NOTE:</b>&nbsp;Click the button above to return to overview view for '+user_branch+'.';
+            html += '<br />';
+            html += '<br />';
+        }
 
         $('#div_supervisor').html(html);
 
@@ -494,8 +526,13 @@
                 for(var ii=0; ii<cms.length; ii++)
                 {
                     var cm = cms[ii];
+                    var employee_label = showEmployeeName(cm.employee_id);
+                    if (cm.employee_branch != user_branch)
+                    {
+                        employee_label += ' <font color="#0000AA"><b>['+cm.employee_branch+']</b></font>';
+                    }
                     html += '<tr>';
-                    html += '<td style="cursor: pointer; padding: 15px" onmouseover="this.style.backgroundColor=\'#00AA00\'" onmouseout="this.style.backgroundColor=\'#FFFFFF\'" onClick="popUpMoveCrewMember('+cm.employee_id+')">'+showEmployeeName(cm.employee_id)+'</td>';
+                    html += '<td style="cursor: pointer; padding: 15px" onmouseover="this.style.backgroundColor=\'#00AA00\'" onmouseout="this.style.backgroundColor=\'#FFFFFF\'" onClick="popUpMoveCrewMember('+cm.employee_id+')">'+employee_label+'</td>';
                     html += '</tr>';
                 }
             }
