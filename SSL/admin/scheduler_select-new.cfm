@@ -1,4 +1,4 @@
-<cflocation url="scheduler_select_m.cfm">
+<cflocation url="/SSL/scheduler/crew_assignments.cfm">
 <cfabort>
 
 <CFIF IsDefined("url.work_date")>

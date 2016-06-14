@@ -132,6 +132,26 @@
             <cfabort>
         </cfif>
     </cfcase>
+    <cfcase value="getCrewMembersFromAllBranches">
+        <cfif IsDefined('form.branch')>
+            <cfset access_roles = '0,6,7'>
+
+            <!--- RETRIEVE APP_CREWS BY BRANCH AND ACCESS_ROLES --->
+            <cfquery name="get_app_crews" datasource="jrgm">
+                SELECT Employee_Position_ID, crew_name, employee_id, ae.[Name FirstLast] as crew_leader_name, acn.crew_leader_id, acn.employee_branch FROM app_crews_new acn
+                LEFT JOIN app_employees ae ON ae.[Employee ID]=acn.crew_leader_id
+                WHERE
+                <cfif SESSION.branch EQ 'test'>
+                <cfelse>
+                    acn.employee_branch!='test' AND
+                </cfif>
+                acn.Employee_Position_ID IN (#access_roles#)
+                ORDER BY acn.employee_branch, acn.crew_name
+            </cfquery>
+            <cfoutput>#serializejson(get_app_crews)#</cfoutput>
+            <cfabort>
+        </cfif>
+    </cfcase>
 </cfswitch>
 
 <cfoutput>#serializejson(ArrayNew(1))#</cfoutput>
