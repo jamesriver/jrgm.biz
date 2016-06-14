@@ -126,8 +126,11 @@
             <td align="left">#employee_id#</td>
             <td align="left">#full_name#</td>
             <td align="left">#branch#</td>
-            <cfif access_role_id EQ 9 OR access_role_id EQ 1>
+            <cfif access_role_id EQ 9>
                 <td align="left"><a href="/SSL/scheduler/crew_assignments.cfm?branch=#branch#" target="_blank">Crews</a></td>
+            </cfif>
+            <cfif access_role_id EQ 1>
+                <td align="left"><a href="/SSL/scheduler/crew_assignments.cfm?branch=#branch#&employee_id=#employee_id#" target="_blank">Crews</a></td>
             </cfif>
             <cfif access_role_id EQ 2 OR access_role_id EQ 6 OR access_role_id EQ 7>
                 <td><cfif StructKeyExists(employees, supervisor_id)>#employees[supervisor_id]#<cfelse>[ Unassigned ]</cfif></td>
@@ -266,6 +269,19 @@
         html += '<td align="left" width="50%" style="padding: 10px"><input id="employee_active" type="checkbox" value="1"'+(employee.employee_active==1?' checked':'')+'></td>';
         html += '</tr>';
         html += '<tr>';
+        html += '<td align="right" width="50%" style="padding: 10px"><b>Access Role:</b></td>';
+        html += '<td align="left" width="50%" style="padding: 10px">';
+        html += '<select id="access_role" onChange="showAccessRoleNote(\''+employee.access_role+'\', this.value)">';
+        for(var i in access_roles_select)
+        {
+            var access_role = access_roles_select[i];
+            html += '<option value="'+access_role[0]+'"'+(employee.access_role==access_role[0]?' selected':'')+'>'+access_role[1]+'</option>';
+        }
+        html += '</select>';
+        html += '<br /><span id="access_role_note" style="font-size: 8pt; color: #0000AA; display: none"><i>make sure this value is also updated in ADP<br />this may affect crew assignments so remember to check afterwards</i></span>';
+        html += '</td>';
+        html += '</tr>';
+        html += '<tr>';
         html += '<td align="right" width="50%" style="padding: 10px"><b>Branch:</b></td>';
         html += '<td align="left" width="50%" style="padding: 10px">';
         html += '<select id="branch" onChange="showBranchNote(\''+employee.branch+'\', this.value)">';
@@ -306,6 +322,19 @@
             $('#branch_note').hide();
         }
     }
+    
+    function showAccessRoleNote(original_access_role, new_access_role)
+    {
+        console.log(original_access_role + ' ?= ' + new_access_role);
+        if (original_access_role != new_access_role)
+        {
+            $('#access_role_note').show();
+        }
+        else
+        {
+            $('#access_role_note').hide();
+        }
+    }
 
     function saveEmployee()
     {
@@ -314,6 +343,7 @@
         var username = $('#username').val();
         var password = $('#password').val();
         var branch = $('#branch').val();
+        var access_role = $('#access_role').val();
 
         var html = 'Saving... please wait.';
         showPopup(html);
@@ -321,7 +351,7 @@
         $.ajax({
             url: 'scheduler_select_m_ajax.cfm',
             dataType: 'json',
-            data: { 'ajaxAction': 'saveEmployee', 'employee_id': employee_id, 'employee_active': employee_active, 'username': username, 'password': password, 'branch': branch },
+            data: { 'ajaxAction': 'saveEmployee', 'employee_id': employee_id, 'employee_active': employee_active, 'username': username, 'password': password, 'branch': branch, 'access_role': access_role },
             success: function(data) {
                 if (data.error)
                 {

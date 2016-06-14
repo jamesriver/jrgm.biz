@@ -36,6 +36,7 @@
                     , password='#form.password#'
                     , password_date=CASE WHEN '#form.password#' != password THEN GetDate() ELSE password_date END
                     , branch='#form.branch#'
+                    , access_role=#form.access_role#
                 WHERE employee_id=#form.employee_id#
             </cfoutput>
             <cfabort--->
@@ -46,6 +47,7 @@
                     , password=<cfqueryparam value="#form.password#" CFSQLType="CF_SQL_TEXT">
                     , password_date=CASE WHEN <cfqueryparam value="#form.password#" CFSQLType="CF_SQL_TEXT"> != password THEN GetDate() ELSE password_date END
                     , employee_branch=<cfqueryparam value="#form.branch#" CFSQLType="CF_SQL_TEXT">
+                    , access_role=<cfqueryparam value="#form.access_role#" CFSQLType="CF_SQL_INTEGER">
                 WHERE employee_id=<cfqueryparam value="#form.employee_id#" CFSQLType="CF_SQL_INTEGER">
             </cfquery>
 
@@ -72,6 +74,7 @@
                 SET supervisor_id=CASE WHEN <cfqueryparam value="#form.branch#" CFSQLType="CF_SQL_TEXT"> != employee_branch THEN <cfqueryparam value="#bm_id#" CFSQLType="CF_SQL_INTEGER"> ELSE supervisor_id END
                     , employee_branch=<cfqueryparam value="#form.branch#" CFSQLType="CF_SQL_TEXT">
                     , active_record=<cfqueryparam value="#form.employee_active#" CFSQLType="CF_SQL_INTEGER">
+                    , employee_position_id=<cfqueryparam value="#form.access_role#" CFSQLType="CF_SQL_INTEGER">
                 WHERE employee_id=<cfqueryparam value="#form.employee_id#" CFSQLType="CF_SQL_INTEGER">
             </cfquery>
 
@@ -80,6 +83,7 @@
                 SET supervisor_id=CASE WHEN <cfqueryparam value="#form.branch#" CFSQLType="CF_SQL_TEXT"> != employee_branch THEN <cfqueryparam value="#bm_id#" CFSQLType="CF_SQL_INTEGER"> ELSE supervisor_id END
                     , employee_branch=<cfqueryparam value="#form.branch#" CFSQLType="CF_SQL_TEXT">
                     , active_record=<cfqueryparam value="#form.employee_active#" CFSQLType="CF_SQL_INTEGER">
+                    , employee_position_id=<cfqueryparam value="#form.access_role#" CFSQLType="CF_SQL_INTEGER">
                 WHERE employee_id=<cfqueryparam value="#form.employee_id#" CFSQLType="CF_SQL_INTEGER">
             </cfquery>
 

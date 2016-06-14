@@ -25,6 +25,16 @@ SELECT DISTINCT employee_id  FROM app_employee_payroll_clock
 <cfloop query="get_all_employees_onthisDS">
   <cfset myList = ListAppend(mylist,Employee_ID)>
 </cfloop>
+
+<cfquery name="get_ds" datasource="jrgm">
+SELECT   * FROM app_daily_sheets  WHERE ID=#url.dsid#
+</cfquery>
+<cfif get_ds.recordcount EQ 0>
+    Invalid Daily Sheet.
+    <cfabort>
+</cfif>
+<cfset myList = myList & ',' & get_ds.supervisor_id & ',' & get_ds.crew_leader_id>
+
 <cfquery name="get_all_employees" datasource="jrgm"  >
 SELECT first_name,last_name,branch,position,[Employee ID] As employee_id,  [Name FirstLast] AS fullname  FROM APP_employees
 WHERE   [Employee ID]  IN (#mylist#)
@@ -137,9 +147,6 @@ WHERE ds_id =#dsid#
  SELECT   ds_id, supervisor FROM APP_Employee_Payroll_Clock  
  WHERE in_out_status=1 AND time_out IS NULL AND ds_id = #url.dsid# AND CAST(Time_In as date) = '#DateFormat(now(), 'yyyy-mm-dd')#'
  </cfquery>
-<cfquery name="get_ds" datasource="jrgm">
-SELECT   * FROM app_daily_sheets  WHERE ID=#url.dsid#   
-</cfquery>
 <CFSET ds_date =  get_ds.ds_date>
 <CFSET supervisor_id =  get_ds.supervisor_id>
 <CFSET crew_leader_id =  get_ds.crew_leader_id>
@@ -367,7 +374,7 @@ FROM         dbo.app_services
             </thead>
             <tbody>
               <cfquery name="get_employees_for_Crew_Leader" datasource="jrgm">
-				SELECT DISTINCT [Employee ID] As employee_id,[Name FirstLast] AS employee_name, position,last_name  FROM APP_employees
+				SELECT DISTINCT [Employee ID] As employee_id, [Name FirstLast] AS employee_name, position, last_name, branch  FROM APP_employees
 				WHERE [Employee ID] IN 
 				(SELECT Employee_ID FROM  app_employee_payroll_clock WHERE  ds_id = #dsid#) 
 				 ORDER by last_name ASC
@@ -378,7 +385,7 @@ FROM         dbo.app_services
                   <td width="25" align="center"><cfif ds_date GT #APPLICATION.blockdate#>
                       <a href="daily_sheet_edit_employee_time2.cfm?ds_id=#dsid#&Employee_ID=#get_employees_for_Crew_Leader.Employee_ID#"><i class="fa-orange fa-pencil-square"></i></a>
                     </cfif></td>
-                  <td>#employee_name#</td>
+                  <td>#employee_name#<cfif branch NEQ SESSION.branch> [#branch#]</cfif></td>
                   <cfquery name="get_number_of_times" datasource="jrgm">
  				 SELECT Employee_ID,COUNT(Employee_ID) AS cid FROM  app_employee_payroll_clock WHERE Employee_ID =#get_employees_for_Crew_Leader.Employee_ID# AND ds_id = #dsid#
                  GROUP by Employee_ID
