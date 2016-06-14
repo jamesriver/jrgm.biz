@@ -429,7 +429,7 @@
                         {
                             if (!crew_members[ob[3]])
                                 crew_members[ob[3]] = [];
-                            crew_members[ob[3]].push({ employee_name: ob[1], employee_id: ob[2], crew_leader_id: ob[3], supervisor_id: ob[4] });
+                            crew_members[ob[3]].push({ employee_name: ob[1], employee_id: ob[2], crew_leader_id: ob[3], supervisor_id: ob[4], employee_branch: ob[5] });
                         }                            
                     }
                     buildSupervisorVersion();
@@ -494,8 +494,13 @@
                 for(var ii=0; ii<cms.length; ii++)
                 {
                     var cm = cms[ii];
+                    var employee_label = showEmployeeName(cm.employee_id);
+                    if (cm.employee_branch != user_branch)
+                    {
+                        employee_label += ' <font color="#0000AA"><b>['+cm.employee_branch+']</b></font>';
+                    }
                     html += '<tr>';
-                    html += '<td style="cursor: pointer; padding: 15px" onmouseover="this.style.backgroundColor=\'#00AA00\'" onmouseout="this.style.backgroundColor=\'#FFFFFF\'" onClick="popUpMoveCrewMember('+cm.employee_id+')">'+showEmployeeName(cm.employee_id)+'</td>';
+                    html += '<td style="cursor: pointer; padding: 15px" onmouseover="this.style.backgroundColor=\'#00AA00\'" onmouseout="this.style.backgroundColor=\'#FFFFFF\'" onClick="popUpMoveCrewMember('+cm.employee_id+')">'+employee_label+'</td>';
                     html += '</tr>';
                 }
             }

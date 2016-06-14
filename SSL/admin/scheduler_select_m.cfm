@@ -5,13 +5,14 @@
 
 <cfset todayDate = Now()>
 <cfquery name="get_employees" datasource="jrgm">
-  SELECT ae.[Employee ID] as employee_id, ae.branch, ae.[Name FirstLast] as full_name, ae.last_name, aep.employee_active, CASE WHEN ar.name IS NULL THEN 'Crew Member' ELSE ar.name END as access_role_name, CASE WHEN ar.access_role_id IS NULL THEN 0 ELSE ar.access_role_id END as access_role_id, ac.supervisor_id, ac.crew_leader_id FROM app_employees ae
+  SELECT ae.*, ae.[Employee ID] as employee_id, ae.[Name FirstLast] as full_name, aep.employee_active, aep.username, aep.password, aep.access_role, CASE WHEN ar.name IS NULL THEN CASE WHEN ac.employee_id IS NULL THEN 'No Employee Login' ELSE 'Crew Member' END ELSE ar.name END as access_role_name, CASE WHEN ar.access_role_id IS NULL THEN CASE WHEN ac.employee_id IS NULL THEN -1 ELSE 0 END ELSE ar.access_role_id END as access_role_id, ac.supervisor_id, ac.crew_leader_id FROM app_employees ae
   LEFT JOIN app_employee_passwords aep ON aep.employee_id=ae.[Employee ID]
   LEFT JOIN access_roles ar ON ar.access_role_id=aep.access_role
   LEFT JOIN app_crews_new ac ON ac.employee_id=ae.[Employee ID]
   WHERE ae.active_record=1 AND ae.branch <>'Test'
-  ORDER BY CASE WHEN ar.access_role_id IS NULL THEN 110 ELSE ar.displayorder END, ae.branch, ae.last_name
+  ORDER BY CASE WHEN ar.access_role_id IS NULL THEN CASE WHEN ac.employee_id IS NULL THEN -1 ELSE 110 END ELSE ar.displayorder END, ae.branch, ae.first_name
 </cfquery>
+<cfset employees_for_insert = ArrayNew(1)>
 <cfset employee_counts = StructNew()>
 <cfset employee_total = 0>
 <cfloop query="get_employees">
@@ -21,7 +22,9 @@
         <cfset employee_counts[access_role_id]++>
     </cfif>
     <cfset employee_total++>
+    <cfset ArrayAppend(employees_for_insert, [full_name, first_name, last_name, employee_id, username, password, branch, email, access_role_id, access_role_name])>
 </cfloop>
+<!---cfdump var="#employees_for_insert#"><cfabort--->
 
 <cfquery name="get_all_employees" datasource="jrgm">
   SELECT ae.[Employee ID] as employee_id, ae.[Name FirstLast] as full_name FROM app_employees ae
@@ -30,6 +33,18 @@
 <cfloop query="get_all_employees">
     <cfset employees[employee_id] = full_name>
 </cfloop>
+
+<cfquery name="get_access_roles" datasource="jrgm">
+  SELECT * FROM access_roles
+  ORDER BY displayorder
+</cfquery>
+
+<cfquery name="get_branches" datasource="jrgm">
+  SELECT * FROM branches
+  WHERE branch_active=1
+  AND branch_visible_to_select=1
+  ORDER BY branch_name
+</cfquery>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -62,14 +77,18 @@
           <td class="subbartxt">Welcome: Level Access</td>
           <td width="42"><!--<a href="supervisors/setting.cfm" class="first"><img src="images/icon_settings.png" width="42" height="36" alt="Settings" /></a>--></td>
           <td width="20"><img src="images/clear.gif" width="20" height="2" alt="" /></td>
+          <td class="subbartxt" width="200" align="right">  <a href="default.cfm">Home</a><img src="images/clear.gif" width="20" height="2" alt="" /></td>
+
         </tr>
       </table>
     </div>
     <cfinclude template="includes/topbar.cfm">
     <!--centre content goes here -->
     <div class="centrecontent_inner">
-    Total Active Employees in Biz: <cfoutput>#employee_total#</cfoutput><br />
-
+    Total Employee Logins in Biz: <cfoutput>#employee_total#</cfoutput><br />
+    <cfif is_admin EQ 1>
+        <center><input type="button" value="Add Employee Login" onClick="popUpAddEmployee()"></center>
+    </cfif>
     <cfset last_access_role_id = ''>
     <cfoutput query="get_employees">
       <cfif last_access_role_id NEQ access_role_id>
@@ -95,7 +114,7 @@
                     <cfif access_role_id EQ 0>
                         <th align="left">Supervisor/Crew Leader</th>
                     </cfif>
-                    <cfif is_admin EQ 1 AND access_role_id NEQ 0>
+                    <cfif is_admin EQ 1 AND access_role_id GT 0>
                         <th align="left">Home</th>
                         <th align="left">Edit</th>
                     </cfif>
@@ -116,7 +135,7 @@
             <cfif access_role_id EQ 0>
                 <td><cfif StructKeyExists(employees, crew_leader_id)>#employees[crew_leader_id]#<cfelse>[ Unassigned ]</cfif></td>
             </cfif>
-            <cfif is_admin EQ 1 AND access_role_id NEQ 0>
+            <cfif is_admin EQ 1 AND access_role_id GT 0>
                 <td><a href="do_loginnew.cfm?employee_ID=#employee_id#&schedchoice=home" target="_blank">Home</a></td>
                 <td><input type="button" value="Edit" onClick="editEmployee(#employee_id#)"></td>
             </cfif>
@@ -151,6 +170,35 @@
 
 <cfif is_admin>
 <script>
+    var employees = {};
+    var employees_select = [];
+    //[full_name, first_name, last_name, employee_id, username, password, branch, email, access_role_id, access_role_name]
+    <cfoutput>
+    <cfloop from="1" to="#arrayLen(employees_for_insert)#" index="i">
+        <cfset employee = employees_for_insert[i]>
+        employees[#employee[4]#] = { full_name: '#Replace(employee[1], "'", "\\'", "ALL")#', first_name: '#Replace(employee[2], "'", "\\'", "ALL")#', last_name: '#Replace(employee[3], "'", "\\'", "ALL")#', employee_id: '#employee[4]#', username: '#Replace(employee[5], "'", "\\'", "ALL")#', password: '#Replace(employee[6], "'", "\\'", "ALL")#', branch: '#employee[7]#', email: '#employee[8]#', 'access_role': '#employee[9]#', access_role_name: '#employee[10]#' };
+        employees_select.push([employees[#employee[4]#].employee_id, employees[#employee[4]#].full_name]);
+    </cfloop>
+    </cfoutput>
+    employees_select.sort(function(a, b){
+         var nameA=a[1].toLowerCase(), nameB=b[1].toLowerCase()
+         if (nameA < nameB) //sort string ascending
+          return -1
+         if (nameA > nameB)
+          return 1
+         return 0 //default return value (no sorting)
+    })
+
+    var access_roles_select = [];
+    <cfoutput query="get_access_roles">
+        access_roles_select.push([#access_role_id#, '#name#']);</cfoutput>
+
+    var branches = {};
+    var branches_select = [];
+    <cfoutput query="get_branches">
+        branches['#branch_name#'] = { branch_abbr: '#branch_abbr#'};
+        branches_select.push(['#branch_name#', '#branch_name#']);</cfoutput>
+
     function showPopup(html)
     {
         if (html)
@@ -167,6 +215,8 @@
 
     function editEmployee(employee_id)
     {
+        showPopup('Loading... please wait.');
+
         $.ajax({
             url: 'scheduler_select_m_ajax.cfm',
             dataType: 'json',
@@ -196,10 +246,11 @@
             'password': data[5],
             'access_role': data[6],
             'password_date': data[7],
-            'supervisor_name': data[8]
+            'supervisor_name': data[8],
+            'branch': data[9]
         };
 
-        console.log(data);
+        //console.log(employee);
 
         var html = '<table cellspacing="0" align="center" style="width: 50%; border: 1px solid black">';
         html += '<input type="hidden" id="employee_id" value="'+employee.employee_id+'">';
@@ -213,6 +264,19 @@
         html += '<tr>';
         html += '<td align="right" width="50%" style="padding: 10px"><b>Active Biz Login:</b></td>';
         html += '<td align="left" width="50%" style="padding: 10px"><input id="employee_active" type="checkbox" value="1"'+(employee.employee_active==1?' checked':'')+'></td>';
+        html += '</tr>';
+        html += '<tr>';
+        html += '<td align="right" width="50%" style="padding: 10px"><b>Branch:</b></td>';
+        html += '<td align="left" width="50%" style="padding: 10px">';
+        html += '<select id="branch" onChange="showBranchNote(\''+employee.branch+'\', this.value)">';
+        for(var i in branches_select)
+        {
+            var branch = branches_select[i];
+            html += '<option value="'+branch[0]+'"'+(employee.branch==branch[0]?' selected':'')+'>'+branch[1]+'</option>';
+        }
+        html += '</select>';
+        html += '<br /><span id="branch_note" style="font-size: 8pt; color: #0000AA; display: none"><i>make sure this value is also updated in ADP</i></span>';
+        html += '</td>';
         html += '</tr>';
         html += '<tr>';
         html += '<td align="right" width="50%" style="padding: 10px"><b>Username:</b></td>';
@@ -230,12 +294,26 @@
         showPopup(html);
     }
 
+    function showBranchNote(original_branch, new_branch)
+    {
+        console.log(original_branch + ' ?= ' + new_branch);
+        if (original_branch != new_branch)
+        {
+            $('#branch_note').show();
+        }
+        else
+        {
+            $('#branch_note').hide();
+        }
+    }
+
     function saveEmployee()
     {
         var employee_id = $('#employee_id').val();
         var employee_active = $('#employee_active').prop('checked')?1:0;
         var username = $('#username').val();
         var password = $('#password').val();
+        var branch = $('#branch').val();
 
         var html = 'Saving... please wait.';
         showPopup(html);
@@ -243,7 +321,7 @@
         $.ajax({
             url: 'scheduler_select_m_ajax.cfm',
             dataType: 'json',
-            data: { 'ajaxAction': 'saveEmployee', 'employee_id': employee_id, 'employee_active': employee_active, 'username': username, 'password': password },
+            data: { 'ajaxAction': 'saveEmployee', 'employee_id': employee_id, 'employee_active': employee_active, 'username': username, 'password': password, 'branch': branch },
             success: function(data) {
                 if (data.error)
                 {
@@ -252,6 +330,148 @@
                 }
                 else
                 {
+                    window.location = 'scheduler_select_m.cfm';
+                }
+            }
+        });
+    }
+
+    function popUpAddEmployee()
+    {
+        var html = '<table cellspacing="0" align="center" style="width: 50%; border: 1px solid black">';
+        html += '<tr>';
+        html += '<td colspan="2" align="center" style="padding: 10px; border-top: 1px solid black; border-bottom: 2px solid black; background-color: #999999; color: #FFFFFF">Adding Employee Login</td>';
+        html += '</tr>';
+        html += '<tr>';
+        html += '<td align="right" width="50%" style="padding: 10px"><b>Choose Employee:</b></td>';
+        html += '<td align="left" width="50%" style="padding: 10px">';
+        html += '<select id="add_employee" onChange="updateAddEmployee(this.value)">';
+        html += '<option value="">[ Choose one ]</option>';
+        for(var i in employees_select)
+        {
+            var employee = employees[employees_select[i][0]];
+            html += '<option value="'+employee.employee_id+'">'+employee.full_name+' ('+employee.employee_id+') ['+employee.branch+'] |'+employee.access_role_name+'|</option>';
+        }
+        html += '</select>';
+        html += '<br /><span style="font-size: 8pt"><i>must be added in ADP first</i>';
+        html += '</td>';
+        html += '</tr>';
+        html += '<tr>';
+        html += '<td align="right" width="50%" style="padding: 10px"><b>Employee ID:</b></td>';
+        html += '<td align="left" width="50%" style="padding: 10px"><input id="add_employee_id"></td>';
+        html += '</tr>';
+        html += '<tr>';
+        html += '<td align="right" width="50%" style="padding: 10px"><b>Login Employee ID:</b></td>';
+        html += '<td align="left" width="50%" style="padding: 10px"><input id="add_employee_id_new"></td>';
+        html += '</tr>';
+        html += '<tr>';
+        html += '<td align="right" width="50%" style="padding: 10px"><b>Branch:</b></td>';
+        html += '<td align="left" width="50%" style="padding: 10px">';
+        html += '<select id="add_branch" onChange="changeBranch(this.value)">';
+        html += '<option value="">[ Choose one ]</option>';
+        for(var i in branches_select)
+        {
+            var branch = branches_select[i];
+            html += '<option value="'+branch[0]+'">'+branch[1]+'</option>';
+        }
+        html += '</select>';
+        html += '</td>';
+        html += '</tr>';
+        html += '<tr>';
+        html += '<td align="right" width="50%" style="padding: 10px"><b>Access Role:</b></td>';
+        html += '<td align="left" width="50%" style="padding: 10px">';
+        html += '<select id="add_access_role">';
+        html += '<option value="">[ Choose one ]</option>';
+        for(var i in access_roles_select)
+        {
+            var access_role = access_roles_select[i];
+            html += '<option value="'+access_role[0]+'">'+access_role[1]+'</option>';
+        }
+        html += '</select>';
+        html += '</td>';
+        html += '</tr>';
+        html += '<tr>';
+        html += '<td align="right" width="50%" style="padding: 10px"><b>Username:</b></td>';
+        html += '<td align="left" width="50%" style="padding: 10px"><input id="add_username"></td>';
+        html += '</tr>';
+        html += '<tr>';
+        html += '<td align="right" width="50%" style="padding: 10px"><b>Password:</b></td>';
+        html += '<td align="left" width="50%" style="padding: 10px"><input id="add_password"></td>';
+        html += '</tr>';
+        html += '<tr>';
+        html += '<tr>';
+        html += '<td colspan="2" align="center" style="padding: 10px"><input id="add_submit" type="button" value="Add Employee Login" onClick="if (confirm(\'Add this employee login?\')) addEmployee()">&nbsp;&nbsp;&nbsp;<input type="button" value="Cancel" onClick="hidePopup()"></td>';
+        html += '</tr>';
+        html += '</table>';
+        showPopup(html);
+    }
+
+    function updateAddEmployee(employee_id)
+    {
+        var employee = employees[employee_id];
+        $('#add_employee_id').val(employee.employee_id);
+        $('#add_employee_id_new').val(employee.employee_id);
+        if (employee.username)
+        {
+            //a login already exists for this user
+            $('#add_access_role').val(employee.access_role);
+            $('#add_username').val(employee.username);
+            $('#add_password').val(employee.password);
+            $('#add_branch').val(employee.branch);
+        }
+        else
+        {
+            //this user does not yet have a login
+            $('#add_access_role').val('');
+            $('#add_username').val((employee.first_name.substring(0, 1).toLowerCase()+employee.last_name.toLowerCase()).replace(/[^a-zA-Z]/g, ''));
+            $('#add_password').val('corpjrgm'+employee.employee_id);
+            $('#add_branch').val('');
+        }
+    }
+
+    function changeBranch(branch)
+    {
+        //check to see if this employee might be getting added to a new branch
+        var employee_id = $('#add_employee').val();
+        var employee = employees[employee_id];
+        if (employee.username)
+        {
+            if (employee.branch != branch)
+            {
+                $('#add_employee_id_new').val(employee_id+'1');
+                $('#add_username').val(employee.username+branches[branch].branch_abbr);
+            }
+            else
+            {
+                $('#add_employee_id_new').val(employee_id);
+                $('#add_username').val(employee.username);
+            }
+        }
+    }
+
+    function addEmployee()
+    {
+        var employee_id = $('#add_employee_id').val();
+        var employee_id_new = $('#add_employee_id_new').val();
+        var access_role = $('#add_access_role').val();
+        var username = $('#add_username').val();
+        var password = $('#add_password').val();
+        var branch = $('#add_branch').val();
+        document.getElementById('add_submit').disabled = true;
+
+        $.ajax({
+            url: 'scheduler_select_m_ajax.cfm',
+            dataType: 'json',
+            data: { 'ajaxAction': 'addEmployee', 'employee_id': employee_id, 'employee_id_new': employee_id_new, 'access_role': access_role, 'username': username, 'password': password, 'branch': branch },
+            success: function(data) {
+                if (data.error)
+                {
+                    alert(data.error);
+                    document.getElementById('add_submit').disabled = false;
+                }
+                else
+                {
+                    hidePopup();
                     window.location = 'scheduler_select_m.cfm';
                 }
             }
