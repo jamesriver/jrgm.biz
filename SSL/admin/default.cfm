@@ -147,6 +147,7 @@
             <ul class="dashboard">
               <li><a href="payroll_manager_deadtime.cfm">Dead Time Report</a></li>
               <li><a href="payroll_manager_misctime.cfm">Miscellaneous Job Time Report</a></li>
+              <li><a href="payroll_manager_employeesworkedinotherbranches.cfm">Daily Sheets With Employees From Other Branches Report</a></li>
             </ul>
             <cfif SESSION.userid EQ 1001  >
               <div class="dashboardHeader">Quoting Admin</div>

@@ -5,7 +5,7 @@
  </cfquery>
   <cfquery name="get_this_employee" datasource="jrgm">
 SELECT first_name,last_name,branch,position,[Employee ID] As employee_id,  [Name FirstLast] AS fullname  FROM APP_employees
-WHERE branch = '#SESSION.branch#'  AND    active_record = 1 AND  [Employee ID] =#form.EMPLOYEEID#
+WHERE active_record = 1 AND  [Employee ID] =#form.EMPLOYEEID#
 </cfquery>
   <!--- Get all Job_clock_ids for this DS --->
   <cfquery name="get_job_clock_ids" datasource="jrgm"  >
@@ -24,9 +24,18 @@ SELECT   *  FROM app_job_clock WHERE ds_id =#dsid#
 </cfif>
 <cfif IsDefined("form.ds_id")>
   <CFSET ds_id= form.ds_id>
-  <cfelseif IsDefined("url.ds_id")>
-  <CFSET ds_id= url.ds_id>
+  <cfelseif IsDefined("url.dsid")>
+  <CFSET ds_id= url.dsid>
 </cfif>
+
+<cfquery name="get_ds" datasource="jrgm">
+SELECT   * FROM app_daily_sheets  WHERE ID=#ds_id#
+</cfquery>
+<cfif get_ds.recordcount EQ 0>
+    Invalid Daily Sheet.
+    <cfabort>
+</cfif>
+
 <cfquery name="get_DSID_info" datasource="jrgm"  >
 SELECT   ds_date,supervisor_id, crew_leader_id   FROM app_daily_sheets
 WHERE ID =#dsid#
@@ -39,12 +48,34 @@ WHERE ds_id =#dsid#
 <cfloop query="get_branch_employees_on_DSID">
   <cfset myList = ListAppend(mylist,Employee_ID)>
 </cfloop>
+
 <!--- Get Employee List --->
+<cfset employees_select = ArrayNew(1)>
+<cfquery name="get_employees_in_crew" datasource="jrgm"  >
+    SELECT * FROM app_crews_new
+    WHERE (crew_leader_id=#get_ds.crew_leader_id#
+       OR employee_id=#get_ds.crew_leader_id#
+       )
+       AND  [employee_id] NOT IN (#mylist#)
+    ORDER BY last_name
+ </cfquery>
+ <cfloop query="get_employees_in_crew">
+   <cfset myList = ListAppend(mylist,Employee_ID)>
+   <cfset employee_name = crew_name>
+   <cfif employee_branch NEQ SESSION.branch>
+        <cfset employee_name = employee_name & ' [' & employee_branch & ']'>
+   </cfif>
+   <cfset employee_name = employee_name & ' (assigned to current crew)'>
+   <cfset ArrayAppend(employees_select, [employee_id, employee_name])>
+ </cfloop>
 <cfquery name="get_branch_employees" datasource="jrgm"  >
 SELECT first_name,last_name,branch,position,[Employee ID] As employee_id,  [Name FirstLast] AS fullname  FROM APP_employees
 WHERE branch = '#SESSION.branch#'  AND    active_record = 1 AND  [Employee ID] NOT IN (#mylist#)
  ORDER by  Last_name ASC,first_name ASC
 </cfquery>
+<cfloop query="get_branch_employees">
+    <cfset ArrayAppend(employees_select, [employee_id, fullname])>
+</cfloop>
 
 <!DOCTYPE html>
 <!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
@@ -128,8 +159,11 @@ WHERE branch = '#SESSION.branch#'  AND    active_record = 1 AND  [Employee ID] N
               <tr>
                 <td nowrap="nowrap"><strong>Choose employee to add:</strong></td>
                 <td><select name="employeeID" class="bs-select form-control">
-                    <cfoutput query="get_branch_employees">
-                      <option value="#employee_id#">#fullname#</option>
+                    <cfoutput>
+                    <cfloop from="1" to="#arrayLen(employees_select)#" index="i">
+                        <cfset employee = employees_select[i]>
+                        <option value="#employee[1]#">#employee[2]#</option>
+                    </cfloop>
                     </cfoutput>
                   </select></td>
               </tr>

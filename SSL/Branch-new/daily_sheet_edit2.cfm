@@ -374,7 +374,8 @@ FROM         dbo.app_services
             </thead>
             <tbody>
               <cfquery name="get_employees_for_Crew_Leader" datasource="jrgm">
-				SELECT DISTINCT [Employee ID] As employee_id, [Name FirstLast] AS employee_name, position, last_name, branch  FROM APP_employees
+				SELECT DISTINCT [Employee ID] As employee_id, [Name FirstLast] AS employee_name, position, last_name, aebh.branch FROM APP_employees ae
+                LEFT JOIN app_employee_branchhistory aebh ON aebh.employee_id=ae.[Employee ID] AND aebh.asofdate <= '#DateFormat(ds_date, 'yyyy-mm-dd')# 12:00:00.000' AND aebh.untildate >= '#DateFormat(ds_date, 'yyyy-mm-dd')# 12:00:00.000'
 				WHERE [Employee ID] IN 
 				(SELECT Employee_ID FROM  app_employee_payroll_clock WHERE  ds_id = #dsid#) 
 				 ORDER by last_name ASC
