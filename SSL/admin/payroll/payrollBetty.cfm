@@ -289,14 +289,14 @@ SELECT Employee_ID,  time_worked, in_out_status,ds_date
   </cfquery>
 
       <!--- CALCULATE DEAD TIME BY BRANCH, tricky because dead time has no job or date or daily sheet associated with it--->
-      <cfset current_dead_time = 0>
+      <cfset get_current_dead_time = 0>
       <cfquery name="get_current_dead_time_start_id" datasource="jrgm">
         SELECT TOP 1 ajsae.ID FROM app_job_services_actual_employee ajsae
         INNER JOIN app_employees ae ON ae.[Employee ID]=ajsae.employee_id
         WHERE Service_Time_In >= '#DateFormat(app_payroll_periods_C.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000'
         AND branch='#branch_name#'
       </cfquery>
-      <cfif get_current_dead_time_start_id.recordcount GT 0>
+      <cfif get_current_dead_time_start_id.id NEQ ''>
         <cfquery name="get_current_dead_time" datasource="jrgm">
           SELECT FLOOR(SUM(Total_Time)/60) as sum FROM app_job_services_actual_employee ajsae
           INNER JOIN app_employees ae ON ae.[Employee ID]=ajsae.employee_id

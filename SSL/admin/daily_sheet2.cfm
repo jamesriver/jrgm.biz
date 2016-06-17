@@ -285,7 +285,8 @@ FROM         dbo.app_services
             </thead>
             <tbody>
               <cfquery name="get_employees_for_Crew_Leader" datasource="#request.dsn#">
-SELECT DISTINCT [Employee ID] As employee_id,[Name FirstLast] AS employee_name, position,last_name FROM APP_employees
+SELECT DISTINCT [Employee ID] As employee_id, [Name FirstLast] AS employee_name, position, last_name, aebh.branch FROM APP_employees ae
+LEFT JOIN app_employee_branchhistory aebh ON aebh.employee_id=ae.[Employee ID] AND aebh.asofdate <= '#DateFormat(ds_date, 'yyyy-mm-dd')# 12:00:00.000' AND aebh.untildate >= '#DateFormat(ds_date, 'yyyy-mm-dd')# 12:00:00.000'
 WHERE [Employee ID] IN 
 (SELECT Employee_ID FROM  app_employee_payroll_clock WHERE crew_leader =#crew_leader_id# 
  AND ds_id = #dsid#) 
@@ -301,7 +302,7 @@ WHERE [Employee ID] IN
         SELECT IsEmpInjury  FROM 
        app_employee_payroll_clock WHERE IsEmpInjury =0 AND   Employee_ID =#get_employees_for_Crew_Leader.Employee_ID# AND ds_id = #dsid#
            </cfquery>
-                  <td>#employee_name# -#Employee_ID#&nbsp; &nbsp;
+                  <td>#employee_name#<cfif branch NEQ SESSION.branch> [#branch#]</cfif></td>
                     <cfif get_employees_CompleteHours.CompleteHours EQ 0>
                       <span class="text-danger">(Hours Disagreed)</span>
                     </cfif>

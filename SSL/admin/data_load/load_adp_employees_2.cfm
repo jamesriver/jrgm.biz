@@ -288,6 +288,45 @@ varchar
   branch = '#get_modified_records.branch#', last_modified_date =CURRENT_TIMESTAMP,  employee_rehire_date = <cfqueryparam cfsqltype="cf_sql_date" value="#get_modified_records.employee_rehire_date#"> ,fww='#get_modified_records.fww#',regular_pay_rate =#regular_pay_rate#
   WHERE  [Employee ID] =#get_modified_records.employee_id#
   </cfquery>
+    <!--- UPDATE THE CREW ENTRIES AS WELL --->
+    <cfquery name="update_app_crews"   datasource="jrgm">
+      UPDATE app_crews SET  active_record = '#get_modified_records.active_record#',
+      employee_branch = '#get_modified_records.branch#'
+      WHERE  employee_id =#get_modified_records.employee_id#
+    </cfquery>
+
+    <!--- ADD HISTORICAL RECORD TO BRANCH HISTORY --->
+    <cfquery name="get_app_employee_branchhistory"   datasource="jrgm">
+      SELECT TOP 1 branch FROM app_employee_branchhistory
+      WHERE employee_id=<cfqueryparam value="#get_modified_records.employee_id#" cfsqltype="CF_SQL_INTEGER">
+      ORDER BY asofdate DESC
+    </cfquery>
+    <cfset add_to_history = 0>
+    <cfif get_app_employee_branchhistory.recordcount EQ 0>
+        <cfset add_to_history = 1>
+    <cfelseif get_app_employee_branchhistory.branch NEQ get_modified_records.branch>
+        <cfset add_to_history = 1>
+    </cfif>
+
+    <cfif add_to_history EQ 1>
+        <cfquery name="update_app_employee_branchhistory"   datasource="jrgm">
+          UPDATE app_employee_branchhistory
+          SET untildate=GetDate()
+          WHERE employee_id=<cfqueryparam value="#get_modified_records.employee_id#" cfsqltype="CF_SQL_INTEGER">
+            AND untildate='2099-12-31 00:00:00.000'
+        </cfquery>
+        <cfquery name="update_app_employee_branchhistory"   datasource="jrgm">
+          INSERT INTO app_employee_branchhistory
+          (employee_id, branch, asofdate, untildate)
+          VALUES
+          (<cfqueryparam value="#get_modified_records.employee_id#" cfsqltype="CF_SQL_INTEGER">
+           , <cfqueryparam value="#get_modified_records.branch#" cfsqltype="CF_SQL_TEXT">
+           , GetDate()
+           , '2099-12-31 00:00:00.000'
+           )
+        </cfquery>
+    </cfif>
+
     <cfif (get_modified_records_was.active_record NEQ get_modified_records.active_record) OR (get_modified_records_was.branch NEQ get_modified_records.branch)>
       <cfoutput> #get_modified_records.employee_name# (#employee_id#) ACTIVE_RECORD WAS #get_modified_records_was.active_record# IS NOW #get_modified_records.active_record#. <br>
         #get_modified_records.employee_name# (#employee_id#) BRANCH WAS #get_modified_records_was.branch# IS NOW #get_modified_records.branch# <br>

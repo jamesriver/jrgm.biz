@@ -87,6 +87,38 @@
                 WHERE employee_id=<cfqueryparam value="#form.employee_id#" CFSQLType="CF_SQL_INTEGER">
             </cfquery>
 
+            <!--- ADD HISTORICAL RECORD TO BRANCH HISTORY --->
+            <cfquery name="get_app_employee_branchhistory"   datasource="jrgm">
+              SELECT TOP 1 branch FROM app_employee_branchhistory
+              WHERE employee_id=<cfqueryparam value="#form.employee_id#" cfsqltype="CF_SQL_INTEGER">
+              ORDER BY asofdate DESC
+            </cfquery>
+            <cfset add_to_history = 0>
+            <cfif get_app_employee_branchhistory.recordcount EQ 0>
+                <cfset add_to_history = 1>
+            <cfelseif get_app_employee_branchhistory.branch NEQ form.branch>
+                <cfset add_to_history = 1>
+            </cfif>
+
+            <cfif add_to_history EQ 1>
+                <cfquery name="update_app_employee_branchhistory"   datasource="jrgm">
+                  UPDATE app_employee_branchhistory
+                  SET untildate=GetDate()
+                  WHERE employee_id=<cfqueryparam value="#form.employee_id#" cfsqltype="CF_SQL_INTEGER">
+                    AND untildate='2099-12-31 00:00:00.000'
+                </cfquery>
+                <cfquery name="update_app_employee_branchhistory"   datasource="jrgm">
+                  INSERT INTO app_employee_branchhistory
+                  (employee_id, branch, asofdate, untildate)
+                  VALUES
+                  (<cfqueryparam value="#form.employee_id#" cfsqltype="CF_SQL_INTEGER">
+                   , <cfqueryparam value="#form.branch#" cfsqltype="CF_SQL_TEXT">
+                   , GetDate()
+                   , '2099-12-31 00:00:00.000'
+                   )
+                </cfquery>
+            </cfif>
+
             <cfoutput>#serializejson(ArrayNew(1))#</cfoutput>
             <cfabort>
         </cfif>

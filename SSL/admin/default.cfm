@@ -72,6 +72,7 @@
           <li><a href="javascript:window.open('http://api.jrgm.com/biz/?AWS=1&EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=csv_snowremoval');">Snow Removal (CSV)</a></li>
           <li><a href="javascript:window.open('http://api.jrgm.com/biz/?AWS=1&EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=csv_snowremoval&nocostrates=1');">Snow Removal - No Cost Rates (CSV)</a></li>
           <li><a href="javascript:window.open('http://api.jrgm.com/biz/?AWS=1&EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=view_jobcost');">Job Cost Report</a></li>
+          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?AWS=1&EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=view_jobcostsummary');">Job Cost Summary Report (CSV)</a></li>
           <!--- <li><a href="select_branch_j4.cfm">Job Labor &amp; Materials Report by Branch (excel)</a></li>--->
           
         </ul></td>
@@ -101,6 +102,7 @@
           <li><a href="javascript:window.open('http://api.jrgm.com/biz/?AWS=1&EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=csv_snowremoval');">Snow Removal (CSV)</a></li>
           <li><a href="javascript:window.open('http://api.jrgm.com/biz/?AWS=1&EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=csv_snowremoval&nocostrates=1');">Snow Removal - No Cost Rates (CSV)</a></li>
           <li><a href="javascript:window.open('http://api.jrgm.com/biz/?AWS=1&EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=view_jobcost');">Job Cost Report</a></li>
+          <li><a href="javascript:window.open('http://api.jrgm.com/biz/?AWS=1&EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=view_jobcostsummary');">Job Cost Summary Report (CSV)</a></li>
           <!--- <li><a href="select_branch_j4.cfm">Job Labor &amp; Materials Report by Branch (excel)</a></li>--->
           
         </ul>
@@ -145,6 +147,7 @@
             <ul class="dashboard">
               <li><a href="payroll_manager_deadtime.cfm">Dead Time Report</a></li>
               <li><a href="payroll_manager_misctime.cfm">Miscellaneous Job Time Report</a></li>
+              <li><a href="payroll_manager_employeesworkedinotherbranches.cfm">Daily Sheets With Employees From Other Branches Report</a></li>
             </ul>
             <cfif SESSION.userid EQ 1001  >
               <div class="dashboardHeader">Quoting Admin</div>

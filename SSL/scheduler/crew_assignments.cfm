@@ -44,6 +44,17 @@
     ORDER by branch_name
 </cfquery>
 
+<cfquery name="get_all_branches" datasource="jrgm"  >
+    SELECT * FROM branches
+    WHERE
+    <cfif SESSION.branch EQ 'test'>
+        branch_code=100 AND
+    </cfif>
+    branch_active=1 AND branch_visible_to_select=1 AND
+    branch_code != 12 <!--- Corporate branch does not have any crews --->
+    ORDER by branch_name
+</cfquery>
+
 <!DOCTYPE html>
 <!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
 <!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
@@ -105,6 +116,7 @@
       <!-- BEGIN PAGE TITLE -->
       <div class="page-title">
         <h1>Crew Assignments</h1>
+        <span style="position: relative; top: 20px; left: 20px">This system allows Branch Managers to assign Supervisors/Crew Leaders to Production Managers, and allows Production Managers to organize Crews.<br />When creating daily sheets manually, crew members appear in the top of the dropdown list and can be from other branches.</span>
       </div>
       <!-- END PAGE TITLE -->
       <!-- BEGIN PAGE TOOLBAR -->
@@ -211,7 +223,7 @@
 
   <script>
     var branches = [];
-    <cfoutput query="get_branches">
+    <cfoutput query="get_all_branches">
         branches.push({ name: '#Replace(branch_name, "'", "\\'", "ALL")#', id: #branch_code# });</cfoutput>
 
     var supervisors = [];
@@ -368,10 +380,10 @@
         var pophtml = '';
         pophtml += '<table align="center" style="width: 80%; border: 1px solid black">';
         pophtml += '<tr>';
-        pophtml += '<td align="center" style="padding: 10px; border-bottom: 1px solid black; background-color: #e5e5e5"><b>'+showEmployeeName(employee_id)+'</b></td>';
+        pophtml += '<td align="center" style="padding: 10px; border-bottom: 1px solid black; background-color: #e5e5e5"><b>Assign Supervisor/Crew Leader to Production Manager</b></td>';
         pophtml += '</tr>';
         pophtml += '<tr>';
-        pophtml += '<td align="center" style="padding: 10px;">Click/Touch a supervisor below to move this crew leader.</td>';
+        pophtml += '<td align="center" style="padding: 10px;">Click/Touch a Production Manager below to assign '+showEmployeeName(employee_id)+'</td>';
         pophtml += '</tr>';
         pophtml += '<tr>';
         pophtml += '<td align="center" style="padding: 10px;"><input type="button" value="Cancel and Go Back" onClick="hidePopup()"></td>';
@@ -539,7 +551,7 @@
             if (cl.employee_id != 0)
             {
                 html += '<tr>';
-                html += '<td style="padding: 15px"><input type="button" value="Other Branch" onClick="getCrewMembersFromOtherBranches('+cl.employee_id+')"></td>';
+                html += '<td style="padding: 15px"><input type="button" value="Find Crew Member" onClick="getCrewMembersFromAllBranches('+cl.employee_id+')"></td>';
                 html += '</tr>';
             }
             html += '</table>';
@@ -556,10 +568,10 @@
         var pophtml = '';
         pophtml += '<table align="center" style="width: 80%; border: 1px solid black">';
         pophtml += '<tr>';
-        pophtml += '<td align="center" style="padding: 10px; border-bottom: 1px solid black; background-color: #purple"><b>'+showEmployeeName(employee_id)+'</b></td>';
+        pophtml += '<td align="center" style="padding: 10px; border-bottom: 1px solid black; background-color: #purple"><b>Assign Crew Member to Crew Leader</b></td>';
         pophtml += '</tr>';
         pophtml += '<tr>';
-        pophtml += '<td align="center" style="padding: 10px;">Click/Touch a crew leader below to move this crew member.</td>';
+        pophtml += '<td align="center" style="padding: 10px;">Click/Touch a Supervisor/Crew Leader below to assign '+showEmployeeName(employee_id)+'</td>';
         pophtml += '</tr>';
         pophtml += '<tr>';
         pophtml += '<td align="center" style="padding: 10px;"><input type="button" value="Cancel and Go Back" onClick="hidePopup()"></td>';
@@ -608,6 +620,20 @@
         });
     }
 
+    function getCrewMembersFromAllBranches(crew_leader_id) {
+        showPopup('Loading... please wait.');
+
+        $.ajax({
+            url: 'crew_assignments_ajax.cfm',
+            type: 'post',
+            dataType: 'json',
+            data: { 'ajaxAction': 'getCrewMembersFromAllBranches', 'branch': user_branch },
+            success: function(data) {
+                popUpMoveCrewMemberFromAnyBranch(crew_leader_id, data);
+            }
+        });
+    }
+
     function getCrewMembersFromOtherBranches(crew_leader_id) {
         showPopup('Loading... please wait.');
 
@@ -620,6 +646,46 @@
                 popUpMoveCrewMemberFromAnotherBranch(crew_leader_id, data);
             }
         });
+    }
+
+    function popUpMoveCrewMemberFromAnyBranch(crew_leader_id, data) {
+        var pophtml = '';
+        pophtml += '<table align="center" style="width: 80%; border: 1px solid black">';
+        pophtml += '<tr>';
+        pophtml += '<td align="center" style="padding: 10px; border-bottom: 1px solid black; background-color: #purple"><b>Find Crew Member</b></td>';
+        pophtml += '</tr>';
+        pophtml += '<tr>';
+        pophtml += '<td align="center" style="padding: 10px;">Select ONE (1) Crew Member below, then click the corresponding button on the right.</td>';
+        pophtml += '</tr>';
+        pophtml += '<tr>';
+        pophtml += '<td align="center" style="padding: 10px;"><input type="button" value="Cancel and Go Back" onClick="hidePopup()"></td>';
+        pophtml += '</tr>';
+
+        for(var ii=0; ii<branches.length; ii++)
+        {
+            var b = branches[ii];
+            console.log(ii + '. ' + b);
+
+            pophtml += '<tr>';
+            pophtml += '<td align="center" style="padding: 10px">';
+            pophtml += '<span style="width: 150px; text-align: right"><b>'+b.name+':</b>&nbsp;&nbsp;</span>';
+            pophtml += '<select id="select_employee_id_'+ii+'">';
+
+            for(var i=0; i<data['DATA'].length; i++)
+            {
+                var cm = data['DATA'][i];
+                if (cm[5] == b.name)
+                    pophtml += '<option value="'+cm[2]+'">'+cm[1]+' ('+cm[2]+') ['+(cm[3]?'assigned to '+cm[3]:'==UNASSIGNED==')+']</option>';
+            }
+
+            pophtml += '</select>';
+            pophtml += '&nbsp;&nbsp;<input type="button" value="Assign to '+showEmployeeName(crew_leader_id)+'" onClick="moveCrewMember(document.getElementById(\'select_employee_id_'+ii+'\').value, '+crew_leader_id+')">';
+            pophtml += '</td>';
+            pophtml += '</tr>';
+        }
+
+        pophtml += '</table>';
+        showPopup(pophtml);
     }
 
     function popUpMoveCrewMemberFromAnotherBranch(crew_leader_id, data) {

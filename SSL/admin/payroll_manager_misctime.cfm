@@ -49,7 +49,7 @@ WHERE Job_ID IN ('MISC-IRR-1','J3033-1014','J3031-1014','J3025-1014','J3027-1014
   AND (Service_Time_In >= '#DateFormat("#app_payroll_periods_C.pay_period_start#", "yyyy-mm-dd")# 00:00:00.000')  AND  (Service_Time_In < '#DateFormat("#app_payroll_periods_C.pay_period_end#", "yyyy-mm-dd")# 00:00:00.000')
   AND Total_Time > 0
   <cfif branch NEQ ''>AND ae.branch='#branch#'</cfif>
-  ORDER BY Service_Time_In DESC
+  ORDER BY [Name FirstLast], Service_Time_In
 </cfquery>
 <cfquery name="sum_all_app_job_services_actual_employee" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
 SELECT COUNT(*) as count, SUM(Total_Time) as sum FROM app_job_services_actual_employee ajsae
