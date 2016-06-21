@@ -26,7 +26,7 @@
  FROM app_pay_periods WHERE pay_period_number = #pay_period_number_visible#
 </cfquery>
 
-<cfoutput>
+<!---cfoutput>
     SELECT ads.id FROM app_employee_payroll_clock aepc
     INNER JOIN app_daily_sheets ads ON ads.id=aepc.ds_id
     JOIN app_employee_branchhistory aebh ON aebh.employee_id=aepc.employee_id AND aebh.asofdate <= aepc.Time_In AND aebh.untildate >= aepc.Time_In
@@ -36,7 +36,7 @@
     GROUP BY ads.id
     HAVING COUNT(CASE WHEN aebh.branch != aebh2.branch THEN 1 ELSE NULL END) > 0
     ORDER BY ads.id
-</cfoutput>
+</cfoutput--->
 <cfquery name="get_daily_sheets" datasource="jrgm">
     SELECT ads.id FROM app_employee_payroll_clock aepc
     INNER JOIN app_daily_sheets ads ON ads.id=aepc.ds_id

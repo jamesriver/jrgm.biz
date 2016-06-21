@@ -141,14 +141,18 @@ app_employee_payroll_clock WHERE Employee_ID =#get_employees_with_time.Employee_
 SELECT Employee_ID,SUM(time_worked) AS sumtime FROM 
 app_employee_payroll_clock WHERE Employee_ID =#get_employees_with_time.Employee_ID#  AND app_employee_payroll_clock.Time_In > '#DateFormat(pay_period_start_week2, "yyyy-mm-dd")# 00:00:00.000' AND  app_employee_payroll_clock.Time_In < '#DateFormat(pay_period_end_week2, "yyyy-mm-dd")# 00:00:00.000'  AND in_out_status =2  GROUP by 				Employee_ID
 </cfquery >
-        <cfif  get_employee_time_sum_w2.recordcount EQ 0>
-          <cfelse>
+
+        <cftry>
           <cfoutput query="get_employee_time_sum_w2">
            <cfset  employee_total =  sumtime>
             <cfset hourssum = int(sumtime\60)>
             <cfset minutessum = int(sumtime mod 60)>
           </cfoutput>
-        </cfif>
+          <cfcatch>
+            <cfset hourssum = 0>
+            <cfset minutessum = 0>
+          </cfcatch>
+        </cftry>
         <cfif get_employee_time_sum_w2.sumtime GT 2400>
           <cfset sumtime_OT2 = (get_employee_time_sum_w2.sumtime-2400)>
           <cfset hourssum_OT2 = int(sumtime_OT2\60)>
@@ -156,13 +160,25 @@ app_employee_payroll_clock WHERE Employee_ID =#get_employees_with_time.Employee_
           <cfelse>
           <cfset sumtime_OT2 = 0>
         </cfif>
-        <cfset sum_ot_totals =   sumtime_OT2>
-        <cfset hourssum_OT_TOTALS= int(sum_ot_totals\60)>
-        <cfset minutessum_OT_TOTALS= int(sum_ot_totals mod 60)>
-        <cfset sum_reg_totals = employee_total -sum_ot_totals>
-        <cfset hourssum_reg_totals= int(SUM_REG_TOTALS\60)>
-        <cfset minutessum_reg_totals= int(SUM_REG_TOTALS mod 60)>
-        <cfset base60reg =  100*minutessum_reg_totals/60>
+
+        <cftry>
+            <cfset sum_ot_totals =   sumtime_OT2>
+            <cfset hourssum_OT_TOTALS= int(sum_ot_totals\60)>
+            <cfset minutessum_OT_TOTALS= int(sum_ot_totals mod 60)>
+            <cfset sum_reg_totals = employee_total -sum_ot_totals>
+            <cfset hourssum_reg_totals= int(SUM_REG_TOTALS\60)>
+            <cfset minutessum_reg_totals= int(SUM_REG_TOTALS mod 60)>
+            <cfset base60reg =  100*minutessum_reg_totals/60>
+            <cfcatch>
+                <cfset sum_ot_totals = 0>
+                <cfset hourssum_OT_TOTALS = 0>
+                <cfset minutessum_OT_TOTALS= 0>
+                <cfset sum_reg_totals = 0>
+                <cfset hourssum_reg_totals= 0>
+                <cfset minutessum_reg_totals= 0>
+                <cfset base60reg =  0>
+            </cfcatch>
+        </cftry>
         <cfoutput>
           <td align="center">#hourssum_reg_totals#.#NumberFormat(base60reg,"09")#</td>
         </cfoutput>
