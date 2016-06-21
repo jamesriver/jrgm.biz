@@ -47,28 +47,35 @@ FROM         app_employees
 <cfset current_dead_time = 0>
 <cfquery name="get_current_dead_time_start_id" datasource="jrgm">
     SELECT TOP 1 ajsae.ID FROM app_job_services_actual_employee ajsae
-    INNER JOIN app_employees ae ON ae.[Employee ID]=ajsae.employee_id
+    INNER JOIN app_employee_branchhistory aebh ON aebh.employee_id=ajsae.employee_id
     WHERE Service_Time_In >= '#DateFormat(app_payroll_periods_C.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000'
-    <cfif branch NEQ ''>AND ae.branch='#branch#'</cfif>
 </cfquery>
 <cfif get_current_dead_time_start_id.recordcount GT 0>
+    <cfquery name="get_current_dead_time_end_id" datasource="jrgm">
+        SELECT TOP 1 ajsae.ID FROM app_job_services_actual_employee ajsae
+        INNER JOIN app_employee_branchhistory aebh ON aebh.employee_id=ajsae.employee_id
+        WHERE Service_Time_In >= '#DateFormat(app_payroll_periods_C.pay_period_end, 'yyyy-mm-dd')# 00:00:00.000'
+    </cfquery>
+
     <cfquery name="get_all_app_job_services_actual_employee" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
         SELECT * FROM app_job_services_actual_employee ajsae
-        INNER JOIN app_employees ae ON ae.[Employee ID]=ajsae.employee_id
+        INNER JOIN app_employee_branchhistory aebh ON aebh.employee_id=ajsae.employee_id
         WHERE Job_ID IS NULL
         AND Total_Time > 0
         AND ajsae.ID>#get_current_dead_time_start_id.ID#
-        <cfif branch NEQ ''>AND ae.branch='#branch#'</cfif>
+        <cfif get_current_dead_time_end_id.recordcount GT 0>AND ajsae.ID<=#get_current_dead_time_end_id.ID#</cfif>
+        <cfif branch NEQ ''>AND aebh.branch='#branch#'</cfif>
     </cfquery>
     <cfquery name="sum_all_app_job_services_actual_employee" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
         SELECT SUM(Total_Time) as sum FROM app_job_services_actual_employee ajsae
-        INNER JOIN app_employees ae ON ae.[Employee ID]=ajsae.employee_id
+        INNER JOIN app_employee_branchhistory aebh ON aebh.employee_id=ajsae.employee_id
         WHERE Job_ID IS NULL
         AND Total_Time > 0
         AND ajsae.ID>#get_current_dead_time_start_id.ID#
-        <cfif branch NEQ ''>AND ae.branch='#branch#'</cfif>
+        <cfif branch NEQ ''>AND aebh.branch='#branch#'</cfif>
     </cfquery>
 </cfif>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -126,17 +133,30 @@ td {
         </tr>
       </table>     
 <br />
-<cfif get_current_dead_time_start_id.recordcount EQ 0 OR sum_all_app_job_services_actual_employee.sum EQ ''>
-    No dead time found for this branch during the current pay period.
-    <cfabort>
-</cfif>
 <cfoutput>
-<strong class="arialfontbold">DEAD TIME (no associated Job ID)<b>: #get_all_app_job_services_actual_employee.recordcount# records<br />
-Total Hours: #sum_all_app_job_services_actual_employee.sum/60#, Average Hours Per Entry: #(sum_all_app_job_services_actual_employee.sum/60/get_all_app_job_services_actual_employee.recordcount)#<br />
+<cfif get_current_dead_time_start_id.recordcount EQ 0 OR sum_all_app_job_services_actual_employee.sum EQ ''>
+    No dead time found for this branch during this pay period.
+<cfelse>
+    <strong class="arialfontbold">DEAD TIME (no associated Job ID)<b>: #get_all_app_job_services_actual_employee.recordcount# records<br />
+    Total Hours: #sum_all_app_job_services_actual_employee.sum/60#, Average Hours Per Entry: #(sum_all_app_job_services_actual_employee.sum/60/get_all_app_job_services_actual_employee.recordcount)#
+</cfif>
 <br />
+<br />
+<span style="font-family: Gotham, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-style: italic;">Pay Period ###pay_period_number_visible#: #DateFormat("#app_payroll_periods_C.pay_period_start#", "mm/dd/yyyy")#-<cfoutput>#DateFormat("#app_payroll_periods_C.pay_period_end#", "mm/dd/yyyy")#</cfoutput></span>
+  <input type="button" value="<< Previous" onClick="window.location='payroll_manager_deadtime.cfm?branch=#branch#&pay_period=#(pay_period_number_visible-1)#';">
+  <cfif pay_period_number_visible LT pay_period_number>
+    <input type="button" value="Next >>" onClick="window.location='payroll_manager_deadtime.cfm?branch=#branch#&pay_period=#(pay_period_number_visible+1)#';">
+  </cfif>
 </cfoutput>
-<span style="font-family: Gotham, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-style: italic;">No Dates or Daily Sheets are associated with these entries<br />
-  <br />
+<br />
+<br />
+<cfif get_current_dead_time_start_id.recordcount EQ 0 OR sum_all_app_job_services_actual_employee.sum EQ ''>
+  <cfabort>
+</cfif>
+
+<!---span style="font-family: Gotham, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-style: italic;">No Dates or Daily Sheets are associated with these entries
+<br />
+<br /--->
 
 <table class="sortable" border="0" cellspacing="0" cellpadding="0"   width="80%">
         <tr height="40" >

@@ -56,6 +56,21 @@
     <cfset prior_misc_time[branch] = { 'sum': sum, 'count': count }>
 </cfloop>
 
+<!--- DEAD TIME (BROKEN ENTRIES) --->
+<cfquery name="get_current_dead_time_start_id" datasource="jrgm">
+SELECT TOP 1 ajsae.ID FROM app_job_services_actual_employee ajsae
+    INNER JOIN app_employee_branchhistory aebh ON aebh.employee_id=ajsae.employee_id
+    WHERE Service_Time_In >= '#DateFormat(app_payroll_periods_C.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000'
+    ORDER BY ID
+</cfquery>
+<cfquery name="get_prior_dead_time_start_id" datasource="jrgm">
+    SELECT TOP 1 ajsae.ID FROM app_job_services_actual_employee ajsae
+    INNER JOIN app_employee_branchhistory aebh ON aebh.employee_id=ajsae.employee_id
+    WHERE Service_Time_In >= '#DateFormat(app_payroll_periods_L.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000'
+    ORDER BY ID
+</cfquery>
+
+
 <!--- BRANCHES --->
 <cfset branches = ArrayNew(1)>
 <cfquery name="get_branches" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
@@ -290,22 +305,31 @@ SELECT Employee_ID,  time_worked, in_out_status,ds_date
 
       <!--- CALCULATE DEAD TIME BY BRANCH, tricky because dead time has no job or date or daily sheet associated with it--->
       <cfset get_current_dead_time = 0>
-      <cfquery name="get_current_dead_time_start_id" datasource="jrgm">
-        SELECT TOP 1 ajsae.ID FROM app_job_services_actual_employee ajsae
-        INNER JOIN app_employees ae ON ae.[Employee ID]=ajsae.employee_id
-        WHERE Service_Time_In >= '#DateFormat(app_payroll_periods_C.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000'
-        AND branch='#branch_name#'
-      </cfquery>
+      <cfset get_prior_dead_time = 0>
+
       <cfif get_current_dead_time_start_id.id NEQ ''>
         <cfquery name="get_current_dead_time" datasource="jrgm">
           SELECT FLOOR(SUM(Total_Time)/60) as sum FROM app_job_services_actual_employee ajsae
-          INNER JOIN app_employees ae ON ae.[Employee ID]=ajsae.employee_id
+          INNER JOIN app_employee_branchhistory aebh ON aebh.employee_id=ajsae.employee_id
           WHERE Job_ID IS NULL
           AND Total_Time > 0
           AND ajsae.ID>#get_current_dead_time_start_id.ID#
           AND branch='#branch_name#'
         </cfquery>
         <cfset get_current_dead_time = get_current_dead_time.sum>
+
+        <cfif get_prior_dead_time_start_id.id NEQ ''>
+            <cfquery name="get_prior_dead_time" datasource="jrgm">
+              SELECT FLOOR(SUM(Total_Time)/60) as sum FROM app_job_services_actual_employee ajsae
+              INNER JOIN app_employee_branchhistory aebh ON aebh.employee_id=ajsae.employee_id
+              WHERE Job_ID IS NULL
+              AND Total_Time > 0
+              AND ajsae.ID>#get_prior_dead_time_start_id.ID#
+              AND ajsae.ID<=#get_current_dead_time_start_id.ID#
+              AND branch='#branch_name#'
+            </cfquery>
+            <cfset get_prior_dead_time = get_prior_dead_time.sum>
+        </cfif>
       </cfif>
       <td align="center" ><cfif get_all_employee_time_for_period.recordcount EQ 0>
           <span class="greenText">Approved</span>
@@ -342,6 +366,9 @@ SELECT Employee_ID,  time_worked, in_out_status,ds_date
         <a href="payroll_view_employee_detail_2week.cfm?branch=#branch_name#&pay_period_number=#pay_period_end_week_L#" target="_blank">View</a>
         <cfif StructKeyExists(prior_misc_time, branch_name)>
             <br /><span style="font-size: 8pt"><i>#prior_misc_time[branch_name].sum# hr MISC</i>&nbsp;<a href="../payroll_manager_misctime.cfm?branch=#branch_name#&pay_period=#pay_period_end_week_L#" target="_blank">view</a>
+        </cfif>
+        <cfif get_prior_dead_time GT 0>
+            <br /><span style="font-size: 8pt; color: ##AA0000"><i>#get_prior_dead_time# hr DEAD</i>&nbsp;<a href="../payroll_manager_deadtime.cfm?branch=#branch_name#&pay_period=#pay_period_end_week_L#" target="_blank">view</a>
         </cfif>
       </td>
       <td align="center"><a href="payroll_view_employee_dates.cfm?branch=#branch_name#" target="_blank">View</a></td>

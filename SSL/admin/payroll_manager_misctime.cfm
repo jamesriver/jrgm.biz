@@ -44,20 +44,20 @@ FROM         app_employees
  </cfquery>
 <cfquery name="get_all_app_job_services_actual_employee" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
 SELECT * FROM app_job_services_actual_employee ajsae
-INNER JOIN app_employees ae ON ae.[Employee ID]=ajsae.employee_id
+INNER JOIN app_employee_branchhistory aebh ON aebh.employee_id=ajsae.employee_id
 WHERE Job_ID IN ('MISC-IRR-1','J3033-1014','J3031-1014','J3025-1014','J3027-1014','J3018-1014','MISC-IRR-2','MISC-IRR-3','MISC-IRR-4','MISC-IRR-5')
   AND (Service_Time_In >= '#DateFormat("#app_payroll_periods_C.pay_period_start#", "yyyy-mm-dd")# 00:00:00.000')  AND  (Service_Time_In < '#DateFormat("#app_payroll_periods_C.pay_period_end#", "yyyy-mm-dd")# 00:00:00.000')
   AND Total_Time > 0
-  <cfif branch NEQ ''>AND ae.branch='#branch#'</cfif>
-  ORDER BY [Name FirstLast], Service_Time_In
+  <cfif branch NEQ ''>AND aebh.branch='#branch#'</cfif>
+  ORDER BY Service_Time_In
 </cfquery>
 <cfquery name="sum_all_app_job_services_actual_employee" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
 SELECT COUNT(*) as count, SUM(Total_Time) as sum FROM app_job_services_actual_employee ajsae
-INNER JOIN app_employees ae ON ae.[Employee ID]=ajsae.employee_id
+INNER JOIN app_employee_branchhistory aebh ON aebh.employee_id=ajsae.employee_id
 WHERE Job_ID IN ('MISC-IRR-1','J3033-1014','J3031-1014','J3025-1014','J3027-1014','J3018-1014','MISC-IRR-2','MISC-IRR-3','MISC-IRR-4','MISC-IRR-5')
   AND (Service_Time_In >= '#DateFormat("#app_payroll_periods_C.pay_period_start#", "yyyy-mm-dd")# 00:00:00.000')  AND  (Service_Time_In < '#DateFormat("#app_payroll_periods_C.pay_period_end#", "yyyy-mm-dd")# 00:00:00.000')
   AND Total_Time > 0
-  <cfif branch NEQ ''>AND ae.branch='#branch#'</cfif>
+  <cfif branch NEQ ''>AND aebh.branch='#branch#'</cfif>
 </cfquery>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -118,15 +118,22 @@ td {
       </table>     
 <br />
 <cfoutput>
-<strong class="arialfontbold">Employee Labor records performed against Misc Jobs: #get_all_app_job_services_actual_employee.recordcount# records<br />
-Total Hours: #sum_all_app_job_services_actual_employee.sum/60#, Average Hours Per Entry: #(sum_all_app_job_services_actual_employee.sum/60/get_all_app_job_services_actual_employee.recordcount)#<br />
-<br />
+<cfif get_all_app_job_services_actual_employee.recordcount EQ 0 OR sum_all_app_job_services_actual_employee.sum EQ ''>
+    No misc time found for this branch during this pay period.
+<cfelse>
+    <strong class="arialfontbold">Employee Labor records performed against Misc Jobs: #get_all_app_job_services_actual_employee.recordcount# records<br />
+    Total Hours: #sum_all_app_job_services_actual_employee.sum/60#, Average Hours Per Entry: #(sum_all_app_job_services_actual_employee.sum/60/get_all_app_job_services_actual_employee.recordcount)#
+</cfif>
+<br /><br />
 <span style="font-family: Gotham, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-style: italic;">Pay Period ###pay_period_number_visible#: #DateFormat("#app_payroll_periods_C.pay_period_start#", "mm/dd/yyyy")#-<cfoutput>#DateFormat("#app_payroll_periods_C.pay_period_end#", "mm/dd/yyyy")#</cfoutput></span>
   <input type="button" value="<< Previous" onClick="window.location='payroll_manager_misctime.cfm?branch=#branch#&pay_period=#(pay_period_number_visible-1)#';">
   <cfif pay_period_number_visible LT pay_period_number>
     <input type="button" value="Next >>" onClick="window.location='payroll_manager_misctime.cfm?branch=#branch#&pay_period=#(pay_period_number_visible+1)#';">
   </cfif>
   </cfoutput>
+  <cfif get_all_app_job_services_actual_employee.recordcount EQ 0 OR sum_all_app_job_services_actual_employee.sum EQ ''>
+    <cfabort>
+  </cfif>
 <br />
 <br />
 <table class="sortable" border="0" cellspacing="0" cellpadding="0"   width="80%">
