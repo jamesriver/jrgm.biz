@@ -31,45 +31,85 @@
 
 <!--- TIME WORKED ON MISCELLANEOUS JOBS --->
 <cfset current_misc_time = StructNew()>
-<cfquery name="sum_all_app_job_services_actual_employee_current_pay_period" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
-  SELECT ae.branch, COUNT(*) as count, FLOOR(SUM(Total_Time)/60) as sum FROM app_job_services_actual_employee ajsae
+<cfquery name="sum_all_misc_time_current_pay_period" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
+  SELECT aebh.branch, COUNT(*) as count, FLOOR(SUM(Total_Time)/60) as sum FROM app_job_services_actual_employee ajsae
   INNER JOIN app_employees ae ON ae.[Employee ID]=ajsae.employee_id
+  INNER JOIN app_employee_branchhistory aebh ON aebh.employee_id=ae.[Employee ID]
   WHERE Job_ID IN ('MISC-IRR-1','J3033-1014','J3031-1014','J3025-1014','J3027-1014','J3018-1014','MISC-IRR-2','MISC-IRR-3','MISC-IRR-4','MISC-IRR-5')
     AND (Service_Time_In >= '#DateFormat("#app_payroll_periods_C.pay_period_start#", "yyyy-mm-dd")# 00:00:00.000')  AND  (Service_Time_In < '#DateFormat("#app_payroll_periods_C.pay_period_end#", "yyyy-mm-dd")# 00:00:00.000')
     AND Total_Time > 0
-    GROUP BY ae.branch
+    GROUP BY aebh.branch
 </cfquery>
-<cfloop query="sum_all_app_job_services_actual_employee_current_pay_period">
+<cfloop query="sum_all_misc_time_current_pay_period">
     <cfset current_misc_time[branch] = { 'sum': sum, 'count': count }>
 </cfloop>
 
 <cfset prior_misc_time = StructNew()>
-<cfquery name="sum_all_app_job_services_actual_employee_prior_pay_period" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
-  SELECT ae.branch, COUNT(*) as count, FLOOR(SUM(Total_Time)/60) as sum FROM app_job_services_actual_employee ajsae
+<cfquery name="sum_all_misc_time_prior_pay_period" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
+  SELECT aebh.branch, COUNT(*) as count, FLOOR(SUM(Total_Time)/60) as sum FROM app_job_services_actual_employee ajsae
   INNER JOIN app_employees ae ON ae.[Employee ID]=ajsae.employee_id
+  INNER JOIN app_employee_branchhistory aebh ON aebh.employee_id=ae.[Employee ID]
   WHERE Job_ID IN ('MISC-IRR-1','J3033-1014','J3031-1014','J3025-1014','J3027-1014','J3018-1014','MISC-IRR-2','MISC-IRR-3','MISC-IRR-4','MISC-IRR-5')
     AND (Service_Time_In >= '#DateFormat("#app_payroll_periods_L.pay_period_start#", "yyyy-mm-dd")# 00:00:00.000')  AND  (Service_Time_In < '#DateFormat("#app_payroll_periods_L.pay_period_end#", "yyyy-mm-dd")# 00:00:00.000')
     AND Total_Time > 0
-    GROUP BY ae.branch
+    GROUP BY aebh.branch
 </cfquery>
-<cfloop query="sum_all_app_job_services_actual_employee_prior_pay_period">
+<cfloop query="sum_all_misc_time_prior_pay_period">
     <cfset prior_misc_time[branch] = { 'sum': sum, 'count': count }>
 </cfloop>
 
 <!--- DEAD TIME (BROKEN ENTRIES) --->
-<cfquery name="get_current_dead_time_start_id" datasource="jrgm">
-SELECT TOP 1 ajsae.ID FROM app_job_services_actual_employee ajsae
-    INNER JOIN app_employee_branchhistory aebh ON aebh.employee_id=ajsae.employee_id
-    WHERE Service_Time_In >= '#DateFormat(app_payroll_periods_C.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000'
-    ORDER BY ID
+<cfset current_dead_time = StructNew()>
+<cfquery name="sum_all_dead_time_current_pay_period" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
+  SELECT ads.id, COUNT(CASE WHEN aepc.ds_id IS NOT NULL THEN 1 ELSE NULL END) as count_payroll,  COUNT(CASE WHEN ajsae.ds_id IS NOT NULL THEN 1 ELSE NULL END) as count_job, FLOOR(SUM(time_worked/60)) as sum_time_worked, aebh.branch, ae.[Name FirstLast] as production_manager_name, ae2.[Name FirstLast] as crew_leader_name FROM app_daily_sheets ads
+    INNER JOIN app_employee_payroll_clock aepc ON aepc.ds_id=ads.id
+    INNER JOIN app_employees ae ON ae.[Employee ID]=ads.supervisor_id
+    INNER JOIN app_employee_branchhistory aebh ON aebh.employee_id=ae.[Employee ID]
+    JOIN app_employees ae2 ON ae2.[Employee ID]=ads.crew_leader_id
+    LEFT JOIN app_job_services_actual_employee ajsae ON ajsae.ds_id=aepc.ds_id
+    WHERE ads.ds_date < CONVERT(Date, GetDate(), 121)
+    AND aepc.Time_In >= '#DateFormat(app_payroll_periods_C.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000'
+    AND aepc.Time_In <= '#DateFormat(app_payroll_periods_C.pay_period_end, 'yyyy-mm-dd')# 00:00:00.000'
+    AND aebh.branch != 'test'
+    GROUP BY ads.id, aebh.branch, ae.[Name FirstLast], ae2.[Name FirstLast]
+    HAVING COUNT(CASE WHEN ajsae.ds_id IS NOT NULL THEN 1 ELSE NULL END)=0
+    ORDER BY ads.id DESC
 </cfquery>
-<cfquery name="get_prior_dead_time_start_id" datasource="jrgm">
-    SELECT TOP 1 ajsae.ID FROM app_job_services_actual_employee ajsae
-    INNER JOIN app_employee_branchhistory aebh ON aebh.employee_id=ajsae.employee_id
-    WHERE Service_Time_In >= '#DateFormat(app_payroll_periods_L.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000'
-    ORDER BY ID
-</cfquery>
+<cfloop query="sum_all_dead_time_current_pay_period">
+    <cfif !StructKeyExists(current_dead_time, branch)>
+        <cfset current_dead_time[branch] = { 'sum': 0, 'count': 0 }>
+    </cfif>
+    <cftry>
+        <cfset current_dead_time[branch]['sum'] += sum_time_worked>
+        <cfcatch></cfcatch>
+    </cftry>
+</cfloop>
 
+<cfset prior_dead_time = StructNew()>
+<cfquery name="sum_all_dead_time_prior_pay_period" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
+  SELECT ads.id, COUNT(CASE WHEN aepc.ds_id IS NOT NULL THEN 1 ELSE NULL END) as count_payroll,  COUNT(CASE WHEN ajsae.ds_id IS NOT NULL THEN 1 ELSE NULL END) as count_job, FLOOR(SUM(time_worked/60)) as sum_time_worked, aebh.branch, ae.[Name FirstLast] as production_manager_name, ae2.[Name FirstLast] as crew_leader_name FROM app_daily_sheets ads
+    INNER JOIN app_employee_payroll_clock aepc ON aepc.ds_id=ads.id
+    INNER JOIN app_employees ae ON ae.[Employee ID]=ads.supervisor_id
+    INNER JOIN app_employee_branchhistory aebh ON aebh.employee_id=ae.[Employee ID]
+    JOIN app_employees ae2 ON ae2.[Employee ID]=ads.crew_leader_id
+    LEFT JOIN app_job_services_actual_employee ajsae ON ajsae.ds_id=aepc.ds_id
+    WHERE ads.ds_date < CONVERT(Date, GetDate(), 121)
+      AND aepc.Time_In >= '#DateFormat(app_payroll_periods_L.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000'
+      AND aepc.Time_In <= '#DateFormat(app_payroll_periods_L.pay_period_end, 'yyyy-mm-dd')# 00:00:00.000'
+      AND aebh.branch != 'test'
+    GROUP BY ads.id, aebh.branch, ae.[Name FirstLast], ae2.[Name FirstLast]
+    HAVING COUNT(CASE WHEN ajsae.ds_id IS NOT NULL THEN 1 ELSE NULL END)=0
+    ORDER BY ads.id DESC
+</cfquery>
+<cfloop query="sum_all_dead_time_prior_pay_period">
+    <cfif !StructKeyExists(prior_dead_time, branch)>
+        <cfset prior_dead_time[branch] = { 'sum': 0, 'count': 0 }>
+    </cfif>
+    <cftry>
+        <cfset prior_dead_time[branch]['sum'] += sum_time_worked>
+        <cfcatch></cfcatch>
+    </cftry>
+</cfloop>
 
 <!--- BRANCHES --->
 <cfset branches = ArrayNew(1)>
@@ -302,35 +342,6 @@ SELECT Employee_ID,  time_worked, in_out_status,ds_date
  WHERE Employee_ID IN (#employeelist#) AND app_employee_payroll_clock.Time_In > '#DateFormat(app_payroll_periods_L.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000' AND  app_employee_payroll_clock.Time_Out < '#DateFormat(pay_period_end_week_plusone, 'yyyy-mm-dd')# 00:00:00.000'
  AND in_out_status =2 AND payroll_approved IS NULL
   </cfquery>
-
-      <!--- CALCULATE DEAD TIME BY BRANCH, tricky because dead time has no job or date or daily sheet associated with it--->
-      <cfset get_current_dead_time = 0>
-      <cfset get_prior_dead_time = 0>
-
-      <cfif get_current_dead_time_start_id.id NEQ ''>
-        <cfquery name="get_current_dead_time" datasource="jrgm">
-          SELECT FLOOR(SUM(Total_Time)/60) as sum FROM app_job_services_actual_employee ajsae
-          INNER JOIN app_employee_branchhistory aebh ON aebh.employee_id=ajsae.employee_id
-          WHERE Job_ID IS NULL
-          AND Total_Time > 0
-          AND ajsae.ID>#get_current_dead_time_start_id.ID#
-          AND branch='#branch_name#'
-        </cfquery>
-        <cfset get_current_dead_time = get_current_dead_time.sum>
-
-        <cfif get_prior_dead_time_start_id.id NEQ ''>
-            <cfquery name="get_prior_dead_time" datasource="jrgm">
-              SELECT FLOOR(SUM(Total_Time)/60) as sum FROM app_job_services_actual_employee ajsae
-              INNER JOIN app_employee_branchhistory aebh ON aebh.employee_id=ajsae.employee_id
-              WHERE Job_ID IS NULL
-              AND Total_Time > 0
-              AND ajsae.ID>#get_prior_dead_time_start_id.ID#
-              AND ajsae.ID<=#get_current_dead_time_start_id.ID#
-              AND branch='#branch_name#'
-            </cfquery>
-            <cfset get_prior_dead_time = get_prior_dead_time.sum>
-        </cfif>
-      </cfif>
       <td align="center" ><cfif get_all_employee_time_for_period.recordcount EQ 0>
           <span class="greenText">Approved</span>
           <cfelse>
@@ -358,8 +369,8 @@ SELECT Employee_ID,  time_worked, in_out_status,ds_date
         <cfif StructKeyExists(current_misc_time, branch_name)>
             <br /><span style="font-size: 8pt"><i>#current_misc_time[branch_name].sum# hr MISC</i>&nbsp;<a href="../payroll_manager_misctime.cfm?branch=#branch_name#" target="_blank">view</a>
         </cfif>
-        <cfif get_current_dead_time GT 0>
-            <br /><span style="font-size: 8pt; color: ##AA0000"><i>#get_current_dead_time# hr DEAD</i>&nbsp;<a href="../payroll_manager_deadtime.cfm?branch=#branch_name#" target="_blank">view</a>
+        <cfif StructKeyExists(current_dead_time, branch_name)>
+            <br /><span style="font-size: 8pt; color: ##AA0000"><i>#current_dead_time[branch_name].sum# hr DEAD</i>&nbsp;<a href="../payroll_manager_deadtime.cfm?branch=#branch_name#" target="_blank">view</a>
         </cfif>
       </td>
       <td align="center">
@@ -367,8 +378,8 @@ SELECT Employee_ID,  time_worked, in_out_status,ds_date
         <cfif StructKeyExists(prior_misc_time, branch_name)>
             <br /><span style="font-size: 8pt"><i>#prior_misc_time[branch_name].sum# hr MISC</i>&nbsp;<a href="../payroll_manager_misctime.cfm?branch=#branch_name#&pay_period=#pay_period_end_week_L#" target="_blank">view</a>
         </cfif>
-        <cfif get_prior_dead_time GT 0>
-            <br /><span style="font-size: 8pt; color: ##AA0000"><i>#get_prior_dead_time# hr DEAD</i>&nbsp;<a href="../payroll_manager_deadtime.cfm?branch=#branch_name#&pay_period=#pay_period_end_week_L#" target="_blank">view</a>
+        <cfif StructKeyExists(prior_dead_time, branch_name)>
+            <br /><span style="font-size: 8pt; color: ##AA0000"><i>#prior_dead_time[branch_name].sum# hr DEAD</i>&nbsp;<a href="../payroll_manager_deadtime.cfm?branch=#branch_name#&pay_period=#pay_period_end_week_L#" target="_blank">view</a>
         </cfif>
       </td>
       <td align="center"><a href="payroll_view_employee_dates.cfm?branch=#branch_name#" target="_blank">View</a></td>
