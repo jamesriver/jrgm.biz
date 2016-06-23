@@ -493,14 +493,25 @@ WHERE Employee_ID =#get_employees_for_Crew_Leader.Employee_ID# AND ds_id = #dsid
                           <CFSET get_all_employee_minutes_for_job.minutes_worked_day_crew = 0>
                         </cfif>
                         <cfset totalminutes="#get_all_employee_minutes_for_job.minutes_worked_day_crew#">
-                        <cfset hours_all_j= int(totalminutes\60)>
-                        <cfset minutes_all_j = int(totalminutes mod 60)>
+                        <cftry>
+                            <cfset hours_all_j= int(totalminutes\60)>
+                            <cfset minutes_all_j = int(totalminutes mod 60)>
+                            <cfcatch>
+                                <cfset hours_all_j= 0>
+                                <cfset minutes_all_j = 0>
+                            </cfcatch>
+                        </cftry>
                         
                         <!---   <cfif totalminutes GT 0>
                        &nbsp; &nbsp;   &nbsp; &nbsp;  Total Crew Hours #hours_all_j#:#NumberFormat(minutes_all_j,"09")# &nbsp;&nbsp;(#totalminutes# min.)
                     </cfif > &nbsp; &nbsp;   &nbsp; &nbsp;  --->
-                        
-                        <CFSET time_difference  = totalminutes_this_job_all_crew - totalminutes>
+
+                        <cftry>
+                            <CFSET time_difference  = totalminutes_this_job_all_crew - totalminutes>
+                            <cfcatch>
+                                <CFSET time_difference  = totalminutes_this_job_all_crew>
+                            </cfcatch>
+                        </cftry>
                         
                         <!---   <cfif totalminutes GT 0>
                        &nbsp; &nbsp;   &nbsp; &nbsp;  Total Crew Hours #hours_all_j#:#NumberFormat(minutes_all_j,"09")# &nbsp;&nbsp;(#totalminutes# min.)
@@ -715,8 +726,14 @@ WHERE Employee_ID =#get_employees_for_Crew_Leader.Employee_ID# AND ds_id = #dsid
                       <CFSET get_all_employee_minutes_for_job.minutes_worked_day_crew = 0>
                     </cfif>
                     <cfset totalminutes="#get_all_employee_minutes_for_job.minutes_worked_day_crew#">
-                    <cfset hours_all_j= int(totalminutes\60)>
-                    <cfset minutes_all_j = int(totalminutes mod 60)>
+                    <cftry>
+                        <cfset hours_all_j= int(totalminutes\60)>
+                        <cfset minutes_all_j = int(totalminutes mod 60)>
+                        <cfcatch>
+                            <cfset hours_all_j= 0>
+                            <cfset minutes_all_j = 0>
+                        </cfcatch>
+                    </cftry>
                     <cfif totalminutes GT 0>
                       <span class="text-cotime">&nbsp; &nbsp;&nbsp; &nbsp;Total Crew Hours #hours_all_j#:#NumberFormat(minutes_all_j,"09")# &nbsp;&nbsp;(#totalminutes# min.)</span>
                     </cfif >

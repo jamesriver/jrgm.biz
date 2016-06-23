@@ -48,24 +48,21 @@
             <cfabort>
         </cfif>
     </cfcase>
-    <cfcase value="getCrewLeadersAndCrewMembers">
-        <cfif IsDefined('form.supervisor_id') AND IsDefined('form.branch')>
-            <cfset access_roles = '1,0,2,6,7,9,10'>
+    <cfcase value="getFullCrews">
+        <cfset access_roles = '1,0,2,6,7,9,10'>
 
-            <!--- RETRIEVE APP_CREWS BY BRANCH AND ACCESS_ROLES --->
-            <cfquery name="get_app_crews" datasource="jrgm">
-                SELECT Employee_Position_ID, crew_name, employee_id, crew_leader_id, supervisor_id, employee_branch FROM app_crews_new
-                WHERE ((employee_id=<cfqueryparam value="#form.supervisor_id#" CFSQLType="CF_SQL_INTEGER">
-                       OR supervisor_id=<cfqueryparam value="#form.supervisor_id#" CFSQLType="CF_SQL_INTEGER">
-                       )
-                    OR (employee_branch=<cfqueryparam value="#form.branch#" CFSQLType="CF_SQL_TEXT"> AND Employee_Position_ID IN (0,6,7))
-                )
-                AND Employee_Position_ID IN (#access_roles#)
-                ORDER BY Employee_Position_ID, crew_name
-            </cfquery>
-            <cfoutput>#serializejson(get_app_crews)#</cfoutput>
-            <cfabort>
-        </cfif>
+        <!--- RETRIEVE APP_CREWS BY BRANCH AND ACCESS_ROLES --->
+        <cfquery name="get_app_crews" datasource="jrgm">
+            SELECT Employee_Position_ID, crew_name, employee_id, crew_leader_id, supervisor_id, employee_branch FROM app_crews_new acn
+            WHERE Employee_Position_ID IN (#access_roles#)
+            <cfif SESSION.branch EQ 'test'>
+            <cfelse>
+                AND acn.employee_branch!='test'
+            </cfif>
+            ORDER BY employee_branch, Employee_Position_ID, crew_name
+        </cfquery>
+        <cfoutput>#serializejson(get_app_crews)#</cfoutput>
+        <cfabort>
     </cfcase>
     <cfcase value="moveCrewMember">
         <cfif IsDefined('form.employee_id') AND IsDefined('form.crew_leader_id') AND IsDefined('form.branch')>

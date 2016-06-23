@@ -122,6 +122,36 @@ li {
 	position: relative;
 	top: 1px;
 }
+.equipmenthistory {
+	background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #0000AA), color-stop(1, #000066) );
+	background: -moz-linear-gradient( center top, #0000AA 5%, #000066 100% );
+ filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#0000AA', endColorstr='#000066');
+	background-color: #0000AA;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+	border: 1px solid #143d0b;
+	display: inline-block;
+	color: #ffffff;
+	font-family: arial;
+	font-size: 20px;
+	font-weight: bold;
+	padding: 5px 10px;
+	margin-top: 4px;
+	margin-right: 30px;
+	text-decoration: none;
+	text-shadow: 1px 1px 0px #000000;
+}
+.equipmenthistory:hover {
+	background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #000066), color-stop(1, #0000AA) );
+	background: -moz-linear-gradient( center top, #000066 5%, #0000AA 100% );
+ filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#000066', endColorstr='#0000AA');
+	background-color: #0000DD;
+}
+.equipmenthistory:active {
+	position: relative;
+	top: 1px;
+}
 .eqbutton {
 	-moz-box-shadow: inset 0px 1px 0px 0px #ffffff;
 	-webkit-box-shadow: inset 0px 1px 0px 0px #ffffff;
@@ -298,6 +328,7 @@ SELECT * FROM equipment WHERE ID = #url.id#
             <td>&nbsp;</td>
             <td align="center" nowrap="nowrap"><strong> <a href="inventory_edit.cfm?ID=#next#" class="jobstop">Edit Next Record</a> </strong></td>
             <td align="center"><strong> <a href="inventory_list.cfm" class="jobstart">Back to Inv. List</a> </strong></td>
+            <td align="center"><strong> <a href="history_allocation.cfm?ID=#ID#" class="equipmenthistory" target="_blank">History</a> </strong></td>
             <td align="center" valign="middle"  class="dstableno"><!--- <a href="inventory_damage_history_enter.cfm?ID=#ID#" ><img src="images/damage.gif" alt="Damage information" width="35" height="35" />Enter Damage Info</a> ---></td>
           </tr>
         </table>

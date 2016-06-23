@@ -139,6 +139,10 @@
       <div class="row">
         <div class="col-md-12">
             <form method="post">
+              <center>
+                <a id="btn_showDiagram" style="display: none; position: relative; top: -15px" class="btn btn-primary" onClick="showDiagram()">Show Complete Crew Diagram</a>
+                <a id="btn_hideDiagram" style="display: none; position: relative; top: -15px" class="btn btn-info" onClick="hideDiagram()">Hide Complete Crew Diagram</a>
+              </center>
               <table class="table large">
                 <tr>
                   <cfif user_is_admin EQ 1 AND SESSION.access_role NEQ 9>
@@ -152,13 +156,15 @@
             </form>
         </div>
       </div>
-      <div class="row">
+      <div id="div_crewassignments" class="row">
         <div class="col-md-12">
             <div id="div_supervisor" align="center"></div>
-            <table id="table_crews" align="center">
-                <tr id="tr_crews"></tr>
+            <table id="table_crewassignments" align="center">
+                <tr id="tr_crewassignments"></tr>
             </table>
         </div>
+      </div>
+      <div id="div_crews" class="row" style="display: none">
       </div>
       </cfoutput>
     </div>
@@ -281,7 +287,7 @@
 
     function getSupervisorsAndCrewLeaders(branch) {
         user_branch = branch;
-        $('#tr_crews').html('Loading... please wait.');
+        $('#tr_crewassignments').html('Loading... please wait.');
         $('#div_supervisor').html('');
 
         $.ajax({
@@ -329,6 +335,7 @@
                 }
 
                 hidePopup();
+                hideDiagram();
             }
         });
     }
@@ -340,7 +347,7 @@
 
     function buildBranchManagerVersion()
     {
-        $('#tr_crews').html('');
+        $('#tr_crewassignments').html('');
 
         var fullhtml = '';
         for(var i=0; i<supervisors.length; i++)
@@ -370,7 +377,7 @@
 
             fullhtml += '<td valign="top" style="padding: 5px">'+html+'</td>';
         }
-        $('#tr_crews').append(fullhtml);
+        $('#tr_crewassignments').append(fullhtml);
     }
 
     function popUpMoveCrewLeader(employee_id)
@@ -429,7 +436,7 @@
 
     function getCrewLeadersAndCrewMembers(supervisor_id) {
         user_supervisor_id = supervisor_id;
-        $('#tr_crews').html('Loading... please wait.');
+        $('#tr_crewassignments').html('Loading... please wait.');
         $('#div_supervisor').html('');
 
         $.ajax({
@@ -482,13 +489,14 @@
                 }
 
                 hidePopup();
+                hideDiagram();
             }
         });
     }
 
     function buildSupervisorVersion()
     {
-        $('#tr_crews').html('');
+        $('#tr_crewassignments').html('');
 
         var fullhtml = '';
 
@@ -558,7 +566,7 @@
 
             fullhtml += '<td valign="top" style="padding: 5px">'+html+'</td>';
         }
-        $('#tr_crews').append(fullhtml);
+        $('#tr_crewassignments').append(fullhtml);
     }
     
     function popUpMoveCrewMember(employee_id)
@@ -727,6 +735,147 @@
 
         pophtml += '</table>';
         showPopup(pophtml);
+    }
+
+    function showDiagram()
+    {
+        $('#div_crewassignments').hide();
+        $('#div_crews').show();
+        $('#btn_showDiagram').hide();
+        $('#btn_hideDiagram').show();
+
+        $('#div_crews').html('<center>Loading... please wait.</center>');
+
+        $.ajax({
+            url: 'crew_assignments_ajax.cfm',
+            type: 'post',
+            dataType: 'json',
+            data: { 'ajaxAction': 'getFullCrews' },
+            success: function(data) {
+                try
+                {
+                    var obj = data['DATA'];
+                    var i;
+                    var ob;
+
+                    supervisors = [];
+                    crew_leaders = [];
+                    crew_members = [];
+                    employees = [];
+                    unassigned = { employee_name: 'UNASSIGNED', employee_id: 0, crew_leader_id: 0, supervisor_id: 0 };
+
+                    employees[0] = unassigned;
+                    for(i=0; i<obj.length; i++)
+                    {
+                        ob = obj[i];
+                        employees[ob[2]] = { employee_name: ob[1], employee_id: ob[2], crew_leader_id: ob[3], supervisor_id: ob[4] };
+                    }
+
+                    //crew leader
+                    crew_leaders.push(unassigned);
+                    for(i=0; i<obj.length; i++)
+                    {
+                        ob = obj[i];
+                        if (ob[0] == 1 || ob[0] == 9 || ob[0] == 10)
+                        {
+                            if (!supervisors[ob[5]])
+                                supervisors[ob[5]] = [];
+                            supervisors[ob[5]].push({ employee_name: ob[1], employee_id: ob[2], crew_leader_id: ob[3], supervisor_id: ob[4], employee_branch: ob[5] });
+                        }
+                        else if (ob[0] == 2)
+                        {
+                            if (!crew_leaders[ob[4]])
+                                crew_leaders[ob[4]] = [];
+                            crew_leaders[ob[4]].push({ employee_name: ob[1], employee_id: ob[2], crew_leader_id: ob[3], supervisor_id: ob[4] });
+                        }
+                        else if (ob[0] == 0 || ob[0] == 6 || ob[0] == 7)
+                        {
+                            if (!crew_members[ob[3]])
+                                crew_members[ob[3]] = [];
+                            crew_members[ob[3]].push({ employee_name: ob[1], employee_id: ob[2], crew_leader_id: ob[3], supervisor_id: ob[4], employee_branch: ob[5] });
+                        }
+                    }
+                    buildFullCrewsVersion();
+                }
+                catch(ob)
+                {
+                    console.log(ob);
+                    alert('An error occurred: '+ob);
+                }
+
+                hidePopup();
+            }
+        });
+    }
+
+    function buildFullCrewsVersion()
+    {
+        var fullhtml = '';
+        for(var b=0; b<branches.length; b++)
+        {
+            var html = '';
+            html += '<tr>';
+            html += '<td><b>'+branches[b].name+'</b></td>';
+            html += '<td></td>';
+            html += '<td></td>';
+            html += '<td></td>';
+            html += '</tr>';
+
+            var supervisors_by_branch = supervisors[branches[b].name];
+            if (supervisors_by_branch)
+            {
+                for(var i=0; i<supervisors_by_branch.length; i++)
+                {
+                    var supervisor = supervisors_by_branch[i];
+                    html += '<tr>';
+                    html += '<td></td>';
+                    html += '<td>'+showEmployeeName(supervisor.employee_id)+'</td>';
+                    html += '<td></td>';
+                    html += '<td></td>';
+                    html += '</tr>';
+                    var crew_leaders_by_supervisor = crew_leaders[supervisor.employee_id];
+                    if (crew_leaders_by_supervisor)
+                    {
+                        for(var ii=0; ii<crew_leaders_by_supervisor.length; ii++)
+                        {
+                            var crew_leader = crew_leaders_by_supervisor[ii];
+                            html += '<tr>';
+                            html += '<td></td>';
+                            html += '<td></td>';
+                            html += '<td>'+showEmployeeName(crew_leader.employee_id)+'</td>';
+                            html += '<td></td>';
+                            html += '</tr>';
+
+                            var crew_members_by_crew_leader = crew_members[crew_leader.employee_id];
+                            if (crew_members_by_crew_leader)
+                            {
+                                for(var iii=0; iii<crew_members_by_crew_leader.length; iii++)
+                                {
+                                    var crew_member = crew_members_by_crew_leader[iii];
+                                    html += '<tr>';
+                                    html += '<td></td>';
+                                    html += '<td></td>';
+                                    html += '<td></td>';
+                                    html += '<td>'+showEmployeeName(crew_member.employee_id)+'</td>';
+                                    html += '</tr>';
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            fullhtml += html;
+        }
+        $('#div_crews').html(fullhtml);
+    }
+
+    function hideDiagram()
+    {
+        $('#div_crews').hide();
+        $('#div_crewassignments').show();
+        $('#btn_hideDiagram').hide();
+        $('#btn_showDiagram').show();
     }
 
     function showPopup(html)
