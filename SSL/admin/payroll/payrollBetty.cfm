@@ -61,7 +61,7 @@
 <!--- DEAD TIME (BROKEN ENTRIES) --->
 <cfset current_dead_time = StructNew()>
 <cfquery name="sum_all_dead_time_current_pay_period" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
-  SELECT ads.id, COUNT(CASE WHEN aepc.ds_id IS NOT NULL THEN 1 ELSE NULL END) as count_payroll,  COUNT(CASE WHEN ajsae.ds_id IS NOT NULL THEN 1 ELSE NULL END) as count_job, FLOOR(SUM(time_worked/60)) as sum_time_worked, aebh.branch, ae.[Name FirstLast] as production_manager_name, ae2.[Name FirstLast] as crew_leader_name FROM app_daily_sheets ads
+  SELECT ads.id, COUNT(CASE WHEN aepc.ds_id IS NOT NULL THEN 1 ELSE NULL END) as count_payroll,  COUNT(CASE WHEN ajsae.ds_id IS NOT NULL THEN 1 ELSE NULL END) as count_job, SUM(time_worked) as sum_time_worked, aebh.branch, ae.[Name FirstLast] as production_manager_name, ae2.[Name FirstLast] as crew_leader_name FROM app_daily_sheets ads
     INNER JOIN app_employee_payroll_clock aepc ON aepc.ds_id=ads.id
     INNER JOIN app_employees ae ON ae.[Employee ID]=ads.supervisor_id
     INNER JOIN app_employee_branchhistory aebh ON aebh.employee_id=ae.[Employee ID]
@@ -80,14 +80,14 @@
         <cfset current_dead_time[branch] = { 'sum': 0, 'count': 0 }>
     </cfif>
     <cftry>
-        <cfset current_dead_time[branch]['sum'] += sum_time_worked>
+        <cfset current_dead_time[branch]['sum'] += (sum_time_worked/60)>
         <cfcatch></cfcatch>
     </cftry>
 </cfloop>
 
 <cfset prior_dead_time = StructNew()>
 <cfquery name="sum_all_dead_time_prior_pay_period" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
-  SELECT ads.id, COUNT(CASE WHEN aepc.ds_id IS NOT NULL THEN 1 ELSE NULL END) as count_payroll,  COUNT(CASE WHEN ajsae.ds_id IS NOT NULL THEN 1 ELSE NULL END) as count_job, FLOOR(SUM(time_worked/60)) as sum_time_worked, aebh.branch, ae.[Name FirstLast] as production_manager_name, ae2.[Name FirstLast] as crew_leader_name FROM app_daily_sheets ads
+  SELECT ads.id, COUNT(CASE WHEN aepc.ds_id IS NOT NULL THEN 1 ELSE NULL END) as count_payroll,  COUNT(CASE WHEN ajsae.ds_id IS NOT NULL THEN 1 ELSE NULL END) as count_job, SUM(time_worked) as sum_time_worked, aebh.branch, ae.[Name FirstLast] as production_manager_name, ae2.[Name FirstLast] as crew_leader_name FROM app_daily_sheets ads
     INNER JOIN app_employee_payroll_clock aepc ON aepc.ds_id=ads.id
     INNER JOIN app_employees ae ON ae.[Employee ID]=ads.supervisor_id
     INNER JOIN app_employee_branchhistory aebh ON aebh.employee_id=ae.[Employee ID]
@@ -106,7 +106,7 @@
         <cfset prior_dead_time[branch] = { 'sum': 0, 'count': 0 }>
     </cfif>
     <cftry>
-        <cfset prior_dead_time[branch]['sum'] += sum_time_worked>
+        <cfset prior_dead_time[branch]['sum'] += (sum_time_worked/60)>
         <cfcatch></cfcatch>
     </cftry>
 </cfloop>
@@ -370,7 +370,7 @@ SELECT Employee_ID,  time_worked, in_out_status,ds_date
             <br /><span style="font-size: 8pt"><i>#current_misc_time[branch_name].sum# hr MISC</i>&nbsp;<a href="../payroll_manager_misctime.cfm?branch=#branch_name#" target="_blank">view</a>
         </cfif>
         <cfif StructKeyExists(current_dead_time, branch_name)>
-            <br /><span style="font-size: 8pt; color: ##AA0000"><i>#current_dead_time[branch_name].sum# hr DEAD</i>&nbsp;<a href="../payroll_manager_deadtime.cfm?branch=#branch_name#" target="_blank">view</a>
+            <br /><span style="font-size: 8pt; color: ##AA0000"><i>#FLOOR(current_dead_time[branch_name].sum)# hr DEAD</i>&nbsp;<a href="../payroll_manager_deadtime.cfm?branch=#branch_name#" target="_blank">view</a>
         </cfif>
       </td>
       <td align="center">
@@ -379,7 +379,7 @@ SELECT Employee_ID,  time_worked, in_out_status,ds_date
             <br /><span style="font-size: 8pt"><i>#prior_misc_time[branch_name].sum# hr MISC</i>&nbsp;<a href="../payroll_manager_misctime.cfm?branch=#branch_name#&pay_period=#pay_period_end_week_L#" target="_blank">view</a>
         </cfif>
         <cfif StructKeyExists(prior_dead_time, branch_name)>
-            <br /><span style="font-size: 8pt; color: ##AA0000"><i>#prior_dead_time[branch_name].sum# hr DEAD</i>&nbsp;<a href="../payroll_manager_deadtime.cfm?branch=#branch_name#&pay_period=#pay_period_end_week_L#" target="_blank">view</a>
+            <br /><span style="font-size: 8pt; color: ##AA0000"><i>#FLOOR(prior_dead_time[branch_name].sum)# hr DEAD</i>&nbsp;<a href="../payroll_manager_deadtime.cfm?branch=#branch_name#&pay_period=#pay_period_end_week_L#" target="_blank">view</a>
         </cfif>
       </td>
       <td align="center"><a href="payroll_view_employee_dates.cfm?branch=#branch_name#" target="_blank">View</a></td>

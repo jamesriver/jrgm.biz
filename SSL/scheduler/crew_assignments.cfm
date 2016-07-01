@@ -480,7 +480,7 @@
                             crew_members[ob[3]].push({ employee_name: ob[1], employee_id: ob[2], crew_leader_id: ob[3], supervisor_id: ob[4], employee_branch: ob[5] });
                         }                            
                     }
-                    buildSupervisorVersion();
+                    buildProductionManagerVersion();
                 }
                 catch(ob)
                 {
@@ -494,7 +494,7 @@
         });
     }
 
-    function buildSupervisorVersion()
+    function buildProductionManagerVersion()
     {
         $('#tr_crewassignments').html('');
 
@@ -523,48 +523,55 @@
 
         $('#div_supervisor').html(html);
 
-        for(var i=0; i<crew_leaders.length; i++)
+        if (crew_leaders)
         {
-            var cl = crew_leaders[i];
-            var bgcolor = bgcolors[i];
-            var textcolor = textcolors[i];
-            if (cl.employee_id == 0)
+            for(var i=0; i<crew_leaders.length; i++)
             {
-                bgcolor = 'white';
-                textcolor = 'black';
-            }
-
-            html = '';
-            html += '<table style="border: 1px solid black">';
-            html += '<tr>';
-            html += '<td style="padding: 15px; background-color: '+bgcolor+'; color: '+textcolor+'; font-weight: bold; border-bottom: 1px solid black">'+showEmployeeName(cl.employee_id)+'</td>';
-            html += '</tr>';
-
-            var cms = crew_members[cl.employee_id];
-            if (cms)
-            {
-                for(var ii=0; ii<cms.length; ii++)
+                var cl = crew_leaders[i];
+                var bgcolor = bgcolors[i];
+                var textcolor = textcolors[i];
+                if (cl.employee_id == 0)
                 {
-                    var cm = cms[ii];
-                    var employee_label = showEmployeeName(cm.employee_id);
-                    if (cm.employee_branch != user_branch)
+                    bgcolor = 'white';
+                    textcolor = 'black';
+                }
+
+                html = '';
+                html += '<table style="border: 1px solid black">';
+                html += '<tr>';
+                html += '<td style="padding: 15px; background-color: '+bgcolor+'; color: '+textcolor+'; font-weight: bold; border-bottom: 1px solid black">'+showEmployeeName(cl.employee_id)+'</td>';
+                html += '</tr>';
+
+                var cms = crew_members[cl.employee_id];
+                if (cms)
+                {
+                    for(var ii=0; ii<cms.length; ii++)
                     {
-                        employee_label += ' <font color="#0000AA"><b>['+cm.employee_branch+']</b></font>';
+                        var cm = cms[ii];
+                        var employee_label = showEmployeeName(cm.employee_id);
+                        if (cm.employee_branch != user_branch)
+                        {
+                            employee_label += ' <font color="#0000AA"><b>['+cm.employee_branch+']</b></font>';
+                        }
+                        html += '<tr>';
+                        html += '<td style="cursor: pointer; padding: 15px" onmouseover="this.style.backgroundColor=\'#00AA00\'" onmouseout="this.style.backgroundColor=\'#FFFFFF\'" onClick="popUpMoveCrewMember('+cm.employee_id+')">'+employee_label+'</td>';
+                        html += '</tr>';
                     }
+                }
+                if (cl.employee_id != 0)
+                {
                     html += '<tr>';
-                    html += '<td style="cursor: pointer; padding: 15px" onmouseover="this.style.backgroundColor=\'#00AA00\'" onmouseout="this.style.backgroundColor=\'#FFFFFF\'" onClick="popUpMoveCrewMember('+cm.employee_id+')">'+employee_label+'</td>';
+                    html += '<td style="padding: 15px"><input type="button" value="Find Crew Member" onClick="getCrewMembersFromAllBranches('+cl.employee_id+')"></td>';
                     html += '</tr>';
                 }
-            }
-            if (cl.employee_id != 0)
-            {
-                html += '<tr>';
-                html += '<td style="padding: 15px"><input type="button" value="Find Crew Member" onClick="getCrewMembersFromAllBranches('+cl.employee_id+')"></td>';
-                html += '</tr>';
-            }
-            html += '</table>';
+                html += '</table>';
 
-            fullhtml += '<td valign="top" style="padding: 5px">'+html+'</td>';
+                fullhtml += '<td valign="top" style="padding: 5px">'+html+'</td>';
+            }
+        }
+        else
+        {
+            fullhtml += '<center>[ No Crew Leaders have been assigned.  Contact your Branch Manager and request assignments. ]</center>';
         }
         $('#tr_crewassignments').append(fullhtml);
     }

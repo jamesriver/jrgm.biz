@@ -59,3 +59,15 @@ app_crews_new flattened<br />
 <cfquery name="insert_app_crews" datasource="jrgm">
     SELECT * INTO app_crews FROM app_crews_new
 </cfquery>
+
+<cfquery name="realign_job_statuses" datasource="jrgm">
+    UPDATE app_jobs
+    SET active_record=0
+    WHERE (active_record=1 AND Status!='IN PROGRESS')
+</cfquery>
+<cfquery name="realign_job_statuses2" datasource="jrgm">
+    UPDATE app_jobs
+    SET active_record=1
+    WHERE (active_record=0 AND Status='IN PROGRESS')
+</cfquery>
+job statuses realigned for tablet
