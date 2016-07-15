@@ -263,7 +263,8 @@ AND Product_description LIKE '%#form.criteria#%' OR Product_name LIKE '%#form.cr
             <th align="left" class="sorttable_alpha">Serial<br />
               Number</th>
             <th align="center">Year</th>
-            <th align="center" sorttable_customkey="mm/dd/yyyy"><a href="inventory_list.cfm?purchdatesort=yes">Purch Date</a></th>
+            <!---th align="center" sorttable_customkey="mm/dd/yyyy"><a href="inventory_list.cfm?purchdatesort=yes">Purch Date</a></th--->
+            <th align="center">Purchase Date</th>
             <th align="center">Oil Change Criteria</th>
             <th align="center">Hours</th>
             <th align="left">Mileage</th>
@@ -289,7 +290,7 @@ AND Product_description LIKE '%#form.criteria#%' OR Product_name LIKE '%#form.cr
               </cfif>
               <td align="left">#Serial_Number#</td>
               <td align="center">#Equipment_Year#</td>
-              <td  align="right">#DateFormat(Date_Purchased,"mm/dd/yyyy")#</td>
+              <td  align="right">#DateFormat(Date_Purchased,"yyyy-mm-dd")#</td>
               <td  align="center"><cfif oil_change_criteria EQ 0>
                   N/A
                   <cfelseif oil_change_criteria EQ 1>

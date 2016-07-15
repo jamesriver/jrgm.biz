@@ -43,38 +43,30 @@ SELECT     [Employee ID] AS employee_id, branch,[Name FirstLast] AS empname
 FROM         app_employees
  </cfquery>
 
-<!--- CALCULATE DEAD TIME BY BRANCH, tricky because dead time has no job or date or daily sheet associated with it--->
-<cfset current_dead_time = 0>
-<cfquery name="get_current_dead_time_start_id" datasource="jrgm">
-    SELECT TOP 1 ajsae.ID FROM app_job_services_actual_employee ajsae
-    INNER JOIN app_employee_branchhistory aebh ON aebh.employee_id=ajsae.employee_id
-    WHERE Service_Time_In >= '#DateFormat(app_payroll_periods_C.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000'
+<!--- CALCULATE DEAD TIME --->
+<cfset total_dead_time = 0>
+<cfquery name="get_current_dead_time" datasource="jrgm">
+    SELECT ads.id, COUNT(CASE WHEN aepc.ds_id IS NOT NULL THEN 1 ELSE NULL END) as count_payroll,  COUNT(CASE WHEN ajsae.ds_id IS NOT NULL THEN 1 ELSE NULL END) as count_job, SUM(time_worked) as sum_time_worked, aebh.branch, ae.[Name FirstLast] as production_manager_name, ae2.[Name FirstLast] as crew_leader_name FROM app_daily_sheets ads
+    INNER JOIN app_employee_payroll_clock aepc ON aepc.ds_id=ads.id
+    INNER JOIN app_employees ae ON ae.[Employee ID]=ads.supervisor_id
+    INNER JOIN app_employee_branchhistory aebh ON aebh.employee_id=ae.[Employee ID]
+    JOIN app_employees ae2 ON ae2.[Employee ID]=ads.crew_leader_id
+    LEFT JOIN app_job_services_actual_employee ajsae ON ajsae.ds_id=aepc.ds_id
+    WHERE ads.ds_date < CONVERT(Date, GetDate(), 121)
+      AND aepc.Time_In >= '#DateFormat(app_payroll_periods_C.pay_period_start, 'yyyy-mm-dd')# 00:00:00.000'
+      AND aepc.Time_In <= '#DateFormat(app_payroll_periods_C.pay_period_end, 'yyyy-mm-dd')# 00:00:00.000'
+      <cfif branch EQ ''>AND aebh.branch != 'test'<cfelse>AND aebh.branch='#branch#'</cfif>
+    GROUP BY ads.id, aebh.branch, ae.[Name FirstLast], ae2.[Name FirstLast]
+    HAVING COUNT(CASE WHEN ajsae.ds_id IS NOT NULL THEN 1 ELSE NULL END)=0
+    ORDER BY ads.id DESC
 </cfquery>
-<cfif get_current_dead_time_start_id.recordcount GT 0>
-    <cfquery name="get_current_dead_time_end_id" datasource="jrgm">
-        SELECT TOP 1 ajsae.ID FROM app_job_services_actual_employee ajsae
-        INNER JOIN app_employee_branchhistory aebh ON aebh.employee_id=ajsae.employee_id
-        WHERE Service_Time_In >= '#DateFormat(app_payroll_periods_C.pay_period_end, 'yyyy-mm-dd')# 00:00:00.000'
-    </cfquery>
+<cfloop query="get_current_dead_time">
+    <cftry>
+        <cfset total_dead_time += sum_time_worked>
+        <cfcatch></cfcatch>
+    </cftry>
+</cfloop>
 
-    <cfquery name="get_all_app_job_services_actual_employee" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
-        SELECT * FROM app_job_services_actual_employee ajsae
-        INNER JOIN app_employee_branchhistory aebh ON aebh.employee_id=ajsae.employee_id
-        WHERE Job_ID IS NULL
-        AND Total_Time > 0
-        AND ajsae.ID>#get_current_dead_time_start_id.ID#
-        <cfif get_current_dead_time_end_id.recordcount GT 0>AND ajsae.ID<=#get_current_dead_time_end_id.ID#</cfif>
-        <cfif branch NEQ ''>AND aebh.branch='#branch#'</cfif>
-    </cfquery>
-    <cfquery name="sum_all_app_job_services_actual_employee" datasource="jrgm" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
-        SELECT SUM(Total_Time) as sum FROM app_job_services_actual_employee ajsae
-        INNER JOIN app_employee_branchhistory aebh ON aebh.employee_id=ajsae.employee_id
-        WHERE Job_ID IS NULL
-        AND Total_Time > 0
-        AND ajsae.ID>#get_current_dead_time_start_id.ID#
-        <cfif branch NEQ ''>AND aebh.branch='#branch#'</cfif>
-    </cfquery>
-</cfif>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -134,11 +126,11 @@ td {
       </table>     
 <br />
 <cfoutput>
-<cfif get_current_dead_time_start_id.recordcount EQ 0 OR sum_all_app_job_services_actual_employee.sum EQ ''>
+<cfif get_current_dead_time.recordcount EQ 0 OR total_dead_time EQ ''>
     No dead time found for this branch during this pay period.
 <cfelse>
-    <strong class="arialfontbold">DEAD TIME (no associated Job ID)<b>: #get_all_app_job_services_actual_employee.recordcount# records<br />
-    Total Hours: #sum_all_app_job_services_actual_employee.sum/60#, Average Hours Per Entry: #(sum_all_app_job_services_actual_employee.sum/60/get_all_app_job_services_actual_employee.recordcount)#
+    <strong class="arialfontbold">DEAD TIME (no Jobs worked even though payroll time has been logged)<b>: #get_current_dead_time.recordcount# records<br />
+    Total Hours: #total_dead_time/60#, Average Hours Per Entry: #(total_dead_time/60/get_current_dead_time.recordcount)#
 </cfif>
 <br />
 <br />
@@ -150,7 +142,7 @@ td {
 </cfoutput>
 <br />
 <br />
-<cfif get_current_dead_time_start_id.recordcount EQ 0 OR sum_all_app_job_services_actual_employee.sum EQ ''>
+<cfif get_current_dead_time.recordcount EQ 0 OR total_dead_time EQ ''>
   <cfabort>
 </cfif>
 
@@ -161,31 +153,22 @@ td {
 <table class="sortable" border="0" cellspacing="0" cellpadding="0"   width="80%">
         <tr height="40" >
           <td><strong>ID</strong></td>
-          <td><strong>Employee ID</strong></td>
-          <td><strong>   Name</strong></td>
-          <td><strong>Branch</strong></td>
-          <!---td align="center"><strong>Date</strong></td>
-          <td align="center"><strong>DS <br />
-          Time Ins</strong></td--->
+          <td>Branch</td>
+          <td>Production Manager</td>
+          <td>Supervisor/Crew Leader</td>
+          <td><strong>#<br />
+          Time Ins </strong></td>
           <td><strong>DS <br />
           Minutes </strong></td>
-          <!---td align="center"><strong>DSID</strong></td--->
         </tr>
-        <cfoutput query="get_all_app_job_services_actual_employee">
+        <cfoutput query="get_current_dead_time">
           <tr>
-            <td>#ID#</td>
-            <td>#Employee_ID#</td>
- <cfquery name="get_many_hours_name" dbtype="query" >
-SELECT    employee_id, branch,  empname
-FROM         get_all_employees
-WHERE   employee_id = #Employee_ID#
- </cfquery>
-            <td>#get_many_hours_name.empname#</td>
-            <td>#get_many_hours_name.branch#</td>
-            <!---td align="center">#DateFormat(Service_Time_In, "mm/dd/yyyy")#</td>
-            <td align="center">#totalids#</td--->
-            <td>#Total_Time#</td>
-            <!---td align="center"><a href="../admin/daily_sheet.cfm?dsid=#ds_id#"  target="_blank">#ds_id#</a></td--->
+            <td><a href="../admin/daily_sheet.cfm?dsid=#ID#"  target="_blank">#ID#</a></td>
+            <td>#branch#</td>
+            <td>#production_manager_name#</td>
+            <td>#crew_leader_name#</td>
+            <td>#count_payroll#</td>
+            <td>#sum_time_worked#</td>
           </tr>
         </cfoutput>
       </table>

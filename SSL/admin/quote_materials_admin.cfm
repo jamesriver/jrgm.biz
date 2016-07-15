@@ -49,7 +49,7 @@
         <thead>
             <th>Material Item ID</th>
             <th>Cost per Unit</th>
-            <th></th>
+            <!---th></th--->
         </thead>
         <tbody>
             <cfset alternator = 0>
@@ -58,11 +58,11 @@
                 <tr<cfif alternator EQ 1> bgcolor="##e5e5e5"</cfif><cfif Item_Cost EQ 0> style="color: ##AA0000"</cfif>>
                     <td>#Item_ID#</td>
                     <td>$<input id="item_#ID#" size="4" value="#NumberFormat(Item_Cost, ".__")#" onChange="saveInput(this.id, this.value)"></td>
-                    <td>
+                    <!---td>
                         <cfif StructKeyExists(materials_in_quoting, Item_ID)>
                             If changed, please also update Quoting Calculations and Versions <a href="quote_data_entry_row_maria.cfm" target="_blank">(click to open in new tab)</a>
                         </cfif>
-                    </td>
+                    </td--->
                 </tr>
             </cfloop>
         </tbody>

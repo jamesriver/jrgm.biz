@@ -234,13 +234,13 @@ ORDER by ID DESC
         <li><a href="/ssl/admin/dailysheet_add2.cfm">New Daily Sheet</a> <img src="images/new2.gif" width="33" height="16" /> [Snow Plow Entry]</li>
       </ul>
         </div>
-      <cfif SESSION.userid EQ 1001  >
+      <!---cfif SESSION.userid EQ 1001  >
         <div class="dashboardHeader">Manage Log In Credentials</div>
         <ul class="dashboard">
           <li><a href="manage_crew_leaders.cfm">Manage Supervisors/Crew Leaders Log In Credentials</a></li>
         </ul>
           </div>
-      </cfif>
+      </cfif--->
         </td>
     </cfif>
   </tr>

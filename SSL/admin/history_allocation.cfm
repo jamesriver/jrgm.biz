@@ -444,7 +444,7 @@ WHERE  [Employee ID] =  '#get_this_equipment_oilchange.entered_by#'
             </table>
           </cfif>
           <div class="spacer20"></div>
-          <div class="headerbutton">Inspection History</div>
+          <div class="headerbutton">State Inspection History</div>
           <div class="bluebuttonRT"><a href="inspection_info_equipment.cfm?ID=<cfoutput>#ID#</cfoutput>"  class="bluebuttonNR">Add Inspection</a></div>
           <cfquery name="get_this_equipment_inspection" datasource="jrgm">
 SELECT * FROM equipment_inspections WHERE equipment_id = '#getequipment_this.Equipment_ID#' OR equipment_id = '#url.ID#'

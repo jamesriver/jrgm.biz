@@ -155,11 +155,11 @@
                 <li><a href="quote_data_entry_row_maria.cfm" target="_blank">View/Edit Quoting Calculations and Versions</a></li>
                 <li><a href="quote_materials_admin.cfm" target="_blank">Manage Material Names and Costs</a></li>
               </ul>
-              <div class="dashboardHeader">Manage Log In Credentials</div>
+              <!---div class="dashboardHeader">Manage Log In Credentials</div>
               <ul class="dashboard">
                 <li><a href="manage_crew_leaders.cfm">Manage Supervisors/Crew Leaders</a></li>
               </ul>
-              </div>
+              </div--->
             </cfif>
           </cfif></td>
       </cfif>
