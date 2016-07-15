@@ -1,3 +1,4 @@
+<!---test--->
 <cfif IsDefined('form.submitted')>
     <cfset row_iterator = StructNew()>
     <cfloop collection=#form# item="field">
