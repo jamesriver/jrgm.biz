@@ -46,7 +46,7 @@ FROM         app_employees
 <!--- CALCULATE DEAD TIME --->
 <cfset total_dead_time = 0>
 <cfquery name="get_current_dead_time" datasource="jrgm">
-    SELECT ads.id, COUNT(CASE WHEN aepc.ds_id IS NOT NULL THEN 1 ELSE NULL END) as count_payroll,  COUNT(CASE WHEN ajsae.ds_id IS NOT NULL THEN 1 ELSE NULL END) as count_job, SUM(time_worked/60) as sum_time_worked, aebh.branch, ae.[Name FirstLast] as production_manager_name, ae2.[Name FirstLast] as crew_leader_name FROM app_daily_sheets ads
+    SELECT ads.id, COUNT(CASE WHEN aepc.ds_id IS NOT NULL THEN 1 ELSE NULL END) as count_payroll,  COUNT(CASE WHEN ajsae.ds_id IS NOT NULL THEN 1 ELSE NULL END) as count_job, SUM(time_worked) as sum_time_worked, aebh.branch, ae.[Name FirstLast] as production_manager_name, ae2.[Name FirstLast] as crew_leader_name FROM app_daily_sheets ads
     INNER JOIN app_employee_payroll_clock aepc ON aepc.ds_id=ads.id
     INNER JOIN app_employees ae ON ae.[Employee ID]=ads.supervisor_id
     INNER JOIN app_employee_branchhistory aebh ON aebh.employee_id=ae.[Employee ID]
