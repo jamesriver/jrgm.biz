@@ -24,14 +24,14 @@
                     <cfset SESSION.todaytoken = dateformat(now(), "mmddyyyy") & "T" & TimeFormat(now(), "HHmmss")>
                     <cfset SESSION.logindate = DateFormat(Now(),"mm/dd/yyyy")>
 
-                    <cfif query_login.Employee_ID EQ 1001>
+                    <cfif query_login.Employee_ID EQ EMPLOYEEID_MARIACANDLER>
                         <cfset SESSION.screenname_always = query_login.firstname & " " & query_login.lastname>
-                        <cfset SESSION.userid = 1001>
+                        <cfset SESSION.userid = EMPLOYEEID_MARIACANDLER>
                     </cfif>
 
-                    <cfif query_login.Employee_ID EQ 1003>
+                    <cfif query_login.Employee_ID EQ EMPLOYEEID_JASONKNIGHT>
                         <cfset SESSION.screenname_always = query_login.firstname & " " & query_login.lastname>
-                        <cfset SESSION.userid = 1003>
+                        <cfset SESSION.userid = EMPLOYEEID_JASONKNIGHT>
                     </cfif>
 
                     <cfcookie name="employee_ID" value="#SESSION.userid#" expires="7">
@@ -47,31 +47,31 @@
                 <cfinclude template="#APPLICATION.basePath#model/global_model.cfm">
                 <cfset SESSION.supervisor_id = query_get_supervisor_id.supervisor_id>
 
-                 <cfif SESSION.access_role EQ 1>
+                 <cfif SESSION.access_role EQ ACCESSROLE_PRODUCTIONMANAGER>
                     <cflocation   url="/ssl/supervisors-new/index.cfm"   addtoken="no"  >
-                 <cfelseif SESSION.access_role EQ 2>
+                 <cfelseif SESSION.access_role EQ ACCESSROLE_SUPERVISORCREWLEADER>
                     <cflocation   url="/"   addtoken="no"  >
-                 <cfelseif SESSION.access_role EQ 6>
+                 <cfelseif SESSION.access_role EQ ACCESSROLE_IRRIGATIONTECH>
                     <cflocation   url="/ssl/itech-new/index.cfm"   addtoken="no"  >
-                 <cfelseif SESSION.access_role EQ 7>
+                 <cfelseif SESSION.access_role EQ ACCESSROLE_SPRAYTECH>
                     <cflocation   url="/ssl/stech-new/index.cfm"   addtoken="no"  >
-                 <cfelseif SESSION.access_role EQ 8>
+                 <cfelseif SESSION.access_role EQ ACCESSROLE_MECHANIC>
                     <cflocation   url="/ssl/mechanic-new/index.cfm"   addtoken="no"  >
-                 <cfelseif SESSION.access_role EQ 9>
+                 <cfelseif SESSION.access_role EQ ACCESSROLE_BRANCHMANAGER>
                     <cflocation   url="/ssl/branch-new/index.cfm"   addtoken="no"  >
-                 <cfelseif SESSION.access_role EQ 10>
+                 <cfelseif SESSION.access_role EQ ACCESSROLE_REGIONALMANAGER>
                     <cflocation url="/ssl/regional-new/index.cfm"  addtoken="no"  >
-                 <cfelseif SESSION.access_role EQ 94>
+                 <cfelseif SESSION.access_role EQ ACCESSROLE_BUSINESSDEVELOPMENTGROUP>
                     <cflocation   url="/ssl/admin/default.cfm"   addtoken="no"  >
-                 <cfelseif SESSION.access_role EQ 95 >
+                 <cfelseif SESSION.access_role EQ ACCESSROLE_ADMIN95>
                     <cflocation   url="/ssl/admin/bgarrett.cfm"   addtoken="no"  >
-                 <cfelseif SESSION.access_role EQ 96 >
+                 <cfelseif SESSION.access_role EQ ACCESSROLE_ADMINISTRATIVEASSISTANT>
                     <cflocation   url="/ssl/admin/payroll/payrollbetty.cfm"   addtoken="no"  >
-                 <cfelseif SESSION.access_role EQ 97 >
+                 <cfelseif SESSION.access_role EQ ACCESSROLE_ESTIMATOR>
                     <cflocation   url="/ssl/quoting-new/default.cfm"   addtoken="no"  >
-                 <cfelseif SESSION.access_role EQ 98 >
+                 <cfelseif SESSION.access_role EQ ACCESSROLE_REGIONALADMIN>
                     <cflocation   url="/ssl/regional_admin-new/index.cfm"   addtoken="no"  >
-                 <cfelseif SESSION.access_role EQ 99>
+                 <cfelseif SESSION.access_role EQ ACCESSROLE_ADMIN>
                     <cflocation   url="#APPLICATION.basePath#index.cfm"   addtoken="no"  >
                  </cfif>
             <cfelse>
@@ -99,7 +99,7 @@
 </cfif>
 
 <!--- FIGURE OUT HOME PAGE BY ACCESS_ROLE --->
-<cfif SESSION.access_role EQ 99>
+<cfif SESSION.access_role EQ ACCESSROLE_ADMIN>
     <cfinclude template="#APPLICATION.basePath#view/home_admin.cfm">
 <cfelse>
     <cfinclude template="#APPLICATION.basePath#view/home_dashboard.cfm">
