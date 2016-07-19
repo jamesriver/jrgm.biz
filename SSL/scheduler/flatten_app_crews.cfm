@@ -71,3 +71,4 @@ app_crews_new flattened<br />
     WHERE (active_record=0 AND Status='IN PROGRESS')
 </cfquery>
 job statuses realigned for tablet
+
