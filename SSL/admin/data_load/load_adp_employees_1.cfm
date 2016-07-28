@@ -310,6 +310,10 @@ Done -Data loaded in app_employees_test
 </body>
 </html>
 
+<cfif IsDefined('url.halt')>
+    <cfabort>
+</cfif>
+
 <cfinclude template="load_adp_employees_2.cfm">
 <cfinclude template="update_employee_info.cfm">
 <cfinclude template="../../scheduler/flatten_app_crews.cfm">

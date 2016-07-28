@@ -1,0 +1,1247 @@
+<cfif !IsDefined('url.ID')>
+    FAILED - no ID detected
+    <cfabort>
+</cfif>
+<cfif url.ID EQ ''>
+    FAILED - no ID detected
+    <cfabort>
+</cfif>
+
+<!--- ALL FORM SAVING LOGIC HERE --->
+<cfif IsDefined('form.opportunity_name') AND IsDefined('form.opportunity_state')>
+    <!--- ========================= clean the variables before putting them into the SQL query ======================== --->
+    <cfset opportunity_id = form.opportunity_id>
+    <cfset query_quote_services_parameters = "">
+    <cfset query_quote_materials_parameters = "">
+    <cfset query_parameters = "">
+
+    <!--- ====================== build SQL insert query based on form POST variables ======================= --->
+    <cfloop collection=#form# item="form_element_name">
+      <cfset query_parameters = "">
+      <cfset field_name = LCase(form_element_name)>
+      <cfif field_name neq "fieldnames" AND field_name neq 'submittedform'>
+        <cfset field_value = Replace(form[form_element_name], "'", "''", "ALL")>
+        <cfif field_name CONTAINS 'date' OR field_name CONTAINS '_unit' OR field_name CONTAINS '_service'>
+            <cfif field_value eq "">
+              <cfset query_parameters = query_parameters & field_name & "=NULL, ">
+            <cfelse>
+              <cfif field_name CONTAINS 'date'>
+                <cfset query_parameters = query_parameters & field_name & "='" & dateformat(field_value,"yyyy-mm-dd") & "', ">
+              <cfelse>
+                <cfset query_parameters = query_parameters & field_name & "='" & field_value & "', ">
+              </cfif>
+            </cfif>
+            <cfset query_quote_services_parameters = query_quote_services_parameters & query_parameters>
+        <cfelse>
+            <cfif field_name CONTAINS 'opportunity'>
+                <!---
+                <cfset query_parameters = query_parameters & field_name & "='" & field_value & "'" & ", ">
+                <cfset query_quote_services_parameters = query_quote_services_parameters & query_parameters>
+                --->
+            <cfelse>
+                <cfif field_value eq "">
+                  <cfset query_parameters = query_parameters & field_name & "=0.00" & ", ">
+                <cfelse>
+                  <cfset query_parameters = query_parameters & field_name & "=" & field_value & "" & ", ">
+                </cfif>
+                <cfif field_name CONTAINS 'materials'>
+                    <cfset query_quote_materials_parameters = query_quote_materials_parameters & query_parameters>
+                <cfelse>
+                    <!---cfif field_name CONTAINS '_gm' AND field_name NEQ 'gross_margin'>
+                    <cfelse>
+                        <cfset query_quote_services_parameters = query_quote_services_parameters & query_parameters>
+                    </cfif--->
+                    <cfset query_quote_services_parameters = query_quote_services_parameters & query_parameters>
+                </cfif>
+            </cfif>
+        </cfif>
+      </cfif>
+    </cfloop>
+
+    <!--- Quote Main Insert --->
+    <cfquery name="check_for_quote_main" datasource="jrgm">
+        SELECT opportunity_id FROM quote_main  WHERE  opportunity_id =#opportunity_id#
+    </cfquery>
+    <cfif check_for_quote_main.recordcount EQ 0>
+      <cfquery name="insert_quote_main" datasource="jrgm">
+        INSERT INTO quote_main (opportunity_id,date_created, date_updated, user_id) VALUES ('#opportunity_id#',GETUTCDATE(),GETUTCDATE(),'#SESSION.userid#')
+     </cfquery>
+     <cfquery name="update_quote_start" datasource="jrgm">
+        UPDATE quote_start SET
+        date_quote_started = GETUTCDATE(),
+        date_quote_updated = GETUTCDATE(),
+        user_id =  '#SESSION.userid#'
+        WHERE opportunity_id = #opportunity_id#
+     </cfquery>
+     <cfquery name="insert_quote_services" datasource="jrgm">
+        INSERT INTO quote_services (opportunity_id) VALUES ('#opportunity_id#')
+     </cfquery>
+     <cfquery name="insert_quote_materials" datasource="jrgm">
+        INSERT INTO quote_materials (opportunity_id) VALUES ('#opportunity_id#')
+     </cfquery>
+    </cfif>
+
+    <cfquery name="update_quote_services" datasource="jrgm">
+        <cfoutput>
+            UPDATE quote_services
+            SET #preserveSingleQuotes(query_quote_services_parameters)#
+                opportunity_id=opportunity_id
+            WHERE opportunity_id=#opportunity_id#
+        </cfoutput>
+    </cfquery>
+    <cfquery name="update_quote_materials" datasource="jrgm">
+        <cfoutput>
+            UPDATE quote_materials
+            SET #preserveSingleQuotes(query_quote_materials_parameters)#
+                opportunity_id=opportunity_id
+            WHERE opportunity_id=#opportunity_id#
+        </cfoutput>
+    </cfquery>
+
+    <cfif IsDefined('form.opportunity_name') AND IsDefined('form.opportunity_state')>
+      <cfquery name="update_quote_start" datasource="jrgm">
+        UPDATE quote_start SET
+        date_quote_updated = GETUTCDATE(),
+        user_id =  '#SESSION.userid#',
+        opportunity_name = <cfqueryparam value="#form.opportunity_name#"     CFSQLType="CF_SQL_VARCHAR">,
+        opportunity_state = <cfqueryparam value="#form.opportunity_state#"     CFSQLType="CF_SQL_VARCHAR">
+        WHERE opportunity_id = #opportunity_id#
+        </cfquery>
+    <cfelse>
+      <cfquery name="update_quote_start" datasource="jrgm">
+            UPDATE quote_start SET
+            date_quote_updated = GETUTCDATE(),
+            user_id =  '#SESSION.userid#'
+            WHERE opportunity_id = #opportunity_id#
+        </cfquery>
+    </cfif>
+    <cflocation url="quote_data_entry_ben.cfm?ID=#opportunity_id#" />
+</cfif>
+
+<!--- INITIALIZE MAIN VARIABLES --->
+<cfset current_quote_services_materials = StructNew()>
+
+<!--- GET CURRENT QUOTE START --->
+<cfquery name="get_quote_start" datasource="jrgm">
+ SELECT    ID, opportunity_id, opportunity_name, opportunity_state, bid_amount,
+opportunity_field_1 AS q_branch,
+CONVERT(varchar, [opportunity_field_18], 121) AS q_start_date ,
+CONVERT(varchar, [opportunity_field_19], 121) AS q_end_date,
+stage_id,
+date_created_utc,
+bid_currency,
+bid_type,
+bid_duration,
+pipeline_id,
+opportunity_field_2 AS q_address1,
+opportunity_field_3 AS q_address2,
+opportunity_field_4 AS q_city,
+opportunity_field_5  AS q_address_state,
+opportunity_field_6 AS q_address_zip,
+opportunity_field_14 AS q_opportunity_type  ,
+OPPORTUNITY_status ,
+date_updated_utc,
+date_due_utc,
+date_quote_started,
+date_quote_updated
+FROM         quote_start
+where opportunity_id  =#url.id#
+</cfquery>
+<cfif !IsDefined('get_quote_start.ID')>
+    <cfoutput>
+    FAILED - could not resolve ID #url.ID#
+    </cfoutput>
+    <cfabort>
+</cfif>
+<cfif get_quote_start.ID EQ ''>
+    <cfoutput>
+    FAILED - could not resolve ID #url.ID#
+    </cfoutput>
+    <cfabort>
+</cfif>
+
+<!--- GET QUOTE MAIN --->
+<cfquery name="get_quote_main" datasource="jrgm">
+    SELECT *
+    FROM quote_main
+    WHERE opportunity_id=<cfqueryparam value="#url.ID#" CFSQLType="CF_SQL_INT">
+</cfquery>
+
+<!--- GET QUOTE SERVICES --->
+<cfset quote_column_headers = ArrayNew(1)>
+<cfquery name="get_quote_services" datasource="jrgm">
+    SELECT * FROM quote_services
+    WHERE opportunity_id=<cfqueryparam value="#url.ID#"     CFSQLType="CF_SQL_INT">
+</cfquery>
+<cfset current_quote_services_names = get_quote_services.getMetaData().getColumnLabels()>
+<cfset current_quote_services_nameassoc = StructNew()>
+<cfloop from="1" to="#arrayLen(current_quote_services_names)#" index="i">
+    <cfset StructInsert(current_quote_services_nameassoc, UCase(current_quote_services_names[i]), current_quote_services_names[i])>
+</cfloop>
+<cfset current_quote_services = QueryToStruct(get_quote_services)>
+<cfloop from="1" to="#arrayLen(current_quote_services)#" index="i">
+    <cfloop collection=#current_quote_services[i]# item="index">
+        <cfset field = current_quote_services_nameassoc[index]>
+        <cfif !structKeyExists(current_quote_services_materials, field)>
+            <!---<cfoutput>#field# = #current_quote_services[i][field]#</cfoutput><br />--->
+            <cfset StructInsert(current_quote_services_materials, field, current_quote_services[i][field])>
+        </cfif>
+    </cfloop>
+</cfloop>
+
+<!--- GET QUOTE MATERIALS --->
+<cfset quote_column_headers = ArrayNew(1)>
+<cfquery name="get_quote_materials" datasource="jrgm">
+    SELECT * FROM quote_materials
+    WHERE opportunity_id=<cfqueryparam value="#url.ID#"     CFSQLType="CF_SQL_INT">
+</cfquery>
+<cfset current_quote_materials_names = get_quote_materials.getMetaData().getColumnLabels()>
+<cfset current_quote_materials_nameassoc = StructNew()>
+<cfloop from="1" to="#arrayLen(current_quote_materials_names)#" index="i">
+    <cfset StructInsert(current_quote_materials_nameassoc, UCase(current_quote_materials_names[i]), current_quote_materials_names[i])>
+</cfloop>
+<cfset current_quote_materials = QueryToStruct(get_quote_materials)>
+<cfloop from="1" to="#arrayLen(current_quote_materials)#" index="i">
+    <cfloop collection=#current_quote_materials[i]# item="index">
+        <cfset field = current_quote_materials_nameassoc[index]>
+        <!---cfif !structKeyExists(current_quote_services_materials, field)>
+            <cfset StructInsert(current_quote_services_materials, field, current_quote_materials[i][field])>
+        </cfif--->
+    </cfloop>
+</cfloop>
+
+<!--- HELPER FUNCTION TO CONVERT QUERY TO STRUCT FOR EASIER USE IN HTML OUTPUT --->
+<cffunction name="QueryToStruct" access="public" returntype="any" output="false"
+    hint="Converts an entire query or the given record to a struct. This might return a structure (single record) or an array of structures.">
+
+    <!--- Define arguments. --->
+    <cfargument name="Query" type="query" required="true" />
+    <cfargument name="Row" type="numeric" required="false" default="0" />
+
+    <cfscript>
+        // Define the local scope.
+        var LOCAL = StructNew();
+        // Determine the indexes that we will need to loop over.
+        // To do so, check to see if we are working with a given row,
+        // or the whole record set.
+        if (ARGUMENTS.Row){
+            // We are only looping over one row.
+            LOCAL.FromIndex = ARGUMENTS.Row;
+            LOCAL.ToIndex = ARGUMENTS.Row;
+        } else {
+            // We are looping over the entire query.
+            LOCAL.FromIndex = 1;
+            LOCAL.ToIndex = ARGUMENTS.Query.RecordCount;
+        }
+        // Get the list of columns as an array and the column count.
+        LOCAL.Columns = ListToArray( ARGUMENTS.Query.ColumnList );
+        LOCAL.ColumnCount = ArrayLen( LOCAL.Columns );
+        // Create an array to keep all the objects.
+        LOCAL.DataArray = ArrayNew( 1 );
+        // Loop over the rows to create a structure for each row.
+        for (LOCAL.RowIndex = LOCAL.FromIndex ; LOCAL.RowIndex LTE LOCAL.ToIndex ; LOCAL.RowIndex = (LOCAL.RowIndex + 1)){
+            // Create a new structure for this row.
+            ArrayAppend( LOCAL.DataArray, StructNew() );
+            // Get the index of the current data array object.
+            LOCAL.DataArrayIndex = ArrayLen( LOCAL.DataArray );
+            // Loop over the columns to set the structure values.
+            for (LOCAL.ColumnIndex = 1 ; LOCAL.ColumnIndex LTE LOCAL.ColumnCount ; LOCAL.ColumnIndex = (LOCAL.ColumnIndex + 1)){
+                // Get the column value.
+                LOCAL.ColumnName = LOCAL.Columns[ LOCAL.ColumnIndex ];
+                // Set column value into the structure.
+                LOCAL.DataArray[ LOCAL.DataArrayIndex ][ LOCAL.ColumnName ] = ARGUMENTS.Query[ LOCAL.ColumnName ][ LOCAL.RowIndex ];
+            }
+        }
+        // At this point, we have an array of structure objects that
+        // represent the rows in the query over the indexes that we
+        // wanted to convert. If we did not want to convert a specific
+        // record, return the array. If we wanted to convert a single
+        // row, then return the just that STRUCTURE, not the array.
+        if (ARGUMENTS.Row){
+            // Return the first array item.
+            return( LOCAL.DataArray[ 1 ] );
+        } else {
+            // Return the entire array.
+            return( LOCAL.DataArray );
+        }
+    </cfscript>
+</cffunction>
+
+<!--- GET QUOTE COLUMN HEADERS --->
+<cfset quote_column_headers = ArrayNew(1)>
+<cfquery name="get_quote_column_headers" datasource="jrgm">
+    SELECT ID, column_name, column_displayformat, column_multiplier, column_precision, column_options, column_formula, column_editable, column_displayalign, column_totalable FROM quote_data_entry_headers
+    WHERE column_active=1
+    ORDER BY column_order
+</cfquery>
+
+<!--- CONVERT QUERY INTO ARRAY OF STRUCTS --->
+<cfset quote_column_headers = QueryToStruct(get_quote_column_headers)>
+<cfset quote_column_ID_index = StructNew()>
+<cfloop from="1" to="#arrayLen(quote_column_headers)#" index="i">
+    <cfset StructInsert(quote_column_ID_index, quote_column_headers[i].ID, i)>
+</cfloop>
+<cfset total_columns = arrayLen(quote_column_headers) - 5 + 1>
+
+<!--- GET QUOTE ROWS --->
+<cfquery name="get_quote_rows" datasource="jrgm">
+    SELECT qder.ID, qder.row_defaultvalue, qder.quote_data_entry_headers_ID, qder.quote_services_field, qder.row_order, qder.row_active, qder.row_totaltype, qder.row_formula FROM quote_data_entry_row qder
+    INNER JOIN quote_data_entry_headers qdeh ON qdeh.ID=qder.quote_data_entry_headers_ID
+    WHERE qdeh.column_active=1
+    ORDER BY qder.row_order, qdeh.column_order
+</cfquery>
+
+<!--- CONVERT QUERY INTO ARRAY OF STRUCTS --->
+<cfset quote_rows_raw = ArrayNew(1)>
+<cfset quote_rows_raw = QueryToStruct(get_quote_rows)>
+<cfset quote_rows = StructNew()>
+<cfset row_order_array = ArrayNew(1)>
+<cfloop from="1" to="#arrayLen(quote_rows_raw)#" index="i">
+    <cfset row_ID = quote_rows_raw[i].row_order>
+    <cfif !structKeyExists(quote_rows, row_ID)>
+        <cfset quote_rows[row_ID] = ArrayNew(1)>
+        <cfset ArrayAppend(row_order_array, row_ID)>
+    </cfif>
+    <cfset ArrayAppend(quote_rows[row_ID], quote_rows_raw[i])>
+</cfloop>
+
+<!--- ////////////////////////////////////////////////////////////////////// --->
+<!--- /////////////////////////                  ///////////////////////////--->
+<!--- ///////////////////////// CREATE HTML PAGE /////////////////////////// --->
+<!--- /////////////////////////                  ///////////////////////////--->
+<!--- ////////////////////////////////////////////////////////////////////// --->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>James River Grounds Management</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- BEGIN GLOBAL MANDATORY STYLES -->
+<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&amp;subset=all" rel="stylesheet" type="text/css" />
+<link href="assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+<link href="assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+<link href="assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css" />
+<!-- END GLOBAL MANDATORY STYLES -->
+<!-- BEGIN PAGE LEVEL STYLES -->
+<link rel="stylesheet" type="text/css" href="assets/global/plugins/select2/select2.css"/>
+<link rel="stylesheet" type="text/css" href="assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
+<link rel="stylesheet" type="text/css" href="assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
+<link rel="stylesheet" type="text/css" href="assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+<!-- END PAGE LEVEL STYLES -->
+<!-- BEGIN PAGE LEVEL STYLES -->
+<link rel="stylesheet" type="text/css" href="assets/global/plugins/clockface/css/clockface.css"/>
+<link rel="stylesheet" type="text/css" href="assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css"/>
+<link rel="stylesheet" type="text/css" href="assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css"/>
+<link rel="stylesheet" type="text/css" href="assets/global/plugins/bootstrap-colorpicker/css/colorpicker.css"/>
+<link rel="stylesheet" type="text/css" href="assets/global/plugins/bootstrap-daterangepicker/daterangepicker-bs3.css"/>
+<link rel="stylesheet" type="text/css" href="assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css"/>
+<!-- END PAGE LEVEL STYLES -->
+<!-- BEGIN THEME STYLES -->
+<link href="assets/global/css/components-rounded.css" id="style_components" rel="stylesheet" type="text/css" />
+<link href="assets/global/css/plugins.css" rel="stylesheet" type="text/css" />
+<link href="assets/admin/layout3/css/layout.css" rel="stylesheet" type="text/css" />
+<link href="assets/admin/layout3/css/themes/default.css" rel="stylesheet" type="text/css" id="style_color" />
+<link href="assets/admin/layout3/css/custom.css" rel="stylesheet" type="text/css" />
+<link href="css/styles_pricing_sheet_1.css" rel="stylesheet" type="text/css" />
+
+<!--[if lt IE 9]>
+    <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+<style type="text/css">
+.noMargin {
+	margin: -2px;
+}
+.headbig {
+	font-size: 14px;
+	font-weight: bold;
+}
+.th {
+	border: thick;
+	border-bottom: thin
+}
+i.mysize {
+	font-size: 14px;
+	font-weight: bold
+}
+</style>
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<!-- DOC: Apply "page-header-menu-fixed" class to set the mega menu fixed  -->
+<!-- DOC: Apply "page-header-top-fixed" class to set the top menu fixed  -->
+<body>
+<!-- BEGIN HEADER SECTION  -->
+<div class="page-header">
+  <cfinclude template="header-include.cfm">
+  <div class="page-header-menu">
+    <div class="container-fluid">
+      <div id="hor-menu-default" class="hor-menu"> </div>
+    </div>
+  </div>
+</div>
+<!-- END HEADER SECTION -->
+<div class="page-head">
+  <div class="container-fluid">
+    <!-- BEGIN PAGE TITLE -->
+    <div class="page-title">
+      <h1>Quote Pricing Sheet</h1>
+    </div>
+    <cfoutput>
+      <div class="page-toolbar">
+        <ul class="page-breadcrumb breadcrumb">
+          <li class="active"><i class="fa fa-circle"></i> <a href="ServicesSummary.cfm?ID=#url.id#"  target="_blank">Summary(MSS)</a></li>
+          <li class="active"><i class="fa fa-circle"></i> <a href="definition_of_services.cfm?ID=#url.id#"  target="_blank">Services(DOS)</a></li>
+          <li class="active"><i class="fa fa-circle"></i> <a href="ContractTerms.cfm?ID=#url.id#"  target="_blank">Terms</a></li>
+          <li class="active"><i class="fa fa-circle"></i> <a href=""  target="_blank">All Contract Docs</a></li>
+        </ul>
+      </div>
+    </cfoutput></div>
+</div>
+<div class="page-content">
+  <div class="container-fluid">
+    <cfif IsDefined("form.btnSumit")   AND form.btnSumit EQ 'Contract Approved'>
+      <cfquery name="update_quote_start" datasource="jrgm">
+UPDATE quote_start SET
+date_quote_updated = '#todayDate#',quote_approved =1,biz_approved_date = '#todayDate#',
+user_id =  '#SESSION.userid#'
+WHERE opportunity_id = #url.id#
+</cfquery>
+      <cfquery name="update_quote_start" datasource="jrgm">
+UPDATE quote_main SET
+date_updated = '#todayDate#', quote_approved =1,
+user_id =  '#SESSION.userid#'
+WHERE opportunity_id = #url.id#
+</cfquery>
+      <cfmail from="alerts@jrgm.com" to="quotingapproval@jrgm.com" subject="JRGM Quote Approved" type="html">
+        <style type="text/css">
+       .arialfont {
+	  font: normal .9em Arial, Helvetica, sans-serif;
+       }
+      </style>
+        <span class="arialfont">Quote ID: #url.id# for #get_quote_start.opportunity_name# has been approved in jrgm.biz.<br />
+        <br />
+        Please review the Intacct record for accuracy.</span><br />
+        <br />
+      </cfmail>
+      <table width="95%" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+          <td><div class="alert alert-success"> Contract Approved</div></td>
+        </tr>
+      </table>
+      <cfabort>
+    </cfif>
+    <form   name="quoteform" method="post" action="quote_data_entry_ben.cfm?ID=<cfoutput>#url.id#</cfoutput>" onsubmit="return validate()">
+      <div class="button-boxer">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="quote_data_entry_print.cfm?ID=<cfoutput>#url.id#</cfoutput>" class="btn btn-success blue-chambray" target="_blank">Print Pricing Sheet</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="dimensions_entry.cfm?ID=<cfoutput>#url.id#</cfoutput>" class="btn btn-success" target="_blank">Dimensions Sheet</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="quote_notes.cfm?opportunity_id_original=<cfoutput>#url.id#&opportunity_id=#url.id#</cfoutput>" class="btn btn-success purple" >Notes</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="hidden" name="submittedForm" value="1">
+        <input type="hidden" name="opportunity_id" value="<cfoutput>#url.id#</cfoutput>">
+        <input type="submit" class="btn btn-primary" id="btnSumit" value="Save Changes"/>
+      </div>
+      <br />
+      <br />
+      <div class="container-table">
+        <div class="left-table">
+        <cfoutput query="get_quote_start">
+          <table class="table">
+            <tr>
+              <td>Quote ID : </td>
+              <td>#opportunity_id#</td>
+              <td>&nbsp;</td>
+              <td>Branch : #q_branch#</td>
+              <td><!---#opportunity_state#---></td>
+            </tr>
+            <tr>
+              <td>Customer : </td>
+              <td colspan="4"><input name="opportunity_name" value="#opportunity_name#" size="35"  class="form-control"></td>
+            </tr>
+            <tr>
+              <td>Job Location : </td>
+              <td colspan="4">#q_address1#, #q_city#, #q_address_state#, #q_address_zip#</td>
+            </tr>
+            <tr>
+              <td>Estimator :</td>
+              <td colspan="4">#SESSION.screenname#</td>
+            </tr>
+            <tr>
+              <td>Quote Status : </td>
+              <td><select name="opportunity_state"   tabindex="5" >
+                  <cfset statuses = ArrayNew(1)>
+                  <cfset ArrayAppend(statuses, ['WON', 'WON'])>
+                  <cfset ArrayAppend(statuses, ['OPEN', 'OPEN'])>
+                  <cfset ArrayAppend(statuses, ['LOST', 'LOST'])>
+                  <cfset ArrayAppend(statuses, ['SUSPENDED', 'SUSPENDED'])>
+                  <cfset ArrayAppend(statuses, ['ABANDONED', 'ABANDONED'])>
+                  <cfset ArrayAppend(statuses, ['', 'RENEWAL'])>
+                  <cfloop from="1" to="#arrayLen(statuses)#" index="i">
+                    <cfset value = "">
+                    <cfif UCASE(opportunity_state) EQ statuses[i][1]>
+                      <cfset value = ' selected="selected"'>
+                    </cfif>
+                    <option value="<cfoutput>#statuses[i][1]#</cfoutput>"<cfoutput>#value#</cfoutput>> <cfoutput>#statuses[i][2]#</cfoutput> </option>
+                  </cfloop>
+                </select></td>
+              <td>&nbsp;</td>
+              <td><a href="https://googleapps.insight.ly/Opportunities/Details/#opportunity_id#"  target="_blank">Insightly Link</a></td>
+              <td></td>
+            </tr>
+          </table>
+          </div>
+          <div class="right-table">
+          <table class="table">
+            <tr>
+              <td  nowrap="nowrap">Date Opportunty Created : #dateformat(date_created_utc,"mm/dd/yyyy")#</td>
+              <td>&nbsp;</td>
+              <td  nowrap="nowrap">Date Opportunty Modified : #dateformat(date_updated_utc,"mm/dd/yyyy")#</td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+            </tr>
+            <tr>
+              <td>Date Quote Created : #dateformat(date_quote_started,"mm/dd/yyyy")#</td>
+              <td>&nbsp;</td>
+              <td>Date Quote Modified : #dateformat(date_quote_updated,"mm/dd/yyyy")#</td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+            </tr>
+            <tr>
+              <td  nowrap="nowrap">Contract Start Date :
+                <input name="contract_start_date" type="text" class="form_buttons" id="contract_start_date"  size="10"  value="#dateformat(get_quote_services.contract_start_date,"mm/dd/yyyy")#"/></td>
+              <td>&nbsp;</td>
+              <td nowrap="nowrap"   colspan="2"  align="left">Contract End Date :
+                <input name="contract_end_date" type="text" class="form_buttons" id="contract_end_date"  size="10"  value="#dateformat(get_quote_services.contract_end_date,"mm/dd/yyyy")#"/>
+                &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;Installments :
+                <input name="contract_installments" type="text" class="form_buttons" id="contract_installments"  size="2"  value="#get_quote_services.contract_installments#"/></td>
+              <td>&nbsp;</td>
+            </tr>
+            <tr>
+              <td  nowrap="nowrap">Annual Contract Price :  $#NumberFormat(get_quote_main.adjusted_contract_price,"99,999,999.99")#</td>
+              <td>&nbsp;</td>
+              <cfif  get_quote_main.contract_installments GT  0>
+                <cfset  total_contract_price_monthly =  get_quote_main.adjusted_contract_price/get_quote_main.contract_installments>
+                <cfelse>
+                <cfset  total_contract_price_monthly =  "">
+              </cfif>
+              <td nowrap="nowrap">Monthly Contract Price :  $#NumberFormat(total_contract_price_monthly,"99,999,999.99")#</td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+            </tr>
+          </table>
+        </cfoutput></div>
+
+<!--- BEGIN OUTPUT --->
+  <table width="98%" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td valign="top">
+        <table class="table table-striped" cellpadding="5" cellspacing="0">
+          <thead>
+            <tr bgcolor="#EDF3F8">
+                <cfloop from="1" to="#arrayLen(quote_column_headers)#" index="i">
+                    <th align="<cfoutput>#quote_column_headers[i].column_displayalign#</cfoutput>"><cfoutput>#quote_column_headers[i].column_name#</cfoutput></th>
+                    <cfif i EQ 9>
+                        <th align="left"><-Formula</th>
+                    </cfif>
+                </cfloop>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+                <td align="right" colspan="<cfoutput>#(total_columns+3)#</cfoutput>"><!--i>Profit Margin must be greater than 50%</i--></td>
+                <td align="right"><input id="gross_margin" name="gross_margin" oninput="apply_profit_margin(this.value)" size="6" value="<cfoutput>#get_quote_main.gross_margin#</cfoutput>"></td>
+                <td align="left">&nbsp;</td>
+            </tr>
+            <cfset alternator = 1>
+            <cfloop from="1" to="#arrayLen(row_order_array)#" index="wrapi">
+                <cfset quote_row_index = row_order_array[wrapi]>
+                <cfset tr_class = (alternator % 2?' bgcolor="##e5e5e5"':'')>
+                <cfset alternator = 1-alternator>
+                <tr <cfoutput>#tr_class#</cfoutput>>
+                    <cfloop from="1" to="#arrayLen(quote_rows[quote_row_index])#" index="i">
+                        <cfset current_row = quote_rows[quote_row_index][i]>
+                        <cfset current_column = quote_column_headers[quote_column_ID_index[current_row.quote_data_entry_headers_ID]]>
+                        <cfif current_row.row_active EQ 1>
+                            <td align="<cfoutput>#quote_column_headers[i].column_displayalign#</cfoutput>">
+                                <cfif current_row.quote_services_field NEQ ''>
+                                    <cfif (current_column.column_editable EQ 1 AND (current_column.ID NEQ 18 OR current_row.row_defaultvalue NEQ 40)) OR (current_row.row_order GT 55 AND (current_column.ID EQ 1 OR current_column.ID EQ 3 OR current_column.ID EQ 4 OR current_column.ID EQ 6))>
+                                        <cfoutput><input class="column<cfoutput>#current_column.ID#</cfoutput>" id="#current_row.quote_services_field#" name="#current_row.quote_services_field#" type="text" size="6" value="#current_row.row_defaultvalue#" oninput="recalculate_row<cfoutput>#quote_row_index#</cfoutput>(); recalculate_totals();" /></cfoutput>
+                                    <cfelse>
+                                        <cfoutput><input disabled="true" class="column<cfoutput>#current_column.ID#</cfoutput>" id="#current_row.quote_services_field#" name="#current_row.quote_services_field#" type="text" size="6" value="#current_row.row_defaultvalue#" /></cfoutput>
+                                        <cfoutput><input type="hidden" class="column<cfoutput>#current_column.ID#</cfoutput>" id="#current_row.quote_services_field#" name="#current_row.quote_services_field#" value="#current_row.row_defaultvalue#" /></cfoutput>
+                                    </cfif>
+                                <cfelse>
+                                    <cfoutput><span class="column<cfoutput>#current_column.ID#</cfoutput>" id="row#current_row.ID#">#current_row.row_defaultvalue#</span></cfoutput>
+                                    <cfoutput><input class="column<cfoutput>#current_column.ID#</cfoutput> totaltype_<cfoutput>#current_row.row_totaltype#</cfoutput>" type="hidden" id="row#current_row.ID#_numeric" value="#current_row.row_defaultvalue#"></cfoutput>
+                                </cfif>
+                            </td>
+                        <cfelse>
+                            <cfoutput><td align="<cfoutput>#quote_column_headers[i].column_displayalign#</cfoutput>"><span class="column<cfoutput>#current_column.ID#</cfoutput>" id="row#current_row.ID#"></span></td></cfoutput>
+                            <cfoutput><input type="hidden" class="column<cfoutput>#current_column.ID#</cfoutput>" id="row#current_row.ID#_numeric" value="0"></td></cfoutput>
+                        </cfif>
+                        <cfif current_column.ID EQ 9>
+                            <cfoutput><td align="left">#Replace(current_row.row_formula, '[2]', '[Qty/SqFt]', 'ALL')#</td></cfoutput>
+                        </cfif>
+                    </cfloop>
+                </tr>
+            </cfloop>
+            <tr bgcolor="#EDF3F8">
+                <cfloop from="1" to="#arrayLen(quote_column_headers)#" index="i">
+                        <cfset current_column = quote_column_headers[i]>
+                        <cfif current_column.ID EQ 1 OR current_column.ID EQ 2>
+                            <cfif current_column.ID EQ 1>
+                                <th align="<cfoutput>#current_column.column_displayalign#</cfoutput>" colspan="2">
+                                    Totals (Unadjusted)
+                                </th>
+                            </cfif>
+                        <cfelse>
+                            <cfif current_column.ID EQ 6 OR current_column.ID EQ 7 OR current_column.ID EQ 5>
+                                <cfif current_column.ID EQ 6>
+                                    <th align="left" colspan="2">
+                                        Seasonal Hours
+                                    </th>
+                                    <th></th>
+                                <cfelse>
+                                    <cfif current_column.ID EQ 5>
+                                        <cfoutput>
+                                            <th align="<cfoutput>#current_column.column_displayalign#</cfoutput>">
+                                                <span id="seasonal_hours_formatted"></span>
+                                            </th>
+                                        </cfoutput>
+                                    </cfif>
+                                </cfif>
+                            <cfelse>
+                                <th align="<cfoutput>#current_column.column_displayalign#</cfoutput>">
+                                <cfif current_column.column_totalable EQ 1>
+                                    <cfoutput>
+                                        <span class="total#current_column.ID#"></span>
+                                    </cfoutput>
+                                <cfelse>
+                                    <cfif current_column.column_totalable EQ 2>
+                                        <cfoutput>
+                                            <span class="avg#current_column.ID#"></span>
+                                        </cfoutput>
+                                    <cfelse>
+                                        &nbsp;
+                                    </cfif>
+                                </cfif>
+                            </cfif>
+                        </cfif>
+                    </th>
+                </cfloop>
+            </tr>
+            <tr>
+                <td align="right" colspan="<cfoutput>#total_columns#</cfoutput>">&nbsp;</td>
+                <td align="right" colspan="4"><a href=""><i class="fa fa-file-text mysize font-blue">&nbsp;Note</i></a>&nbsp;&nbsp;&nbsp; <strong>Contract Adjustment</strong></td>
+                <td align="left">
+                  <input id="contract_adjustment" name="contract_adjustment" type="text" class="noMargin"  size="6" oninput="recalculate_totals()" /></td>
+            </tr>
+            <tr>
+                <td align="right" colspan="<cfoutput>#total_columns#</cfoutput>">&nbsp;</td>
+                <td align="right" colspan="4"><a href=""><i class="fa fa-file-text mysize font-blue">&nbsp;Note</i></a>&nbsp;&nbsp;&nbsp; <strong>Discount Adjustment</strong></td>
+                <td align="left">
+                  <input id="discount_adjustment" name="discount_adjustment" type="text" class="noMargin"  size="6" oninput="recalculate_totals()" /></td>
+            </tr>
+            <tr bgcolor="#EDF3F8" style="font-weight: bold">
+                <td align="right" colspan="<cfoutput>#total_columns#</cfoutput>">&nbsp;</td>
+                <td align="right" colspan="4"><strong>Total Adjusted Contract Price</strong></td>
+                <td align="left">
+                  <span id="adjusted_contract_price" name="adjusted_contract_price" style="font-weight: bold" /></span>
+                </td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+  </table>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/2.6.0/math.min.js"></script>
+  <script>
+    function recalculate_totals()
+    {
+        var current_total;
+        var avg_total;
+        var avg_count;
+        var avg_calculated;
+        var value_raw;
+        var value_formatted;
+        var value_rounded;
+        var contract_subtotal;
+        var grounds_maintenance_contract_total;
+        var irrigation_contract_total;
+
+        <cfloop from="1" to="#arrayLen(quote_column_headers)#" index="i">
+            <cfset current_column = quote_column_headers[i]>
+            <cfif current_column.column_totalable NEQ 0>
+            <cfoutput>
+                <cfif current_column.column_totalable EQ 1>
+                    current_total = 0;
+                    $('.column#current_column.ID#').each(function(){
+                        current_total += 1*$(this).val();
+                        //console.log(current_total);
+                    });
+
+                    value_raw = current_total;
+                    if (!value_raw)
+                    {
+                        value_formatted = '&nbsp;';
+                    }
+                    else
+                    {
+                        value_rounded = (Math.round(value_raw * Math.pow(10, <cfoutput>#current_column.column_precision#</cfoutput>))/Math.pow(10, <cfoutput>#current_column.column_precision#</cfoutput>)).toFixed(<cfoutput>#current_column.column_precision#</cfoutput>);
+                        <cfif current_column.column_displayformat NEQ ''>
+                            value_formatted = '<cfoutput>#current_column.column_displayformat#</cfoutput>'.replace('__', formatNumber(value_rounded));
+                        <cfelse>
+                            value_formatted = formatNumber(value_rounded);
+                        </cfif>
+                    }
+                    $('.total#current_column.ID#').html(value_formatted);
+                    <cfif current_column.ID EQ 20>
+                        contract_subtotal = value_raw;
+                    </cfif>
+                </cfif>
+                <!---
+                <cfif current_column.column_totalable EQ 2>
+                    avg_total = 0;
+                    avg_count = 0;
+                    $('.column#current_column.ID#').each(function(){
+                        avg_total += 1*$(this).val();
+                        avg_count++;
+                        //console.log(avg_total);
+                    });
+
+                    avg_calculated = 0;
+                    if (avg_count > 0)
+                        avg_calculated = avg_total/avg_count;
+
+                    value_raw = avg_calculated;
+                    if (!value_raw)
+                    {
+                        value_formatted = '&nbsp;';
+                    }
+                    else
+                    {
+                        value_rounded = (Math.round(value_raw * Math.pow(10, <cfoutput>#current_column.column_precision#</cfoutput>))/Math.pow(10, <cfoutput>#current_column.column_precision#</cfoutput>)).toFixed(<cfoutput>#current_column.column_precision#</cfoutput>);
+                        <cfif current_column.column_displayformat NEQ ''>
+                            value_formatted = '<cfoutput>#current_column.column_displayformat#</cfoutput>'.replace('__', formatNumber(value_rounded));
+                        <cfelse>
+                            value_formatted = formatNumber(value_rounded);
+                        </cfif>
+                    }
+                    $('.avg#current_column.ID#').html(value_formatted);
+                </cfif>
+                --->
+            </cfoutput>
+            </cfif>
+        </cfloop>
+        value_raw = 1*$('#contract_adjustment').val();
+        $('#contract_adjustment_formatted').html(formatDollars(value_raw));
+
+        value_raw = 1*$('#discount_adjustment').val();
+        $('#discount_adjustment_formatted').html(formatDollars(value_raw));
+
+        value_raw = contract_subtotal + 1*$('#contract_adjustment').val() + 1*$('#discount_adjustment').val();
+        $('#adjusted_contract_price').html(formatDollars(value_raw));
+        $('#adjusted_contract_price_formatted').html(formatDollars(value_raw));
+
+        var irrigation_contract_total = 0;
+        $('.totaltype_irrigation').each(function(){
+            irrigation_contract_total += 1*$(this).val();
+        });
+        $('#irrigation_contract_formatted').html(formatDollars(irrigation_contract_total));
+
+        var grounds_maintenance_contract_total = contract_subtotal - irrigation_contract_total;
+        $('#grounds_maintenance_contract_formatted').html(formatDollars(grounds_maintenance_contract_total));
+        
+        var seasonal_hours_total = 0;
+        $('.totaltype_seasonal').each(function(){
+            seasonal_hours_total += 1*$(this).val();
+        });
+        $('#seasonal_hours_formatted').html(getValueRounded(seasonal_hours_total, 1));
+
+        value_raw = unformatValueByIdentity('.total14') + unformatValueByIdentity('.total15');
+        $('#total_direct_costs_formatted').html(formatDollars(value_raw));
+
+        value_raw = unformatValueByIdentity('#adjusted_contract_price') - unformatValueByIdentity('#total_direct_costs_formatted');
+        $('#gross_profit_formatted').html(formatDollars(value_raw));
+
+        value_raw = unformatValueByIdentity('.total20') / 2;
+        $('#margin_formatted').html(formatDollars(value_raw));
+
+        value_raw = unformatValueByIdentity('#gross_profit_formatted') - unformatValueByIdentity('#margin_formatted');
+        $('#net_cash_flow_formatted').html(formatDollars(value_raw));
+
+        value_raw = unformatValueByIdentity('#net_cash_flow_formatted') / unformatValueByIdentity('.total20') * 100;
+        if (isNaN(value_raw)) value_raw = 0;
+        $('#net_cash_flow_percentage_formatted').html(formatPercentage(value_raw));
+    }
+
+    function formatDollars(value_raw) {
+        var value_rounded = getValueRounded(value_raw);
+        return '$'+formatNumber(value_rounded);
+    }
+
+    function formatPercentage(value_raw) {
+        var value_rounded = getValueRounded(value_raw);
+        return formatNumber(value_rounded)+'%';
+    }
+
+    function getValueRounded(value_raw, precision)
+    {
+        if (!precision) precision = 2;
+        var value = (Math.round(value_raw * Math.pow(10, precision))/Math.pow(10, precision)).toFixed(precision);
+        if (isNaN(value)) return 0.00;
+        return value;
+    }
+
+    function unformatValueByIdentity(identity) {
+        var html = $(identity).html();
+        while (html.indexOf('$') != -1) html = html.replace('$' ,'');
+        while (html.indexOf(',') != -1) html = html.replace(',' ,'');
+        return 1*html;
+    }
+
+    function formatNumber (num) {
+        return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+    }
+
+    function recalculate()
+    {
+    <cfloop from="1" to="#arrayLen(row_order_array)#" index="wrapi">
+        <cfset quote_row_index = row_order_array[wrapi]>
+        recalculate_row<cfoutput>#quote_row_index#</cfoutput>();
+    </cfloop>
+        recalculate_totals();
+    }
+
+    <cfloop from="1" to="#arrayLen(row_order_array)#" index="wrapi">
+        <cfset quote_row_index = row_order_array[wrapi]>
+    function recalculate_row<cfoutput>#quote_row_index#</cfoutput>()
+    {
+        var equation;
+        var regexp = /\[(\d+)\]/g;
+        var matches;
+        var index;
+        var rowcol_element_ids;
+        var column_ID;
+        var column_ID_raw;
+        var value_raw;
+        var value_rounded;
+        var value_formatted;
+
+        rowcol_element_ids = {};
+        <cfloop from="1" to="#arrayLen(quote_rows[quote_row_index])#" index="i">
+            <cfset current_row = quote_rows[quote_row_index][i]>
+            <cfset current_column = quote_column_headers[quote_column_ID_index[current_row.quote_data_entry_headers_ID]]>
+            <cfif current_row.quote_services_field NEQ ''>
+                rowcol_element_ids['[<cfoutput>#current_column.ID#</cfoutput>]'] = '<cfoutput>#current_row.quote_services_field#</cfoutput>';
+            <cfelse>
+                rowcol_element_ids['[<cfoutput>#current_column.ID#</cfoutput>]'] = '<cfoutput>row#current_row.ID#_numeric</cfoutput>';
+            </cfif>
+        </cfloop>
+        <cfloop from="1" to="#arrayLen(quote_rows[quote_row_index])#" index="i">
+            <cfset current_row = quote_rows[quote_row_index][i]>
+            <cfset current_column = quote_column_headers[quote_column_ID_index[current_row.quote_data_entry_headers_ID]]>
+            <cfif current_column.column_formula NEQ '' OR current_row.row_formula NEQ ''>
+                <cfif current_row.row_formula NEQ ''>
+                    equation = '<cfoutput>#current_row.row_formula#</cfoutput>';
+                <cfelse>
+                    equation = '<cfoutput>#current_column.column_formula#</cfoutput>';
+                </cfif>
+                //console.log(equation);
+                matches = equation.match(regexp);
+                for(var index in matches)
+                {
+                    column_ID = matches[index];
+                    //console.log(column_ID);
+                    var extracted_value;
+                    if (document.getElementById(rowcol_element_ids[column_ID]))
+                    {
+                        //console.log(rowcol_element_ids[column_ID]);
+                        extracted_value = 1*document.getElementById(rowcol_element_ids[column_ID]).value;
+                    }
+                    else
+                    {
+                        column_ID_raw = column_ID.replace('[', '').replace(']', '');
+                        //console.log('row'+column_ID_raw+'_numeric');
+                        extracted_value = 1*document.getElementById('row'+column_ID_raw+'_numeric').value;
+                    }
+                    equation = equation.replace(matches[index], extracted_value);
+                }
+                //console.log(equation);
+                value_raw = math.eval(equation);
+                if (isNaN(value_raw)) value_raw = 0;
+                if (!value_raw)
+                {
+                    value_formatted = '&nbsp;';
+                }
+                else
+                {
+                    value_rounded = (Math.round(value_raw * Math.pow(10, <cfoutput>#current_column.column_precision#</cfoutput>))/Math.pow(10, <cfoutput>#current_column.column_precision#</cfoutput>)).toFixed(<cfoutput>#current_column.column_precision#</cfoutput>);
+                    <cfif current_column.column_displayformat NEQ ''>
+                        value_formatted = '<cfoutput>#current_column.column_displayformat#</cfoutput>'.replace('__', formatNumber(value_rounded));
+                    <cfelse>
+                        value_formatted = formatNumber(value_rounded);
+                    </cfif>
+                }
+
+                <cfif current_row.quote_services_field NEQ ''>
+                    document.getElementById('<cfoutput>#current_row.quote_services_field#</cfoutput>').value = value_raw?value_rounded:value_raw;
+                <cfelse>
+                    document.getElementById('row<cfoutput>#current_row.ID#</cfoutput>_numeric').value = value_raw;
+                    //console.log(value_raw);
+                    //console.log(document.getElementById('row<cfoutput>#current_row.ID#</cfoutput>_numeric').value);
+
+                    if (document.getElementById('row<cfoutput>#current_row.ID#</cfoutput>'))
+                    {
+                        document.getElementById('row<cfoutput>#current_row.ID#</cfoutput>').innerHTML = value_formatted;
+                    }
+                </cfif>
+            </cfif>
+        </cfloop>
+    }
+    </cfloop>
+
+    function apply_profit_margin(value) {
+        value = 1*value;
+        if (isNaN(value)) value = 0;
+        //if (value < 50) return;
+        $('.column18').each(function(){
+            if (!$(this).is('span') && $(this).attr('type') != 'hidden' && !$(this).prop('disabled'))
+                $(this).val(value);
+        });
+        recalculate()
+    }
+
+    window.onload = function(){
+        $( document ).ready(function() {
+            var initial_element;
+            <cfloop collection=#current_quote_services_materials# item="field">
+                <cfif field DOES NOT CONTAIN 'date'>
+                    <cfoutput>
+                        initial_element = document.getElementById('#field#');
+                        if (initial_element)
+                            initial_element.value = '#replace(current_quote_services_materials[field], "'", "\'", 'ALL')#';
+                    </cfoutput>
+                </cfif>
+            </cfloop>
+            //apply_profit_margin(<cfoutput>#get_quote_services.gross_margin#</cfoutput>);
+
+            recalculate();
+        });
+    }
+  </script>
+<!--- END OUTPUT --->
+
+<table   width="98%"border="0" cellspacing="0" cellpadding="0" >
+        <tr>
+          <td><table class="table"  >
+              <cfoutput>
+                <tr>
+                  <td colspan="2" align="center" nowrap="nowrap"><strong>CONTRACT INFO</strong></td>
+                  <td width="150" align="right" nowrap="nowrap">&nbsp;</td>
+                  <td colspan="2" align="center" nowrap="nowrap"><strong>BILLING INFO</strong></td>
+                </tr>
+                <tr>
+                  <td nowrap="nowrap">Suggested Contract Price</td>
+                  <td align="right" nowrap="nowrap"><span class="total20"></span></td>
+                  <td width="150" align="right" nowrap="nowrap">&nbsp;</td>
+                  <td nowrap="nowrap">Grounds Maintenance Contract</td>
+                  <td  align="right" nowrap="nowrap"><span id="grounds_maintenance_contract_formatted"></span></td>
+                </tr>
+                <tr>
+                  <td nowrap="nowrap">Contract Adjustment</td>
+                  <td align="right" nowrap="nowrap"><span id="contract_adjustment_formatted"></span></td>
+                  <td width="150" align="right" nowrap="nowrap">&nbsp;</td>
+                  <td nowrap="nowrap">Irrigation Contract</td>
+                  <td  align="right" nowrap="nowrap"><span id="irrigation_contract_formatted"></span></td>
+                </tr>
+                <tr>
+                  <td nowrap="nowrap">Discount Adjustment</td>
+                  <td align="right" nowrap="nowrap"><span id="discount_adjustment_formatted"></td>
+                  <td width="150" align="right" nowrap="nowrap">&nbsp;</td>
+                  <td nowrap="nowrap">&nbsp;</td>
+                  <td  align="right" nowrap="nowrap">&nbsp;</td>
+                </tr>
+                <tr>
+                  <td nowrap="nowrap"><strong>Total Adjusted Contract Price</strong></td>
+                  <td align="right" nowrap="nowrap"><strong><span id="adjusted_contract_price_formatted"></span></strong></td>
+                  <td width="150" align="right" nowrap="nowrap">&nbsp;</td>
+                  <td>Bill To Company</td>
+                  <td align="right" nowrap="nowrap">&nbsp;</td>
+                </tr>
+                <tr>
+                  <td nowrap="nowrap">&nbsp;</td>
+                  <td align="right" nowrap="nowrap"></td>
+                  <td width="150" align="right" nowrap="nowrap"></td>
+                  <td>Billing Contact</td>
+                  <td align="right" nowrap="nowrap"></td>
+                </tr>
+                <tr>
+                  <td nowrap="nowrap">Total Labor</td>
+                  <td align="right" nowrap="nowrap"><span class="total14"></span></td>
+                  <td width="150" align="right" nowrap="nowrap">&nbsp;</td>
+                  <td>Billing Contact Phone</td>
+                  <td align="right" nowrap="nowrap">&nbsp;</td>
+                </tr>
+                <tr>
+                  <td nowrap="nowrap">Total Material</td>
+                  <td align="right" nowrap="nowrap"><span class="total15"></span></td>
+                  <td width="150" align="right" nowrap="nowrap">&nbsp;</td>
+                  <td nowrap="nowrap">Billing Contact Email Address</td>
+                  <td align="right" nowrap="nowrap">&nbsp;</td>
+                </tr>
+                <tr>
+                  <td nowrap="nowrap"><strong>Total Direct Costs</strong></td>
+                  <td align="right" nowrap="nowrap"><strong><span id="total_direct_costs_formatted"></span></strong></td>
+                  <td width="150" align="right" nowrap="nowrap">&nbsp;</td>
+                  <td align="right" nowrap="nowrap">&nbsp;</td>
+                  <td align="right" nowrap="nowrap">&nbsp;</td>
+                </tr>
+                <tr>
+                  <td nowrap="nowrap">&nbsp;</td>
+                  <td align="right" nowrap="nowrap"></td>
+                  <td width="150" align="right" nowrap="nowrap"></td>
+                  <td>Billing Address</td>
+                  <td align="right" nowrap="nowrap"></td>
+                </tr>
+                <tr>
+                  <td nowrap="nowrap">Gross Profit</td>
+                  <td align="right" nowrap="nowrap"><span id="gross_profit_formatted"></span></td>
+                  <td width="150" align="right" nowrap="nowrap">&nbsp;</td>
+                  <td>Billing Address2</td>
+                  <td align="right" nowrap="nowrap">&nbsp;</td>
+                </tr>
+                <tr>
+                  <td nowrap="nowrap">Margin (50% contract price)</td>
+                  <td align="right" nowrap="nowrap"><span id="margin_formatted"></span></td>
+                  <td width="150" align="right" nowrap="nowrap">&nbsp;</td>
+                  <td>Billing City </td>
+                  <td align="right" nowrap="nowrap">&nbsp;</td>
+                </tr>
+                <tr>
+                  <td nowrap="nowrap"><strong>Net Cashflow</strong></td>
+                  <td align="right" nowrap="nowrap"><strong><span id="net_cash_flow_formatted"></span></strong></td>
+                  <td width="150" align="right" nowrap="nowrap">&nbsp;</td>
+                  <td>Billing State</td>
+                  <td align="right" nowrap="nowrap">&nbsp;</td>
+                </tr>
+                <tr>
+                  <td nowrap="nowrap">Net Cashflow %</td>
+                  <td align="right" nowrap="nowrap"><span id="net_cash_flow_percentage_formatted"></span></td>
+                  <td align="right" nowrap="nowrap">&nbsp;</td>
+                  <td>Billing Zip</td>
+                  <td align="right" nowrap="nowrap">&nbsp;</td>
+                </tr>
+                <tr>
+                  <td nowrap="nowrap">&nbsp;</td>
+                  <td  align="right" nowrap="nowrap">&nbsp;</td>
+                  <td width="150"  align="right" nowrap="nowrap">&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td  align="right" nowrap="nowrap">&nbsp;</td>
+                </tr>
+                <!--- <tr>
+                  <td nowrap="nowrap">Grounds Maintenance Contract</td>
+                  <td  align="right" nowrap="nowrap">#NumberFormat(SESSION.Grounds_Maintenance_Contract,"99,999,999.99")#</td>
+                  <td width="100"  align="right" nowrap="nowrap">&nbsp;</td>
+                  <td  align="right" nowrap="nowrap">&nbsp;</td>
+                  <td  align="right" nowrap="nowrap">&nbsp;</td>
+                </tr>
+                <tr>
+                  <td nowrap="nowrap">Irrigation</td>
+                  <td  align="right" nowrap="nowrap">#NumberFormat(SESSION.Irrigation_Contract,"99,999,999.99")#</td>
+                  <td width="100"  align="right" nowrap="nowrap">&nbsp;</td>
+                  <td  align="right" nowrap="nowrap">&nbsp;</td>
+                  <td  align="right" nowrap="nowrap">&nbsp;</td>
+                </tr>--->
+              </cfoutput>
+            </table>
+            <p>&nbsp;</p></td>
+          <td  width="60%">&nbsp;</td>
+          <td align="top"><br />
+            <br />
+            <br />
+            <br />
+            <div class="container-buttons">
+              <div class="left-buttons">
+                <input name="btnSumit" class="btn btn-primary" id="btnSumit"  type="submit" value="Contract Approved"/>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <!---  <div class="button-box"><a href="create_duplicate_quote.cfm?ID=<cfoutput>#url.id#</cfoutput>" class="btn btn-success" >Duplicate this Quote</a> </div> --->
+
+              </div>
+            </div></td>
+        </tr>
+      </table>
+    </form>
+    <table width="95%" border="0">
+      <tbody>
+        <tr   bgcolor="#EDF3F8">
+          <td height="50" valign="bottom"><H2>NOTES: </H2></td>
+        </tr>
+      </tbody>
+    </table>
+    <br />
+    <table width="95%" border="0">
+      <tbody>
+        <tr    bgcolor="#EDF3F8">
+          <td><strong>Developer Notes : (Temporary, will be removed prior to production)</strong></td>
+        </tr>
+        <tr>
+          <td valign="top"><p> Ben: Is Billing Contact Info done like this? <br />
+              http://52.35.20.44/ssl/admin/project_Edit_Project_Information.cfm?ProjectID=J3769-316</p>
+            <p>&nbsp;</p></td>
+        </tr>
+      </tbody>
+    </table>
+    <br />
+    <table width="95%" border="0">
+      <tbody>
+        <tr      bgcolor="#EDF3F8">
+          <td height="30"><strong>Contract Adjustment Notes: </strong></td>
+        </tr>
+        <tr>
+          <td valign="top"><br />
+            <br />
+            <br /></td>
+        </tr>
+      </tbody>
+    </table>
+    <br />
+    <table width="95%" border="0">
+      <tbody>
+        <tr      bgcolor="#EDF3F8">
+          <td height="30"><strong>Discount Adjustment Notes :</strong></td>
+        </tr>
+        <tr>
+          <td valign="top"><br />
+            <br /></td>
+        </tr>
+      </tbody>
+    </table>
+    <br />
+    <table width="95%" border="0">
+      <tbody>
+        <tr      bgcolor="#EDF3F8">
+          <td height="30"><strong>Billing Notes :</strong></td>
+        </tr>
+        <tr>
+          <td valign="top"><br />
+            (for use by Admins, Billing, etc.)<br /></td>
+        </tr>
+      </tbody>
+    </table>
+    <br />
+    <table width="95%" border="0">
+      <tbody>
+        <tr      bgcolor="#EDF3F8">
+          <td height="30"><strong>Quote Notes : </strong></td>
+        </tr>
+        <tr>
+          <td valign="top"><br />
+            (viewed only within the Quote)(for use by Estimators/BDs in reference to adjustments made, etc.)<br />
+            <br /></td>
+        </tr>
+      </tbody>
+    </table>
+    <br />
+    <table width="95%" border="0">
+      <tbody>
+        <tr      bgcolor="#EDF3F8">
+          <td height="30"><strong>Spec Sheet Notes : </strong></td>
+        </tr>
+        <tr>
+          <td valign="top"><br />
+            (viewed within the Quote and shown on bottom of Spec Sheets)(for use by Production)<br />
+            <br /></td>
+        </tr>
+      </tbody>
+    </table>
+    <br />
+    <table width="95%" border="0">
+      <tbody>
+        <tr      bgcolor="#EDF3F8">
+          <td height="30"><strong>Proposal/Contract Notes : </strong></td>
+        </tr>
+        <tr>
+          <td valign="top"><br />
+            (viewed within the Quote and shown at bottom of MSS sheet.)(for use of Client)<br />
+            <br /></td>
+        </tr>
+      </tbody>
+    </table>
+    <br />
+    <br />
+    <br />
+    <br />
+  </div>
+</div>
+<!--Html-->
+</div>
+</div>
+<!-- END PAGE CONTAINER -->
+<!-- BEGIN FOOTER -->
+<cfinclude template="footer-include.cfm">
+<!-- END FOOTER -->
+<div class="scroll-to-top"> <i class="icon-arrow-up"></i> </div>
+<!-- END FOOTER -->
+<!-- BEGIN JAVASCRIPTS (Load javascripts at bottom, this will reduce page load time) -->
+<!-- BEGIN CORE PLUGINS -->
+<!--[if lt IE 9]>
+<script src="assets/global/plugins/respond.min.js"></script>
+<script src="assets/global/plugins/excanvas.min.js"></script>
+<![endif]-->
+<script src="assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+<script src="assets/global/plugins/jquery-migrate.min.js" type="text/javascript"></script>
+<!-- IMPORTANT! Load jquery-ui.min.js before bootstrap.min.js to fix bootstrap tooltip conflict with jquery ui tooltip -->
+<script src="assets/global/plugins/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
+<script src="assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="assets/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js" type="text/javascript"></script>
+<script src="assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+<script src="assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+<script src="assets/global/plugins/jquery.cokie.min.js" type="text/javascript"></script>
+<script src="assets/global/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
+<!-- END CORE PLUGINS -->
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+<script type="text/javascript" src="assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+<script type="text/javascript" src="assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js"></script>
+<script type="text/javascript" src="assets/global/plugins/clockface/js/clockface.js"></script>
+<script type="text/javascript" src="assets/global/plugins/bootstrap-daterangepicker/moment.min.js"></script>
+<script type="text/javascript" src="assets/global/plugins/bootstrap-daterangepicker/daterangepicker.js"></script>
+<script type="text/javascript" src="assets/global/plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.js"></script>
+<script type="text/javascript" src="assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<!-- END PAGE LEVEL PLUGINS -->
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+<script src="assets/global/scripts/metronic.js" type="text/javascript"></script>
+<script src="assets/admin/layout3/scripts/layout.js" type="text/javascript"></script>
+<script src="assets/admin/layout3/scripts/demo.js" type="text/javascript"></script>
+<script type="text/javascript" src="assets/admin/pages/scripts/dropdown-header-menu.js"></script>
+<!-- END CORE PLUGINS -->
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+<script type="text/javascript" src="assets/global/plugins/select2/select2.min.js"></script>
+<script type="text/javascript" src="assets/global/plugins/datatables/extensions/TableTools/js/dataTables.tableTools.min.js"></script>
+<script type="text/javascript" src="assets/global/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js"></script>
+<script type="text/javascript" src="assets/global/plugins/datatables/extensions/Scroller/js/dataTables.scroller.min.js"></script>
+<script type="text/javascript" src="assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.js"></script>
+<script type="text/javascript" src="assets/admin/pages/scripts/table-advanced2.js"></script>
+<script src="assets/admin/pages/scripts/components-pickers.js"></script>
+<!-- END PAGE LEVEL PLUGINS -->
+<script>
+jQuery(document).ready(function() {
+
+   Metronic.init(); // init metronic core components
+Layout.init(); // init current layout
+Demo.init(); // init demo features
+   TableAdvanced.init();
+   ComponentsPickers.init();
+
+});
+</script>
+</body>
+<!-- END BODY -->
+</html>

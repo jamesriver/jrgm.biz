@@ -45,7 +45,7 @@ textarea {
 </thead> 
  
  <cfquery name="get_job_notes" datasource="jrgm">
-SELECT * FROM APP_notes 
+SELECT TOP 100 ID, Note_Author_ID, Note_Content, Note_Date, job_id, employee_id FROM APP_notes
 ORDER by Note_Date DESC
 </cfquery>
       <tbody>  
@@ -70,7 +70,7 @@ SELECT [Employee ID] AS EmployeeID,position,[Name FirstLast] AS employeename  FR
     select *
     from Job_note_pix
   WHERE name LIKE '#ID#%'
-</cfquery>  
+</cfquery>
 <!---  <cfdump  var="#Job_note_pix#">  --->
     <td align="center" ><cfloop query="Job_note_pix"  startRow = "1" endRow = "5"><a href="http://webservice.jrgm.biz/NotesImg/#name#" target="_blank"><img src="http://webservice.jrgm.biz/NotesImg/#name#" width="20" height="20" /></a>&nbsp;</cfloop></td>
      <td align="center" ><a href="job_details.cfm?deleteme=notsure&job_id=#job_id#&noteid=#get_job_notes.ID#"><img src="images/del.png" width="12" height="12" /></a></td>

@@ -8,6 +8,13 @@
 UPDATE equipment SET  crew_assignment_last = #form.EMPLOYEEID#
  WHERE ID=#form.EquipmentID#
 </cfquery>
+<cfquery name="update_allocation_history" datasource="jrgm"  >
+INSERT INTO equipment_allocation_history
+(equipment_id, assign_date, employee_id, modified_by_employee_id)
+VALUES
+(#form.EquipmentID#, GetUTCDate(), #form.EMPLOYEEID#, #SESSION.userid#)
+</cfquery>
+
 <cfquery name="getequipment_this" datasource="jrgm">
 SELECT inventory_status ,ID,Product_description,Product_name,Serial_Number,Equipment_ID,category,License_Plate,Equipment_Year, engine_cycle, mileage_eq,hours_eq,BRANCH_NAME,ISNULL(CREW_ASSIGNMENT_LAST,0),CREW_ASSIGNMENT_LAST
   FROM equipment WHERE 0=0 AND ID=#form.EquipmentID#
@@ -30,11 +37,20 @@ SELECT inventory_status ,ID,Product_description,Product_name,Serial_Number,Equip
 <CFSET crew_assignment_last = #getequipment_this.COMPUTED_COLUMN_14#>
 
 <!--- Get Employee List --->
+<cfquery name="get_all_employees" datasource="jrgm"  >
+SELECT first_name,last_name,branch,position,[Employee ID] As employee_id,  [Name FirstLast] AS fullname  FROM APP_employees
+ ORDER by  Last_name ASC,first_name ASC
+</cfquery>
 <cfquery name="get_branch_employees" datasource="jrgm"  >
 SELECT first_name,last_name,branch,position,[Employee ID] As employee_id,  [Name FirstLast] AS fullname  FROM APP_employees
 WHERE branch = '#url.branch#'  AND    active_record = 1
  ORDER by  Last_name ASC,first_name ASC
 </cfquery>
+<cfset employees = StructNew()>
+<cfloop query="get_all_employees">
+    <cfset StructInsert(employees, employee_id, fullname)>
+</cfloop>
+<cfset StructInsert(employees, '', '')>
 
  <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -139,24 +155,24 @@ WHERE branch = '#url.branch#'  AND    active_record = 1
     <input type="submit" name="submit" id="submit" value="Submit">
     <button type="button" onClick="javascript:window.close()">Close</button>
         </div>
-      </td></tr></table></form><br />
- 
- <cfquery name="get_branch_employees_now" datasource="jrgm"  >
-SELECT first_name,last_name,branch,position,[Employee ID] As employee_id,  [Name FirstLast] AS fullname  FROM APP_employees
-WHERE   [Employee ID] =#getequipment_this.COMPUTED_COLUMN_14#
+      </td></tr></table></form>
+
+ <cfquery name="get_allocation_history" datasource="jrgm"  >
+SELECT * FROM equipment_allocation_history
+WHERE   equipment_id=#url.id#
+ORDER BY assign_date DESC
 </cfquery>
 
-<!--- <cfdump var="#get_branch_employees_now#"> --->
-
-<table width="500" border="0" cellpadding="0" cellspacing="5" class="clockoutb">
-  <tr>
-    <td><cfif get_branch_employees_now.recordcount EQ 0>Equipment Is Unassigned 
-	<cfelse>Equipment Assigned to <cfoutput>#get_branch_employees_now.fullname#</cfoutput></cfif>&nbsp;</td>
-  </tr>
-</table>
 <br />
-<br />
-<span class="timeOut">(Dont forget to close this window)</span></div>  </div>
+Allocation History
+      <hr />
+<cfoutput query="get_allocation_history">
+    #DateFormat(assign_date, 'mm/dd/yyyy')# - #employees[employee_id]#
+    <cfif employees[modified_by_employee_id] NEQ ''>
+        (assigned by #employees[modified_by_employee_id]#)
+    </cfif>
+    <br />
+</cfoutput>
   <!-- to clear footer -->
 </div>
 

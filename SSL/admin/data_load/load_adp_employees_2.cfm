@@ -272,8 +272,8 @@ varchar
 <!-----------------  This is the end of step 1 ----------------------> 
 <!-----------------  This is the end of step 1 ---------------------->
 <cfquery name="get_modified_records"   datasource="jrgm" >
-  SELECT [Employee ID] AS employee_id, branch,active_record,[Name FirstLast] AS employee_name,employee_rehire_date,fww,regular_pay_rate FROM app_employees_test 
-  WHERE   POSITION_EFFECTIVE_DATE > '#checkdate#' AND  [Employee ID] > 0
+  SELECT [Employee ID] AS employee_id, branch,active_record,[Name FirstLast] AS employee_name,employee_rehire_date,fww,regular_pay_rate FROM app_employees_test
+  WHERE   (POSITION_EFFECTIVE_DATE > '#checkdate#' OR employee_rehire_date > '#checkdate#') AND  [Employee ID] > 0
   </cfquery>
 <cfloop query="get_modified_records">
   <cfquery name="get_modified_records_was"   datasource="jrgm">
