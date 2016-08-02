@@ -28,12 +28,16 @@ SELECT  [Employee ID] AS Employee_ID,[Name FirstLast] AS employee_name, first_na
 <cfloop query="get_all_employee_info">
   <cfset myemployeelist = ListAppend(myemployeelist,Employee_ID)>
 </cfloop>
+<!---
 <cfquery name="get_all_equipment_repair_log_info"    datasource="jrgm"   >
 SELECT   ID,acceptdate,Equipment_ID,completionDate  FROM equipment_repair_log
   </cfquery>
+--->
+<!---
 <cfquery name="get_all_jobs_info" datasource="jrgm">
 SELECT   [Wk Location Name] AS jobname,  [Job ID]  AS jobid FROM app_jobs  
 </cfquery>
+--->
 <cfquery name="get_employees" datasource="jrgm">
 SELECT DISTINCT Employee_ID, crew_name AS employee_name,supervisor_id,Employee_Position_ID FROM APP_crews 
 WHERE  Employee_branch = '#SESSION.branch#' AND Employee_Position_ID
@@ -44,15 +48,19 @@ WHERE  Employee_branch = '#SESSION.branch#' AND Employee_Position_ID
 SELECT [Employee ID] AS Employee_ID,position,Last_name AS Employee_Name FROM 
 APP_employees WHERE [Employee ID] ='#SESSION.userid#' 
 </cfquery>
+<!---
 <cfquery name="get_supers" datasource="jrgm">
 SELECT [Employee ID] AS Employee_ID,position,[Name FirstLast] AS Employee_Name FROM 
 APP_employees WHERE Branch = '#session.branch#'
 </cfquery>
+--->
 <!--- <cfdump  var="#get_crew_leaders#"> --->
+<!---
 <CFSET mylistsupers ="0">
 <cfloop query="get_supers">
   <cfset mylistsupers = ListAppend(mylistsupers,Employee_ID)>
 </cfloop>
+--->
 <CFIF IsDefined("url.work_date")>
   <cfset todayDate = #url.work_date#>
   <cfelse>
@@ -222,53 +230,37 @@ SELECT  last_name AS employee_name,branch
           </div>
         </div>
       </cfif>
+
+      <!--   DAILY SHEETS AND PAYROLL ROW   -->
       <div class="row margin-top-10">
         <div class="col-md-6 col-sm-12"> 
+
           <!-- BEGIN PORTLET-->
-          <div class="portlet box blue-hoki">
-            <cfquery name="get_UA_daily_sheets_for_RM" datasource="jrgm"  > 
-SELECT  * FROM APP_daily_sheets  WHERE ((Supervisor_ID IN (#mylistsupers#)  OR  Supervisor_ID = #SESSION.userid#)) AND ds_approved IS NULL AND ds_date > '12/31/2014' ORDER by ds_date DESC , ID DESC
-  </cfquery>
+          <div class="portlet box blue-hoki" id="dailySheetsIdForAjax">
+
             <div class="portlet-title">
-              <div class="caption"><span class="badge badge-portal"><cfoutput>#get_UA_daily_sheets_for_RM.RecordCount#</cfoutput></span> Daily Sheets</div>
+              <div class="caption"><span class="badge badge-portal"><cfoutput>0</cfoutput></span> Daily Sheets</div>
               <div class="tools"> <a href="javascript:;" class="collapse"> </a> </div>
             </div>
             <div class="portlet-body">
-              <p class="text-danger"><strong>The following Daily Sheets have NOT been approved.</strong></p>
-              <table class="table table-striped table-hover">
-                <thead>
-                  <tr>
-                    <th>DSID</th>
-                    <th>Date</th>
-                    <th>Branch</th>
-                    <th>Production Manager</th>
-                    <th>Supervisor/Crew Leader</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <cfoutput query="get_UA_daily_sheets_for_RM">
-                    <cfquery name="get_info_S"  dbtype="query" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
-						SELECT  last_name AS employee_name,branch
-						FROM get_all_employee_info WHERE employee_ID =#get_UA_daily_sheets_for_RM.supervisor_id#
-					</cfquery>
-                    <cfquery name="get_info_CL" dbtype="query" cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
-						SELECT   last_name AS employee_name,branch
-						FROM   get_all_employee_info WHERE employee_ID =#get_UA_daily_sheets_for_RM.Crew_Leader_ID#
-					</cfquery>
-                    <tr>
-                      <td><a href="daily_sheet.cfm?dsid=#ID#">#ID#</a></td>
-                      <td>#dateformat(ds_date,"mm/dd/yy")#</td>
-                      <td >#get_info_S.branch#</td>
-                      <td>#get_info_S.employee_name#</td>
-                      <td>#get_info_CL.employee_name#</td>
-                    </tr>
-                  </cfoutput>
-                </tbody>
-              </table>
+		<span id="icon_ajaxloading" style="display: inline"><i>Daily Sheets Loading... please wait.</i></span>
+
+		<script>
+                $.ajax({
+                    url: 'index_daily_sheets.cfm',
+                    type: 'get',
+                    success: function(data) {
+			document.getElementById("dailySheetsIdForAjax").innerHTML=data;
+                    }
+                });
+		</script>
             </div>
+
           </div>
+          <!-- END PORTLET-->
+
         </div>
-        <!-- END PORTLET-->
+
         <div class="col-md-6 col-sm-12"> 
           <!-- BEGIN PORTLET-->
           <div class="portlet box green">
@@ -276,146 +268,20 @@ SELECT  * FROM APP_daily_sheets  WHERE ((Supervisor_ID IN (#mylistsupers#)  OR  
               <div class="caption"><span class="badge badge-portal">1</span> Payroll</div>
               <div class="tools"> <a href="javascript:;" class="collapse"> </a> </div>
             </div>
-            
-            <!--   Check Pay Period 1 --->
-            
-            <div class="portlet-body"> 
+            <div class="portlet-body" id="payrollIdForAjax"> 
               
-              <!---   Check Pay Period 1 --->
-              <cfquery name="app_payroll_periods1" datasource="jrgm">
- SELECT  MIN(pay_period_start) as pay_period_start, MAX(pay_period_end) AS pay_period_end
- FROM app_pay_periods WHERE pay_period_week = #pay_period_week1#
- </cfquery>
-              <CFSET pay_period_end_week1 =  dateadd("d",7,app_payroll_periods1.pay_period_start)>
-              <cfquery name="get_employees_with_time_Week1" datasource="jrgm" >
-		SELECT DISTINCT Employee_ID, APP_employees.last_name, APP_employees.first_name FROM 
-		app_employee_payroll_clock  
-		INNER JOIN APP_employees
-		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
-		WHERE branch = '#SESSION.branch#'  
-        AND 
-        (app_employee_payroll_clock.Time_In > '#app_payroll_periods1.pay_period_start# 00:00:00.000' AND app_employee_payroll_clock.Time_Out < '#DateFormat(pay_period_end_week1, "yyyy-mm-dd")# 00:00:00.000')
-		ORDER by APP_employees.last_name
-  </cfquery>
-              <CFSET mylist ="0">
-              <cfloop query="get_employees_with_time_Week1">
-                <cfset myList = ListAppend(mylist,Employee_ID)>
-              </cfloop>
-              <cfif SESSION.branch EQ 'Test'>
-                <CFSET mylist ="0">
-              </cfif>
-              <cfquery name="get_employees_with_time_unapproved_Week1" datasource="jrgm"     >
-		SELECT DISTINCT Employee_ID, APP_employees.last_name, APP_employees.first_name,APP_employees.branch,ds_id,ds_date FROM 
-		app_employee_payroll_clock  
-		INNER JOIN APP_employees
-		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
-		WHERE    
-         ( app_employee_payroll_clock.Time_In > '#app_payroll_periods1.pay_period_start# 00:00:00.000' AND  app_employee_payroll_clock.Time_Out < '#DateFormat(pay_period_end_week1, "yyyy-mm-dd")# 00:00:00.000')
-   AND Employee_ID IN (#mylist#)  AND payroll_approved IS NULL
-		ORDER by APP_employees.last_name
- </cfquery>
-              <cfif  todaydate GT APPLICATION.week1_date_available  AND get_employees_with_time_unapproved_Week1.recordcount GT 0>
-                <p class="text-danger"><strong>You have unapproved Week 1 payroll.</strong></p>
-                <a href="payroll_view_employee_detail_1week.cfm?pay_period_week=<cfoutput>#pay_period_week1#</cfoutput>" class="btn btn-primary">Approve week 1 payroll</a>
-                <cfelse>
-                <p class="text-success"><strong>All Week 1 payroll is approved.</strong></p>
-              </cfif>
-              
-              <!---   Check Pay Period 2 --->
-              <cfquery name="app_payroll_periods2" datasource="jrgm">
- SELECT   pay_period_start  as pay_period_start,  pay_period_end  AS pay_period_end
- FROM app_pay_periods WHERE pay_period_week = #pay_period_week2#
- </cfquery>
-              <CFSET pay_period_end_week2 =  dateadd("d",7,app_payroll_periods2.pay_period_start)>
-              <cfquery name="get_employees_with_time_Week2" datasource="jrgm" >
-		SELECT DISTINCT Employee_ID, APP_employees.last_name, APP_employees.first_name FROM 
-		app_employee_payroll_clock  
-		INNER JOIN APP_employees
-		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
-		WHERE branch = '#SESSION.branch#'  
-        AND 
-        (app_employee_payroll_clock.Time_In > '#app_payroll_periods2.pay_period_start# 00:00:00.000' AND app_employee_payroll_clock.Time_Out < '#DateFormat(pay_period_end_week2, "yyyy-mm-dd")# 00:00:00.000')
-		ORDER by APP_employees.last_name
-  </cfquery>
-              <CFSET mylist ="0">
-              <cfloop query="get_employees_with_time_Week2">
-                <cfset myList = ListAppend(mylist,Employee_ID)>
-              </cfloop>
-              <cfif SESSION.branch EQ 'Test'>
-                <CFSET mylist ="0">
-              </cfif>
-              <cfquery name="get_employees_with_time_unapproved_Week2" datasource="jrgm"     >
-		SELECT DISTINCT Employee_ID, APP_employees.last_name, APP_employees.first_name,APP_employees.branch,ds_id,ds_date FROM 
-		app_employee_payroll_clock  
-		INNER JOIN APP_employees
-		ON app_employee_payroll_clock.Employee_ID=APP_employees.[Employee ID]  
-		WHERE    
-         ( app_employee_payroll_clock.Time_In > '#app_payroll_periods2.pay_period_start# 00:00:00.000' AND  app_employee_payroll_clock.Time_Out < '#DateFormat(pay_period_end_week2, "yyyy-mm-dd")# 00:00:00.000')
-   AND Employee_ID IN (#mylist#)  AND payroll_approved IS NULL
-		ORDER by APP_employees.last_name
- </cfquery>
-              <cfif  todaydate GT APPLICATION.week2_date_available AND get_employees_with_time_unapproved_Week2.recordcount GT 0>
-                <p class="text-danger"><strong>You have unapproved Week 2 payroll.</strong></p>
-                <a href="payroll_view_employee_detail_1week.cfm?pay_period_week=<cfoutput>#pay_period_week2#</cfoutput>" class="btn btn-primary">Approve week 2 payroll</a>
-                <cfelse>
-                <br>
-                <br>
-                <p class="text-success"><strong>All Week 2 payroll is approved.</strong></p>
-              </cfif>
-              <cfquery name="get_many_hours" datasource="jrgm">
- SELECT employee_ID,ds_date,COUNT(DISTINCT ds_id) AS Count 
- FROM  app_employee_payroll_clock
- WHERE     (ds_date > '#APPLICATION.blockdate#')     AND Employee_ID IN (#myemployeelist#)
- GROUP BY Employee_ID, ds_date
- HAVING   COUNT(DISTINCT ds_id) > 1
- </cfquery>
-              <cfif  get_many_hours.recordcount GT 0>
-                <br>
-                <br>
-                <br>
-                <p class="text-danger"><strong>These employees are on more than 1 daily sheet  in 1 day. Please review to make sure that this is correct.</strong></p>
-                <table class="table table-striped table-hover">
-                  <thead>
-                    <tr>
-                      <th> Employee ID</th>
-                      <th> Date</th>
-                      <th> Employee Name</th>
-                      <th> DSID #1</th>
-                      <th> DSID #2</th>
-                    </tr>
-                  </thead>
-                  <cfoutput query="get_many_hours">
-                    <tbody>
-                      <tr>
-                        <td>#Employee_ID#</td>
-                        <td>#DateFormat(ds_date, "mm/dd/yyyy")#</td>
-                        <cfquery name="get_many_hours_name"   dbtype="query">
-SELECT   employee_name  FROM get_all_employee_info
-WHERE  employee_ID = #Employee_ID#
- </cfquery>
+		<span id="icon_ajaxloading" style="display: inline"><i>Payroll Loading... please wait.</i></span>
 
-                        <td>#get_many_hours_name.employee_name#</td>
-                        <!---    <td>#get_many_hours_name.branch#</td> --->
-                        <cfquery name="get_ds_id" datasource="jrgm">
-SELECT     Employee_ID, ds_date, ID,ds_id,Time_In, Time_Out
-FROM         app_employee_payroll_clock
-WHERE    ds_date ='#DateFormat(ds_date, "yyyy-mm-dd")#'  AND Employee_ID = #Employee_ID#
-ORDER by time_IN ASC
- </cfquery>
-                        <td> DSID: <a href="daily_sheet.cfm?dsid=#get_ds_id.ds_id#"  target="_blank">#get_ds_id.ds_id#</a><br>
-                          #TimeFormat(get_ds_id.time_in, "HH:mm")# - #TimeFormat(get_ds_id.time_out, "HH:mm")#</td>
-                        <cfquery name="get_ds_id_other" datasource="jrgm">
-SELECT     Employee_ID, ds_date, ID,ds_id,Time_In, Time_Out
-FROM         app_employee_payroll_clock
-WHERE    ds_date ='#DateFormat(ds_date, "yyyy-mm-dd")#'  AND Employee_ID = #Employee_ID#  AND ds_id <> #get_ds_id.ds_id#
- </cfquery>
-                        <td> DSID: <a href="daily_sheet.cfm?dsid=#get_ds_id_other.ds_id#"  target="_blank">#get_ds_id_other.ds_id#</a><br>
-                          #TimeFormat(get_ds_id_other.time_in, "HH:mm")# - #TimeFormat(get_ds_id_other.time_out, "HH:mm")#</td>
-                      </tr>
-                    </tbody>
-                  </cfoutput>
-                </table>
-              </cfif>
+		<script>
+                $.ajax({
+                    url: 'index_payroll.cfm',
+                    type: 'get',
+                    success: function(data) {
+			document.getElementById("payrollIdForAjax").innerHTML=data;
+                    }
+                });
+		</script>
+
             </div>
             <!-- END PORTLET--> 
           </div>
@@ -429,278 +295,29 @@ WHERE    ds_date ='#DateFormat(ds_date, "yyyy-mm-dd")#'  AND Employee_ID = #Empl
               <div class="caption"><span class="badge badge-portal">4</span> Equipment</div>
               <div class="tools"> <a href="javascript:;" class="collapse"> </a> </div>
             </div>
-            
-            <!--   PENDING REPAIR  -->
             <div class="portlet-body">
               <div class="scroller" style="height:300px">
-                <cfquery name="get_this_equipment_in_repair_pending" datasource="jrgm">
-SELECT * FROM equipment WHERE  inventory_status = 2  AND Branch_name = '#SESSION.branch#' 
- </cfquery>
-                <h4><span class="badge badge-default"><cfoutput>#get_this_equipment_in_repair_pending.recordcount#</cfoutput></span> Pending Repair</h4>
-                <div class="table-scrollable table-scrollable-borderless">
-                  <cfif get_this_equipment_in_repair_pending.recordcount EQ  0 >
-                    There is no equipment pending repair
-                    <cfelse>
-                    <table class="table table-hover table-light">
-                      <thead>
-                        <tr class="uppercase">
-                          <th> date pended repair</th>
-                          <th> category </th>
-                          <th> eqid </th>
-                          <th> equip name</th>
-                          <th>allocated to</th>
-                          <th>history</th>
-                        </tr>
-                      </thead>
-                      <cfoutput query="get_this_equipment_in_repair_pending">
-                        <tr>
-                          <td>#dateformat(pended_repair_date,"mm/dd/yy")#</td>
-                          <td>#Category#</td>
-                          <td>#Equipment_ID#</td>
-                          <td>#Product_name#</td>
-                          <cfif  get_this_equipment_in_repair_pending.Crew_assignment_last  EQ "">
-                            <td>Unallocated</td>
-                            <cfelseif get_this_equipment_in_repair_pending.Crew_assignment_last  EQ 3>
-                            <td>Spare</td>
-                            <cfelseif get_this_equipment_in_repair_pending.Crew_assignment_last  EQ 4>
-                            <td>Inactive</td>
-                            <cfelseif get_this_equipment_in_repair_pending.Crew_assignment_last  EQ 5>
-                            <td>Seasonal</td>
-                            <cfelseif get_this_equipment_in_repair_pending.Crew_assignment_last  EQ 6>
-                            <td>Lost</td>
-                            <cfelse>
-                            <cfquery name="get_branch_employees_cache"   dbtype="query"  cachedWithin="#createTimeSpan( 0, 1, 0, 0 )#">
-SELECT   employee_name  FROM get_all_employee_info
-WHERE  employee_ID =  #Crew_assignment_last# 
- </cfquery>
-                            <td>#get_branch_employees_cache.employee_name#</td>
-                          </cfif>
-                          <td><a href= "history_allocation.cfm?ID=#ID#">History</a></td>
-                        </tr>
-                      </cfoutput>
-                    </table>
-                  </cfif>
-                </div>
-                <!--   END PENDING REPAIR  -->
-                
-                <div class="spacer40"></div>
-                
-                <!--  CURRENTLY IN REPAIR  -->
-                <cfquery name="get_this_equipment_in_repair" datasource="jrgm">
-SELECT * FROM equipment WHERE  inventory_status = 3  AND
-Branch_name = '#SESSION.branch#'  
-ORDER by ID DESC
- </cfquery>
-                <h4><span class="badge badge-default"><cfoutput>#get_this_equipment_in_repair.recordcount#</cfoutput></span> Currently in Repair</h4>
-                <div class="table-scrollable table-scrollable-borderless"> 
-                  <!---  <cfdump var="#get_this_equipment_in_repair#"> --->
-                  <cfif get_this_equipment_in_repair.recordcount EQ 0 >
-                    There is no equipment currently in repair
-                    <cfelse>
-                    <table class="table table-hover table-light">
-                      <thead>
-                        <tr class="uppercase">
-                          <th> date given<br>
-                            to mechanic</th>
-                          <th> date repair<br>
-                            log started</th>
-                          <th> repair<br>
-                            log id</th>
-                          <th>category</th>
-                          <th>eQid</th>
-                          <th>Equipment Name</th>
-                          <th>Allocated to</th>
-                          <th>history</th>
-                        </tr>
-                      </thead>
-                      <cfoutput query="get_this_equipment_in_repair">
-                        
-                          <td>#dateformat(date_sent_to_mechanic,"mm/dd/yy")#</td>
-                          <cfquery name="get_accept_date"        dbtype="query" maxrows="1" >
-SELECT   ID,acceptdate  FROM get_all_equipment_repair_log_info
- WHERE  Equipment_ID =  #get_this_equipment_in_repair.ID#  AND   completionDate IS NULL
- ORDER by ID DESC
- </cfquery>
-                          <cfif  get_accept_date.recordcount EQ 0>
-                            <td>Not Started</td>
-                            <td>-</td>
-                            <cfelse>
-                            <td>#dateformat(get_accept_date.acceptdate,"mm/dd/yy")#</td>
-                            <td><a href="repairLog_view.cfm?ID=#get_accept_date.id#&amp;equipmentid=#ID#"  target="_blank">#ID#</a></td>
-                          </cfif>
-                          <td>#Category#</td>
-                          <td>#Equipment_ID#</td>
-                          <td>#Product_name#</td>
-                          <cfif  get_this_equipment_in_repair.Crew_assignment_last  EQ "">
-                            <td>Unallocated</td>
-                            <cfelseif get_this_equipment_in_repair.Crew_assignment_last  EQ 3>
-                            <td>Spare</td>
-                            <cfelseif get_this_equipment_in_repair.Crew_assignment_last  EQ 4>
-                            <td>Inactive</td>
-                            <cfelseif get_this_equipment_in_repair.Crew_assignment_last  EQ 5>
-                            <td>Seasonal</td>
-                            <cfelseif get_this_equipment_in_repair.Crew_assignment_last  EQ 6>
-                            <td>Lost</td>
-                            <cfelse>
-                            <cfquery name="get_branch_employees_cache"   dbtype="query">
-SELECT   employee_name  FROM get_all_employee_info
-WHERE  employee_ID =  #Crew_assignment_last# 
- </cfquery>
-                            <td>#get_branch_employees_cache.employee_name#</td>
-                          </cfif>
-                          <td><a href="history_allocation.cfm?ID=#ID#">History</a></td>
-                        </tr>
-                      </cfoutput>
-                        </tbody>
-                      
-                    </table>
-                  </cfif>
-                </div>
-                <!--  END CURRENTLY IN REPAIR  -->
-                <div class="spacer40"></div>
-                
-                <!--   RECENTLY COMPLETED REPAIRS  -->
-                <cfquery name="get_this_equipment_in_repair_recent" datasource="jrgm" >
-SELECT * FROM equipment WHERE   inventory_status = 5
-AND    Branch_name = '#SESSION.branch#' 
-ORDER by repair_last_completed_date DESC
- </cfquery>
-                <h4><span class="badge badge-default"><cfoutput>#get_this_equipment_in_repair_recent.recordcount#</cfoutput></span> Recently Completed Repairs with Status "Completed Repair" <span class="message">These Need a Status Change</span> </h4>
-                <cfif get_this_equipment_in_repair_recent.recordcount EQ 0 >
-                  There is no equipment with recently completed repairs that needs a status change.
-                  <cfelse>
-                  <div class="table-scrollable table-scrollable-borderless">
-                  <table class="table table-hover table-light">
-                    <thead>
-                      <tr class="uppercase">
-                        <th> date given<br>
-                          to mechanic</th>
-                        <th>date repair<br>
-                          completed</th>
-                        <th>repair<br>
-                          log id</th>
-                        <th>category</th>
-                        <th>eQid</th>
-                        <th>Equipment Name</th>
-                        <th>Allocated to</th>
-                        <th>change status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <cfoutput query="get_this_equipment_in_repair_recent">
-                        <tr>
-                          <td>#dateformat(date_sent_to_mechanic,"mm/dd/yy")#</td>
-                          <td>#dateformat(repair_last_completed_date,"mm/dd/yy")#</td>
-                          <cfquery name="get_accept_date2"       dbtype="query" maxrows="1" >
-SELECT   ID,acceptdate  FROM get_all_equipment_repair_log_info
- WHERE  Equipment_ID =  #ID# 
- ORDER by ID DESC
- </cfquery>
-                          <td><a href="repairLog_view.cfm?ID=#get_accept_date2.id#&amp;equipmentid=#ID#">#ID#</a></td>
-                          <td>#Category#</td>
-                          <td>#Equipment_ID#</td>
-                          <td>#Product_name#</td>
-                          <cfif  get_this_equipment_in_repair_recent.Crew_assignment_last  EQ "">
-                            <td>Unallocated</td>
-                            <cfelseif get_this_equipment_in_repair_recent.Crew_assignment_last  EQ 3>
-                            <td>Spare</td>
-                            <cfelseif get_this_equipment_in_repair_recent.Crew_assignment_last  EQ 4>
-                            <td>Inactive</td>
-                            <cfelseif get_this_equipment_in_repair_recent.Crew_assignment_last  EQ 5>
-                            <td>Seasonal</td>
-                            <cfelseif get_this_equipment_in_repair_recent.Crew_assignment_last  EQ 6>
-                            <td>Lost</td>
-                            <cfelse>
-                            <cfquery name="get_branch_employees_cache"   dbtype="query">
-SELECT   employee_name  FROM get_all_employee_info
-WHERE  employee_ID =  #Crew_assignment_last# 
- </cfquery>
-                            <td>#get_branch_employees_cache.employee_name#</td>
-                          </cfif>
-                          <td><a href="history_allocation.cfm?ID=#ID#">Change Status</a></td>
-                        </tr>
-                      </cfoutput>
-                    </tbody>
-                  </table>
-                </cfif>
+		<div id="equipmentIdForAjax">
+
+		<span id="icon_ajaxloading" style="display: inline"><i>Equipment Loading... please wait.</i></span>
+
+		<script>
+                $.ajax({
+                    url: 'index_equipment.cfm',
+                    type: 'get',
+                    success: function(data) {
+			document.getElementById("equipmentIdForAjax").innerHTML=data;
+                    }
+                });
+		</script>
+
+		</div>
               </div>
-              <!--   END RECENTLY COMPLETED REPAIRS  -->
-              
-              <div class="spacer40"></div>
-              
-              <!--  RECENTLY COMPLETED REPAIRS WITH STATUS ACTIVE  -->
-              <cfquery name="get_this_equipment_in_repair_recent" datasource="jrgm" maxrows="20">
-SELECT * FROM equipment WHERE   inventory_status = 1  AND repair_last_completed_date IS NOT NULL
-AND    Branch_name = '#SESSION.branch#' 
-ORDER by repair_last_completed_date DESC
- </cfquery>
-              <cfif get_this_equipment_in_repair_recent.recordcount EQ 0 >
-                There is no equipment with recently completed repairs
-                <cfelse>
-                <h4>Recently Completed Repairs with Status "Active" (Showing last 20) <span class="message">These Do Not Need a Status Change</span> </h4>
-                <div class="table-scrollable table-scrollable-borderless">
-                <table class="table table-hover table-light">
-                  <thead>
-                    <tr class="uppercase">
-                      <th> date given<br>
-                        to mechanic</th>
-                      <th>date repair<br>
-                        completed</th>
-                      <th>repair<br>
-                        log id</th>
-                      <th>category</th>
-                      <th>eQid</th>
-                      <th>Equipment Name</th>
-                      <th>Allocated to</th>
-                      <th>history</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <cfoutput query="get_this_equipment_in_repair_recent">
-                      <tr>
-                        <td>#dateformat(date_sent_to_mechanic,"mm/dd/yy")#</td>
-                        <td>#dateformat(repair_last_completed_date,"mm/dd/yy")#</td>
-                        <cfquery name="get_accept_date2"        dbtype="query" maxrows="1" >
-SELECT   ID,acceptdate  FROM get_all_equipment_repair_log_info
- WHERE  Equipment_ID =  #ID# 
- ORDER by ID DESC
- </cfquery>
-                        <td><a href="repairLog_view.cfm?ID=#get_accept_date2.id#&equipmentid=#ID#">#ID#</a></td>
-                        <td>#Category#</td>
-                        <td>#Equipment_ID#</td>
-                        <td>#Product_name#</td>
-                        <cfif  get_this_equipment_in_repair_recent.Crew_assignment_last  EQ "">
-                          <td>Unallocated</td>
-                          <cfelseif get_this_equipment_in_repair_recent.Crew_assignment_last  EQ 3>
-                          <td>Spare</td>
-                          <cfelseif get_this_equipment_in_repair_recent.Crew_assignment_last  EQ 4>
-                          <td>Inactive</td>
-                          <cfelseif get_this_equipment_in_repair_recent.Crew_assignment_last  EQ 5>
-                          <td>Seasonal</td>
-                          <cfelseif get_this_equipment_in_repair_recent.Crew_assignment_last  EQ 6>
-                          <td>Lost</td>
-                          <cfelse>
-                          <cfquery name="get_branch_employees_cache"   dbtype="query">
-SELECT   employee_name  FROM get_all_employee_info
-WHERE  employee_ID =  #Crew_assignment_last# 
- </cfquery>
-                          <td>#get_branch_employees_cache.employee_name#</td>
-                        </cfif>
-                        <td><a href="history_allocation.cfm?ID=#ID#">History</a></td>
-                      </tr>
-                    </cfoutput>
-                  </tbody>
-                </table>
-              </cfif>
             </div>
-            <!--  END RECENTLY COMPLETED REPAIRS WITH STATUS ACTIVE  --> 
-            
           </div>
         </div>
       </div>
-    </div>
-  </div>
-  <!--   END EQUIPMENT ROW   --> 
+      <!--   END EQUIPMENT ROW   --> 
   
   <!--   SIGN OUT AND REPORTS ROW  -->
   <div class="row">
@@ -713,109 +330,20 @@ WHERE  employee_ID =  #Crew_assignment_last#
         </div>
         <div class="portlet-body">
           <div class="scroller" style="height:300px">
-            <h4>Hours </h4>
-            Employees that answered "I do not agree" to hours signout question <span class="message">Showing last 20</span>
-            <div class="table-scrollable table-scrollable-borderless">
-              <table class="table table-hover table-light">
-                <thead>
-                  <tr class="uppercase">
-                    <th> DSID </th>
-                    <th> Date </th>
-                    <th> employee name</th>
-                    <th>Production Manager</th>
-                    <th>Supervisor/Crew Leader</th>
-                  </tr>
-                </thead>
-                <cfquery name="get_daily_sheets" datasource="jrgm">
-    SELECT  * FROM APP_daily_sheets  WHERE ((Supervisor_ID IN (#mylistsupers#)  OR  Supervisor_ID = #SESSION.userid#)) AND ds_date > '12/31/2014' ORDER by ds_date DESC
-    </cfquery>
-                <CFSET mylistds ="0">
-                <cfloop query="get_daily_sheets">
-                  <cfset mylistds = ListAppend(mylistds,ID)>
-                </cfloop>
-                <cfquery name="get_employees_CompleteHours" datasource="jrgm" maxrows="20">
-        SELECT * FROM 
-       app_employee_payroll_clock WHERE CompleteHours =0 AND ds_id In (#mylistds#)  
-       ORDER by ds_date desc
-          </cfquery>
-                <cfoutput query="get_employees_CompleteHours">
-                  <cfquery name="get_employees_name"  dbtype="query">
-        SELECT  first_name ,  last_name,branch ,  employee_name   FROM 
-        get_all_employee_info WHERE employee_ID = #get_employees_CompleteHours.employee_ID#
-        </cfquery>
-                  <cfquery name="get_info_CL"  dbtype="query">
-SELECT employee_name,last_name
-FROM   get_all_employee_info WHERE employee_ID =#get_employees_CompleteHours.crew_leader#
-        </cfquery>
-                  <cfquery name="get_info_S"  dbtype="query">
-SELECT employee_name,branch,last_name
-FROM   get_all_employee_info WHERE employee_ID =#get_employees_CompleteHours.supervisor#
-        </cfquery>
-                  <tr>
-                    <td><a href="daily_sheet.cfm?dsid=#get_employees_CompleteHours.ds_id#" target="_blank">#ds_id#</a></td>
-                    <td>#dateformat(ds_date,"mm/dd/yy")#</td>
-                    <td>#get_employees_name.employee_name#</td>
-                    <td>#get_info_S.last_name#</td>
-                    <td>#get_info_CL.last_name#</td>
-                  </tr>
-                </cfoutput>
-                <tr>
-                  <td>&nbsp;</td>
-                  <td>&nbsp;</td>
-                  <td>&nbsp;</td>
-                  <td>&nbsp;</td>
-                  <td><a href="report_signout_questions_hours.cfm" class="btn btn-circle btn-sm blue-madison"> View All </a></td>
-                </tr>
-              </table>
-              <div class="spacer20"></div>
-              <h4>Injury </h4>
-              Employees that answered "I do not agree" to injury signout question <span class="message">Showing last 20</span>
-              <div class="table-scrollable table-scrollable-borderless">
-                <table class="table table-hover table-light">
-                  <thead>
-                    <tr class="uppercase">
-                      <th> DSID </th>
-                      <th> Date </th>
-                      <th> employee name</th>
-                      <th>Production Manager</th>
-                      <th>Supervisor/Crew Leader</th>
-                    </tr>
-                  </thead>
-                  <cfquery name="get_employees_injury" datasource="jrgm" maxrows="20">
-        SELECT ds_id,IsEmpInjury,employee_ID,CREW_LEADER,supervisor ,DS_DATE FROM 
-       app_employee_payroll_clock WHERE IsEmpInjury =0 AND ds_id In (#mylistds#)
-       ORDER by ds_date desc
-          </cfquery>
-                  <cfoutput query="get_employees_injury">
-                    <cfquery name="get_employees_name"  dbtype="query">
-        SELECT  first_name ,  last_name,branch ,  employee_name   FROM 
-        get_all_employee_info WHERE employee_ID = #get_employees_injury.employee_ID#
-        </cfquery>
-                    <cfquery name="get_info_CL"  dbtype="query">
-SELECT employee_name,last_name
-FROM   get_all_employee_info WHERE employee_ID =#get_employees_injury.crew_leader#
-        </cfquery>
-                    <cfquery name="get_info_S"  dbtype="query">
-SELECT employee_name,branch,last_name
-FROM   get_all_employee_info WHERE employee_ID =#get_employees_injury.supervisor#
-        </cfquery>
-                    <tr>
-                      <td><a href="daily_sheet.cfm?dsid=#get_employees_injury.ds_id#" target="_blank">#ds_id#</a></td>
-                      <td>#dateformat(ds_date,"mm/dd/yy")#</td>
-                      <td>#get_employees_name.employee_name#</td>
-                      <td>#get_info_S.last_name#</td>
-                      <td>#get_info_CL.last_name#</td>
-                    </tr>
-                  </cfoutput>
-                  <tr>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
-                    <td><a href="report_signout_questions_injury.cfm" class="btn btn-circle btn-sm blue-madison"> Show All </a></td>
-                  </tr>
-                </table>
-              </div>
+            <div id="signoutIdForAjax">
+
+		<span id="icon_ajaxloading" style="display: inline"><i>Sign Out Loading... please wait.</i></span>
+
+		<script>
+                $.ajax({
+                    url: 'index_signout.cfm',
+                    type: 'get',
+                    success: function(data) {
+			document.getElementById("signoutIdForAjax").innerHTML=data;
+                    }
+                });
+		</script>
+
             </div>
           </div>
         </div>
@@ -882,78 +410,60 @@ FROM   get_all_employee_info WHERE employee_ID =#get_employees_injury.supervisor
     <div class="col-md-6"> 
       <!-- EMPLOYEE NOTES SECTION -->
       <div class="portlet box blue-madison">
-        <cfquery name="get_employees_notes" datasource="jrgm">
-SELECT  ID,note_content,employee_id,Note_Author_ID, Note_Date FROM app_notes WHERE Employee_ID  
- IN (SELECT Employee_ID FROM app_crews WHERE  Employee_branch = '#SESSION.branch#')
- ORDER by  Note_Date DESC
-            </cfquery>
-        <!--- <cfdump var="#get_employees_notes#">  --->
         <div class="portlet-title">
           <div class="caption"> Employee Notes</div>
           <div class="tools"> <a href="javascript:;" class="collapse"> </a> </div>
           <div class="actions"> <a href="employee_notes.cfm" class="btn btn-circle btn-default"> View All </a> </div>
         </div>
         <div class="portlet-body">
-          <cfif get_employees_notes.recordcount EQ 0>
-            <div class="scroller" style="height:300px"> No employee notes. </div>
-            <cfelse>
-            <div class="table-scrollable table-scrollable-borderless">
-            <table class="table table-hover table-light">
-              <tbody>
-                <cfoutput query="get_employees_notes">
-                  <cfquery name="get_employees_name"  dbtype="query">
-        SELECT  first_name ,  last_name,branch ,  employee_name   FROM 
-        get_all_employee_info WHERE employee_ID = #get_employees_notes.employee_ID#
-        </cfquery>
-                  <tr>
-                    <td><span class="date">#dateformat(Note_Date,"mm/dd/yy")#</span></td>
-                    <td><a href="employee_details.cfm?employee_id=#employee_id#&amp;work_date=#todayDate#">#get_employees_name.employee_name#</a> : #note_content#</td>
-                    <td><a href=""><i class="fa fa-times-circle font-red"></i></a></td>
-                  </tr>
-                </cfoutput>
-              </tbody>
-            </table>
-          </cfif>
+
+            <div id="employeeNotesIdForAjax">
+
+		<span id="icon_ajaxloading" style="display: inline"><i>Employee Notes Loading... please wait.</i></span>
+
+		<script>
+                $.ajax({
+                    url: 'index_employee_notes.cfm',
+                    type: 'get',
+                    success: function(data) {
+			document.getElementById("employeeNotesIdForAjax").innerHTML=data;
+                    }
+                });
+		</script>
+
+            </div>
+
         </div>
-        <!-- END EMPLOYEE NOTES --> 
       </div>
+      <!-- END EMPLOYEE NOTES --> 
     </div>
-  </div>
-  <div class="col-md-6"> 
+    <div class="col-md-6"> 
     
     <!-- BEGIN JOB NOTES-->
     <div class="portlet box green-haze">
-      <cfquery name="get_job_notes" datasource="jrgm" maxrows="7">
-SELECT  ID,note_content, job_id,Note_Date FROM app_notes WHERE job_ID  
- IN (SELECT  [Job ID]  FROM app_jobs WHERE  branch = '#SESSION.branch#')
- ORDER by  Note_Date DESC
-</cfquery>
-      <!--- <cfdump var="#get_job_notes#"> --->
       <div class="portlet-title">
         <div class="caption">Job Notes</div>
         <div class="tools"> <a href="javascript:;" class="collapse"> </a> </div>
         <div class="actions"> <a href="job_notes.cfm" class="btn btn-circle btn-default"> View All </a> </div>
       </div>
       <div class="portlet-body">
-        <cfif get_job_notes.recordcount EQ 0>
-          <div class="scroller" style="height:300px">No Job Notes for today</div>
-          <cfelse>
-          <div class="table-scrollable table-scrollable-borderless">
-          <table class="table table-hover table-light">
-            <tbody>
-              <cfoutput query="get_job_notes">
-                <cfquery name="get_jobs_name" dbtype="query">
-SELECT   jobname FROM get_all_jobs_info WHERE  jobid  = '#get_job_notes.job_id#'
-</cfquery>
-                <tr>
-                  <td><span class="date">#dateformat(Note_Date,"mm/dd/yy")#</span></td>
-                  <td><a href="job_details.cfm?job_id=#job_id#&amp;work_date=#todayDate#">#get_jobs_name.jobname#</a> : #note_content#</td>
-                  <td><a href=""><i class="fa fa-times-circle font-red"></i></a></td>
-                </tr>
-              </cfoutput>
-            </tbody>
-          </table>
-        </cfif>
+
+            <div id="jobNotesIdForAjax">
+
+		<span id="icon_ajaxloading" style="display: inline"><i>Employee Notes Loading... please wait.</i></span>
+
+		<script>
+                $.ajax({
+                    url: 'index_job_notes.cfm',
+                    type: 'get',
+                    success: function(data) {
+			document.getElementById("jobNotesIdForAjax").innerHTML=data;
+                    }
+                });
+		</script>
+
+            </div>
+
       </div>
     </div>
   </div>

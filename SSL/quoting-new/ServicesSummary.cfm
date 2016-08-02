@@ -84,32 +84,27 @@ H3 {
                     <cfloop from="1" to="#arrayLen(quote_data_entry_row_order_array)#" index="ii">
                       <cfset current_row = quote_rows[quote_data_entry_row_order_array[ii]]>
                       <cfset row_ID = getRowID(current_row[1])>
+                      <!---cfdump var="#quote_rows_cache[quote_data_entry_row_order_array[ii]]#">
+                      <cfabort--->
+                      <cfset row_column1 = current_row[3]><!---NUMBER OF TIMES--->
+
+                      <cfset prefix = Replace(getRowID(current_row[3]), '_times', '', 'ALL')>
+                      <cfif row_ID EQ 'blank_service'>
+                          <cfset blank_count++>
+                          <cfset prefix = 'blank' & blank_count>
+                          <cfset row_ID = 'BlankService' & blank_count>
+                          <cfset row_column2 = current_row[1]>
+                      <cfelse>
+                          <cfset row_column2 = quote_rows_cache[quote_data_entry_row_order_array[ii]][19]['row_defaultvalue']><!---NAME OF SERVICE--->
+                      </cfif>
+
+                      <cfif row_column2 EQ 'Spring Annuals'>
+                          <cfset row_column2 = row_column2 & ' - ' & Round(current_quote_services_materials['Annuals_S_materials_qty'])>
+                      <cfelseif row_column2 EQ 'Fall Annuals'>
+                          <cfset row_column2 = row_column2 & ' - ' & Round(current_quote_services_materials['Annuals_F_materials_qty'])>
+                      </cfif>
+                       
                       <cfif row_ID NEQ 'TravelTime'>
-                          <!---cfdump var="#quote_rows_cache[quote_data_entry_row_order_array[ii]]#">
-                          <cfabort--->
-                          <cfset row_column1 = current_row[3]><!---NUMBER OF TIMES--->
-
-                          <cfset prefix = Replace(getRowID(current_row[3]), '_times', '', 'ALL')>
-                          <cfif row_ID EQ 'blank_service'>
-                              <cfset blank_count++>
-                              <cfset prefix = 'blank' & blank_count>
-                              <cfset row_ID = 'BlankService' & blank_count>
-                              <cfset row_column2 = current_row[1]>
-                          <cfelse>
-                              <cfset row_column2 = quote_rows_cache[quote_data_entry_row_order_array[ii]][19]['row_defaultvalue']><!---NAME OF SERVICE--->
-                          </cfif>
-
-                          <cfif row_column2 EQ 'Spring Annuals'>
-                            <cfset row_column2 = row_column2 & ' - ' & Round(current_quote_services_materials['Annuals_S_materials_qty'])>
-                          <cfelseif row_column2 EQ 'Fall Annuals'>
-                            <cfset row_column2 = row_column2 & ' - ' & Round(current_quote_services_materials['Annuals_F_materials_qty'])>
-                          </cfif>
-
-                          <cftry>
-                            <cfset contract_price_array[contract_price_ID] += current_quote_main[prefix & '_contract_price']>
-                          <cfcatch></cfcatch>
-                          </cftry>
-
                           <tr id="#row_ID#">
                             <td  width="25">&nbsp;</td>
                             <td><span class="price">#row_column1#</span></td>
@@ -117,6 +112,12 @@ H3 {
                             <td>&nbsp;</td>
                           </tr>
                       </cfif>
+
+                      <cftry>
+                        <cfset contract_price_array[contract_price_ID] += current_quote_main[prefix & '_contract_price']>
+                        <cfcatch></cfcatch>
+                      </cftry>
+
                     </cfloop>
 
                   </cfloop>
