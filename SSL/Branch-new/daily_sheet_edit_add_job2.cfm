@@ -69,6 +69,26 @@ SELECT   [Employee ID], [Name FirstLast] AS employeename FROM app_employees WHER
 <cfquery name="get_crew_leader" datasource="jrgm">
 SELECT   [Employee ID], [Employee ID] as empid,[Name FirstLast] AS employeename FROM app_employees WHERE [Employee ID]=    #get_ds_info.crew_leader_id#  
 </cfquery>
+
+<cfquery name="get_all_branches" datasource="jrgm"  >
+    SELECT * FROM branches
+    WHERE
+    <cfif SESSION.branch EQ 'test'>
+        branch_code=100 AND
+    </cfif>
+    branch_active=1 AND branch_visible_to_select=1 AND
+    branch_code != 12 <!--- Corporate branch does not have any crews --->
+    ORDER by branch_name
+</cfquery>
+
+<cfquery name="get_all_branch_jobs" datasource="jrgm">
+    SELECT [Wk Location Name] AS work_loc_name ,[job id] AS job_id, branch FROM APP_jobs
+    ORDER by [Wk Location Name] ASC
+</cfquery>
+
+
+
+
 <!DOCTYPE html>
 <!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
 <!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
@@ -117,10 +137,10 @@ SELECT   [Employee ID], [Employee ID] as empid,[Name FirstLast] AS employeename 
   <cfinclude template="header-include.cfm">
   <cfinclude template="header-menu.cfm">
 </div>
-<!-- END HEADER SECTION --> 
+<!-- END HEADER SECTION -->
 
 <!-- BEGIN PAGE CONTAINER -->
-<div class="page-container-fluid"> 
+<div class="page-container-fluid">
   <!-- BEGIN PAGE HEAD -->
   <div class="page-head">
     <div class="container-fluid"> 
@@ -133,8 +153,8 @@ SELECT   [Employee ID], [Employee ID] as empid,[Name FirstLast] AS employeename 
       <div class="page-toolbar">
         <ul class="page-breadcrumb breadcrumb">
           <li> <a href="index.cfm">Home</a><i class="fa fa-circle"></i> </li>
-         
-            <li class="active">Job Editor</li>
+
+          <li class="active">Job Editor</li>
         </ul>
       </div>
       <!-- END PAGE TOOLBAR --> 
@@ -165,19 +185,20 @@ SELECT   [Employee ID], [Employee ID] as empid,[Name FirstLast] AS employeename 
             </tr>
           </table>
           <form  method="post" action="daily_sheet_edit_add_job2.cfm" >
-            <cfquery name="get_all_branch_jobs" datasource="jrgm">
-		SELECT [Wk Location Name] AS work_loc_name ,[job id] AS job_id FROM APP_jobs
-		WHERE branch= '#SESSION.branch#'
-        ORDER by [Wk Location Name] ASC
-		</cfquery>
             <table class="table large">
               <tr>
-                <td><strong>Select Job</strong></td>
-                <td colspan="4"><select name="Job_ID" class="bs-select form-control" >
-                    <cfoutput query="get_all_branch_jobs">
-                      <option value="#job_id#">#work_loc_name#</option>
+                <td><strong>Select Branch</strong></td>
+                <td colspan="4"><select class="bs-select form-control" onChange="populateJobsByBranch(this.value)">
+                    <cfoutput query="get_all_branches">
+                      <option value="#branch_name#"<cfif branch_name EQ SESSION.branch> selected</cfif>>#branch_name#</option>
                     </cfoutput>
                   </select></td>
+              </tr>
+              <tr>
+                <td><strong>Select Job</strong></td>
+                <td colspan="4">
+                    <span id="span_job"></span>
+                </td>
               </tr>
               <cfoutput>
                 <tr>
@@ -248,14 +269,37 @@ SELECT   [Employee ID], [Employee ID] as empid,[Name FirstLast] AS employeename 
 <script src="assets/admin/pages/scripts/components-pickers.js"></script> 
 <!-- END PAGE LEVEL SCRIPTS --> 
 <script>
-        jQuery(document).ready(function() {       
-           // initiate layout and plugins
-           Metronic.init(); // init metronic core components
-Layout.init(); // init current layout
-Demo.init(); // init demo features
-           ComponentsPickers.init();
-        });   
-    </script> 
+    var branches = [];
+    var jobs = {};
+    <cfoutput query="get_all_branches">
+        branches.push({ name: '#Replace(branch_name, "'", "\'", "ALL")#', id: #branch_code# });
+        jobs['#Replace(branch_name, "'", "\'", "ALL")#'] = [];</cfoutput>
+
+    <cfoutput query="get_all_branch_jobs">
+        jobs['#Replace(branch, "'", "\'", "ALL")#'].push({ name: '#Replace(work_loc_name, "'", "\'", "ALL")#', id: '#job_id#' });</cfoutput>
+
+    jQuery(document).ready(function() {
+        populateJobsByBranch('<cfif SESSION.branch EQ 'Corporate'>Charlottesville<cfelse><cfoutput>#SESSION.branch#</cfoutput></cfif>');
+        // initiate layout and plugins
+        Metronic.init(); // init metronic core components
+        Layout.init(); // init current layout
+        Demo.init(); // init demo features
+        ComponentsPickers.init();
+    });
+
+    function populateJobsByBranch(branch)
+    {
+        var html = '';
+        user_job = '';
+        html += '<select name="Job_ID" class="bs-select form-control">';
+        for(var i=0; i<jobs[branch].length; i++) {
+            var j = jobs[branch][i];
+            html += '<option value="'+j.name+'">'+j.name+'</option>';
+        }
+        html += '</select>';
+        $('#span_job').html(html);
+    }
+</script>
 <!-- END JAVASCRIPTS -->
 </body>
 <!-- END BODY -->
