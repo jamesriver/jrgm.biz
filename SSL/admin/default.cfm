@@ -219,6 +219,7 @@
       <td valign="top"><div class="subheader">Miscellaneous</div>
         <div class="dashboardHeader">Equipment Reports</div>
         <ul class="dashboard">
+          <li><a href="equipment_overdue_report.cfm">Equipment Overdue Report</a></li>
           <li><a href="inventory.cfm">Repair Report</a></li>
           <li><a href="inventory_list_report_miscategorized.cfm">Uncategorized Equipment</a></li>
           <li><a href="inventory_list_report_no_eqid.cfm">Equipment WITHOUT Equipment ID</a></li>
