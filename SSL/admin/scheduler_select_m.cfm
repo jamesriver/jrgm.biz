@@ -1,15 +1,44 @@
 <cfset is_admin = 0>
-<cfif SESSION.userid EQ 1001 OR SESSION.userid EQ 1003 OR SESSION.userid EQ 1870>
+<cfquery name="get_is_admin" datasource="jrgm">
+    SELECT is_admin FROM access_roles WHERE access_role_id=#SESSION.access_role#
+</cfquery>
+<cfloop query="get_is_admin">
+    <cfset is_admin = get_is_admin.is_admin>
+</cfloop>
+<cfif SESSION.branch EQ 'Corporate'>
     <cfset is_admin = 1>
 </cfif>
 
+<cfif is_admin EQ 0>
+Permission denied.
+<cfabort>
+</cfif>
+
+<cfset allowed_access_roles = 'ALL'>
 <cfset todayDate = Now()>
 <cfquery name="get_employees" datasource="jrgm">
   SELECT ae.*, ae.[Employee ID] as employee_id, ae.[Name FirstLast] as full_name, aep.employee_active, aep.username, aep.password, aep.access_role, CASE WHEN ar.name IS NULL THEN CASE WHEN ac.employee_id IS NULL THEN 'No Employee Login' ELSE 'Crew Member' END ELSE ar.name END as access_role_name, CASE WHEN ar.access_role_id IS NULL THEN CASE WHEN ac.employee_id IS NULL THEN -1 ELSE 0 END ELSE ar.access_role_id END as access_role_id, ac.supervisor_id, ac.crew_leader_id FROM app_employees ae
   LEFT JOIN app_employee_passwords aep ON aep.employee_id=ae.[Employee ID]
   LEFT JOIN access_roles ar ON ar.access_role_id=aep.access_role
   LEFT JOIN app_crews_new ac ON ac.employee_id=ae.[Employee ID]
-  WHERE ae.active_record=1 AND ae.branch <>'Test'
+  WHERE ae.active_record=1 AND (ae.[Employee ID]=#SESSION.userid# OR (
+  <cfif is_admin EQ 0>
+  <cfelseif is_admin EQ 1>
+    ae.branch <>'Test'
+  <cfelseif is_admin EQ 2>
+    <cfset allowed_access_roles = '1,0,2,6,7,9'>
+    ae.branch=<cfqueryparam value="#SESSION.branch#" CFSQLType="CF_SQL_TEXT"> AND ac.Employee_Position_ID IN (#allowed_access_roles#)
+  <cfelseif is_admin EQ 3>
+    <cfset allowed_access_roles = '0,2,6,7'>
+    ae.branch=<cfqueryparam value="#SESSION.branch#" CFSQLType="CF_SQL_TEXT"> AND ac.Employee_Position_ID IN (#allowed_access_roles#)
+  <cfelseif is_admin EQ 4>
+    <cfset allowed_access_roles = '1,0,2,6,7,9,10'>
+    ac.Employee_Position_ID IN (#allowed_access_roles#)
+  </cfif>
+  ))
+  <cfif SESSION.userid NEQ 1001>
+    AND ar.is_admin != 1
+  </cfif>
   ORDER BY CASE WHEN ar.access_role_id IS NULL THEN CASE WHEN ac.employee_id IS NULL THEN -1 ELSE 110 END ELSE ar.displayorder END, ae.branch, ae.first_name
 </cfquery>
 <cfset employees_for_insert = ArrayNew(1)>
@@ -36,6 +65,9 @@
 
 <cfquery name="get_access_roles" datasource="jrgm">
   SELECT * FROM access_roles
+  <cfif allowed_access_roles NEQ 'ALL'>
+    WHERE access_role_id IN (#allowed_access_roles#)
+  </cfif>
   ORDER BY displayorder
 </cfquery>
 
@@ -43,6 +75,9 @@
   SELECT * FROM branches
   WHERE branch_active=1
   AND branch_visible_to_select=1
+  <cfif is_admin GE 1>
+    AND branch_name=<cfqueryparam value="#SESSION.branch#" CFSQLType="CF_SQL_TEXT">
+  </cfif>
   ORDER BY branch_name
 </cfquery>
 
@@ -85,8 +120,8 @@
     <cfinclude template="includes/topbar.cfm">
     <!--centre content goes here -->
     <div class="centrecontent_inner">
-    Total Employee Logins in Biz: <cfoutput>#employee_total#</cfoutput><br />
-    <cfif is_admin EQ 1>
+    Total Employees Shown: <cfoutput>#employee_total#</cfoutput><br />
+    <cfif is_admin GE 1>
         <center><input type="button" value="Add Employee Login" onClick="popUpAddEmployee()"></center>
     </cfif>
     <cfset last_access_role_id = ''>
@@ -114,7 +149,7 @@
                     <cfif access_role_id EQ 0>
                         <th align="left">Supervisor/Crew Leader</th>
                     </cfif>
-                    <cfif is_admin EQ 1 AND access_role_id GT 0>
+                    <cfif is_admin GE 1 AND access_role_id GT 0>
                         <th align="left">Home</th>
                         <th align="left">Edit</th>
                     </cfif>
@@ -138,7 +173,7 @@
             <cfif access_role_id EQ 0>
                 <td><cfif StructKeyExists(employees, crew_leader_id)>#employees[crew_leader_id]#<cfelse>[ Unassigned ]</cfif></td>
             </cfif>
-            <cfif is_admin EQ 1 AND access_role_id GT 0>
+            <cfif is_admin GE 1 AND access_role_id GT 0>
                 <td><a href="do_loginnew.cfm?employee_ID=#employee_id#&schedchoice=home" target="_blank">Home</a></td>
                 <td><input type="button" value="Edit" onClick="editEmployee(#employee_id#)"></td>
             </cfif>

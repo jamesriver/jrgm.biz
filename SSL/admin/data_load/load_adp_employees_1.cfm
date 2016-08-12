@@ -14,6 +14,7 @@ Delete_this_employees_backup is where the current app_employees table gets backe
 Delete_this_crews_backup is where the current app_crews table gets backed up to. It is created on page 2. Revert to this table for app_crews if there are problems. This Table is DROPPED on this page when the process is started next time--->
 
 
+<cfsetting requestTimeOut = "60000">
 <CFSET checkdate = '#DateFormat(DateAdd('d', -30,Now()),'mm/dd/yyyy')#'>
 <CFSET currentdate = DateFormat(DateAdd('d', 0, Now()), 'yyyymmdd')>
 <cfif IsDefined('url.currentdate')>
@@ -318,3 +319,4 @@ Done -Data loaded in app_employees_test
 <cfinclude template="update_employee_info.cfm">
 <cfinclude template="../../scheduler/flatten_app_crews.cfm">
 <cfinclude template="../../scheduler/fix_app_job_materials_actual.cfm">
+<cfinclude template="../../scheduler/allocate_inactive_equipment_to_spare.cfm">

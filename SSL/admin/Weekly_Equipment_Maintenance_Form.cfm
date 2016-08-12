@@ -7,6 +7,14 @@ SELECT      Inspection_ID, Crew_LeaderID, Inspection_Date, Inspection_Type, Prob
 SELECT   [Employee ID] AS employee_ID,[Name FirstLast] AS fullname, first_name ,  last_name,branch ,phone_cell 
 FROM app_employees  WHERE  [Employee ID]  = #get_weekly_inspections.Crew_LeaderID#
 </cfquery>
+
+<cfquery name="get_weekly_inspections_vehicle" datasource="jrgm">
+SELECT      CheckList_ID, Inspection_ID, Vehicle_ID, Current_Mileage, Oil_Change_Due, ATF_Level_Engine_Hot, Inspect_Seat_Belts,
+          Clean_Glass_Check_for_breakage, Inside_cab_free_garbage, Wash_Vehicle, Rear_vision_mirrors, Windshield_wipers, Parking_brake, Check_power_steering,
+          Grease_axle_dump_body, Check_for_current_registration, Trailer_ID, Trailer_Grease_axle_dump_body,oil_change_due
+FROM         app_Inspection_Weekly_CheckList WHERE Inspection_ID =#Inspection_ID#
+</cfquery>
+
 <!doctype html>
 <html>
 <head>
@@ -65,16 +73,22 @@ FROM app_employees  WHERE  [Employee ID]  = #get_weekly_inspections.Crew_LeaderI
                     <td>Driver's Phone Number</td>
                 <td> <cfoutput>#get_CL_info.phone_cell#</cfoutput></td>
                   </tr>
-                 <cfoutput query="get_weekly_inspections"> 
-                  <tr>
-                    <td>Oil Change Due</td>
-                    <td><cfif  get_weekly_inspections.oil_change_date_due GT '01/01/1900'>#dateformat(get_weekly_inspections.oil_change_date_due,"mm/dd/yy")#</cfif> </td>  
-                  </tr>
-                  <tr>
-                    <td>Inspection Due</td>
-                   <td><cfif  get_weekly_inspections.Inspection_Due GT '01/01/1900'>#dateformat(get_weekly_inspections.Inspection_Due,"mm/dd/yy")#</cfif></td>
-                  </tr>
-                </cfoutput>
+                 <cfif get_weekly_inspections.Vehicle_Number NEQ ''>
+                     <cfoutput query="get_weekly_inspections">
+                       <tr>
+                         <td>Current Mileage</td>
+                         <td>#get_weekly_inspections.Current_Mileage#</td>
+                       </tr>
+                      <tr>
+                        <td>Oil Change Due</td>
+                        <td>#get_weekly_inspections_vehicle.oil_change_due#</td>
+                      </tr>
+                      <tr>
+                        <td>Inspection Due</td>
+                       <td><cfif  get_weekly_inspections.Inspection_Due GT '01/01/1900'>#dateformat(get_weekly_inspections.Inspection_Due,"mm/dd/yy")#</cfif></td>
+                      </tr>
+                    </cfoutput>
+                </cfif>
               </tbody>
             </table></td>
         </tr>
@@ -140,11 +154,12 @@ FROM       app_Crew_WeeklyEquipment_Inspection WHERE  Inspection_ID  =  #Inspect
 ORDER by  Equipment_ID ASC
           </cfquery>
           <cfoutput query="get_weekly_inspections_4cycle">
+            <cfquery name="get_weekly_inspections_4cycle_category" datasource="jrgm">
+                SELECT     category,Product_name,HOURS_MILEAGE
+                FROM      Equipment  WHERE  Equipment_ID  =  '#Equipment_ID#'
+            </cfquery>
+            <cfif get_weekly_inspections_4cycle_category.category NEQ 'Vehicles'>
             <tr>
-              <cfquery name="get_weekly_inspections_4cycle_category" datasource="jrgm">
-          SELECT     category,Product_name,HOURS_MILEAGE 
-FROM      Equipment  WHERE  Equipment_ID  =  '#Equipment_ID#'
-          </cfquery>
               <td>#get_weekly_inspections_4cycle_category.category#</td>
               <td>#get_weekly_inspections_4cycle_category.Product_name#</td>
               <td align="center">#Equipment_ID#</td>
@@ -165,15 +180,12 @@ FROM      Equipment  WHERE  Equipment_ID  =  '#Equipment_ID#'
               <td align="center">#Grease_Fittings# </td>
               <td align="center">#Clean_Powerwash# </td>
             </tr>
+            </cfif>
           </cfoutput>
         </tbody>
       </table>
-      <cfquery name="get_weekly_inspections_vehicle" datasource="jrgm">
-          SELECT      CheckList_ID, Inspection_ID, Vehicle_ID, Current_Mileage, Oil_Change_Due, ATF_Level_Engine_Hot, Inspect_Seat_Belts, 
-                      Clean_Glass_Check_for_breakage, Inside_cab_free_garbage, Wash_Vehicle, Rear_vision_mirrors, Windshield_wipers, Parking_brake, Check_power_steering, 
-                      Grease_axle_dump_body, Check_for_current_registration, Trailer_ID, Trailer_Grease_axle_dump_body,oil_change_due
-FROM         app_Inspection_Weekly_CheckList WHERE Inspection_ID =#Inspection_ID#
-      </cfquery>
+
+      <cfif get_weekly_inspections_vehicle.Vehicle_ID GT 0>
       <table border="0" class="tableadmin" width="100%" cellpadding="0" cellspacing="0">
         <tbody>
           <tr>
@@ -184,7 +196,7 @@ FROM         app_Inspection_Weekly_CheckList WHERE Inspection_ID =#Inspection_ID
             <td align="center" nowrap="nowrap"><strong>Complete or NA</strong></td>
           </tr>
           <cfoutput query="get_weekly_inspections_vehicle">
-            <tr>
+            <!---tr>
               <td>Current Mileage</td>
               <td align="center">#Current_Mileage#</td>
               <td align="center">&nbsp;</td>
@@ -233,10 +245,55 @@ FROM         app_Inspection_Weekly_CheckList WHERE Inspection_ID =#Inspection_ID
               <td align="left">&nbsp;</td>
               <td align="center">&nbsp;</td>
               <td align="center">&nbsp;</td>
+            </tr--->
+            <tr>
+              <td>ATF Level Engine Hot</td>
+              <td align="center">#ATF_Level_Engine_Hot#</td>
+              <td align="left">&nbsp;</td>
+              <td>Rear vision mirrors</td>
+              <td align="center">#Rear_vision_mirrors#</td>
+            </tr>
+            <tr>
+              <td>Inspect Seat Belts</td>
+              <td align="center">#Inspect_Seat_Belts#</td>
+              <td align="left">&nbsp;</td>
+              <td>Windshield wipers</td>
+              <td align="center">#Windshield_wipers#</td>
+            </tr>
+            <tr>
+              <td>Clean Glass, Check for breakage</td>
+              <td align="center">#Clean_Glass_Check_for_breakage#</td>
+              <td align="left">&nbsp;</td>
+              <td align="left">Parking brake</td>
+              <td align="center">#Parking_brake#</td>
+            </tr>
+            <tr>
+              <td>Inside cab free garbage</td>
+              <td align="center">#Inside_cab_free_garbage#</td>
+              <td align="left">&nbsp;</td>
+              <td align="left">Check power steering fluid level, condition of hoses</td>
+              <td align="center">#Check_power_steering#</td>
+            </tr>
+            <tr>
+              <td>Wash Vehicle</td>
+              <td align="center">#Wash_Vehicle#</td>
+              <td align="left">&nbsp;</td>
+              <td align="left">Grease / axle dump body</td>
+              <td align="center">#Grease_axle_dump_body#</td>
+            </tr>
+            <tr>
+              <td align="left">&nbsp;</td>
+              <td align="center">&nbsp;</td>
+              <td align="center">&nbsp;</td>
+              <td align="left">Check for current registration</td>
+              <td align="center">#Check_for_current_registration#</td>
             </tr>
           </cfoutput>
         </tbody>
       </table>
+      </cfif>
+
+      <cfif get_weekly_inspections_vehicle.Trailer_ID GT 0>
       <cfoutput query="get_weekly_inspections_vehicle">
         <table border="0" class="tableadmin" width="60%" cellpadding="0" cellspacing="0">
           <tbody>
@@ -250,7 +307,9 @@ FROM         app_Inspection_Weekly_CheckList WHERE Inspection_ID =#Inspection_ID
             </tr>
           </tbody>
         </table>
-      </cfoutput> </div>
+      </cfoutput>
+      </cfif>
+      </div>
   </div>
 </div>
 </body>

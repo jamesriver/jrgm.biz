@@ -295,7 +295,7 @@ SELECT   [Employee ID], [Employee ID] as empid,[Name FirstLast] AS employeename 
         html += '<select name="Job_ID" class="bs-select form-control">';
         for(var i=0; i<jobs[branch].length; i++) {
             var j = jobs[branch][i];
-            html += '<option value="'+j.name+'">'+j.name+'</option>';
+            html += '<option value="'+j.id+'">'+j.name+'</option>';
         }
         html += '</select>';
         $('#span_job').html(html);

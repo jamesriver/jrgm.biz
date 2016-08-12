@@ -3,10 +3,20 @@ SELECT      Inspection_ID, Crew_LeaderID, inspection_date,Inspection_due, Inspec
  InspectionMode,Vehicle_Number, Trailer_Number,oil_change_mileage_due
 FROM     app_Inspection_Master WHERE  Inspection_ID = #Inspection_ID#
 </cfquery>
+
+<cfquery name="get_morning_inspections_vehicle" datasource="jrgm">
+SELECT      CheckList_ID, Inspection_ID, Vehicle_ID, Current_Mileage, Oil_Change_Due, ATF_Level_Engine_Hot, Inspect_Seat_Belts,
+          Clean_Glass_Check_for_breakage, Inside_cab_free_garbage, Wash_Vehicle, Rear_vision_mirrors, Windshield_wipers, Parking_brake, Check_power_steering,
+          Grease_axle_dump_body, Check_for_current_registration, Trailer_ID, Trailer_Grease_axle_dump_body,oil_change_due
+FROM         app_Inspection_Weekly_CheckList WHERE Inspection_ID =#Inspection_ID#
+</cfquery>
+
 <cfquery name="get_CL_info" datasource="jrgm"  >
 SELECT   [Employee ID] AS employee_ID,[Name FirstLast] AS fullname, first_name ,  last_name,branch    ,phone_cell 
 FROM app_employees  WHERE  [Employee ID]  = #get_morning_inspections.Crew_LeaderID#
 </cfquery>
+
+
 <!doctype html>
 <html>
 <head>
@@ -66,8 +76,12 @@ FROM app_employees  WHERE  [Employee ID]  = #get_morning_inspections.Crew_Leader
             </tr>
             <cfoutput query="get_morning_inspections">
                    <tr>
+                    <td>Current Mileage</td>
+                    <td> #get_morning_inspections.Current_Mileage#</td>
+                   </tr>
+                   <tr>
                     <td>Oil Change Due</td>
-                    <td> <cfif  get_morning_inspections.oil_change_mileage_due IS ""  OR get_morning_inspections.oil_change_mileage_due EQ 0 >-<cfelse>#oil_change_mileage_due# </cfif></td>
+                    <td> <cfif  get_morning_inspections.oil_change_mileage_due IS ""  OR get_morning_inspections.oil_change_mileage_due EQ 0 >[ Not recorded in app ]<cfelse>#oil_change_mileage_due# </cfif></td>
                   </tr>
                  <tr>
                     <td>Inspection Due</td>
@@ -225,8 +239,10 @@ FROM         app_Inspection_Daily_CheckList    WHERE  Inspection_ID = #Inspectio
               <td>Electric connector plug</td>
               <td>#ElectricConnector# </td>
               <td>&nbsp;</td>
-              <td>Current Mileage: </td>
-              <td><cfoutput> #get_morning_inspections.Current_Mileage#</cfoutput></td>
+              <!---td>Current Mileage: </td>
+              <td><cfoutput> #get_morning_inspections.Current_Mileage#</cfoutput></td--->
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
             </tr>
             <tr>
               <td>Safety chain and hooks</td>

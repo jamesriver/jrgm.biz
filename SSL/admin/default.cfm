@@ -40,9 +40,7 @@
 <cfset yesterday = dateadd("d",-1,somedate)>
 <cfset tomorrow = dateadd("d",1,somedate)>
 <div class="header"> Administrative
-<cfif SESSION.userid EQ 1001 OR SESSION.userid EQ 1003 OR SESSION.userid EQ 9991>
-  <a href="scheduler_select_m.cfm" class="bluebutton">Level Access</a>
-</cfif>
+<a href="scheduler_select_m.cfm" class="bluebutton">Level Access</a>
 </div>
 <a href="default3.cfm" target="_blank">Click here to view the old version of this screen (e.g. if you can't locate a link)</a>
 <table width="100%" border="0" cellspacing="10" cellpadding="5">
@@ -148,6 +146,7 @@
               <li><a href="payroll_manager_deadtime.cfm">Dead Time Report</a></li>
               <li><a href="payroll_manager_misctime.cfm">Miscellaneous Job Time Report</a></li>
               <li><a href="payroll_manager_employeesworkedinotherbranches.cfm">Daily Sheets With Employees From Other Branches Report</a></li>
+              <li><a href="payroll_manager_intacctinvoicesmissingprojectid.cfm">Intacct Invoices Missing Project ID</a></li>
             </ul>
             <cfif SESSION.userid EQ 1001  >
               <div class="dashboardHeader">Quoting Admin</div>

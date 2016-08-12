@@ -72,7 +72,7 @@ WHERE  employee_ID =  #Crew_LeaderID#
               <td align="left">#get_branch_employees_cache.branch#</td>
               <td>-</td>
               <td align="left">#get_branch_employees_cache.fullname#</td>
-              <td><a href="Weekly_Equipment_Maintenance_Form.cfm?Inspection_ID=#Inspection_ID#" >View</a></td>
+              <td><a href="Weekly_Equipment_Maintenance_Form.cfm?Inspection_ID=#Inspection_ID#" target="_blank">View</a></td>
             </tr>
           </cfoutput>
         </tbody>
