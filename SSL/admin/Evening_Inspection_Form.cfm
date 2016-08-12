@@ -7,6 +7,8 @@ FROM     app_Inspection_Master WHERE  Inspection_ID = #Inspection_ID#
 SELECT   [Employee ID] AS employee_ID,[Name FirstLast] AS fullname, first_name ,  last_name,branch ,phone_cell
 FROM app_employees  WHERE  [Employee ID]  = #get_evening_inspections.Crew_LeaderID#
 </cfquery>
+
+
 <!doctype html>
 <html>
 <head>
@@ -65,11 +67,15 @@ FROM app_employees  WHERE  [Employee ID]  = #get_evening_inspections.Crew_Leader
               <td>Driver's Phone Number</td>
               <td align="left"><cfoutput>#get_CL_info.phone_cell#</cfoutput></td> 
             </tr>
-               <cfoutput query="get_evening_inspections">  
-              <tr>
-                    <td>Oil Change Due</td>
-                    <td> <cfif  get_evening_inspections.oil_change_mileage_due IS ""  OR get_evening_inspections.oil_change_mileage_due EQ 0 >-<cfelse>#oil_change_mileage_due# </cfif></td>
-                  </tr>
+               <cfoutput query="get_evening_inspections">
+               <tr>
+                  <td>Current Mileage</td>
+                  <td><cfif  get_evening_inspections.Current_Mileage IS ""  OR get_evening_inspections.Current_Mileage EQ 0 >[ Not recorded in app ]<cfelse>#Current_Mileage# </cfif></td>
+               </tr>
+               <tr>
+                  <td>Oil Change Due</td>
+                  <td> <cfif  get_evening_inspections.oil_change_mileage_due IS ""  OR get_evening_inspections.oil_change_mileage_due EQ 0 >[ Not recorded in app ]<cfelse>#oil_change_mileage_due# </cfif></td>
+               </tr>
             <!--- 
                  <cfoutput query="get_evening_inspections">  
                  <tr>

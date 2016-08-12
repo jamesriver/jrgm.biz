@@ -56,12 +56,11 @@
             <cfquery name="get_app_crews" datasource="jrgm">
                 SELECT Employee_Position_ID, crew_name, employee_id, crew_leader_id, supervisor_id, employee_branch FROM app_crews_new acn
                 WHERE (employee_id=<cfqueryparam value="#form.supervisor_id#" CFSQLType="CF_SQL_INTEGER">
-                       OR supervisor_id=<cfqueryparam value="#form.supervisor_id#" CFSQLType="CF_SQL_INTEGER">)
+                       OR supervisor_id=<cfqueryparam value="#form.supervisor_id#" CFSQLType="CF_SQL_INTEGER">
+                       OR Employee_Position_ID=0
+                       )
                   AND Employee_Position_ID IN (#access_roles#)
-                <cfif SESSION.branch EQ 'test'>
-                <cfelse>
-                    AND acn.employee_branch!='test'
-                </cfif>
+                AND (acn.employee_branch=<cfqueryparam value="#form.branch#" CFSQLType="CF_SQL_TEXT"> OR (acn.employee_branch <> 'Test' AND Employee_Position_ID=0))
                 ORDER BY employee_branch, Employee_Position_ID, crew_name
             </cfquery>
             <cfoutput>#serializejson(get_app_crews)#</cfoutput>
@@ -73,8 +72,10 @@
 
         <!--- RETRIEVE APP_CREWS BY BRANCH AND ACCESS_ROLES --->
         <cfquery name="get_app_crews" datasource="jrgm">
-            SELECT Employee_Position_ID, crew_name, employee_id, crew_leader_id, supervisor_id, employee_branch FROM app_crews_new acn
+            SELECT acn.Employee_Position_ID, acn.crew_name, acn.employee_id, acn.crew_leader_id, acn.supervisor_id, acn.employee_branch FROM app_crews_new acn
+            INNER JOIN app_employees ae ON ae.[Employee ID]=acn.employee_id
             WHERE Employee_Position_ID IN (#access_roles#)
+              AND ae.active_record=1
             <cfif SESSION.branch EQ 'test'>
             <cfelse>
                 AND acn.employee_branch!='test'

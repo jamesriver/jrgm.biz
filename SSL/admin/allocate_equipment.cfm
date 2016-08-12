@@ -168,9 +168,12 @@ Allocation History
       <hr />
 <cfoutput query="get_allocation_history">
     #DateFormat(assign_date, 'mm/dd/yyyy')# - #employees[employee_id]#
-    <cfif employees[modified_by_employee_id] NEQ ''>
-        (assigned by #employees[modified_by_employee_id]#)
-    </cfif>
+    <cftry>
+        <cfif employees[modified_by_employee_id] NEQ ''>
+            (assigned by #employees[modified_by_employee_id]#)
+        </cfif>
+        <cfcatch></cfcatch>
+    </cftry>
     <br />
 </cfoutput>
   <!-- to clear footer -->

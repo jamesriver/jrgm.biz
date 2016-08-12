@@ -1,7 +1,14 @@
 <cfset is_admin = 0>
-<cfif SESSION.userid EQ 1001 OR SESSION.userid EQ 1003 OR SESSION.userid EQ 1870>
+<cfquery name="get_is_admin" datasource="jrgm">
+    SELECT is_admin FROM access_roles WHERE access_role_id=#SESSION.access_role#
+</cfquery>
+<cfloop query="get_is_admin">
+    <cfset is_admin = get_is_admin.is_admin>
+</cfloop>
+<cfif SESSION.branch EQ 'Corporate'>
     <cfset is_admin = 1>
 </cfif>
+
 <cfif is_admin EQ 0>
     <cfoutput>#serializejson({'error': 'Unauthorized'})#</cfoutput>
     <cfabort>
@@ -78,14 +85,7 @@
                 WHERE employee_id=<cfqueryparam value="#form.employee_id#" CFSQLType="CF_SQL_INTEGER">
             </cfquery>
 
-            <cfquery name="save_employee4" datasource="jrgm">
-                UPDATE app_crews_new
-                SET supervisor_id=CASE WHEN <cfqueryparam value="#form.branch#" CFSQLType="CF_SQL_TEXT"> != employee_branch THEN <cfqueryparam value="#bm_id#" CFSQLType="CF_SQL_INTEGER"> ELSE supervisor_id END
-                    , employee_branch=<cfqueryparam value="#form.branch#" CFSQLType="CF_SQL_TEXT">
-                    , active_record=<cfqueryparam value="#form.employee_active#" CFSQLType="CF_SQL_INTEGER">
-                    , employee_position_id=<cfqueryparam value="#form.access_role#" CFSQLType="CF_SQL_INTEGER">
-                WHERE employee_id=<cfqueryparam value="#form.employee_id#" CFSQLType="CF_SQL_INTEGER">
-            </cfquery>
+            <cfinclude template="../scheduler/flatten_app_crews.cfm">
 
             <!--- ADD HISTORICAL RECORD TO BRANCH HISTORY --->
             <cfquery name="get_app_employee_branchhistory"   datasource="jrgm">
