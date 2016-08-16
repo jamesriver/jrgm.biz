@@ -75,7 +75,7 @@ Permission denied.
   SELECT * FROM branches
   WHERE branch_active=1
   AND branch_visible_to_select=1
-  <cfif is_admin GE 1>
+  <cfif is_admin GT 1>
     AND branch_name=<cfqueryparam value="#SESSION.branch#" CFSQLType="CF_SQL_TEXT">
   </cfif>
   ORDER BY branch_name
