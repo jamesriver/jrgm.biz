@@ -14,7 +14,7 @@
     <cfset pay_period_number_visible = url.pay_period>
 </cfif>
 
-<cfset intacct_url = 'http://api.jrgm.com/external_api/intacct.php?auth=jrgmAPI!&type=invoicelineitems_missing_projectid&contract'>
+<cfset intacct_url = 'http://api.jrgm.com/external_api/intacct.php?auth=jrgmAPI!&type=invoicelineitems_missing_projectid'>
 <cfif IsDefined('url.all')>
     <cfset intacct_url &= '&all'>
 </cfif>
@@ -29,7 +29,7 @@
 
 <cfif IsDefined('intacct_response.data')>
     <cfloop from="1" to="#arrayLen(intacct_response.data)#" index="i">
-      <cfset ArrayAppend(lineitems, [intacct_response.data[i].intacct_entrydate, intacct_response.data[i].intacct_recordid, intacct_response.data[i].intacct_lineno, intacct_response.data[i].intacct_itemname, intacct_response.data[i].name, intacct_response.data[i].intacct_branch])>
+      <cfset ArrayAppend(lineitems, [intacct_response.data[i].intacct_entrydate, intacct_response.data[i].intacct_recordid, intacct_response.data[i].intacct_lineno, intacct_response.data[i].intacct_itemname, intacct_response.data[i].name, intacct_response.data[i].intacct_branch, intacct_response.data[i].intacct_lineitem_projectid, intacct_response.data[i].intacct_department])>
     </cfloop>
 </cfif>
 
@@ -78,16 +78,16 @@ td {
         <tr>
           <td class="header">
             <cfoutput>
-            Intacct Invoices Missing Project ID            
+            All Intacct Invoices
             </cfoutput>
           </td>
         </tr>
       </table>
 <br />
-<i>Log into Intacct.com, go to Order Entry > Sales Invoices, enter Document Number and click Go, click Edit, click Line Item, click Show Details blue tab, under Dimensions choose Project</i>
+<i>Watch for miscoded departments!</i>
 <br />
 <br />
-<b>Criteria</b>: Entry Date is within the last 30 days, Contract (Department ID=1), no Project ID associated with line item
+<b>Criteria</b>: Entry Date is within the last 30 days
 <br />
 <br />
 <font color="#0000AA">NOTE: Changes may take up to 30 minutes to update in this report.</font>
@@ -101,6 +101,8 @@ td {
           <td><strong>Description</strong></td>
           <td><strong>Customer/Project</strong></td>
           <td><strong>Branch</strong></td>
+          <td><strong>Coded Project ID</strong></td>
+          <td><strong>Department ID</strong></td>
         </tr>
         <cfloop from="1" to="#arrayLen(lineitems)#" index="i">
           <cfoutput>
@@ -111,6 +113,8 @@ td {
             <td>#lineitems[i][4]#</td>
             <td>#lineitems[i][5]#</td>
             <td>#lineitems[i][6]#</td>
+            <td>#lineitems[i][7]#</td>
+            <td>#lineitems[i][8]#</td>
           </tr>
           </cfoutput>
         </cfloop>
