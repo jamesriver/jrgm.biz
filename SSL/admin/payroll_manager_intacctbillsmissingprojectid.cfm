@@ -14,7 +14,7 @@
     <cfset pay_period_number_visible = url.pay_period>
 </cfif>
 
-<cfset intacct_url = 'http://api.jrgm.com/external_api/intacct.php?auth=jrgmAPI!&type=invoicelineitems_missing_projectid&contract'>
+<cfset intacct_url = 'http://api.jrgm.com/external_api/intacct.php?auth=jrgmAPI!&type=billlineitems_missing_projectid'>
 <cfif IsDefined('url.all')>
     <cfset intacct_url &= '&all'>
 </cfif>
@@ -29,7 +29,7 @@
 
 <cfif IsDefined('intacct_response.data')>
     <cfloop from="1" to="#arrayLen(intacct_response.data)#" index="i">
-      <cfset ArrayAppend(lineitems, [intacct_response.data[i].intacct_entrydate, intacct_response.data[i].intacct_recordid, intacct_response.data[i].intacct_lineno, intacct_response.data[i].intacct_itemname, intacct_response.data[i].name, intacct_response.data[i].intacct_branch])>
+      <cfset ArrayAppend(lineitems, [intacct_response.data[i].bill_dateposted, intacct_response.data[i].bill_vendorid, intacct_response.data[i].bill_vendorname, intacct_response.data[i].bill_billno, intacct_response.data[i].billitemlineitem_linenum, intacct_response.data[i].billitemlineitem_glaccountno, intacct_response.data[i].billitemlineitem_glaccountdescription, intacct_response.data[i].billitemlineitem_location, intacct_response.data[i].billitemlineitem_department])>
     </cfloop>
 </cfif>
 
@@ -78,17 +78,15 @@ td {
         <tr>
           <td class="header">
             <cfoutput>
-            Intacct Invoices Missing Project ID assigned to Contract
+            Intacct Bills Missing Project ID
             </cfoutput>
           </td>
         </tr>
       </table>
-<a href="payroll_manager_intacctinvoices.cfm"><input type="button" value="Click to switch to all departments outside of Contract"></a>
-<br /><br />
-<i>Log into Intacct.com, go to Order Entry > Sales Invoices, enter Document Number and click Go, click Edit, click Line Item, click Show Details blue tab, under Dimensions choose Project</i>
+<i>Log into Intacct.com, go to Accounts Payable > Bills, enter Bill Number and click Go, click Edit, click Line Item, click Show Details blue tab, under Dimensions choose Project</i>
 <br />
 <br />
-<b>Criteria</b>: Entry Date is within the last 30 days, Contract (Department ID=1), no Project ID associated with line item
+<b>Criteria</b>: Date Due is within the last 30 days, no Project ID associated with line item
 <br />
 <br />
 <font color="#0000AA">NOTE: Changes may take up to 30 minutes to update in this report.</font>
@@ -96,12 +94,15 @@ td {
 <br />
 <table class="sortable" border="0" cellspacing="0" cellpadding="0"   width="80%">
         <tr height="40" >
-          <td><strong>Entry Date</strong></td>
-          <td><strong>Document Number</strong></td>
-          <td><strong>Invoice Line Number</strong></td>
+          <td><strong>Date Due</strong></td>
+          <td><strong>Vendor ID</strong></td>
+          <td><strong>Vendor Name</strong></td>
+          <td><strong>Bill Number</strong></td>
+          <td><strong>Bill Line Number</strong></td>
+          <td><strong>GL Account Number</strong></td>
           <td><strong>Description</strong></td>
-          <td><strong>Customer/Project</strong></td>
           <td><strong>Branch</strong></td>
+          <td><strong>Department</strong></td>
         </tr>
         <cfloop from="1" to="#arrayLen(lineitems)#" index="i">
           <cfoutput>
@@ -112,6 +113,9 @@ td {
             <td>#lineitems[i][4]#</td>
             <td>#lineitems[i][5]#</td>
             <td>#lineitems[i][6]#</td>
+            <td>#lineitems[i][7]#</td>
+            <td>#lineitems[i][8]#</td>
+            <td>#lineitems[i][9]#</td>
           </tr>
           </cfoutput>
         </cfloop>

@@ -78,7 +78,7 @@ app_employee_passwords WHERE employee_branch ='#get_employees_not_in_app_crews.B
   </cfloop>
   <!--- Query to make active_employees in app_employees are listed in APP_CREWS ----> 
   These employees were added to app_crews
-  <cfdump var="#get_employees_not_in_app_crews#">
+  <!---cfdump var="#get_employees_not_in_app_crews#"--->
 </cfif>
 <!---END Step 2 - This process adds new employees to the app_crews table---> 
 Step 2 Done --->
@@ -137,7 +137,7 @@ FROM app_employees
 WHERE active_record =0  AND  [Employee ID] < 9993 AND   [Employee ID]   IN (SELECT [Employee ID] FROM app_employees_test_backup)
 ORDER by branch
 </cfquery>
-<cfdump var="#get_inactivated_records#">
+<!---cfdump var="#get_inactivated_records#"--->
 <!---This email address needs to be changed to Maria--->
 <!---cfmail to="benchanviolin@gmail.com"    FROM="JRGM Alerts <alerts@jrgm.com>"  subject="Inactivated Employees in todays ADP File"  type="html">
   <cfif get_inactivated_records.recordcount EQ 0>
@@ -211,7 +211,7 @@ app_employee_passwords WHERE employee_branch ='#get_employees_not_in_app_crews.B
   </cfloop>
   <!--- Query to make active_employees in app_employees are listed in APP_CREWS ----> 
   These employees were added to app_crews
-  <cfdump var="#get_employees_not_in_app_crews#">
+  <!---cfdump var="#get_employees_not_in_app_crews#"--->
 </cfif>
 <!---END Step 7 - This process adds new employees to the app_crews table---> 
 Step 7 Done 

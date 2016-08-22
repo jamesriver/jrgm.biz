@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en" class="no-js">
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
+<head>
+<meta charset="utf-8">
+<title>Books, Dolls and Dot!</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<!-- AngularJS -->
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/3.3.0/firebase.js"></script>
+<!-- AngularFire -->
+<script src="https://cdn.firebase.com/libs/angularfire/2.0.1/angularfire.min.js"></script>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.js"></script>
+<link id="ui-css" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.css" rel="stylesheet">
+<!-- Bootstrap -->
+<link id="bs-css" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
+<link id="bsdp-css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet">
+
+<style>
+    #div_website {
+        width: 100%;
+        height: 100%;
+        min-height: 800px;
+        display: none;
+    }
+    .elem {
+        width: 90%;
+    }
+    .doll {
+        background-color: #FFFFFF;
+    }
+    .doll_name {
+        color: #0000AA;
+        font-size: 14pt;
+    }
+</style>
+</head>
+<body>
+<!--ANGULARFIRE SPECIFIC CODE-->
+<div ng-app="sampleApp" ng-controller="SampleCtrl">
+    <div style="display: none">
+        <button id="btn_initialize" ng-click="initialize()" style="display: none">Initialize</button>
+        <button id="btn_signIn" ng-click="signIn()" style="display: none">Sign In</button>
+        <button id="btn_save" ng-click="save()">Force Save</button>
+    </div>
+    <!--p ng-if="firebaseUser">Signed in user: <strong>{{ firebaseUser.uid }}</strong></p-->
+
+    <div id="div_loading">
+        <center><img src="https://i1.wp.com/cdnjs.cloudflare.com/ajax/libs/galleriffic/2.0.1/css/loader.gif">&nbsp;Loading... please wait.</center>
+    </div>
+
+    <div id="div_admin" style="display: none">
+        <div class="row">
+            <div class="col-lg-6 col-md-4 col-sm-3 col-xs-12">
+                <!--label for="violin_date">Date:</label>
+                <input id="violin_date" name="violin_date" ng-model="data.violin_date" class="form-control elem" datepicker-->
+
+                <label for="background_image_url">Background Image:</label>
+                <input id="background_image_url" name="background_image_url" ng-model="data.background_image_url" class="form-control elem" ng-change="changeBackground(); save()">
+
+                <label for="body_text">Body Text:</label>
+                <div class="row">
+                    <div class="col-xs-4">
+                        Color:<input id="body_font_color" name="body_font_color" ng-model="data.body_font_color" class="form-control elem" ng-change="updateBodyFontColor(); save()">
+                    </div>
+                    <div class="col-xs-2">
+                        Size:<input id="body_font_size" name="body_font_size" ng-model="data.body_font_size" class="form-control elem" ng-change="updateBodyFontSize(); save()">
+                    </div>
+                </div>
+                Text:<textarea id="body_text" name="body_text" ng-model="data.body_text" class="form-control elem" ng-change="updateBodyText(); save()" rows="5"></textarea>
+            </div>
+            <div class="col-lg-6 col-md-4 col-sm-3 col-xs-12">
+                <label for="background_image_url">Header:</label>
+                <div class="row">
+                    <div class="col-xs-4">
+                        Color:<input id="header_font_color" name="header_font_color" ng-model="data.header_font_color" class="form-control elem" ng-change="updateHeaderFontColor(); save()">
+                    </div>
+                    <div class="col-xs-2">
+                        Size:<input id="header_font_size" name="header_font_size" ng-model="data.header_font_size" class="form-control elem" ng-change="updateHeaderFontSize(); save()">
+                    </div>
+                </div>
+                Text:<input id="header_text" name="header_text" ng-model="data.header_text" class="form-control elem" ng-change="updateHeaderText(); save()">
+                <br />
+                <button class="btn btn-success" ng-click="addDoll(); save_dolls()">Add a Doll</button>
+                <div ng-if="dolls" ng-repeat="(index, doll) in dolls">
+                    <hr ng-if="index > 0" />
+                    <div>
+                        Doll Name:<input class="form-control elem" ng-model="doll.name" ng-change="save_doll(doll)">
+                        Description:<textarea class="form-control elem" ng-model="doll.description" ng-change="save_doll(doll)"></textarea>
+                        Image URL:<input class="form-control elem" ng-model="doll.url" ng-change="save_doll(doll)">
+                        Price:<input class="form-control elem" ng-model="doll.price" ng-change="save_doll(doll)">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr />
+    </div>
+
+    <div id="div_website">
+        <div class="row">
+            <div class="col-xs-12">
+                <center>
+                    <span id="span_website_header"></span>
+                    <br />
+                    <span id="span_website_text"></span>
+                </center>
+
+                <div class="row">
+                    <div ng-if="dolls" ng-repeat="(index, doll) in dolls">
+                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                            <div ng-if="doll.name != ''" class="doll">
+                                <center>
+                                    <br />
+                                    <span class="doll_name">{{ doll.name }}</span>
+                                    <br /><br />
+                                    <img src="{{ doll.url }}" width="90%" title="{{ doll.description }}"><br /><br />
+                                    <div ng-if="doll.price"><b>Price</b>: {{ doll.price }}</div>
+                                </center>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type='text/javascript'>
+    var app = angular.module("sampleApp", ["firebase"]);
+    var initialized = false;
+    var admin = false;
+    var adminfailed = false;
+
+    app.factory("DBModel", [function() {
+            return function(node) {
+                var ref;
+                if (node)
+                    ref = firebase.database().ref(node);
+                else
+                    ref = firebase.database().ref();
+                return ref;
+            }
+        }
+    ]);
+
+    app.controller("SampleCtrl", ["$scope", "$firebaseArray", "$firebaseAuth", "$firebaseObject", "DBModel",
+        function($scope, $firebaseArray, $firebaseAuth, $firebaseObject, DBModel) {
+            $scope.initialize = function() {
+                $scope.auth = $firebaseAuth();
+
+                var getvars = getUrlVars();
+                if (getvars.dot == 'dot')
+                {
+                    $scope.auth.$signOut();
+                    admin = true;
+                    console.log('admin!');
+                }
+
+                $scope.auth.$onAuthStateChanged(function(firebaseUser) {
+                    //console.log('auth changed!');
+                    var email = 'admin@booksdollsdot.com';
+                    if ((!firebaseUser || firebaseUser.email != email) && admin && !adminfailed)
+                    {
+                        $scope.auth.$signOut();
+
+                        var password = prompt('What is the password?');
+
+                        console.log('try to sign in');
+                        $scope.auth.$signInWithEmailAndPassword(email, password).catch(function(error) {
+                            alert('Access denied');
+                            $('#div_loading').hide();
+
+                            adminfailed = true;
+                        });
+
+                        return;
+                    }
+
+                    if (!initialized && firebaseUser) {
+                        //console.log(firebaseUser.email);
+                        // User is signed in.
+                        initialized = true;
+                        if (admin)
+                            $('#div_admin').show();
+
+                        $scope.firebaseUser = firebaseUser;
+                        $scope.data = $firebaseObject(DBModel('website'));
+                        $scope.dolls = $firebaseArray(DBModel('website/dolls'));
+
+                        $scope.changeBackground = function(){
+                            //console.log('change background to '+$scope.data.background_image_url);
+                            $('#div_website').css('background-image', 'url('+$scope.data.background_image_url+')');
+                        };
+
+                        $scope.updateHeaderFontColor = function(){
+                            $('#span_website_header').css('color', $scope.data.header_font_color);
+                        };
+
+                        $scope.updateHeaderFontSize = function(){
+                            $('#span_website_header').css('font-size', $scope.data.header_font_size+'pt');
+                        };
+
+                        $scope.updateHeaderText = function(){
+                            $('#span_website_header').html($scope.data.header_text);
+                        };
+
+                        $scope.updateBodyFontColor = function(){
+                            $('#span_website_text').css('color', $scope.data.body_font_color);
+                        };
+
+                        $scope.updateBodyFontSize = function(){
+                            $('#span_website_text').css('font-size', $scope.data.body_font_size+'pt');
+                        };
+
+                        $scope.updateBodyText = function(){
+                            var html = $scope.data.body_text;
+                            if (html) html = html.replace(/\n/g, '<br />');
+                            $('#span_website_text').html(html);
+                        };
+
+                        $scope.addDoll = function(){
+                            $scope.dolls.$add({
+                                name: '',
+                                description: '',
+                                url: '',
+                                price: ''
+                            });
+                            $scope.dolls.$save();
+                        };
+
+                        $scope.save = function(){
+                            //console.log('save');
+                            $scope.data.$save();
+                        };
+
+                        $scope.save_doll = function(doll){
+                            $scope.dolls.$save(doll);
+                        };
+
+                        $scope.data.$loaded(function(data){
+                            $scope.changeBackground();
+                            $scope.updateHeaderFontColor();
+                            $scope.updateHeaderFontSize();
+                            $scope.updateHeaderText();
+                            $scope.updateBodyFontColor();
+                            $scope.updateBodyFontSize();
+                            $scope.updateBodyText();
+                            initializeWebsite();
+                        });
+                    } else {
+                        // No user is signed in.
+                    }
+                });
+            };
+
+            $scope.signIn = function() {
+                if (!initialized)
+                {
+                    if (admin)
+                    {
+                        console.log('already admin');
+                        return;
+                    }
+                    var email = 'anonymous@booksdollsdot.com';
+                    var password = 'anonymous';
+
+                    console.log('try to sign in');
+                    $scope.auth.$signInWithEmailAndPassword(email, password).catch(function(error) {
+                        // Handle Errors here.
+                        var errorCode = error.code;
+                        var errorMessage = error.message;
+                        // ...
+                    });
+                }
+            };
+        }
+    ]);
+
+    app.directive('datepicker', function() {
+        return {
+            restrict: 'A',
+            require : 'ngModel',
+            link : function (scope, element, attrs, ngModelCtrl) {
+                $(function(){
+                    $(element).datepicker({
+                        dateFormat:'mm/dd/yy',
+                        onSelect:function (date) {
+                            scope.$apply(function () {
+                                scope.data.violin_date = date;
+                                scope.save();
+                            });
+                        }
+                    });
+                });
+            }
+        }
+    });
+
+    app.run(function($rootScope) {
+        var config = {
+            apiKey: "AIzaSyCb2u35jy-pekSK1ILHah7OOH1BB-oSf74",
+            authDomain: "dotz-51b43.firebaseapp.com",
+            databaseURL: "https://dotz-51b43.firebaseio.com",
+            storageBucket: "dotz-51b43.appspot.com"
+        };
+
+        firebase.initializeApp(config);
+
+        $( document ).ready(function() {
+            $('#btn_initialize').click();
+            setTimeout('executeLogin()', 1000);
+        });
+    });
+
+    function executeLogin()
+    {
+        $('#btn_signIn').click();
+    }
+
+    function initializeWebsite()
+    {
+        $('#div_loading').hide();
+
+        //var getvars = getUrlVars();
+        //if (getvars.dot == 'dot')
+            //getIPAddress();
+
+        $('#div_website').show();
+
+        window.onresize = resizeDiv();
+        resizeDiv();
+    }
+
+    function getUrlVars()
+    {
+        var vars = {};
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+            vars[key] = value;
+        });
+        return vars;
+    }
+
+    function resizeDiv() {
+        vpw = $(window).width();
+        vph = $(window).height();
+        $('#div_website').css('min-height', vph+'px');
+    }
+
+    function getIPAddress() {
+        $.getJSON('http://ipinfo.io/', function(data) {
+            //console.log(data);
+            if (data.ip == '45.47.192.57')
+                $('#div_admin').show();
+        });
+
+        $.getJSON('//freegeoip.net/json/?callback=?', function(data) {
+            //console.log(data);
+            if (data.ip == '45.47.192.57')
+                $('#div_admin').show();
+        });
+
+        $('#div_admin').show();
+    }
+</script>
+<!----------------------------->
+</body>
+</html>
