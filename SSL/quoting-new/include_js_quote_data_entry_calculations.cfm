@@ -141,6 +141,8 @@
         $('#net_cash_flow_percentage_formatted').html(formatPercentage(value_raw));
 
         $('#total_contract_price').val(unformatValueByIdentity('.total20'));
+
+        $('.total17').html(formatNumber(unformatValueByIdentity('.total17')/2));
     }
 
     function formatDollars(value_raw) {
@@ -165,6 +167,7 @@
     function unformatValueByIdentity(identity) {
         var html = $(identity).html();
         if (!html) html = $(identity).val();
+        if (!html) return '';
         while (html.indexOf('$') != -1) html = html.replace('$' ,'');
         while (html.indexOf(',') != -1) html = html.replace(',' ,'');
         html = 1*html;

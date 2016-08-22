@@ -147,6 +147,7 @@
               <li><a href="payroll_manager_misctime.cfm">Miscellaneous Job Time Report</a></li>
               <li><a href="payroll_manager_employeesworkedinotherbranches.cfm">Daily Sheets With Employees From Other Branches Report</a></li>
               <li><a href="payroll_manager_intacctinvoicesmissingprojectid.cfm">Intacct Invoices Missing Project ID</a></li>
+              <li><a href="payroll_manager_intacctbillsmissingprojectid.cfm">Intacct Bills (AP) Missing Project ID</a></li>
             </ul>
             <cfif SESSION.userid EQ 1001  >
               <div class="dashboardHeader">Quoting Admin</div>

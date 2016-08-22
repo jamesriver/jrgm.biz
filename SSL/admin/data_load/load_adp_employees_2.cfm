@@ -268,8 +268,8 @@ varchar
   </cfquery>
 </cfloop>
 
-<!-----------------  This is the end of step 1 ----------------------> 
-<!-----------------  This is the end of step 1 ----------------------> 
+<!-----------------  This is the end of step 1 ---------------------->
+<!-----------------  This is the end of step 1 ---------------------->
 <!-----------------  This is the end of step 1 ---------------------->
 <cfquery name="get_modified_records"   datasource="jrgm" >
   SELECT [Employee ID] AS employee_id, branch,active_record,[Name FirstLast] AS employee_name,employee_rehire_date,fww,regular_pay_rate FROM app_employees_test
@@ -277,7 +277,7 @@ varchar
   </cfquery>
 <cfloop query="get_modified_records">
   <cfquery name="get_modified_records_was"   datasource="jrgm">
-  SELECT [Employee ID] AS employee_id, branch,active_record,[Name FirstLast] AS employee_name  FROM app_employees 
+  SELECT [Employee ID] AS employee_id, branch,active_record,[Name FirstLast] AS employee_name  FROM app_employees
   WHERE  [Employee ID] =#get_modified_records.employee_id#
   </cfquery>
   <cfif get_modified_records_was.recordcount GT 0>
@@ -336,8 +336,8 @@ varchar
     <cfoutput> I need to insert this employee (#employee_name#) (#employee_id#) into the app_employees_db</cfoutput><br>
   </cfif>
 </cfloop>
-<!-----------------  This is the end of step 2 ----------------------> 
-<!-----------------   This is the end of step 2 ----------------------> 
+<!-----------------  This is the end of step 2 ---------------------->
+<!-----------------   This is the end of step 2 ---------------------->
 <!-----------------    This is the end of step 2 ---------------------->
 <cfquery name="getrecords_Inactivate"   datasource="jrgm">
 SELECT [Employee ID] AS empid,  [Name FirstLast] AS empname,branch
@@ -357,15 +357,15 @@ WHERE [Employee ID] = #getrecords_Inactivate.empid#
 DELETE FROM app_crews
 WHERE employee_id = #getrecords_Inactivate.empid#
 </cfquery--->
-  <!--- Do this Inactivate Password  ---> 
-  <!--- Do this Check for Crew_leader_id and supervisor_id in APP_CREWS ---> 
+  <!--- Do this Inactivate Password  --->
+  <!--- Do this Check for Crew_leader_id and supervisor_id in APP_CREWS --->
   <cfoutput>(#getrecords_Inactivate.empname#) (#getrecords_Inactivate.empid#) have been inactivated in app_employees table</cfoutput><br>
-  
+
 
 </cfloop>
-<!-----------------  This is the end of step 3 ----------------------> 
-<!-----------------    This is the end of step 3 ----------------------> 
-<!-----------------    This is the end of step 3 ----------------------> 
+<!-----------------  This is the end of step 3 ---------------------->
+<!-----------------    This is the end of step 3 ---------------------->
+<!-----------------    This is the end of step 3 ---------------------->
 Data Updated
 </body>
 </html>

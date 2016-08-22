@@ -78,12 +78,13 @@ td {
         <tr>
           <td class="header">
             <cfoutput>
-            All Intacct Invoices
+            Intacct Invoices Missing Project ID assigned outside of Contract
             </cfoutput>
           </td>
         </tr>
       </table>
-<br />
+<a href="payroll_manager_intacctinvoicesmissingprojectid.cfm"><input type="button" value="Click to switch to only Contract"></a>
+<br /><br />
 <i>Watch for miscoded departments!</i>
 <br />
 <br />

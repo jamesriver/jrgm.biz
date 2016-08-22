@@ -149,15 +149,15 @@ Permission denied.
                     <cfif access_role_id EQ 0>
                         <th align="left">Supervisor/Crew Leader</th>
                     </cfif>
-                    <cfif is_admin GE 1 AND access_role_id GT 0>
+                    <cfif is_admin GE 1 AND access_role_id NEQ 0 AND access_role_id NEQ 2>
                         <th align="left">Home</th>
-                        <th align="left">Edit</th>
                     </cfif>
+                    <th align="left">Edit</th>
                 </tr>
             </thead>
             <tbody>
       </cfif>
-          <tr<cfif employee_active NEQ 1 AND access_role_id NEQ 0> style="color: ##FF0000"</cfif>>
+          <tr<cfif employee_active NEQ 1 AND username NEQ ''> style="color: ##FF0000"</cfif>>
             <td align="left">#employee_id#</td>
             <td align="left">#full_name#</td>
             <td align="left">#branch#</td>
@@ -173,9 +173,13 @@ Permission denied.
             <cfif access_role_id EQ 0>
                 <td><cfif StructKeyExists(employees, crew_leader_id)>#employees[crew_leader_id]#<cfelse>[ Unassigned ]</cfif></td>
             </cfif>
-            <cfif is_admin GE 1 AND access_role_id GT 0>
+            <cfif is_admin GE 1 AND access_role_id NEQ 0 AND access_role_id NEQ 2>
                 <td><a href="do_loginnew.cfm?employee_ID=#employee_id#&schedchoice=home" target="_blank">Home</a></td>
+            </cfif>
+            <cfif username NEQ ''>
                 <td><input type="button" value="Edit" onClick="editEmployee(#employee_id#)"></td>
+            <cfelse>
+                <td>&nbsp;</td>
             </cfif>
           </tr>
     </cfoutput>
