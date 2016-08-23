@@ -72,8 +72,16 @@
           <li><a href="javascript:window.open('http://api.jrgm.com/biz/?AWS=1&EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=view_jobcost');">Job Cost Report</a></li>
           <li><a href="javascript:window.open('http://api.jrgm.com/biz/?AWS=1&EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=view_jobcostsummary');">Job Cost Summary Report (CSV)</a></li>
           <!--- <li><a href="select_branch_j4.cfm">Job Labor &amp; Materials Report by Branch (excel)</a></li>--->
-          
-        </ul></td>
+        </ul>
+        <div class="dashboardHeader">Exception Reports</div>
+        <ul class="dashboard">
+          <li><a href="payroll_manager_deadtime.cfm">Dead Time Report</a></li>
+          <li><a href="payroll_manager_misctime.cfm">Miscellaneous Job Time Report</a></li>
+          <li><a href="payroll_manager_employeesworkedinotherbranches.cfm">Daily Sheets With Employees From Other Branches Report</a></li>
+          <li><a href="payroll_manager_intacctinvoicesmissingprojectid.cfm">Intacct Invoices Missing Project ID</a></li>
+          <li><a href="payroll_manager_intacctbillsmissingprojectid.cfm">Intacct Bills (AP) Missing Project ID</a></li>
+        </ul>
+        </td>
     </cfif>
     <cfif  IsDefined("SESSION.access_role")  AND NOT (SESSION.access_role EQ  '1' OR SESSION.access_role EQ  '9' OR SESSION.access_role EQ  '97' OR SESSION.access_role EQ '94')>
       <td valign="top"><div class="subheader">Project Management</div>
@@ -102,7 +110,7 @@
           <li><a href="javascript:window.open('http://api.jrgm.com/biz/?AWS=1&EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=view_jobcost');">Job Cost Report</a></li>
           <li><a href="javascript:window.open('http://api.jrgm.com/biz/?AWS=1&EmployeeID=<cfoutput>#SESSION.userid#</cfoutput>&action=view_jobcostsummary');">Job Cost Summary Report (CSV)</a></li>
           <!--- <li><a href="select_branch_j4.cfm">Job Labor &amp; Materials Report by Branch (excel)</a></li>--->
-          
+
         </ul>
         <!---div class="dashboardHeader">Snow Plow Daily Sheet Reports</div>
         <ul class="dashboard">
@@ -146,8 +154,18 @@
               <li><a href="payroll_manager_deadtime.cfm">Dead Time Report</a></li>
               <li><a href="payroll_manager_misctime.cfm">Miscellaneous Job Time Report</a></li>
               <li><a href="payroll_manager_employeesworkedinotherbranches.cfm">Daily Sheets With Employees From Other Branches Report</a></li>
-              <li><a href="payroll_manager_intacctinvoicesmissingprojectid.cfm">Intacct Invoices Missing Project ID</a></li>
-              <li><a href="payroll_manager_intacctbillsmissingprojectid.cfm">Intacct Bills (AP) Missing Project ID</a></li>
+              <li>
+                <a href="payroll_manager_intacctinvoicesmissingprojectid.cfm">Intacct Invoices Missing Project ID</a>
+                <!---cfif SESSION.userid EQ 1001>
+                    <span id="span_refresh_invoices">&nbsp;<input type="button" id="btn_refresh_invoices" value="Manual refresh"></span>
+                </cfif--->
+              </li>
+              <li>
+                <a href="payroll_manager_intacctbillsmissingprojectid.cfm">Intacct Bills (AP) Missing Project ID</a>
+                <!---cfif SESSION.userid EQ 1001>
+                    <span id="span_refresh_bills">&nbsp;<input type="button" id="btn_refresh_bills" value="Manual refresh"></span>
+                </cfif--->
+              </li>
             </ul>
             <cfif SESSION.userid EQ 1001  >
               <div class="dashboardHeader">Quoting Admin</div>
@@ -262,5 +280,34 @@
 <!-- // <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap.min.js"></script> --> 
 <script scr="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/js/bootstrap.min.js"></script> 
 <script src="js/twitter-bootstrap-hover-dropdown.js"></script>
+
+<script>
+    jQuery(document).ready(function() {
+        $('#btn_refresh_invoices').click(function(){
+            $('#span_refresh_invoices').html('<img src="ajax-loader.gif">&nbsp;Processing.. please wait several minutes.');
+            $.ajax({
+                url: 'http://api.jrgm.com/cronjob_intacctinvoiceledgerlineitems.php',
+                type: 'post',
+                data: { 'key': 'jrgmF0rc3!' },
+                success: function(data) {
+                    $('#span_refresh_invoices').html('Refresh complete.');
+                }
+            });
+        });
+        
+        $('#btn_refresh_bills').click(function(){
+            $('#span_refresh_bills').html('<img src="ajax-loader.gif">&nbsp;Processing.. please wait several minutes.');
+            $.ajax({
+                url: 'http://api.jrgm.com/cronjob_intacctbillledgerlineitems.php',
+                type: 'post',
+                data: { 'key': 'jrgmF0rc3!' },
+                success: function(data) {
+                    $('#span_refresh_bills').html('Refresh complete.');
+                }
+            });
+        });
+    });
+</script>
+
 </body>
 </html>

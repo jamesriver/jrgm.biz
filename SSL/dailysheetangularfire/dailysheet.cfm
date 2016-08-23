@@ -11,9 +11,12 @@
 
 <cfset todayDate = Now()>
 <cfquery name="get_all_employees" datasource="jrgm">
-  SELECT ae.[Employee ID] as employee_id, ae.[Name FirstLast] as full_name, ae.first_name, ae.last_name, CASE WHEN ac.employee_position_id IS NULL THEN 0 ELSE ac.employee_position_id END as access_role, ac.crew_leader_id, ae.branch FROM app_employees ae
+  SELECT ae.[Employee ID] as employee_id, ae.[Name FirstLast] as full_name, ae.first_name, ae.last_name, CASE WHEN ac.employee_position_id IS NULL THEN 0 ELSE CASE WHEN ar.is_admin > 0 THEN 1 ELSE ac.employee_position_id END END as access_role, ac.crew_leader_id, ae.branch FROM app_employees ae
   INNER JOIN app_crews ac ON ac.employee_id=ae.[Employee ID]
+  LEFT JOIN access_roles ar ON ar.access_role_id=ac.employee_position_id
   WHERE ae.active_record=1
+  GROUP BY ae.[Employee ID], ae.[Name FirstLast], ae.first_name, ae.last_name, ac.crew_leader_id, ae.branch, ac.employee_position_id, ar.is_admin
+  ORDER BY ae.last_name
 </cfquery>
 <cfset employees = ArrayNew(1)>
 <cfloop query="get_all_employees">
@@ -54,6 +57,11 @@
 <link id="bs-css" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
 <link id="bsdp-css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet">
 </head>
+<style>
+    .div_main {
+        display: none;
+    }
+</style>
 <body>
 
 <!--ANGULARFIRE SPECIFIC CODE-->
@@ -69,11 +77,29 @@
         <center><img src="/SSL/admin/ajax-loader.gif">&nbsp;Loading... please wait.</center>
     </div>
 
-    <div id="div_main" style="display: none">
+    <div id="div_main" style="padding: 20px">
         <div class="row">
-            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                <label for="ds_date">Date of Service:</label>
-                <input id="ds_date" name="ds_date" ng-model="data.ds_date" class="form-control" style="width: 50%" datepicker>
+            <div class="col-lg-6 col-sm-12">
+                <div class="form-inline">
+                    <div class="form-group">
+                        <label for="ds_date">Date of Service:</label>
+                        <input id="ds_date" name="ds_date" ng-model="data.ds_date" class="form-control" style="width: 50%" datepicker>
+                    </div>
+                </div>
+                <div class="form-inline">
+                    <div class="form-group">
+                        <label for="ds_supervisor_id">Production Manager:</label>
+                        <select id="ds_supervisor_branch" name="ds_supervisor_branch" ng-model="data.supervisor_branch" ng-options="branch[0] as branch[1] for branch in branches" class="form-control" ng-change="save()"></select>
+                        <select id="ds_supervisor_id" name="ds_supervisor_id" ng-model="data.supervisor_id" ng-options="employee[0] as employee[1] for employee in employees[data.supervisor_branch][1]" class="form-control" ng-change="save()"></select>
+                    </div>
+                </div>
+                <div class="form-inline">
+                    <div class="form-group">
+                        <label for="ds_crew_leader_id">Supervisor/Crew Leader:</label>
+                        <select id="ds_crew_leader_branch" name="ds_crew_leader_branch" ng-model="data.crew_leader_branch" ng-options="branch[0] as branch[1] for branch in branches" class="form-control" ng-change="save()"></select>
+                        <select id="ds_crew_leader_id" name="ds_crew_leader_id" ng-model="data.crew_leader_id" ng-options="employee[0] as employee[1] for employee in employees[data.crew_leader_branch][2]" class="form-control" ng-change="save()"></select>
+                    </div>
+                </div>
 
                 <!--header ng-repeat-start="message in messages">
                     Header {{ message.foo }}
@@ -95,6 +121,28 @@
     var initialized = false;
     var admin_email = 'bchan@jrgm.com';
     var admin_password = 'firebase1!';
+
+    var employees = {};
+    var employees_select = {};
+    //[full_name, first_name, last_name, employee_id, username, password, branch, email, access_role_id, access_role_name]
+    <cfoutput>
+    <cfloop from="1" to="#arrayLen(employees)#" index="i">
+        <cfset employee = employees[i]>
+        var employee = { full_name: '#Replace(employee.name, "'", "\\'", "ALL")#', first_name: '#Replace(employee.first_name, "'", "\\'", "ALL")#', last_name: '#Replace(employee.last_name, "'", "\\'", "ALL")#', employee_id: '#employee.id#', branch: '#employee.branch#', 'access_role': '#employee.access_role#' };
+        employees[#employee.id#] = employee;
+        if (!employees_select[employee.branch])
+            employees_select[employee.branch] = {};
+        if (!employees_select[employee.branch][employee.access_role])
+            employees_select[employee.branch][employee.access_role] = [];
+        employees_select[employee.branch][employee.access_role].push([employee.employee_id, employee.full_name]);
+    </cfloop>
+    </cfoutput>
+
+    var branches = {};
+    var branches_select = [];
+    <cfoutput query="get_branches">
+        branches['#branch_name#'] = { branch_abbr: '#branch_abbr#'};
+        branches_select.push(['#branch_name#', '#branch_name#']);</cfoutput>
 
     app.factory("DBModel", [function() {
         return function(node) {
@@ -128,8 +176,21 @@
 
                         $scope.firebaseUser = firebaseUser;
                         $scope.data = $firebaseObject(DBModel('<cfoutput>#Replace(CGI.REMOTE_ADDR, '.', '', 'ALL')#</cfoutput>/<cfoutput>#SESSION.userid#</cfoutput>'));
+                        $scope.branches = branches_select;
+                        $scope.employees = employees_select;
 
                         $scope.data.$loaded(function(data){
+                            //DEFAULT VALUES
+                            if (!$scope.data.ds_date)
+                                $scope.data.ds_date = '<cfoutput>#dateFormat(now(), 'mm/dd/yyyy')#</cfoutput>';
+                            if (!$scope.data.supervisor_branch)
+                                $scope.data.supervisor_branch = '<cfoutput>#SESSION.branch#</cfoutput>';
+                            if (!$scope.data.crew_leader_branch)
+                                $scope.data.crew_leader_branch = '<cfoutput>#SESSION.branch#</cfoutput>';
+
+                            $scope.save();
+                            console.log($scope.data);
+
                             initialize();
                         });
 
@@ -208,31 +269,6 @@
 <!----------------------------->
 
 <script>
-    var employees = {};
-    var employees_select = [];
-    //[full_name, first_name, last_name, employee_id, username, password, branch, email, access_role_id, access_role_name]
-    <cfoutput>
-    <cfloop from="1" to="#arrayLen(employees)#" index="i">
-        <cfset employee = employees[i]>
-        employees[#employee.id#] = { full_name: '#Replace(employee.name, "'", "\\'", "ALL")#', first_name: '#Replace(employee.first_name, "'", "\\'", "ALL")#', last_name: '#Replace(employee.last_name, "'", "\\'", "ALL")#', employee_id: '#employee.id#', branch: '#employee.branch#', 'access_role': '#employee.access_role#' };
-        employees_select.push([employees[#employee.id#].employee_id, employees[#employee.id#].full_name]);
-    </cfloop>
-    </cfoutput>
-    employees_select.sort(function(a, b){
-         var nameA=a[1].toLowerCase(), nameB=b[1].toLowerCase()
-         if (nameA < nameB) //sort string ascending
-          return -1
-         if (nameA > nameB)
-          return 1
-         return 0 //default return value (no sorting)
-    })
-
-    var branches = {};
-    var branches_select = [];
-    <cfoutput query="get_branches">
-        branches['#branch_name#'] = { branch_abbr: '#branch_abbr#'};
-        branches_select.push(['#branch_name#', '#branch_name#']);</cfoutput>
-
     function showPopup(html)
     {
         if (html)
