@@ -172,7 +172,10 @@
                 </div>
                 <div ng-repeat="ds_job in ds_jobs">
                     <br />
-                    <div class="div_job" style="padding: 5px">{{ ds_job.id }} - {{ jobs[ds_job.id].name }}</div>
+                    <div class="div_job" style="padding: 5px; height: 33px">
+                        <div style="float: left">{{ ds_job.id }} - {{ jobs[ds_job.id].name }}</div>
+                        <div style="float: right"><a class="btn btn-danger btn-xs" ng-click="removeJob(ds_job)">Remove</a></div>
+                    </div>
                     <table id="table_job" class="table table-striped">
                         <thead>
                             <th style="padding: 5px">Employee</th>
@@ -180,7 +183,7 @@
                             <th style="padding: 5px">Total Time</th>
                             <th style="padding: 5px">Remove</th>
                         </thead>
-                        <tbody ng-repeat="ds_employee in ds_employees">
+                        <tbody ng-repeat="ds_employee in ds_job.ds_employees">
                             <tr>
                                 <td style="padding: 5px">{{ employees[ds_employee.id].full_name }}</td>
                                 <td style="padding: 5px">
@@ -196,9 +199,15 @@
                                 <td style="padding: 5px">
                                     <a class="btn btn-danger btn-xs" ng-click="removeEmployeeFromJob(ds_employee, ds_job)">Remove</a>
                                 </td>
-                            </tr>
+                            </tr>                            
                         </tbody>
                     </table>
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <select id="add_job_employee_employee_id" name="add_job_employee_employee_id" ng-model="ds_data.add_job_employee_employee_id" ng-options="employee[0] as employee[1] for employee in employees_cached" class="form-control" ng-change="save()"></select>
+                            <a class="btn btn-success btn-xs" ng-click="addEmployeeToJob(ds_data.add_job_employee_employee_id, ds_job.id)">Add</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -359,7 +368,9 @@
                             result.$loaded(function(data){
                                 if (data.length != 0) return;
 
-                                $scope.ds_employees.$add({ 'id': employee_id });
+                                $scope.ds_employees.$add({ 'id': employee_id }).then(function(){
+                                    $scope.save();
+                                });
                                 console.log('added '+employee_id);
                             });
                         }
@@ -370,6 +381,23 @@
                             $scope.ds_employees.$remove(employee).then(function() {
                                 console.log('removed employee');
                                 console.log(employee);
+
+                                //need to remove from all jobs too
+                                for(var i=0; i<$scope.ds_jobs.length; i++)
+                                {
+                                    if ($scope.ds_jobs[i].ds_employees)
+                                    {
+                                        for(var ii=0; ii<$scope.ds_jobs[i].ds_employees.length; ii++)
+                                        {
+                                            if ($scope.ds_jobs[i].ds_employees[ii].id == employee.id)
+                                            {
+                                                $scope.ds_jobs[i].ds_employees.splice(ii, 1);
+                                                $scope.ds_jobs.$save(i);
+                                            }
+                                        }
+                                    }
+                                }
+
                                 $scope.save();
                             });
                         }
@@ -454,13 +482,86 @@
                                  $scope.ds_jobs.$add({ 'id': job_id });
                                  console.log('added '+job_id);
                              });
-                         }
+                        }
+                        
+                        $scope.removeJob = function(job){
+                            if (!confirm('Remove '+jobs[job.id].name+' from this Daily Sheet?')) return;
+
+                            $scope.ds_jobs.$remove(job).then(function() {
+                                console.log('removed job');
+                                console.log(job);
+                                $scope.save();
+                            });
+                        }
+
+                        $scope.addEmployeeToJob = function(employee_id, job_id){
+                            if (!employee_id) return;
+                            if (!job_id) return;
+
+                            var query = DBModel(db_root+'/ds_jobs').orderByChild("id").equalTo(job_id).limitToFirst(1);
+                            var result = $firebaseArray(query);
+                            result.$loaded(function(result){
+                                var data = result[0];
+                                if (data.ds_employees)
+                                {
+                                    for(var i=0; i<data.ds_employees.length; i++)
+                                    {
+                                        if (data.ds_employees[i].id == employee_id) return;
+                                    }
+                                }
+
+                                if (!data.ds_employees)
+                                    data.ds_employees = [];
+                                data.ds_employees.push({ id: employee_id });
+
+                                var key = -1;
+                                for(var i=0; i<$scope.ds_jobs.length; i++)
+                                {
+                                    if ($scope.ds_jobs[i].id == job_id)
+                                        key = i;
+                                }
+                                if (key == -1) return;
+
+                                $scope.ds_jobs[key] = data;
+                                console.log($scope.ds_jobs);
+                                $scope.ds_jobs.$save(key);
+                            });
+                        }
+
+                        $scope.removeEmployeeFromJob = function(employee, job){
+                            if (!confirm('Remove '+employees[employee.id].full_name+' from '+jobs[job.id].name+'?')) return;
+
+                            for(var i=0; i<job.ds_employees.length; i++)
+                            {
+                                if (job.ds_employees[i].id == employee.id)
+                                    job.ds_employees.splice(i, 1);
+                            }
+
+                            var key = -1;
+                            for(var i=0; i<$scope.ds_jobs.length; i++)
+                            {
+                                if ($scope.ds_jobs[i].id == job.id)
+                                    key = i;
+                            }
+                            if (key == -1) return;
+
+                            $scope.ds_jobs[key] = job;
+                            console.log($scope.ds_jobs);
+                            $scope.ds_jobs.$save(key);
+                        }
 
                         $scope.save = function(){
                             if ($scope.ds_data.crew_leader_id && $scope.ds_employees.length == 0)
                             {
                                 console.log('force add '+$scope.ds_data.crew_leader_id);
                                 $scope.addEmployee($scope.ds_data.crew_leader_id);
+                            }
+
+                            $scope.employees_cached = [];
+                            for(var i=0; i<$scope.ds_employees.length; i++)
+                            {
+                                var employee = $scope.ds_employees[i];
+                                $scope.employees_cached.push([employee.id, employees[employee.id].full_name]);
                             }
                             $scope.ds_data.$save();
                             console.log('saved');
