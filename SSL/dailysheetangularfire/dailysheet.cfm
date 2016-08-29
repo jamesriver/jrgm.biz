@@ -40,6 +40,12 @@
     ORDER by [Wk Location Name] ASC
 </cfquery>
 
+<cfquery name="get_all_service_codes" datasource="jrgm">
+    SELECT * FROM app_job_services_list
+    WHERE is_active=1
+    ORDER BY service_id
+</cfquery>
+
 <!DOCTYPE html>
 <!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
 <!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
@@ -106,7 +112,7 @@
                 </div>
                 <div class="form-inline">
                     <div class="form-group">
-                        <label for="ds_supervisor_id">Branch:</label>
+                        <label for="ds_branch">Branch:</label>
                         <select id="ds_branch" name="ds_branch" ng-model="ds_data.ds_branch" ng-options="branch[0] as branch[1] for branch in branches_select" class="form-control" ng-change="save()"></select>
                     </div>
                 </div>
@@ -191,10 +197,10 @@
                                         {{ servicecodetime.display }}
                                         <br />
                                     </span>
-                                    <a class="btn btn-info btn-xs" ng-click="editEmployeeServiceCodeTimes(ds_employee)">Edit</a>
+                                    <a class="btn btn-info btn-xs" ng-click="editEmployeeServiceCodes(ds_employee)">Edit</a>
                                 </td>
                                 <td style="padding: 5px">
-                                    <span ng-if="ds_employee.totalServiceTime">{{ ds_employee.totalServiceTime }}</span>
+                                    <span ng-if="ds_employee.totalServiceTime">{{ ds_employee.totalServiceCodeTime }}</span>
                                 </td>
                                 <td style="padding: 5px">
                                     <a class="btn btn-danger btn-xs" ng-click="removeEmployeeFromJob(ds_employee, ds_job)">Remove</a>
@@ -232,10 +238,10 @@
                         <td align="center" style="padding-bottom: 20px">
                             <div class="form-inline">
                                 <div class="form-group">
-                                    <label for="ds_date">Start Time:</label>
+                                    <label for="starttime">Start Time:</label>
                                     <select ng-model="startendtime.starttime" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options"></select>
                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                    <label for="ds_date">End Time:</label>
+                                    <label for="endtime">End Time:</label>
                                     <select ng-model="startendtime.endtime" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options"></select>
                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                     <a class="btn btn-danger btn-xs" ng-click="removeStartEndTime(index)">Remove</a>
@@ -251,6 +257,60 @@
                                 <a class="btn btn-primary btn-md" ng-click="saveStartEndTimesToAllEmployees()">Save to ALL employees</a>
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                 <a class="btn btn-warning btn-md" ng-click="cancelStartEndTimes()">Cancel</a>
+                            </center>
+                            <br />
+                        </td>
+                    </tr>
+                </table>
+            </center>
+        </div>
+    </div>
+
+    <datalist id="datalist_servicecodes">
+        <cfoutput query="get_all_service_codes">
+            <cfif parent_id NEQ ''>
+                <option value="#service_id# - #name#">
+            </cfif>
+        </cfoutput>
+    </datalist>
+    <div id="div_popupServiceCodes" style="background: no-repeat 50% 50% rgba(255, 255, 255, 1); left: 0; top: 0; width: 100%; height: 100%; text-align: center; display: none; position: fixed; z-index: 1001;">
+        <div style="top: 50%; text-align: center; position: relative; transform: translatey(-50%); -webkit-transform: translatey(-50%); max-height: 80%; overflow: auto;">
+            <center>
+                <table cellspacing="0" align="center" style="width: 50%; border: 1px solid black">
+                    <tr>
+                        <td align="center" style="padding: 10px; border-top: 1px solid black; border-bottom: 2px solid black; background-color: #999999; color: #FFFFFF">Service Codes: {{ ds_data.editing_employee.name }}</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <br />
+                            <center><a class="btn btn-success btn-xs" ng-click="addServiceCode()">Add New Service Code</a></center>
+                            <br />
+                        </td>
+                    </tr>
+                    <tr ng-repeat="(index, servicecode) in ds_temp.editing_servicecodes">
+                        <td align="center" style="padding-bottom: 20px">
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    <label for="servicecode">Enter Service Code:</label>
+                                    <!--select ng-model="servicecode.id" ng-options="option[0] as option[1] for option in ds_temp.editing_servicecodes_options"></select-->
+                                    <input ng-model="servicecode.id" list="datalist_servicecodes">
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <label for="servicecodetime">Time:</label>
+                                    <input ng-model="servicecode.time" style="width: 60px">&nbsp;minutes
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <a class="btn btn-danger btn-xs" ng-click="removeServiceCode(index)">Remove</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <center>
+                                <a class="btn btn-info btn-md" ng-click="saveServiceCodes()">Save</a>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <a class="btn btn-primary btn-md" ng-click="saveServiceCodesToAllEmployees()">Save to ALL employees</a>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <a class="btn btn-warning btn-md" ng-click="cancelServiceCodes()">Cancel</a>
                             </center>
                             <br />
                         </td>
@@ -302,6 +362,11 @@
             jobs_select[job.branch] = [];
         jobs_select[job.branch].push([job.id, job.name]);</cfoutput>
 
+    var servicecodes_select = [];
+    <cfoutput query="get_all_service_codes">
+        var servicecode = { name: '#service_id# - #Replace(name, "'", "\'", "ALL")#', id: '#service_id#' };
+        servicecodes_select.push([servicecode.id, servicecode.name]);</cfoutput>
+
     app.factory("DBModel", [function() {
         return function(node) {
             var ref;
@@ -341,6 +406,7 @@
                         $scope.employees = employees;
                         $scope.jobs_select = jobs_select;
                         $scope.jobs = jobs;
+                        $scope.servicecodes_select = servicecodes_select;
 
                         $scope.ds_data.$loaded(function(data){
                             $scope.ds_employees.$loaded(function(data){
@@ -549,6 +615,63 @@
                             console.log($scope.ds_jobs);
                             $scope.ds_jobs.$save(key);
                         }
+                        
+                        $scope.editEmployeeServiceCodes = function(employee){
+                            $scope.ds_temp = {};
+                            $scope.ds_temp.editing_employee = employee;
+                            $scope.ds_temp.editing_employee_name = employee.name;
+                            $scope.ds_temp.editing_servicecodes = employee.servicecodes;
+                            $scope.ds_temp.editing_servicecodes_options = buildServiceCodesOptions();
+
+                            showPopup('div_popupServiceCodes');
+                        }
+
+
+                        $scope.addServiceCode = function(){
+                            if (!$scope.ds_temp.editing_servicecodes)
+                                $scope.ds_temp.editing_servicecodes = [];
+                            $scope.ds_temp.editing_servicecodes.push({ 'id': '', 'time': '' });
+                            console.log($scope.ds_temp.editing_servicecodes);
+                        };
+
+                        $scope.removeServiceCode = function(key){
+                            $scope.ds_temp.editing_servicecodes.splice(key, 1);
+                        }
+
+                        $scope.saveServiceCodes = function(){
+                            $scope.saveServiceCode();
+                            hidePopup('div_popupServiceCodes');
+                        };
+
+                        $scope.saveServiceCode = function(){
+                            var employee = $scope.ds_temp.editing_employee;
+                            employee.servicecodes = $scope.ds_temp.editing_servicecodes;
+                            totalminutes = 0;
+                            for(var i=0; i<employee.servicecodes.length; i++)
+                            {
+                                employee.servicecodes[i].display = 'the display '+employee.servicecodes[i].time;
+                                totalminutes += employee.servicecodes[i].time;
+                            }
+                            var totalhours = Math.floor(totalminutes / 60);
+                            var totalminutes = totalminutes % 60;
+                            employee.totalTime = (totalhours<10?'0'+totalhours:totalhours)+':'+(totalminutes<10?'0'+totalminutes:totalminutes);
+                            $scope.ds_employees.$save(employee);
+                        }
+
+                        $scope.saveServiceCodesToAllEmployees = function(){
+                            if (!confirm('Are you sure you want to overwrite ALL employee service code times?')) return;
+
+                            for(var i=0; i<$scope.ds_employees.length; i++)
+                            {
+                                $scope.ds_temp.editing_employee = $scope.ds_employees[i];
+                                $scope.saveServiceCode();
+                            }
+                            hidePopup('div_popupServiceCodes');
+                        };
+
+                        $scope.cancelServiceCodes = function(){
+                            hidePopup('div_popupServiceCodes');
+                        };
 
                         $scope.save = function(){
                             if ($scope.ds_data.crew_leader_id && $scope.ds_employees.length == 0)
@@ -683,6 +806,12 @@
                 options.push([str, display_str]);
             }
         }
+        return options;
+    }
+
+    function buildServiceCodesOptions()
+    {
+        var options = servicecodes_select;
         return options;
     }
 
