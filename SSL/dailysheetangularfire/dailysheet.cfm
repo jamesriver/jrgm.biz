@@ -125,13 +125,13 @@
                 <div class="form-inline">
                     <div class="form-group">
                         <label for="ds_crew_leader_id">Supervisor/Crew Leader:</label>
-                        <select id="ds_crew_leader_id" name="ds_crew_leader_id" ng-model="ds_data.crew_leader_id" ng-options="employee[0] as employee[1] for employee in employees_select[ds_data.ds_branch][0]" class="form-control" ng-change="save(); addCrewLeader();"></select>
+                        <select id="ds_crew_leader_id" name="ds_crew_leader_id" ng-model="ds_data.crew_leader_id" ng-options="employee[0] as employee[1] for employee in employees_select[ds_data.ds_branch][0]" class="form-control" ng-change="addCrewLeader();"></select>
                     </div>
                 </div>
             </div>
         </div>
         <br />
-        <div class="row">
+        <div ng-if="ds_data.crew_leader_id > 0" class="row">
             <div class="col-lg-6 col-sm-12">
                 <table id="table_employees" class="table table-striped">
                     <thead>
@@ -167,6 +167,7 @@
                         <a class="btn btn-success btn-xs" ng-click="addEmployee(ds_data.add_employee_id)">Add</a>
                     </div>
                 </div>
+                <div class="visible-xs visible-sm visible-md"><hr /></div>
             </div>
             <div class="col-lg-6 col-sm-12">
                 <div class="form-inline">
@@ -292,11 +293,10 @@
                             <div class="form-inline">
                                 <div class="form-group">
                                     <label for="servicecode">Enter Service Code:</label>
-                                    <!--select ng-model="servicecode.id" ng-options="option[0] as option[1] for option in ds_temp.editing_servicecodes_options"></select-->
-                                    <input ng-model="servicecode.id" list="datalist_servicecodes">
+                                    <input ng-model="servicecode.id" list="datalist_servicecodes" class="form-control" style="width: 150px">
                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                     <label for="servicecodetime">Time:</label>
-                                    <input ng-model="servicecode.time" style="width: 60px">&nbsp;minutes
+                                    <input ng-model="servicecode.time" class="form-control" style="width: 60px">&nbsp;minutes
                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                     <a class="btn btn-danger btn-xs" ng-click="removeServiceCode(index)">Remove</a>
                                 </div>
@@ -330,14 +330,14 @@
     var db_root = '<cfoutput>#Replace(CGI.REMOTE_ADDR, '.', '', 'ALL')#</cfoutput>/<cfoutput>#SESSION.userid#</cfoutput>';
     var date_now = '<cfoutput>#dateFormat(now(), 'mm/dd/yyyy')#</cfoutput>';
     var admin_branch = '<cfoutput>#SESSION.branch#</cfoutput>';
+    var last_crew_leader_id;
 
     var employees = {};
     var employees_select = {};
-    //[full_name, first_name, last_name, employee_id, username, password, branch, email, access_role_id, access_role_name]
     <cfoutput>
     <cfloop from="1" to="#arrayLen(employees)#" index="i">
         <cfset employee = employees[i]>
-        var employee = { full_name: '#employee.id# - #Replace(employee.name, "'", "\\'", "ALL")#', first_name: '#Replace(employee.first_name, "'", "\\'", "ALL")#', last_name: '#Replace(employee.last_name, "'", "\\'", "ALL")#', employee_id: '#employee.id#', branch: '#employee.branch#', 'access_role': '#employee.access_role#' };
+        var employee = { full_name: '#employee.id# - #Replace(employee.name, "'", "\\'", "ALL")#', first_name: '#Replace(employee.first_name, "'", "\\'", "ALL")#', last_name: '#Replace(employee.last_name, "'", "\\'", "ALL")#', employee_id: '#employee.id#', branch: '#employee.branch#', 'access_role': '#employee.access_role#', 'crew_leader_id': #employee.crew_leader_id# };
         employees[#employee.id#] = employee;
         if (!employees_select[employee.branch])
             employees_select[employee.branch] = {};
@@ -419,6 +419,7 @@
                                 $scope.ds_data.add_employee_id = 0;
                                 $scope.ds_data.add_job_branch = $scope.ds_data.ds_branch;
                                 $scope.ds_data.add_job_job_id = 0;
+                                last_crew_leader_id = $scope.ds_data.crew_leader_id;
 
                                 $scope.save();
 
@@ -449,16 +450,19 @@
                                 console.log(employee);
 
                                 //need to remove from all jobs too
-                                for(var i=0; i<$scope.ds_jobs.length; i++)
+                                if ($scope.ds_jobs)
                                 {
-                                    if ($scope.ds_jobs[i].ds_employees)
+                                    for(var i=0; i<$scope.ds_jobs.length; i++)
                                     {
-                                        for(var ii=0; ii<$scope.ds_jobs[i].ds_employees.length; ii++)
+                                        if ($scope.ds_jobs[i].ds_employees)
                                         {
-                                            if ($scope.ds_jobs[i].ds_employees[ii].id == employee.id)
+                                            for(var ii=0; ii<$scope.ds_jobs[i].ds_employees.length; ii++)
                                             {
-                                                $scope.ds_jobs[i].ds_employees.splice(ii, 1);
-                                                $scope.ds_jobs.$save(i);
+                                                if ($scope.ds_jobs[i].ds_employees[ii].id == employee.id)
+                                                {
+                                                    $scope.ds_jobs[i].ds_employees.splice(ii, 1);
+                                                    $scope.ds_jobs.$save(i);
+                                                }
                                             }
                                         }
                                     }
@@ -469,11 +473,26 @@
                         }
 
                         $scope.addCrewLeader = function(){
-                            console.log('crew_leader_id = '+$scope.ds_data.crew_leader_id);
+                            if ($scope.ds_employees.length > 0)
+                            {
+                                if (!confirm('Changing the crew leader now will remove all existing employees from this daily sheet.  Are you sure?'))
+                                {
+                                    $scope.ds_data.crew_leader_id = last_crew_leader_id;
+                                    return;
+                                }
+                            }
 
-                            var query = DBModel(db_root+'/ds_employees').orderByChild("id").equalTo($scope.ds_data.crew_leader_id).limitToFirst(1);
-                            if ($firebaseArray(query).length == 0)
-                                $scope.addEmployee($scope.ds_data.crew_leader_id);
+                            last_crew_leader_id = $scope.ds_data.crew_leader_id;
+
+                            DBModel(db_root+'/ds_employees').remove().then(function(){
+                                $scope.save();
+
+                                for(var i=0; i<$scope.ds_jobs.length; i++)
+                                {
+                                    $scope.ds_jobs[i].ds_employees = [];
+                                    $scope.ds_jobs.$save(i);
+                                }
+                            });
                         }
 
                         $scope.editEmployeeStartEndTimes = function(employee){
@@ -674,10 +693,17 @@
                         };
 
                         $scope.save = function(){
+                            $scope.ds_data.crew_leader_id = last_crew_leader_id;
                             if ($scope.ds_data.crew_leader_id && $scope.ds_employees.length == 0)
                             {
-                                console.log('force add '+$scope.ds_data.crew_leader_id);
+                                //force add current crew members
                                 $scope.addEmployee($scope.ds_data.crew_leader_id);
+                                for(var i in employees)
+                                {
+                                    //console.log('check '+i+' with crew leader '+employees[i].crew_leader_id+' ?= '+$scope.ds_data.crew_leader_id);
+                                    if (employees[i].crew_leader_id == $scope.ds_data.crew_leader_id && i != $scope.ds_data.crew_leader_id)
+                                        $scope.addEmployee(i);
+                                }
                             }
 
                             $scope.employees_cached = [];
