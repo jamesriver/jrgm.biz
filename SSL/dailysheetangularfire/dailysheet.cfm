@@ -40,6 +40,12 @@
     ORDER by [Wk Location Name] ASC
 </cfquery>
 
+<cfquery name="get_all_service_codes" datasource="jrgm">
+    SELECT * FROM app_job_services_list
+    WHERE is_active=1
+    ORDER BY service_id
+</cfquery>
+
 <!DOCTYPE html>
 <!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
 <!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
@@ -106,7 +112,7 @@
                 </div>
                 <div class="form-inline">
                     <div class="form-group">
-                        <label for="ds_supervisor_id">Branch:</label>
+                        <label for="ds_branch">Branch:</label>
                         <select id="ds_branch" name="ds_branch" ng-model="ds_data.ds_branch" ng-options="branch[0] as branch[1] for branch in branches_select" class="form-control" ng-change="save()"></select>
                     </div>
                 </div>
@@ -119,13 +125,13 @@
                 <div class="form-inline">
                     <div class="form-group">
                         <label for="ds_crew_leader_id">Supervisor/Crew Leader:</label>
-                        <select id="ds_crew_leader_id" name="ds_crew_leader_id" ng-model="ds_data.crew_leader_id" ng-options="employee[0] as employee[1] for employee in employees_select[ds_data.ds_branch][0]" class="form-control" ng-change="save(); addCrewLeader();"></select>
+                        <select id="ds_crew_leader_id" name="ds_crew_leader_id" ng-model="ds_data.crew_leader_id" ng-options="employee[0] as employee[1] for employee in employees_select[ds_data.ds_branch][0]" class="form-control" ng-change="addCrewLeader();"></select>
                     </div>
                 </div>
             </div>
         </div>
         <br />
-        <div class="row">
+        <div ng-if="ds_data.crew_leader_id > 0" class="row">
             <div class="col-lg-6 col-sm-12">
                 <table id="table_employees" class="table table-striped">
                     <thead>
@@ -161,6 +167,7 @@
                         <a class="btn btn-success btn-xs" ng-click="addEmployee(ds_data.add_employee_id)">Add</a>
                     </div>
                 </div>
+                <div class="visible-xs visible-sm visible-md"><hr /></div>
             </div>
             <div class="col-lg-6 col-sm-12">
                 <div class="form-inline">
@@ -172,7 +179,10 @@
                 </div>
                 <div ng-repeat="ds_job in ds_jobs">
                     <br />
-                    <div class="div_job" style="padding: 5px">{{ ds_job.id }} - {{ jobs[ds_job.id].name }}</div>
+                    <div class="div_job" style="padding: 5px; height: 33px">
+                        <div style="float: left">{{ ds_job.id }} - {{ jobs[ds_job.id].name }}</div>
+                        <div style="float: right"><a class="btn btn-danger btn-xs" ng-click="removeJob(ds_job)">Remove</a></div>
+                    </div>
                     <table id="table_job" class="table table-striped">
                         <thead>
                             <th style="padding: 5px">Employee</th>
@@ -180,7 +190,7 @@
                             <th style="padding: 5px">Total Time</th>
                             <th style="padding: 5px">Remove</th>
                         </thead>
-                        <tbody ng-repeat="ds_employee in ds_employees">
+                        <tbody ng-repeat="ds_employee in ds_job.ds_employees">
                             <tr>
                                 <td style="padding: 5px">{{ employees[ds_employee.id].full_name }}</td>
                                 <td style="padding: 5px">
@@ -188,17 +198,23 @@
                                         {{ servicecodetime.display }}
                                         <br />
                                     </span>
-                                    <a class="btn btn-info btn-xs" ng-click="editEmployeeServiceCodeTimes(ds_employee)">Edit</a>
+                                    <a class="btn btn-info btn-xs" ng-click="editEmployeeServiceCodes(ds_employee)">Edit</a>
                                 </td>
                                 <td style="padding: 5px">
-                                    <span ng-if="ds_employee.totalServiceTime">{{ ds_employee.totalServiceTime }}</span>
+                                    <span ng-if="ds_employee.totalServiceTime">{{ ds_employee.totalServiceCodeTime }}</span>
                                 </td>
                                 <td style="padding: 5px">
                                     <a class="btn btn-danger btn-xs" ng-click="removeEmployeeFromJob(ds_employee, ds_job)">Remove</a>
                                 </td>
-                            </tr>
+                            </tr>                            
                         </tbody>
                     </table>
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <select id="add_job_employee_employee_id" name="add_job_employee_employee_id" ng-model="ds_data.add_job_employee_employee_id" ng-options="employee[0] as employee[1] for employee in employees_cached" class="form-control" ng-change="save()"></select>
+                            <a class="btn btn-success btn-xs" ng-click="addEmployeeToJob(ds_data.add_job_employee_employee_id, ds_job.id)">Add</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -223,10 +239,10 @@
                         <td align="center" style="padding-bottom: 20px">
                             <div class="form-inline">
                                 <div class="form-group">
-                                    <label for="ds_date">Start Time:</label>
+                                    <label for="starttime">Start Time:</label>
                                     <select ng-model="startendtime.starttime" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options"></select>
                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                    <label for="ds_date">End Time:</label>
+                                    <label for="endtime">End Time:</label>
                                     <select ng-model="startendtime.endtime" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options"></select>
                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                     <a class="btn btn-danger btn-xs" ng-click="removeStartEndTime(index)">Remove</a>
@@ -250,6 +266,59 @@
             </center>
         </div>
     </div>
+
+    <datalist id="datalist_servicecodes">
+        <cfoutput query="get_all_service_codes">
+            <cfif parent_id NEQ ''>
+                <option value="#service_id# - #name#">
+            </cfif>
+        </cfoutput>
+    </datalist>
+    <div id="div_popupServiceCodes" style="background: no-repeat 50% 50% rgba(255, 255, 255, 1); left: 0; top: 0; width: 100%; height: 100%; text-align: center; display: none; position: fixed; z-index: 1001;">
+        <div style="top: 50%; text-align: center; position: relative; transform: translatey(-50%); -webkit-transform: translatey(-50%); max-height: 80%; overflow: auto;">
+            <center>
+                <table cellspacing="0" align="center" style="width: 50%; border: 1px solid black">
+                    <tr>
+                        <td align="center" style="padding: 10px; border-top: 1px solid black; border-bottom: 2px solid black; background-color: #999999; color: #FFFFFF">Service Codes: {{ ds_data.editing_employee.name }}</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <br />
+                            <center><a class="btn btn-success btn-xs" ng-click="addServiceCode()">Add New Service Code</a></center>
+                            <br />
+                        </td>
+                    </tr>
+                    <tr ng-repeat="(index, servicecode) in ds_temp.editing_servicecodes">
+                        <td align="center" style="padding-bottom: 20px">
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    <label for="servicecode">Enter Service Code:</label>
+                                    <input ng-model="servicecode.id" list="datalist_servicecodes" class="form-control" style="width: 150px">
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <label for="servicecodetime">Time:</label>
+                                    <input ng-model="servicecode.time" class="form-control" style="width: 60px">&nbsp;minutes
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <a class="btn btn-danger btn-xs" ng-click="removeServiceCode(index)">Remove</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <center>
+                                <a class="btn btn-info btn-md" ng-click="saveServiceCodes()">Save</a>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <a class="btn btn-primary btn-md" ng-click="saveServiceCodesToAllEmployees()">Save to ALL employees</a>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <a class="btn btn-warning btn-md" ng-click="cancelServiceCodes()">Cancel</a>
+                            </center>
+                            <br />
+                        </td>
+                    </tr>
+                </table>
+            </center>
+        </div>
+    </div>
     <!--end popup loader-->
 </div>
 
@@ -261,14 +330,14 @@
     var db_root = '<cfoutput>#Replace(CGI.REMOTE_ADDR, '.', '', 'ALL')#</cfoutput>/<cfoutput>#SESSION.userid#</cfoutput>';
     var date_now = '<cfoutput>#dateFormat(now(), 'mm/dd/yyyy')#</cfoutput>';
     var admin_branch = '<cfoutput>#SESSION.branch#</cfoutput>';
+    var last_crew_leader_id;
 
     var employees = {};
     var employees_select = {};
-    //[full_name, first_name, last_name, employee_id, username, password, branch, email, access_role_id, access_role_name]
     <cfoutput>
     <cfloop from="1" to="#arrayLen(employees)#" index="i">
         <cfset employee = employees[i]>
-        var employee = { full_name: '#employee.id# - #Replace(employee.name, "'", "\\'", "ALL")#', first_name: '#Replace(employee.first_name, "'", "\\'", "ALL")#', last_name: '#Replace(employee.last_name, "'", "\\'", "ALL")#', employee_id: '#employee.id#', branch: '#employee.branch#', 'access_role': '#employee.access_role#' };
+        var employee = { full_name: '#employee.id# - #Replace(employee.name, "'", "\\'", "ALL")#', first_name: '#Replace(employee.first_name, "'", "\\'", "ALL")#', last_name: '#Replace(employee.last_name, "'", "\\'", "ALL")#', employee_id: '#employee.id#', branch: '#employee.branch#', 'access_role': '#employee.access_role#', 'crew_leader_id': #employee.crew_leader_id# };
         employees[#employee.id#] = employee;
         if (!employees_select[employee.branch])
             employees_select[employee.branch] = {};
@@ -292,6 +361,11 @@
         if (!jobs_select[job.branch])
             jobs_select[job.branch] = [];
         jobs_select[job.branch].push([job.id, job.name]);</cfoutput>
+
+    var servicecodes_select = [];
+    <cfoutput query="get_all_service_codes">
+        var servicecode = { name: '#service_id# - #Replace(name, "'", "\'", "ALL")#', id: '#service_id#' };
+        servicecodes_select.push([servicecode.id, servicecode.name]);</cfoutput>
 
     app.factory("DBModel", [function() {
         return function(node) {
@@ -332,6 +406,7 @@
                         $scope.employees = employees;
                         $scope.jobs_select = jobs_select;
                         $scope.jobs = jobs;
+                        $scope.servicecodes_select = servicecodes_select;
 
                         $scope.ds_data.$loaded(function(data){
                             $scope.ds_employees.$loaded(function(data){
@@ -344,6 +419,7 @@
                                 $scope.ds_data.add_employee_id = 0;
                                 $scope.ds_data.add_job_branch = $scope.ds_data.ds_branch;
                                 $scope.ds_data.add_job_job_id = 0;
+                                last_crew_leader_id = $scope.ds_data.crew_leader_id;
 
                                 $scope.save();
 
@@ -359,7 +435,9 @@
                             result.$loaded(function(data){
                                 if (data.length != 0) return;
 
-                                $scope.ds_employees.$add({ 'id': employee_id });
+                                $scope.ds_employees.$add({ 'id': employee_id }).then(function(){
+                                    $scope.save();
+                                });
                                 console.log('added '+employee_id);
                             });
                         }
@@ -370,16 +448,51 @@
                             $scope.ds_employees.$remove(employee).then(function() {
                                 console.log('removed employee');
                                 console.log(employee);
+
+                                //need to remove from all jobs too
+                                if ($scope.ds_jobs)
+                                {
+                                    for(var i=0; i<$scope.ds_jobs.length; i++)
+                                    {
+                                        if ($scope.ds_jobs[i].ds_employees)
+                                        {
+                                            for(var ii=0; ii<$scope.ds_jobs[i].ds_employees.length; ii++)
+                                            {
+                                                if ($scope.ds_jobs[i].ds_employees[ii].id == employee.id)
+                                                {
+                                                    $scope.ds_jobs[i].ds_employees.splice(ii, 1);
+                                                    $scope.ds_jobs.$save(i);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
                                 $scope.save();
                             });
                         }
 
                         $scope.addCrewLeader = function(){
-                            console.log('crew_leader_id = '+$scope.ds_data.crew_leader_id);
+                            if ($scope.ds_employees.length > 0)
+                            {
+                                if (!confirm('Changing the crew leader now will remove all existing employees from this daily sheet.  Are you sure?'))
+                                {
+                                    $scope.ds_data.crew_leader_id = last_crew_leader_id;
+                                    return;
+                                }
+                            }
 
-                            var query = DBModel(db_root+'/ds_employees').orderByChild("id").equalTo($scope.ds_data.crew_leader_id).limitToFirst(1);
-                            if ($firebaseArray(query).length == 0)
-                                $scope.addEmployee($scope.ds_data.crew_leader_id);
+                            last_crew_leader_id = $scope.ds_data.crew_leader_id;
+
+                            DBModel(db_root+'/ds_employees').remove().then(function(){
+                                $scope.save();
+
+                                for(var i=0; i<$scope.ds_jobs.length; i++)
+                                {
+                                    $scope.ds_jobs[i].ds_employees = [];
+                                    $scope.ds_jobs.$save(i);
+                                }
+                            });
                         }
 
                         $scope.editEmployeeStartEndTimes = function(employee){
@@ -454,13 +567,150 @@
                                  $scope.ds_jobs.$add({ 'id': job_id });
                                  console.log('added '+job_id);
                              });
-                         }
+                        }
+                        
+                        $scope.removeJob = function(job){
+                            if (!confirm('Remove '+jobs[job.id].name+' from this Daily Sheet?')) return;
+
+                            $scope.ds_jobs.$remove(job).then(function() {
+                                console.log('removed job');
+                                console.log(job);
+                                $scope.save();
+                            });
+                        }
+
+                        $scope.addEmployeeToJob = function(employee_id, job_id){
+                            if (!employee_id) return;
+                            if (!job_id) return;
+
+                            var query = DBModel(db_root+'/ds_jobs').orderByChild("id").equalTo(job_id).limitToFirst(1);
+                            var result = $firebaseArray(query);
+                            result.$loaded(function(result){
+                                var data = result[0];
+                                if (data.ds_employees)
+                                {
+                                    for(var i=0; i<data.ds_employees.length; i++)
+                                    {
+                                        if (data.ds_employees[i].id == employee_id) return;
+                                    }
+                                }
+
+                                if (!data.ds_employees)
+                                    data.ds_employees = [];
+                                data.ds_employees.push({ id: employee_id });
+
+                                var key = -1;
+                                for(var i=0; i<$scope.ds_jobs.length; i++)
+                                {
+                                    if ($scope.ds_jobs[i].id == job_id)
+                                        key = i;
+                                }
+                                if (key == -1) return;
+
+                                $scope.ds_jobs[key] = data;
+                                console.log($scope.ds_jobs);
+                                $scope.ds_jobs.$save(key);
+                            });
+                        }
+
+                        $scope.removeEmployeeFromJob = function(employee, job){
+                            if (!confirm('Remove '+employees[employee.id].full_name+' from '+jobs[job.id].name+'?')) return;
+
+                            for(var i=0; i<job.ds_employees.length; i++)
+                            {
+                                if (job.ds_employees[i].id == employee.id)
+                                    job.ds_employees.splice(i, 1);
+                            }
+
+                            var key = -1;
+                            for(var i=0; i<$scope.ds_jobs.length; i++)
+                            {
+                                if ($scope.ds_jobs[i].id == job.id)
+                                    key = i;
+                            }
+                            if (key == -1) return;
+
+                            $scope.ds_jobs[key] = job;
+                            console.log($scope.ds_jobs);
+                            $scope.ds_jobs.$save(key);
+                        }
+                        
+                        $scope.editEmployeeServiceCodes = function(employee){
+                            $scope.ds_temp = {};
+                            $scope.ds_temp.editing_employee = employee;
+                            $scope.ds_temp.editing_employee_name = employee.name;
+                            $scope.ds_temp.editing_servicecodes = employee.servicecodes;
+                            $scope.ds_temp.editing_servicecodes_options = buildServiceCodesOptions();
+
+                            showPopup('div_popupServiceCodes');
+                        }
+
+
+                        $scope.addServiceCode = function(){
+                            if (!$scope.ds_temp.editing_servicecodes)
+                                $scope.ds_temp.editing_servicecodes = [];
+                            $scope.ds_temp.editing_servicecodes.push({ 'id': '', 'time': '' });
+                            console.log($scope.ds_temp.editing_servicecodes);
+                        };
+
+                        $scope.removeServiceCode = function(key){
+                            $scope.ds_temp.editing_servicecodes.splice(key, 1);
+                        }
+
+                        $scope.saveServiceCodes = function(){
+                            $scope.saveServiceCode();
+                            hidePopup('div_popupServiceCodes');
+                        };
+
+                        $scope.saveServiceCode = function(){
+                            var employee = $scope.ds_temp.editing_employee;
+                            employee.servicecodes = $scope.ds_temp.editing_servicecodes;
+                            totalminutes = 0;
+                            for(var i=0; i<employee.servicecodes.length; i++)
+                            {
+                                employee.servicecodes[i].display = 'the display '+employee.servicecodes[i].time;
+                                totalminutes += employee.servicecodes[i].time;
+                            }
+                            var totalhours = Math.floor(totalminutes / 60);
+                            var totalminutes = totalminutes % 60;
+                            employee.totalTime = (totalhours<10?'0'+totalhours:totalhours)+':'+(totalminutes<10?'0'+totalminutes:totalminutes);
+                            $scope.ds_employees.$save(employee);
+                        }
+
+                        $scope.saveServiceCodesToAllEmployees = function(){
+                            if (!confirm('Are you sure you want to overwrite ALL employee service code times?')) return;
+
+                            for(var i=0; i<$scope.ds_employees.length; i++)
+                            {
+                                $scope.ds_temp.editing_employee = $scope.ds_employees[i];
+                                $scope.saveServiceCode();
+                            }
+                            hidePopup('div_popupServiceCodes');
+                        };
+
+                        $scope.cancelServiceCodes = function(){
+                            hidePopup('div_popupServiceCodes');
+                        };
 
                         $scope.save = function(){
+                            $scope.ds_data.crew_leader_id = last_crew_leader_id;
                             if ($scope.ds_data.crew_leader_id && $scope.ds_employees.length == 0)
                             {
-                                console.log('force add '+$scope.ds_data.crew_leader_id);
+                                //force add current crew members
                                 $scope.addEmployee($scope.ds_data.crew_leader_id);
+                                for(var i in employees)
+                                {
+                                    //console.log('check '+i+' with crew leader '+employees[i].crew_leader_id+' ?= '+$scope.ds_data.crew_leader_id);
+                                    if (employees[i].crew_leader_id == $scope.ds_data.crew_leader_id && i != $scope.ds_data.crew_leader_id)
+                                        $scope.addEmployee(i);
+                                }
+                            }
+
+                            $scope.employees_cached = [];
+                            for(var i=0; i<$scope.ds_employees.length; i++)
+                            {
+                                var employee = $scope.ds_employees[i];
+                                $scope.employees_cached.push([employee.id, employees[employee.id].full_name]);
                             }
                             $scope.ds_data.$save();
                             console.log('saved');
@@ -582,6 +832,12 @@
                 options.push([str, display_str]);
             }
         }
+        return options;
+    }
+
+    function buildServiceCodesOptions()
+    {
+        var options = servicecodes_select;
         return options;
     }
 
