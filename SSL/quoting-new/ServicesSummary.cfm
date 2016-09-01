@@ -95,7 +95,7 @@ H3 {
                           <cfset row_ID = 'BlankService' & blank_count>
                           <cfset row_column2 = current_row[1]>
                       <cfelse>
-                          <cfset row_column2 = quote_rows_cache[quote_data_entry_row_order_array[ii]][19]['row_defaultvalue']><!---NAME OF SERVICE--->
+                          <cfset row_column2 = quote_rows_cache[quote_data_entry_row_order_array[ii]][service_descriptions_row]['row_defaultvalue']><!---NAME OF SERVICE--->
                       </cfif>
 
                       <cfif row_column2 EQ 'Spring Annuals'>

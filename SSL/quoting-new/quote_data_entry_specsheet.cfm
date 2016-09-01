@@ -273,14 +273,14 @@ i.mysize {
                             <cfif row_ID CONTAINS 'BlankService'>
                                 <cfset row_column = '<span id="blank' & blank_count & '_service"></span>'>
                             <cfelse>
-                                <cfset row_column = quote_rows_cache[quote_data_entry_row_order_array[ii]][19]['row_defaultvalue']>
+                                <cfset row_column = quote_rows_cache[quote_data_entry_row_order_array[ii]][service_descriptions_row]['row_defaultvalue']>
                             </cfif>
                         </cfcase>
                         <cfcase value="5">
                             <cfif row_ID CONTAINS 'BlankService'>
                                 <cfset row_column = '<span id="blank' & blank_count & '_material"></span>'>
                             <cfelse>
-                                <cfset row_column = quote_rows_cache[quote_data_entry_row_order_array[ii]][19]['row_defaultvalue']>
+                                <cfset row_column = quote_rows_cache[quote_data_entry_row_order_array[ii]][service_descriptions_row]['row_defaultvalue']>
                             </cfif>
                         </cfcase>
                         <cfdefaultcase>

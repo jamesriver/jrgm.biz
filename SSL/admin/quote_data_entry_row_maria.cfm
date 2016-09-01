@@ -1,6 +1,6 @@
 <cfinclude template="../quoting-new/include_cffunctions.cfm">
 <cfinclude template="../admin/include_sql_quote_data_entry_row.cfm">
-<cfset columnList = "1,3,4,6,8,9,10,18,23">
+<cfset columnList = "1,3,4,6,8,9,10,18,24,23">
 
 <!--- BEGIN OUTPUT --->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
