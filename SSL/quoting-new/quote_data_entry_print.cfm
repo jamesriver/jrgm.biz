@@ -227,7 +227,7 @@
                                           <cfoutput><input class="column<cfoutput>#current_column.ID#</cfoutput> #current_row.quote_services_field# subtotal<cfoutput>#current_row.row_order#</cfoutput> totaltype_<cfoutput>#current_row.row_totaltype#</cfoutput>" type="hidden" id="#current_row.quote_services_field#" name="#current_row.quote_services_field#"></cfoutput>
                                       <cfelse>
                                           <cfif current_row.quote_services_field NEQ ''>
-                                              <cfif (current_column.column_editable EQ 1 AND (current_column.ID NEQ 18 OR current_row.row_defaultvalue NEQ 40)) OR (current_row.row_order GT 55 AND (current_column.ID EQ 1 OR current_column.ID EQ 3 OR current_column.ID EQ 4 OR current_column.ID EQ 6 OR current_column.ID EQ 8 OR current_column.ID EQ 9 OR current_column.ID EQ 10))>
+                                              <cfif (current_column.column_editable EQ 1 AND (current_column.ID NEQ 18<!--- OR current_row.row_defaultvalue NEQ 40--->)) OR (current_row.row_order GT 55 AND (current_column.ID EQ 1 OR current_column.ID EQ 3 OR current_column.ID EQ 4 OR current_column.ID EQ 6 OR current_column.ID EQ 8 OR current_column.ID EQ 9 OR current_column.ID EQ 10))>
                                                   <cfoutput><span class="column<cfoutput>#current_column.ID#</cfoutput>" id="#current_row.quote_services_field#" name="#current_row.quote_services_field#"></span></cfoutput>
                                                   <cfif current_column.ID EQ 9 OR current_column.ID EQ 10>
                                                     &nbsp;
@@ -362,7 +362,6 @@
       <tr>
         <td valign="top"><table class="table"  >
             <cfoutput>
-              <cfoutput>
               <tr>
                 <td colspan="2" align="center" nowrap="nowrap"><strong>CONTRACT INFO</strong></td>
                 <td width="150" align="right" nowrap="nowrap">&nbsp;</td>
@@ -417,56 +416,107 @@
                 <td nowrap="nowrap">Billing Contact Email Address</td>
                 <td align="right" nowrap="nowrap">#get_quote_start.q_billing_contact_email#</td>
               </tr>
-              <tr>
-                <td nowrap="nowrap"><strong>Total Direct Costs</strong></td>
-                <td align="right" nowrap="nowrap"><strong><span id="total_direct_costs_formatted"></span></strong></td>
-                <td width="150" align="right" nowrap="nowrap">&nbsp;</td>
-                <td align="right" nowrap="nowrap">&nbsp;</td>
-                <td align="right" nowrap="nowrap">&nbsp;</td>
-              </tr>
-              <tr>
-                <td nowrap="nowrap">&nbsp;</td>
-                <td align="right" nowrap="nowrap"></td>
-                <td width="150" align="right" nowrap="nowrap"></td>
-                <td>Billing Address</td>
-                <td align="right" nowrap="nowrap">#get_quote_start.q_address1#</td>
-              </tr>
-              <tr>
-                <td nowrap="nowrap">Gross Profit</td>
-                <td align="right" nowrap="nowrap"><span id="gross_profit_formatted"></span></td>
-                <td width="150" align="right" nowrap="nowrap">&nbsp;</td>
-                <td>Billing Address2</td>
-                <td align="right" nowrap="nowrap">#get_quote_start.q_address2#</td>
-              </tr>
-              <tr>
-                <td nowrap="nowrap">OH Recovery (40%)</td>
-                <td align="right" nowrap="nowrap"><span id="margin_formatted"></span></td>
-                <td width="150" align="right" nowrap="nowrap">&nbsp;</td>
-                <td>Billing City </td>
-                <td align="right" nowrap="nowrap">#get_quote_start.q_city#</td>
-              </tr>
-              <tr>
-                <td nowrap="nowrap"><strong>Operating Profit</strong></td>
-                <td align="right" nowrap="nowrap"><strong><span id="operating_profit_formatted"></span></strong></td>
-                <td width="150" align="right" nowrap="nowrap">&nbsp;</td>
-                <td>Billing State</td>
-                <td align="right" nowrap="nowrap">#get_quote_start.q_address_state#</td>
-              </tr>
-              <tr>
-                <td nowrap="nowrap">Operating Profit %</td>
-                <td align="right" nowrap="nowrap"><span id="net_cash_flow_percentage_formatted"></span></td>
-                <td align="right" nowrap="nowrap">&nbsp;</td>
-                <td>Billing Zip</td>
-                <td align="right" nowrap="nowrap">#get_quote_start.q_address_zip#</td>
-              </tr>
-              <tr>
-                <td nowrap="nowrap">&nbsp;</td>
-                <td  align="right" nowrap="nowrap">&nbsp;</td>
-                <td width="150"  align="right" nowrap="nowrap">&nbsp;</td>
-                <td>&nbsp;</td>
-                <td  align="right" nowrap="nowrap">&nbsp;</td>
-              </tr>
-            </cfoutput>
+              <cfif version_ID GE 16>
+                  <tr>
+                    <td nowrap="nowrap">Corp OH</td>
+                    <td align="right" nowrap="nowrap"><span id="corp_oh_formatted"></span></td>
+                    <td width="150" align="right" nowrap="nowrap">&nbsp;</td>
+                    <td align="right" nowrap="nowrap">&nbsp;</td>
+                    <td align="right" nowrap="nowrap">&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td nowrap="nowrap"><strong>Total Direct Costs</strong></td>
+                    <td align="right" nowrap="nowrap"><strong><span id="total_direct_costs_formatted"></span></strong></td>
+                    <td width="150" align="right" nowrap="nowrap">&nbsp;</td>
+                    <td>Billing Address</td>
+                    <td align="right" nowrap="nowrap">#get_quote_start.q_address1#</td>
+                  </tr>
+                  <tr>
+                    <td nowrap="nowrap">&nbsp;</td>
+                    <td align="right" nowrap="nowrap">&nbsp;</td>
+                    <td width="150" align="right" nowrap="nowrap">&nbsp;</td>
+                    <td>Billing Address2</td>
+                    <td align="right" nowrap="nowrap">#get_quote_start.q_address2#</td>
+                  </tr>
+                  <tr>
+                    <td nowrap="nowrap"><strong>Projected Operating Profit</strong></td>
+                    <td align="right" nowrap="nowrap"><strong><span id="projected_operating_profit_formatted"></span></strong></td>
+                    <td width="150" align="right" nowrap="nowrap">&nbsp;</td>
+                    <td>Billing City </td>
+                    <td align="right" nowrap="nowrap">#get_quote_start.q_city#</td>
+                  </tr>
+                  <tr>
+                    <td nowrap="nowrap">&nbsp;</td>
+                    <td align="right" nowrap="nowrap">&nbsp;</td>
+                    <td width="150" align="right" nowrap="nowrap">&nbsp;</td>
+                    <td>Billing State</td>
+                    <td align="right" nowrap="nowrap">#get_quote_start.q_address_state#</td>
+                  </tr>
+                  <tr>
+                    <td nowrap="nowrap">&nbsp;</td>
+                    <td align="right" nowrap="nowrap">&nbsp;</td>
+                    <td align="right" nowrap="nowrap">&nbsp;</td>
+                    <td>Billing Zip</td>
+                    <td align="right" nowrap="nowrap">#get_quote_start.q_address_zip#</td>
+                  </tr>
+                  <tr>
+                    <td nowrap="nowrap">&nbsp;</td>
+                    <td  align="right" nowrap="nowrap">&nbsp;</td>
+                    <td width="150"  align="right" nowrap="nowrap">&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td  align="right" nowrap="nowrap">&nbsp;</td>
+                  </tr>
+              <cfelse>
+                  <tr>
+                    <td nowrap="nowrap"><strong>Total Direct Costs</strong></td>
+                    <td align="right" nowrap="nowrap"><strong><span id="total_direct_costs_formatted"></span></strong></td>
+                    <td width="150" align="right" nowrap="nowrap">&nbsp;</td>
+                    <td align="right" nowrap="nowrap">&nbsp;</td>
+                    <td align="right" nowrap="nowrap">&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td nowrap="nowrap">&nbsp;</td>
+                    <td align="right" nowrap="nowrap"></td>
+                    <td width="150" align="right" nowrap="nowrap"></td>
+                    <td>Billing Address</td>
+                    <td align="right" nowrap="nowrap">#get_quote_start.q_address1#</td>
+                  </tr>
+                  <tr>
+                    <td nowrap="nowrap">Gross Profit</td>
+                    <td align="right" nowrap="nowrap"><span id="gross_profit_formatted"></span></td>
+                    <td width="150" align="right" nowrap="nowrap">&nbsp;</td>
+                    <td>Billing Address2</td>
+                    <td align="right" nowrap="nowrap">#get_quote_start.q_address2#</td>
+                  </tr>
+                  <tr>
+                    <td nowrap="nowrap">OH Recovery (40%)</td>
+                    <td align="right" nowrap="nowrap"><span id="margin_formatted"></span></td>
+                    <td width="150" align="right" nowrap="nowrap">&nbsp;</td>
+                    <td>Billing City </td>
+                    <td align="right" nowrap="nowrap">#get_quote_start.q_city#</td>
+                  </tr>
+                  <tr>
+                    <td nowrap="nowrap"><strong>Operating Profit</strong></td>
+                    <td align="right" nowrap="nowrap"><strong><span id="operating_profit_formatted"></span></strong></td>
+                    <td width="150" align="right" nowrap="nowrap">&nbsp;</td>
+                    <td>Billing State</td>
+                    <td align="right" nowrap="nowrap">#get_quote_start.q_address_state#</td>
+                  </tr>
+                  <tr>
+                    <td nowrap="nowrap">Operating Profit %</td>
+                    <td align="right" nowrap="nowrap"><span id="net_cash_flow_percentage_formatted"></span></td>
+                    <td align="right" nowrap="nowrap">&nbsp;</td>
+                    <td>Billing Zip</td>
+                    <td align="right" nowrap="nowrap">#get_quote_start.q_address_zip#</td>
+                  </tr>
+                  <tr>
+                    <td nowrap="nowrap">&nbsp;</td>
+                    <td  align="right" nowrap="nowrap">&nbsp;</td>
+                    <td width="150"  align="right" nowrap="nowrap">&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td  align="right" nowrap="nowrap">&nbsp;</td>
+                  </tr>
+              </cfif>
             </cfoutput>
           </table>
           <p>&nbsp;</p></td>

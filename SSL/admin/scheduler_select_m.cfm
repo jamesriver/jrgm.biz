@@ -16,31 +16,6 @@ Permission denied.
 
 <cfset allowed_access_roles = 'ALL'>
 <cfset todayDate = Now()>
-<cfoutput>
-SELECT ae.*, ae.[Employee ID] as employee_id, ae.[Name FirstLast] as full_name, aep.employee_active, aep.username, aep.password, aep.access_role, CASE WHEN ar.name IS NULL THEN CASE WHEN ac.employee_id IS NULL THEN 'No Employee Login' ELSE 'Crew Member' END ELSE ar.name END as access_role_name, CASE WHEN ar.access_role_id IS NULL THEN CASE WHEN ac.employee_id IS NULL THEN -1 ELSE 0 END ELSE ar.access_role_id END as access_role_id, ac.supervisor_id, ac.crew_leader_id FROM app_employees ae
-  LEFT JOIN app_employee_passwords aep ON aep.employee_id=ae.[Employee ID]
-  LEFT JOIN access_roles ar ON ar.access_role_id=aep.access_role
-  LEFT JOIN app_crews_new ac ON ac.employee_id=ae.[Employee ID]
-  WHERE ae.active_record=1 AND (ae.[Employee ID]=#SESSION.userid# OR (
-  <cfif is_admin EQ 0>
-  <cfelseif is_admin EQ 1>
-    ae.branch <>'Test'
-  <cfelseif is_admin EQ 2>
-    <cfset allowed_access_roles = '1,0,2,6,7,9'>
-    ae.branch=<cfqueryparam value="#SESSION.branch#" CFSQLType="CF_SQL_TEXT"> AND ac.Employee_Position_ID IN (#allowed_access_roles#)
-  <cfelseif is_admin EQ 3>
-    <cfset allowed_access_roles = '0,2,6,7'>
-    ae.branch=<cfqueryparam value="#SESSION.branch#" CFSQLType="CF_SQL_TEXT"> AND ac.Employee_Position_ID IN (#allowed_access_roles#)
-  <cfelseif is_admin EQ 4>
-    <cfset allowed_access_roles = '1,0,2,6,7,9,10'>
-    ac.Employee_Position_ID IN (#allowed_access_roles#)
-  </cfif>
-  ))
-  <cfif SESSION.userid NEQ 1001>
-    AND ar.is_admin != 1
-  </cfif>
-  ORDER BY CASE WHEN ar.access_role_id IS NULL THEN CASE WHEN ac.employee_id IS NULL THEN -1 ELSE 110 END ELSE ar.displayorder END, ae.branch, ae.first_name
-</cfoutput>
 <cfquery name="get_employees" datasource="jrgm">
   SELECT ae.*, ae.[Employee ID] as employee_id, ae.[Name FirstLast] as full_name, aep.employee_active, aep.username, aep.password, aep.access_role, CASE WHEN ar.name IS NULL THEN CASE WHEN ac.employee_id IS NULL THEN 'No Employee Login' ELSE 'Crew Member' END ELSE ar.name END as access_role_name, CASE WHEN ar.access_role_id IS NULL THEN CASE WHEN ac.employee_id IS NULL THEN -1 ELSE 0 END ELSE ar.access_role_id END as access_role_id, ac.supervisor_id, ac.crew_leader_id FROM app_employees ae
   LEFT JOIN app_employee_passwords aep ON aep.employee_id=ae.[Employee ID]

@@ -188,3 +188,8 @@ SELECT       ID, [Job ID] AS ProjectID, [Wk Loc ID], [Wk Location Name] AS proje
                       Crew_Leader_ID, billto_company_name,contract_installments, last_quote_id, project_status_checkbox, [Wk Loc ID] as insightly_id, project_details, irrigation_services_included
 FROM         app_jobs  WHERE last_quote_id  = '#get_quote_start.ID#'
 </cfquery>
+
+<cfset service_descriptions_row = 19>
+<cfif get_quote_start.quote_data_entry_versions_ID GE 16>
+    <cfset service_descriptions_row = 20>
+</cfif>

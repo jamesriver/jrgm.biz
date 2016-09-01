@@ -10,6 +10,7 @@
         var value_raw;
         var value_formatted;
         var value_rounded;
+        var value_perc;
         var contract_subtotal;
         var grounds_maintenance_contract_total;
         var irrigation_contract_total;
@@ -124,7 +125,10 @@
 
         $('#total_materials_formatted').html(formatDollars(unformatValueByIdentity('.total15')));
 
-        value_raw = unformatValueByIdentity('#total_labor_formatted') + unformatValueByIdentity('#total_materials_formatted');
+        value_raw = unformatValueByIdentity('.total16') - (unformatValueByIdentity('#total_labor_formatted') + unformatValueByIdentity('#total_materials_formatted'));
+        $('#corp_oh_formatted').html(formatDollars(value_raw));
+
+        value_raw = unformatValueByIdentity('#total_labor_formatted') + unformatValueByIdentity('#total_materials_formatted') + unformatValueByIdentity('#corp_oh_formatted');
         $('#total_direct_costs_formatted').html(formatDollars(value_raw));
 
         value_raw = $('#adjusted_contract_price').val()*1 - unformatValueByIdentity('#total_direct_costs_formatted');
@@ -135,6 +139,10 @@
 
         value_raw = unformatValueByIdentity('#gross_profit_formatted') - unformatValueByIdentity('#margin_formatted');
         $('#operating_profit_formatted').html(formatDollars(value_raw));
+
+        value_raw = unformatValueByIdentity('#adjusted_contract_price') - unformatValueByIdentity('#total_direct_costs_formatted');
+        value_perc = Math.floor(value_raw / unformatValueByIdentity('#adjusted_contract_price') * 10000)/100;
+        $('#projected_operating_profit_formatted').html(formatDollars(value_raw)+' ('+value_perc+'%)');
 
         value_raw = unformatValueByIdentity('#operating_profit_formatted') / unformatValueByIdentity('.total20') * 100;
         if (isNaN(value_raw)) value_raw = 0;
@@ -296,6 +304,26 @@
         recalculate()
     }
 
+    function apply_labor_rate(value) {
+        value = 1*value;
+        if (isNaN(value)) value = 0;
+        $('.column6').each(function(){
+            if (!$(this).is('span') && $(this).attr('type') != 'hidden' && !$(this).prop('disabled'))
+                $(this).val(value);
+        });
+        recalculate()
+    }
+
+    function apply_corp_oh(value) {
+        value = 1*value;
+        if (isNaN(value)) value = 0;
+        $('.column24').each(function(){
+            if (!$(this).is('span') && $(this).attr('type') != 'hidden' && !$(this).prop('disabled'))
+                $(this).val(value);
+        });
+        recalculate()
+    }
+
     window.onload = function(){
         $( document ).ready(function() {
             if (typeof init_before == 'function')
@@ -305,10 +333,10 @@
             <cfset reapplyProfitMargin = 0>
             <cfloop collection=#current_quote_services_materials# item="field">
                 <cfif field DOES NOT CONTAIN 'date'>
-                    <cfif field CONTAINS '_gm' AND current_quote_services_materials[field] LT 40>
+                    <!---cfif field CONTAINS '_gm' AND current_quote_services_materials[field] LT 40>
                         <cfset reapplyProfitMargin = 1>
                         <cfset current_quote_services_materials[field] = 40>
-                    </cfif>
+                    </cfif--->
                     <cfoutput>
                         initial_element = document.getElementById('#field#');
                         if (initial_element)
