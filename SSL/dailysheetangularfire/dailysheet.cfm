@@ -217,14 +217,24 @@
                         <table id="table_job" class="table table-striped">
                             <thead>
                                 <th style="padding: 5px"><a class="btn btn-info btn-xs" ng-click="editMaterials(ds_job)">Edit Materials</a></th>
-                                <th style="padding: 5px">Material</th>
-                                <th style="padding: 5px">Quantity</th>
+                                <th ng-if="ds_job.ds_materials" style="padding: 5px">Material</th>
+                                <th ng-if="ds_job.ds_materials" style="padding: 5px">Quantity</th>
                             </thead>
                             <tbody>
                                 <tr ng-repeat="ds_material in ds_job.ds_materials">
                                     <td style="padding: 5px">&nbsp;</td>
                                     <td style="padding: 5px">{{ ds_material.id }}</td>
                                     <td style="padding: 5px">{{ ds_material.quantity }}</td>
+                                </tr>
+                                <tr ng-if="!ds_job.ds_materials">
+                                    <td style="padding: 5px">
+                                        <div class="form-inline">
+                                            <div class="form-group">
+                                                <input type="checkbox" value="1" ng-model="ds_job.nomaterials" ng-change="saveNoMaterialsToJob(ds_job, ds_job.nomaterials)">
+                                                Check this box if no materials were used
+                                            </div>
+                                        </div>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -821,9 +831,7 @@
                             var query = DBModel(db_root+'/ds_jobs').orderByChild("id").equalTo(job_id).limitToFirst(1);
                             var result = $firebaseArray(query);
                             result.$loaded(function(result){
-                                console.log('here');
                                 var job = result[0];
-                                console.log(job);
 
                                 var key = -1;
                                 for(var i=0; i<$scope.ds_jobs.length; i++)
@@ -832,9 +840,32 @@
                                        key = i;
                                 }
                                 if (key == -1) return;
-                                console.log('key '+key);
 
                                 job.ds_materials = $scope.ds_temp.editing_materials;
+
+                                $scope.ds_jobs[key] = job;
+                                $scope.ds_jobs.$save(key);
+                            });
+                        }
+
+                        $scope.saveNoMaterialsToJob = function(job, nomaterials){
+                            var job_id = job.id;
+
+                            console.log('hi '+nomaterials);
+                            var query = DBModel(db_root+'/ds_jobs').orderByChild("id").equalTo(job_id).limitToFirst(1);
+                            var result = $firebaseArray(query);
+                            result.$loaded(function(result){
+                                var job = result[0];
+
+                                var key = -1;
+                                for(var i=0; i<$scope.ds_jobs.length; i++)
+                                {
+                                   if ($scope.ds_jobs[i].id == job_id)
+                                       key = i;
+                                }
+                                if (key == -1) return;
+
+                                job.nomaterials = nomaterials;
 
                                 $scope.ds_jobs[key] = job;
                                 $scope.ds_jobs.$save(key);
