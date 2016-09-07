@@ -1,4 +1,3 @@
-<!--- COLDFUSION LOGIC HERE --->
 <cfinclude template="#APPLICATION.basePath#include/init.cfm">
 <cfset is_admin = 0>
 
@@ -12,7 +11,6 @@
     <cfset is_admin = 1>
 </cfif>
 
-<!--- COLDFUSION POST LOGIC HERE--->
 <cfset todayDate = Now()>
 <cfif IsDefined('form.ds_post_data') AND IsDefined('form.ds_id')>
     <cfscript>
@@ -273,10 +271,10 @@
         <!--- SET JOB START, END, LUNCH TIMES --->
     </cfloop>
 
-    <!--- DELETE ANYTHING THAT WAS NOT CREATED OR UPDATED --->
 
-    <!--- ALL DONE; REDIRECT TO EDIT PAGE --->
-    <cflocation url="/SSL/admin/daily_sheet_edit2.cfm?dsid=#ds_id#">
+    <!--- DELETE ANYTHING THAT WAS NOT CREATED OR UPDATED --->
+    <cfoutput>Done, ID=#ds_id#</cfoutput>
+    <cfabort>
 </cfif>
 
 <cfquery name="get_all_employees" datasource="#CONFIG_DATABASENAME#">
@@ -320,7 +318,6 @@
     ORDER BY sortid
 </cfquery>
 
-<!--- UI LOGIC HERE --->
 <!DOCTYPE html>
 <!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
 <!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
@@ -345,31 +342,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.js"></script>
 <link id="ui-css" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.css" rel="stylesheet">
 <!-- Bootstrap -->
+<link id="bs-css" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
 <link id="bsdp-css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet">
-<!-- BEGIN GLOBAL MANDATORY STYLES -->
-<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css">
-<link href="/SSL/admin/assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-<link href="/SSL/admin/assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css">
-<link href="/SSL/admin/assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-<link href="/SSL/admin/assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css">
-<link href="/SSL/admin/assets/global/plugins/bootstrap/css/glyphicons.css" rel="stylesheet">
-<link href="/SSL/admin/assets/global/plugins/bootstrap/css/glyphicons-bootstrap.css" rel="stylesheet">
-<!-- END GLOBAL MANDATORY STYLES -->
-<!-- BEGIN PAGE LEVEL STYLES -->
-<link rel="stylesheet" type="text/css" href="/SSL/admin/assets/global/plugins/select2/select2.css"/>
-<link rel="stylesheet" type="text/css" href="/SSL/admin/assets/global/plugins/datatables/extensions/Scroller/css/dataTables.scroller.min.css"/>
-<link rel="stylesheet" type="text/css" href="/SSL/admin/assets/global/plugins/datatables/extensions/ColReorder/css/dataTables.colReorder.min.css"/>
-<link rel="stylesheet" type="text/css" href="/SSL/admin/assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
-<link href="/SSL/admin/assets/admin/layout3/css/dsicons.css" rel="stylesheet" type="text/css">
-<!-- END PAGE LEVEL STYLES -->
-<!-- BEGIN THEME STYLES -->
-<link href="/SSL/admin/assets/global/css/components-rounded.css" id="style_components" rel="stylesheet" type="text/css">
-<link href="/SSL/admin/assets/global/css/plugins.css" rel="stylesheet" type="text/css">
-<link href="/SSL/admin/assets/admin/layout3/css/layout.css" rel="stylesheet" type="text/css">
-<link href="/SSL/admin/assets/admin/layout3/css/themes/default.css" rel="stylesheet" type="text/css" id="style_color">
-<link href="/SSL/admin/assets/admin/layout3/css/custom.css" rel="stylesheet" type="text/css">
-<!-- END THEME STYLES -->
-<link rel="shortcut icon" href="/favicon.ico"/>
+</head>
 <style>
     #div_main {
         display: none;
@@ -382,612 +357,406 @@
         border: 1px solid black;
         font-weight: bold;
     }
-    .table {
-    	margin-left: 5px;
-    }
-    label {
-        font-weight: bold;
-    }
 </style>
-<link href="/SSL/admin/css/styles_ds.css" rel="stylesheet" type="text/css" />
-</head>
 <body>
-<cfoutput>
-<div class="subbar">
-  <table width="100%" border="0" cellspacing="0" cellpadding="0">
-    <tr>
-      <td width="57"><img src="/SSL/admin/images/logosm.png" width="57" height="36" alt="James River Grounds Management" /></td>
-      <td class="subbartxt">Welcome: #SESSION.screenname#</td>
-      <td ><!--<a href="supervisors/setting.cfm" class="first"><img src="/SSL/admin/images/icon_settings.png" width="42" height="36" alt="Settings" /></a>--></td>
-     <td class="subbartxt" width="200" align="right">  <a href="default.cfm">Home</a><img src="/SSL/admin/images/clear.gif" width="20" height="2" alt="" /></td>
-    </tr>
-  </table>
-</div>
-</cfoutput>
-<br />
-<br />
-<br />
-<div ng-app="sampleApp" ng-controller="SampleCtrl" class="page-container-fluid">
-  <form id="form_saveds" method="post">
-    <input type="hidden" id="ds_id" name="ds_id" value="0">
-    <input type="hidden" id="ds_post_data" name="ds_post_data" value="">
-  </form>
 
-  <div style="display: none">
-    <button id="btn_initialize" ng-click="initialize()" style="display: none">Initialize</button>
-    <button id="btn_signIn" ng-click="signIn()" style="display: none">Sign In</button>
-    <button id="btn_save" ng-click="save()">Force Save</button>
-  </div>
-  <!--p ng-if="firebaseUser">Signed in user: <strong>{{ firebaseUser.uid }}</strong></p-->
+<!--ANGULARFIRE SPECIFIC CODE-->
+<div ng-app="sampleApp" ng-controller="SampleCtrl">
+    <form id="form_saveds" method="post">
+        <input type="hidden" id="ds_id" name="ds_id" value="0">
+        <input type="hidden" id="ds_post_data" name="ds_post_data" value="">
+    </form>
 
-  <div id="div_loading">
-    <br />
-    <br />
-    <center><img src="/SSL/admin/ajax-loader.gif">&nbsp;<span id="span_loading">Loading... please wait.</span></center>
-    <br />
-    <br />
-    <br />
-    <br />
-  </div>
-  <!-- BEGIN PAGE CONTENT -->
+    <div style="display: none">
+      <button id="btn_initialize" ng-click="initialize()" style="display: none">Initialize</button>
+      <button id="btn_signIn" ng-click="signIn()" style="display: none">Sign In</button>
+      <button id="btn_save" ng-click="save()">Force Save</button>
+    </div>
+    <!--p ng-if="firebaseUser">Signed in user: <strong>{{ firebaseUser.uid }}</strong></p-->
 
-  <div id="div_main" class="page-content">
-    <div class="container-fluid">
+    <div id="div_loading">
+        <center><img src="/SSL/admin/ajax-loader.gif">&nbsp;Loading... please wait.</center>
+    </div>
 
-      <!-- BEGIN PAGE CONTENT INNER -->
-      <div class="row">
-        <div class="col-md-5">
-          <table class="table large">
-            <tr>
-              <td nowrap="nowrap">
+    <div id="div_main" style="padding: 20px;">
+        <div class="row">
+            <div class="col-lg-6 col-sm-12">
                 <div class="form-inline">
                     <div class="form-group">
-                        <label for="ds_date">Date:</label>
-                        <input id="ds_date" name="ds_date" ng-model="ds_data.ds_date" class="form-control" style="width: 100px" datepicker>
+                        <label for="ds_date">Date of Service:</label>
+                        <input id="ds_date" name="ds_date" ng-model="ds_data.ds_date" class="form-control" style="width: 50%" datepicker>
                     </div>
                 </div>
-              </td>
-              <td width="50" nowrap="nowrap">&nbsp;</td>
-              <td nowrap="nowrap">
                 <div class="form-inline">
                     <div class="form-group">
                         <label for="ds_branch">Branch:</label>
                         <select id="ds_branch" name="ds_branch" ng-model="ds_data.ds_branch" ng-options="branch[0] as branch[1] for branch in branches_select" class="form-control" ng-change="save()"></select>
                     </div>
                 </div>
-              </td>
-              <td  nowrap="nowrap">
                 <div class="form-inline">
                     <div class="form-group">
-                        <a class="btn btn-success btn-lg" ng-click="syncPostData()">Create Daily Sheet</a>
-                        &nbsp;&nbsp;&nbsp;<a class="btn btn-danger btn-lg" ng-click="resetEverything()">Start Over</a>
+                        <label for="ds_supervisor_id">Production Manager:</label>
+                        <select id="ds_supervisor_id" name="ds_supervisor_id" ng-model="ds_data.supervisor_id" ng-options="employee[0] as employee[1] for employee in employees_select[ds_data.ds_branch][1]" class="form-control" ng-change="save()"></select>
                     </div>
                 </div>
-            </tr>
-            <tr ng-if="ds_data.ds_branch == 'Corporate'">
-                <td colspan="4"><i>Corporate branch isn't supported yet.  Choose a different branch.</i></td>
-            </tr>
-            <tr ng-if="ds_data.ds_branch != 'Corporate'">
-              <td nowrap="nowrap">
-                <div class="form-inline">
-                      <div class="form-group">
-                          <label for="ds_supervisor_id">Production Manager:</label>
-                          <select id="ds_supervisor_id" name="ds_supervisor_id" ng-model="ds_data.supervisor_id" ng-options="employee[0] as employee[1] for employee in employees_select[ds_data.ds_branch][1]" class="form-control" ng-change="save()"></select>
-                      </div>
-                  </div>
-              </td>
-              <td width="50" nowrap="nowrap">&nbsp;</td>
-              <td nowrap="nowrap">
                 <div class="form-inline">
                     <div class="form-group">
                         <label for="ds_crew_leader_id">Supervisor/Crew Leader:</label>
                         <select id="ds_crew_leader_id" name="ds_crew_leader_id" ng-model="ds_data.crew_leader_id" ng-options="employee[0] as employee[1] for employee in employees_select[ds_data.ds_branch][0]" class="form-control" ng-change="addCrewLeader();"></select>
                     </div>
                 </div>
-              </td>
-              <td nowrap="nowrap"></td>
-              <td nowrap="nowrap"></td>
-              <td  nowrap="nowrap"></td>
-            </tr>
-          </table>
+            </div>
+            <div class="col-lg-6 col-sm-12">
+                <div class="visible-xs visible-sm visible-md"><hr /></div>
+                <div class="form-inline">
+                    <div class="form-group">
+                        <a class="btn btn-success btn-lg" ng-click="syncPostData()">Save Daily Sheet</a>
+                    </div>
+                </div>
+                <div class="visible-xs visible-sm visible-md"><hr /></div>
+            </div>
         </div>
-        <div class="col-md-4"> </div>
-        <div class="col-md-5"> </div>
-      </div>
- <div ng-if="ds_data.crew_leader_id > 0">
-      <div class="row">
-        <div class="col-md-12">
-          <h4 class="panel-title">
-          <H4> Employee Time </h4>
-          <br>
-          <table class="table largefull">
-            <thead>
-              <tr>
-                <th><div align="center">Edit</div></th>
-                <th >Employee Name </th>
-                <th><div align="center">#</div></th>
-                <th><div align="center">Start</div></th>
-                <th><div align="center">End</div></th>
-                <th><div align="center">Start</div></th>
-                <th><div align="center">End</div></th>
-                <th><div align="center">Total (H:M)</div></th>
-              </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="ds_employee in ds_employees">
-                    <td width="25" align="center">
-                      <a ng-click="editEmployeeStartEndTimes(ds_employee)"><i class="fa-orange fa-pencil-square"></i></a>
-                    </td>
-                    <td>
-                        {{ employees[ds_employee.id].full_name }} [{{ employees[ds_employee.id].branch }}]&nbsp;
-                        <a ng-if="ds_employee.id != ds_data.crew_leader_id" ng-click="removeEmployee(ds_employee)"><i class="fa-red fa-minus-square"></i></a>
-                        <span ng-if="ds_employee.id == ds_data.crew_leader_id">&nbsp;</span>
-                    </td>
-                    <td align="center">{{ employees[ds_employee.id].startendtimes.length }}</td>
-                    <td align="center">{{ ds_employee.startendtimes[0].starttime_display }}</td>
-                    <td align="center">{{ ds_employee.startendtimes[0].endtime_display }}</td>
-                    <td align="center">{{ ds_employee.startendtimes[1].starttime_display }}</td>
-                    <td align="center">{{ ds_employee.startendtimes[1].endtime_display }}</td>
-                    <td align="center">{{ ds_employee.totalTime }}</td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <div class="form-inline">
-                            <div class="form-group">
-                                <select id="add_branch" name="add_branch" ng-model="ds_data.add_branch" ng-options="branch[0] as branch[1] for branch in branches_select" class="form-control" ng-change="save()"></select>
-                                <select id="add_employee_id" name="add_employee_id" ng-model="ds_data.add_employee_id" ng-options="employee[0] as employee[1] for employee in employees_select[ds_data.add_branch][0]" class="form-control" ng-change="save()"></select>
-                                <a class="btn btn-success btn-xs" ng-click="addEmployee(ds_data.add_employee_id)">Add Employee</a>
-                            </div>
-                        </div>
-                    </td>
-                    <td colspan="6"></td>
-                </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <div class="row">
-        <div ng-if="ds_jobs.length > 0" class="col-md-12">
-          <H4> Job Services and Materials </h4>
-          <div class="panel-body">
-              <div ng-repeat="ds_job in ds_jobs">
-                  <div class="alert alert-info text-coname">{{ jobs[ds_job.id].name }} - {{ ds_job.id }}&nbsp;<a ng-click="removeJob(ds_job)"><i class="fa-red fa-minus-square"></i></a></div>
-                  <table class="table table-striped table-hover">
+        <br />
+        <div ng-if="ds_data.crew_leader_id > 0" class="row">
+            <div class="col-lg-6 col-sm-12">
+                <table id="table_employees" class="table table-striped">
                     <thead>
-                        <tr>
-                          <th><div align="center"><a ng-click="editJobTimes(ds_job)"><i class="fa-orange fa-pencil-square"></i></a></div></th>
-                          <th colspan="16">
-                            <span class="text-cotime">Start&nbsp; {{ ds_job.starttime_display }}</span>
-                            <span ng-if="ds_job.starttime_lunch" class="text-cotime">&nbsp; &nbsp;  Lunch Start: {{ ds_job.starttime_lunch_display }}</span>
-                            <span ng-if="ds_job.endtime_lunch" class="text-cotime">&nbsp; &nbsp;Lunch Stop: {{ ds_job.endtime_lunch_display }}</span>
-                            <span class="text-cotime">&nbsp; &nbsp; End&nbsp; {{ ds_job.endtime_display }}</span>
-                            &nbsp;
-                            <span class="text-cotime">&nbsp; &nbsp; Total Hours {{ ds_job.totalTimeDisplay }}</span>
-                            <!--span class="text-danger"><br>
-                            Please make sure all crew members service time is accounted for. You may still need to account for 205 employee minutes.
-                            </span-->
-                          </th>
-                        </tr>
-                        <tr>
-                          <th colspan="17">
-                            <div class="form-inline">
-                                <div class="form-group">
-                                    <select id="add_job_employee_employee_id" name="add_job_employee_employee_id" ng-model="ds_data.add_job_employee_employee_id" ng-options="employee[0] as employee[1] for employee in employees_cached" class="form-control" ng-change="save()"></select>
-                                    <a class="btn btn-success btn-xs" ng-click="addEmployeeToJob(ds_data.add_job_employee_employee_id, ds_job.id)">Add Employee to this Job</a>
-                                    <a class="btn btn-primary btn-xs" ng-click="addAllEmployeesToJob(ds_job.id)">Add All Current Employees to this Job</a>
-                                </div>
-                            </div>
-                          </th>
-                        </tr>
+                        <th style="padding: 5px">DS Employee</th>
+                        <th style="padding: 5px">Start/End Times</th>
+                        <th style="padding: 5px">Total Time</th>
+                        <th style="padding: 5px">Job Time</th>
+                        <th style="padding: 5px">Remove</th>
                     </thead>
-                    <tbody>
-                      <tr>
-                        <td width="25">&nbsp;</td>
-                        <td><span class="tableheadersm">Employee</span></td>
-                        <td><div align="center"><span class="tableheadersm">1000<br />
-                            Seasonal</span></div></td>
-                        <td><div align="center"><span class="tableheadersm">1100<br />
-                            Turf</span></div></td>
-                        <td><div align="center"><span class="tableheadersm">1200<br />
-                            Tree/Shrub </span></div></td>
-                        <td><div align="center"><span class="tableheadersm">1300<br />
-                            Mulch</span></div></td>
-                        <td><div align="center"><span class="tableheadersm">1400<br />
-                            Color</span></div></td>
-                        <td><div align="center"><span class="tableheadersm">1500<br />
-                            Misc</span></div></td>
-                        <td><div align="center"><span class="tableheadersm">1600<br />
-                            Day</span></div></td>
-                        <td><div align="center"><span class="tableheadersm">1700<br />
-                            Off</span></div></td>
-                        <td><div align="center"><span class="tableheadersm">2000<br />
-                            Enh</span></div></td>
-                        <td><div align="center"><span class="tableheadersm">3000<br />
-                            Irr</span></div></td>
-                        <td><div align="center"><span class="tableheadersm">7000<br />
-                            Snow</span></div></td>
-                      </tr>
-                        <tr ng-repeat="ds_employee in ds_job.ds_employees">
-                          <td width="25" align="center"  nowrap="nowrap"><a ng-click="editEmployeeServiceCodes(ds_employee, ds_job.id)"><i class="fa-orange fa-pencil-square"></i></a></td>
-                          <td  nowrap="nowrap">
-                            {{ employees[ds_employee.id].full_name }}
-                            <a ng-click="removeEmployeeFromJob(ds_employee, ds_job)"><i class="fa-red fa-minus-square"></i></a>
-                          </td>
-                          <td><div align="center">
-                            {{ ds_employee.servicecodeparentsdisplay[1000] }}
-                            </div></td>
-                          <td><div align="center">
-                            {{ ds_employee.servicecodeparentsdisplay[1100] }}
-                            </div></td>
-                          <td><div align="center">
-                            {{ ds_employee.servicecodeparentsdisplay[1200] }}
-                            </div></td>
-                          <td><div align="center">
-                            {{ ds_employee.servicecodeparentsdisplay[1300] }}
-                            </div></td>
-                          <td><div align="center">
-                            {{ ds_employee.servicecodeparentsdisplay[1400] }}
-                            </div></td>
-                          <td><div align="center">
-                            {{ ds_employee.servicecodeparentsdisplay[1500] }}
-                            </div></td>
-                          <td><div align="center">
-                            {{ ds_employee.servicecodeparentsdisplay[1600] }}
-                            </div></td>
-                          <td><div align="center">
-                            {{ ds_employee.servicecodeparentsdisplay[1700] }}
-                            </div></td>
-                          <td><div align="center">
-                            {{ ds_employee.servicecodeparentsdisplay[2000] }}
-                            </div></td>
-                          <td><div align="center">
-                            {{ ds_employee.servicecodeparentsdisplay[3000] }}
-                            </div></td>
-                          <td><div align="center">
-                            {{ ds_employee.servicecodeparentsdisplay[7000] }}
-                            </div></td>
-                        </tr>
-
-                        <tr ng-if="!ds_job.ds_materials">
-                            <td></td>
-                            <td colspan="15">
-                                <div class="form-inline">
-                                    <div class="form-group">
-                                        <input type="checkbox" value="1" ng-model="ds_job.nomaterials" ng-change="saveNoMaterialsToJob(ds_job, ds_job.nomaterials)">
-                                        Check this box if no materials were used
-                                    </div>
-                                </div>
+                    <tbody ng-repeat="ds_employee in ds_employees">
+                        <tr>
+                            <td style="padding: 5px">{{ employees[ds_employee.id].full_name }}</td>
+                            <td style="padding: 5px">
+                                <span ng-repeat="startendtime in ds_employee.startendtimes">
+                                    {{ startendtime.display }}
+                                    <br />
+                                </span>
+                                <a class="btn btn-info btn-xs" ng-click="editEmployeeStartEndTimes(ds_employee)">Edit</a>
+                            </td>
+                            <td style="padding: 5px">
+                                <span ng-if="ds_employee.totalTime">{{ ds_employee.totalTime }}</span>
+                            </td>
+                            <td style="padding: 5px">
+                                <span ng-if="ds_employee.jobTime">{{ ds_employee.jobTime }}</span>
+                            </td>
+                            <td style="padding: 5px">
+                                <a ng-if="ds_employee.id != ds_data.crew_leader_id" class="btn btn-danger btn-xs" ng-click="removeEmployee(ds_employee)">Remove</a>
+                                <span ng-if="ds_employee.id == ds_data.crew_leader_id">&nbsp;</span>
                             </td>
                         </tr>
-
-                        <tr ng-if="ds_job.ds_materials">
-                          <td></td>
-                          <td nowrap="nowrap"><span class="tableheadersm">Materials Used</span></td>
-                          <td align="center" nowrap="nowrap" ><span class="tableheadersm">Quantity</span></td>
-                          <td colspan="13" align="center" nowrap="nowrap" >&nbsp;</td>
-                        </tr>
-
-                        <tr ng-repeat="ds_material in ds_job.ds_materials">
-                          <td></td>
-                          <td nowrap="nowrap" >{{ ds_material.id }}</td>
-                          <td align="center" nowrap="nowrap">{{ ds_material.quantity }}</td>
-                          <td colspan="13"   align="center" nowrap="nowrap"  >&nbsp;</td>
-                        </tr>
-                        <tr>
-                          <td colspan="16">
-                              <div align="left">
-                                <a ng-click="editMaterials(ds_job)"><i class="fa-green fa-plus-square"></i><span class="text-dsadd">Add/Edit/Remove Materials</span></a>
-                              </div>
-                          </td>
-                        </tr>
                     </tbody>
-                  </table>
-              </div>
-          </div>
+                </table>
+                <div class="form-inline">
+                    <div class="form-group">
+                        <select id="add_branch" name="add_branch" ng-model="ds_data.add_branch" ng-options="branch[0] as branch[1] for branch in branches_select" class="form-control" ng-change="save()"></select>
+                        <select id="add_employee_id" name="add_employee_id" ng-model="ds_data.add_employee_id" ng-options="employee[0] as employee[1] for employee in employees_select[ds_data.add_branch][0]" class="form-control" ng-change="save()"></select>
+                        <a class="btn btn-success btn-xs" ng-click="addEmployee(ds_data.add_employee_id)">Add DS Employee</a>
+                    </div>
+                </div>
+                <div class="visible-xs visible-sm visible-md"><hr /></div>
+            </div>
+            <div class="col-lg-6 col-sm-12">
+                <div class="form-inline">
+                    <div class="form-group">
+                        <select id="add_job_branch" name="add_job_branch" ng-model="ds_data.add_job_branch" ng-options="branch[0] as branch[1] for branch in branches_select" class="form-control" ng-change="save()"></select>
+                        <select id="add_job_job_id" name="add_job_job_id" ng-model="ds_data.add_job_job_id" ng-options="job[0] as job[1] for job in jobs_select[ds_data.add_job_branch]" class="form-control" ng-change="save()"></select>
+                        <a class="btn btn-success btn-xs" ng-click="addJob(ds_data.add_job_job_id)">Add Job</a>
+                    </div>
+                </div>
+                <div ng-repeat="ds_job in ds_jobs">
+                    <div class="visible-xs visible-sm visible-md"><hr /></div>
+                    <div class="visible-lg"><br /></div>
+                    <div class="div_job" style="padding: 5px; height: 33px">
+                        <div style="float: left">{{ ds_job.id }} - {{ jobs[ds_job.id].name }}</div>
+                        <div style="float: right"><a class="btn btn-danger btn-xs" ng-click="removeJob(ds_job)">Remove</a></div>
+                    </div>
+                    <table id="table_job" class="table table-striped">
+                        <thead>
+                            <th style="padding: 5px">&nbsp;</th>
+                            <th style="padding: 5px">Start Time</th>
+                            <th ng-if="ds_job.starttime_lunch" style="padding: 5px">Lunch Start</th>
+                            <th ng-if="ds_job.endtime_lunch" style="padding: 5px">Lunch End</th>
+                            <th style="padding: 5px">End Time</th>
+                            <th style="padding: 5px">Total Time</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding: 5px"><a class="btn btn-info btn-xs" ng-click="editJobTimes(ds_job)">Edit Times</a></td>
+                                <td style="padding: 5px">{{ ds_job.starttime_display }}</td>
+                                <td ng-if="ds_job.starttime_lunch"style="padding: 5px">{{ ds_job.starttime_lunch_display }}</td>
+                                <td ng-if="ds_job.endtime_lunch" style="padding: 5px">{{ ds_job.endtime_lunch_display }}</td>
+                                <td style="padding: 5px">{{ ds_job.endtime_display }}</td>
+                                <td style="padding: 5px">{{ ds_job.totalTime }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div ng-if="ds_job.totalTime">
+                        <table id="table_job" class="table table-striped">
+                            <thead>
+                                <th style="padding: 5px"><a class="btn btn-info btn-xs" ng-click="editMaterials(ds_job)">Edit Materials</a></th>
+                                <th ng-if="ds_job.ds_materials" style="padding: 5px">Material</th>
+                                <th ng-if="ds_job.ds_materials" style="padding: 5px">Quantity</th>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="ds_material in ds_job.ds_materials">
+                                    <td style="padding: 5px">&nbsp;</td>
+                                    <td style="padding: 5px">{{ ds_material.id }}</td>
+                                    <td style="padding: 5px">{{ ds_material.quantity }}</td>
+                                </tr>
+                                <tr ng-if="!ds_job.ds_materials">
+                                    <td style="padding: 5px">
+                                        <div class="form-inline">
+                                            <div class="form-group">
+                                                <input type="checkbox" value="1" ng-model="ds_job.nomaterials" ng-change="saveNoMaterialsToJob(ds_job, ds_job.nomaterials)">
+                                                Check this box if no materials were used
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table id="table_job" class="table table-striped">
+                            <thead>
+                                <th style="padding: 5px">Job Employee</th>
+                                <th style="padding: 5px">Time by Service Codes</th>
+                                <th style="padding: 5px">Total Time</th>
+                                <th style="padding: 5px">Remove</th>
+                            </thead>
+                            <tbody ng-repeat="ds_employee in ds_job.ds_employees">
+                                <tr>
+                                    <td style="padding: 5px">{{ employees[ds_employee.id].full_name }}</td>
+                                    <td style="padding: 5px">
+                                        <span ng-repeat="servicecode in ds_employee.servicecodes">
+                                            {{ servicecode.display }}
+                                            <br />
+                                        </span>
+                                        <a class="btn btn-info btn-xs" ng-click="editEmployeeServiceCodes(ds_employee, ds_job.id)">Edit</a>
+                                    </td>
+                                    <td style="padding: 5px">
+                                        <span ng-if="ds_employee.totalServiceTime">{{ ds_employee.totalServiceTime }}</span>
+                                    </td>
+                                    <td style="padding: 5px">
+                                        <a class="btn btn-danger btn-xs" ng-click="removeEmployeeFromJob(ds_employee, ds_job)">Remove</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <select id="add_job_employee_employee_id" name="add_job_employee_employee_id" ng-model="ds_data.add_job_employee_employee_id" ng-options="employee[0] as employee[1] for employee in employees_cached" class="form-control" ng-change="save()"></select>
+                                <a class="btn btn-success btn-xs" ng-click="addEmployeeToJob(ds_data.add_job_employee_employee_id, ds_job.id)">Add DS Employee to Job</a>
+                                <a class="btn btn-primary btn-xs" ng-click="addAllEmployeesToJob(ds_job.id)">Add All DS Employees to Job</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
+    </div>
 
-      <h4>Add a Job to this Daily Sheet:</h4>
-      <h4>
-          <div class="form-inline">
-              <div class="form-group">
-                  <select id="add_job_branch" name="add_job_branch" ng-model="ds_data.add_job_branch" ng-options="branch[0] as branch[1] for branch in branches_select" class="form-control" ng-change="save()"></select>
-                  <select id="add_job_job_id" name="add_job_job_id" ng-model="ds_data.add_job_job_id" ng-options="job[0] as job[1] for job in jobs_select[ds_data.add_job_branch]" class="form-control" ng-change="save()"></select>
-                  <a class="btn btn-success btn-xs" ng-click="addJob(ds_data.add_job_job_id)">Add Job</a>
-              </div>
-          </div>
-      </h4>
-      <br />
-
-        <H4 ng-if="ds_jobs.length > 0"> Job Service Detail Information (read-only)</h4>
-        <div ng-if="ds_jobs.length > 0" class="panel-body">
-          <div ng-repeat="ds_job in ds_jobs">
-              <div class="alert alert-info text-coname">{{ jobs[ds_job.id].name }} - {{ ds_job.id }}</div>
-              <table class="table table-striped table-hover">
-                  <thead>
+    <!--jQuery popup loader-->
+    <div id="div_popupStartEndTimes" style="background: no-repeat 50% 50% rgba(255, 255, 255, 1); left: 0; top: 0; width: 100%; height: 100%; text-align: center; display: none; position: fixed; z-index: 1001;">
+        <div style="top: 50%; text-align: center; position: relative; transform: translatey(-50%); -webkit-transform: translatey(-50%); max-height: 80%; overflow: auto;">
+            <center>
+                <table cellspacing="0" align="center" style="width: 50%; border: 1px solid black">
                     <tr>
-                        <th colspan="16">
-                          <span class="text-cotime">Start&nbsp; {{ ds_job.starttime_display }}</span>
-                          <span ng-if="ds_job.starttime_lunch" class="text-cotime">&nbsp; &nbsp;  Lunch Start: {{ ds_job.starttime_lunch_display }}</span>
-                          <span ng-if="ds_job.endtime_lunch" class="text-cotime">&nbsp; &nbsp;Lunch Stop: {{ ds_job.endtime_lunch_display }}</span>
-                          <span class="text-cotime">&nbsp; &nbsp; End&nbsp; {{ ds_job.endtime_display }}</span>
-                          &nbsp;
-                          <span class="text-cotime"><span class="text-cotime">&nbsp; &nbsp;&nbsp; &nbsp;Total Crew Hours {{ ds_job.totalTimeCrewDisplay }}</span>
-                        </th>
+                        <td align="center" style="padding: 10px; border-top: 1px solid black; border-bottom: 2px solid black; background-color: #999999; color: #FFFFFF">Start/End Times: {{ ds_data.editing_employee.name }}</td>
                     </tr>
-                  </thead>
-
-                  <tbody>
-                    <tr ng-repeat="ds_employee in ds_job.ds_employees">
-                      <td width="300">
-                        {{ employees[ds_employee.id].full_name }}
-                      </td>
-                      <td width="100">
-                        <span ng-repeat="(index, servicecode) in ds_employee.servicecodes">
-                            <span ng-if="index > 0">,&nbsp;</span>
-                            {{ servicecode.time }}
-                        </span>
-                      </td>
-                      <td width="200">
-                        <span ng-repeat="(index, servicecode) in ds_employee.servicecodes">
-                            <span ng-if="index > 0">,&nbsp;</span>
-                            {{ servicecode.id }}
-                        </span>
-                      </td>
+                    <tr>
+                        <td>
+                            <br />
+                            <center><a class="btn btn-success btn-xs" ng-click="addStartEndTime()">Add New Start/End Time</a></center>
+                            <br />
+                        </td>
                     </tr>
-                  </tbody>
-              </table>
-          </div>
-      <!-- END PAGE CONTENT INNER -->
+                    <tr ng-repeat="(index, startendtime) in ds_temp.editing_startendtimes">
+                        <td align="center" style="padding-bottom: 20px">
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    <label for="starttime">Start Time:</label>
+                                    <select ng-model="startendtime.starttime" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options"></select>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <label for="endtime">End Time:</label>
+                                    <select ng-model="startendtime.endtime" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options"></select>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <a class="btn btn-danger btn-xs" ng-click="removeStartEndTime(index)">Remove</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <center>
+                                <a class="btn btn-info btn-md" ng-click="saveStartEndTimes()">Save</a>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <a class="btn btn-primary btn-md" ng-click="saveStartEndTimesToAllEmployees()">Save to ALL employees</a>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <a class="btn btn-warning btn-md" ng-click="cancelStartEndTimes()">Cancel</a>
+                            </center>
+                            <br />
+                        </td>
+                    </tr>
+                </table>
+            </center>
+        </div>
     </div>
-  </div>
-  </div>
-  <!-- END PAGE CONTENT -->
-</div>
 
-<!--jQuery popup loader-->
-<div id="div_popupStartEndTimes" style="background: no-repeat 50% 50% rgba(255, 255, 255, 1); left: 0; top: 0; width: 100%; height: 100%; text-align: center; display: none; position: fixed; z-index: 1001;">
-    <div style="top: 50%; text-align: center; position: relative; transform: translatey(-50%); -webkit-transform: translatey(-50%); max-height: 80%; overflow: auto;">
-        <center>
-            <table cellspacing="0" align="center" style="width: 50%; border: 1px solid black">
-                <tr>
-                    <td align="center" style="padding: 10px; border-top: 1px solid black; border-bottom: 2px solid black; background-color: #999999; color: #FFFFFF">Start/End Times: {{ ds_data.editing_employee.name }}</td>
-                </tr>
-                <tr>
-                    <td>
-                        <br />
-                        <center><a class="btn btn-success btn-xs" ng-click="addStartEndTime()">Add New Start/End Time</a></center>
-                        <br />
-                    </td>
-                </tr>
-                <tr ng-repeat="(index, startendtime) in ds_temp.editing_startendtimes">
-                    <td align="center" style="padding-bottom: 20px">
-                        <div class="form-inline">
-                            <div class="form-group">
-                                <label for="starttime">Start Time:</label>
-                                <select ng-model="startendtime.starttime" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options"></select>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <label for="endtime">End Time:</label>
-                                <select ng-model="startendtime.endtime" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options"></select>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <a class="btn btn-danger btn-xs" ng-click="removeStartEndTime(index)">Remove</a>
+    <datalist id="datalist_servicecodes">
+        <cfoutput query="get_all_service_codes">
+            <option value="#Service_Name#">
+        </cfoutput>
+    </datalist>
+    <div id="div_popupServiceCodes" style="background: no-repeat 50% 50% rgba(255, 255, 255, 1); left: 0; top: 0; width: 100%; height: 100%; text-align: center; display: none; position: fixed; z-index: 1001;">
+        <div style="top: 50%; text-align: center; position: relative; transform: translatey(-50%); -webkit-transform: translatey(-50%); max-height: 80%; overflow: auto;">
+            <center>
+                <table cellspacing="0" align="center" style="width: 50%; border: 1px solid black">
+                    <tr>
+                        <td align="center" style="padding: 10px; border-top: 1px solid black; border-bottom: 2px solid black; background-color: #999999; color: #FFFFFF">Service Codes: {{ ds_data.editing_employee.name }}</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <br />
+                            <center><a class="btn btn-success btn-xs" ng-click="addServiceCode()">Add New Service Code</a></center>
+                            <br />
+                        </td>
+                    </tr>
+                    <tr ng-repeat="(index, servicecode) in ds_temp.editing_servicecodes">
+                        <td align="center" style="padding-bottom: 20px">
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    <label for="servicecode">Enter Service Code:</label>
+                                    <input ng-model="servicecode.id" list="datalist_servicecodes" class="form-control" style="width: 150px">
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <label for="servicecodetime">Time:</label>
+                                    <input ng-model="servicecode.time" class="form-control" style="width: 60px">&nbsp;minutes
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <a class="btn btn-danger btn-xs" ng-click="removeServiceCode(index)">Remove</a>
+                                </div>
                             </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <center>
-                            <a class="btn btn-info btn-md" ng-click="saveStartEndTimes()">Save</a>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <a class="btn btn-primary btn-md" ng-click="saveStartEndTimesToAllEmployees()">Save to ALL employees</a>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <a class="btn btn-warning btn-md" ng-click="cancelStartEndTimes()">Cancel</a>
-                        </center>
-                        <br />
-                    </td>
-                </tr>
-            </table>
-        </center>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <center>
+                                <a class="btn btn-info btn-md" ng-click="saveServiceCodes()">Save</a>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <a class="btn btn-primary btn-md" ng-click="saveServiceCodesToAllEmployees()">Save to ALL employees</a>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <a class="btn btn-warning btn-md" ng-click="cancelServiceCodes()">Cancel</a>
+                            </center>
+                            <br />
+                        </td>
+                    </tr>
+                </table>
+            </center>
+        </div>
     </div>
-</div>
 
-<datalist id="datalist_servicecodes">
-    <cfoutput query="get_all_service_codes">
-        <option value="#Service_Name#">
-    </cfoutput>
-</datalist>
-<div id="div_popupServiceCodes" style="background: no-repeat 50% 50% rgba(255, 255, 255, 1); left: 0; top: 0; width: 100%; height: 100%; text-align: center; display: none; position: fixed; z-index: 1001;">
-    <div style="top: 50%; text-align: center; position: relative; transform: translatey(-50%); -webkit-transform: translatey(-50%); max-height: 80%; overflow: auto;">
-        <center>
-            <table cellspacing="0" align="center" style="width: 50%; border: 1px solid black">
-                <tr>
-                    <td align="center" style="padding: 10px; border-top: 1px solid black; border-bottom: 2px solid black; background-color: #999999; color: #FFFFFF">Service Codes: {{ ds_data.editing_employee.name }}</td>
-                </tr>
-                <tr>
-                    <td>
-                        <br />
-                        <center><a class="btn btn-success btn-xs" ng-click="addServiceCode()">Add New Service Code</a></center>
-                        <br />
-                    </td>
-                </tr>
-                <tr ng-repeat="(index, servicecode) in ds_temp.editing_servicecodes">
-                    <td align="center" style="padding-bottom: 20px">
-                        <div class="form-inline">
-                            <div class="form-group">
-                                <label for="servicecode">Enter Service Code:</label>
-                                <input ng-model="servicecode.id" list="datalist_servicecodes" class="form-control" style="width: 150px">
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <label for="servicecodetime">Time:</label>
-                                <input ng-model="servicecode.time" class="form-control" style="width: 60px">&nbsp;minutes
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <a class="btn btn-danger btn-xs" ng-click="removeServiceCode(index)">Remove</a>
+    <div id="div_popupJobTimes" style="background: no-repeat 50% 50% rgba(255, 255, 255, 1); left: 0; top: 0; width: 100%; height: 100%; text-align: center; display: none; position: fixed; z-index: 1001;">
+        <div style="top: 50%; text-align: center; position: relative; transform: translatey(-50%); -webkit-transform: translatey(-50%); max-height: 80%; overflow: auto;">
+            <center>
+                <table cellspacing="0" align="center" style="width: 50%; border: 1px solid black">
+                    <tr>
+                        <td align="center" style="padding: 10px; border-top: 1px solid black; border-bottom: 2px solid black; background-color: #999999; color: #FFFFFF">Job Times: {{ ds_temp.editing_job_name }}</td>
+                    </tr>
+                    <tr>
+                        <td align="center" style="padding-bottom: 20px">
+                            <br />
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    <label for="starttime">Start Time:</label>
+                                    <select ng-model="ds_temp.editing_starttime" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options" class="form-control"></select>
+                                </div>
                             </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <center>
-                            <a class="btn btn-info btn-md" ng-click="saveServiceCodes()">Save</a>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <a class="btn btn-primary btn-md" ng-click="saveServiceCodesToAllEmployees()">Save to ALL employees</a>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <a class="btn btn-warning btn-md" ng-click="cancelServiceCodes()">Cancel</a>
-                        </center>
-                        <br />
-                    </td>
-                </tr>
-            </table>
-        </center>
+                            <br />
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    <label for="starttime">Lunch Start:</label>
+                                    <select ng-model="ds_temp.editing_starttime_lunch" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options" class="form-control"></select>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <label for="starttime">Lunch End:</label>
+                                    <select ng-model="ds_temp.editing_endtime_lunch" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options" class="form-control"></select>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    <label for="starttime">End Time:</label>
+                                    <select ng-model="ds_temp.editing_endtime" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options" class="form-control"></select>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <center>
+                                <a class="btn btn-info btn-md" ng-click="saveJobTimes()">Save</a>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <a class="btn btn-warning btn-md" ng-click="cancelJobTimes()">Cancel</a>
+                            </center>
+                            <br />
+                        </td>
+                    </tr>
+                </table>
+            </center>
+        </div>
     </div>
-</div>
-
-<div id="div_popupJobTimes" style="background: no-repeat 50% 50% rgba(255, 255, 255, 1); left: 0; top: 0; width: 100%; height: 100%; text-align: center; display: none; position: fixed; z-index: 1001;">
-    <div style="top: 50%; text-align: center; position: relative; transform: translatey(-50%); -webkit-transform: translatey(-50%); max-height: 80%; overflow: auto;">
-        <center>
-            <table cellspacing="0" align="center" style="width: 50%; border: 1px solid black">
-                <tr>
-                    <td align="center" style="padding: 10px; border-top: 1px solid black; border-bottom: 2px solid black; background-color: #999999; color: #FFFFFF">Job Times: {{ ds_temp.editing_job_name }}</td>
-                </tr>
-                <tr>
-                    <td align="center" style="padding-bottom: 20px">
-                        <br />
-                        <div class="form-inline">
-                            <div class="form-group">
-                                <label for="starttime">Start Time:</label>
-                                <select ng-model="ds_temp.editing_starttime" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options" class="form-control"></select>
+    
+    <datalist id="datalist_materials">
+        <cfoutput query="get_all_materials">
+            <option value="#Item_ID#">
+        </cfoutput>
+    </datalist>
+    <div id="div_popupMaterials" style="background: no-repeat 50% 50% rgba(255, 255, 255, 1); left: 0; top: 0; width: 100%; height: 100%; text-align: center; display: none; position: fixed; z-index: 1001;">
+        <div style="top: 50%; text-align: center; position: relative; transform: translatey(-50%); -webkit-transform: translatey(-50%); max-height: 80%; overflow: auto;">
+            <center>
+                <table cellspacing="0" align="center" style="width: 50%; border: 1px solid black">
+                    <tr>
+                        <td align="center" style="padding: 10px; border-top: 1px solid black; border-bottom: 2px solid black; background-color: #999999; color: #FFFFFF">Materials: {{ ds_data.editing_job_name.name }}</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <br />
+                            <center><a class="btn btn-success btn-xs" ng-click="addJobMaterial()">Add New Material</a></center>
+                            <br />
+                        </td>
+                    </tr>
+                    <tr ng-repeat="(index, material) in ds_temp.editing_materials">
+                        <td align="center" style="padding-bottom: 20px">
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    <label for="material">Enter Material:</label>
+                                    <input ng-model="material.id" list="datalist_materials" class="form-control" style="width: 150px">
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <label for="materialtime">Quantity:</label>
+                                    <input ng-model="material.quantity" class="form-control" style="width: 60px">
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <a class="btn btn-danger btn-xs" ng-click="removeJobMaterial(index)">Remove</a>
+                                </div>
                             </div>
-                        </div>
-                        <br />
-                        <div class="form-inline">
-                            <div class="form-group">
-                                <label for="starttime">Lunch Start:</label>
-                                <select ng-model="ds_temp.editing_starttime_lunch" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options" class="form-control"></select>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <label for="starttime">Lunch End:</label>
-                                <select ng-model="ds_temp.editing_endtime_lunch" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options" class="form-control"></select>
-                            </div>
-                        </div>
-                        <br />
-                        <div class="form-inline">
-                            <div class="form-group">
-                                <label for="starttime">End Time:</label>
-                                <select ng-model="ds_temp.editing_endtime" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options" class="form-control"></select>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <center>
-                            <a class="btn btn-info btn-md" ng-click="saveJobTimes()">Save</a>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <a class="btn btn-warning btn-md" ng-click="cancelJobTimes()">Cancel</a>
-                        </center>
-                        <br />
-                    </td>
-                </tr>
-            </table>
-        </center>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <center>
+                                <a class="btn btn-info btn-md" ng-click="saveMaterials()">Save</a>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;                                
+                                <a class="btn btn-warning btn-md" ng-click="cancelMaterials()">Cancel</a>
+                            </center>
+                            <br />
+                        </td>
+                    </tr>
+                </table>
+            </center>
+        </div>
     </div>
+    <!--end popup loader-->
 </div>
 
-<datalist id="datalist_materials">
-    <cfoutput query="get_all_materials">
-        <option value="#Item_ID#">
-    </cfoutput>
-</datalist>
-<div id="div_popupMaterials" style="background: no-repeat 50% 50% rgba(255, 255, 255, 1); left: 0; top: 0; width: 100%; height: 100%; text-align: center; display: none; position: fixed; z-index: 1001;">
-    <div style="top: 50%; text-align: center; position: relative; transform: translatey(-50%); -webkit-transform: translatey(-50%); max-height: 80%; overflow: auto;">
-        <center>
-            <table cellspacing="0" align="center" style="width: 50%; border: 1px solid black">
-                <tr>
-                    <td align="center" style="padding: 10px; border-top: 1px solid black; border-bottom: 2px solid black; background-color: #999999; color: #FFFFFF">Materials: {{ ds_data.editing_job_name.name }}</td>
-                </tr>
-                <tr>
-                    <td>
-                        <br />
-                        <center><a class="btn btn-success btn-xs" ng-click="addJobMaterial()">Add New Material</a></center>
-                        <br />
-                    </td>
-                </tr>
-                <tr ng-repeat="(index, material) in ds_temp.editing_materials">
-                    <td align="center" style="padding-bottom: 20px">
-                        <div class="form-inline">
-                            <div class="form-group">
-                                <label for="material">Enter Material:</label>
-                                <input ng-model="material.id" list="datalist_materials" class="form-control" style="width: 150px">
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <label for="materialtime">Quantity:</label>
-                                <input ng-model="material.quantity" class="form-control" style="width: 60px">
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <a class="btn btn-danger btn-xs" ng-click="removeJobMaterial(index)">Remove</a>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <center>
-                            <a class="btn btn-info btn-md" ng-click="saveMaterials()">Save</a>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <a class="btn btn-warning btn-md" ng-click="cancelMaterials()">Cancel</a>
-                        </center>
-                        <br />
-                    </td>
-                </tr>
-            </table>
-        </center>
-    </div>
-</div>
-<!--end popup loader-->
-<!-- END PAGE CONTAINER -->
-
-<!-- BEGIN FOOTER -->
-<!-- BEGIN FOOTER -->
-<div class="page-footer">
-	<div class="container" align="center">
-		 2016 &copy; James River Grounds Management
-	</div>
-</div>
-<div class="scroll-to-top">
-	<i class="icon-arrow-up"></i>
-</div>
-<!-- END FOOTER -->
-<!-- END FOOTER -->
-
-<div class="scroll-to-top"> <i class="icon-arrow-up"></i> </div>
-<!-- END FOOTER -->
-<!-- BEGIN JAVASCRIPTS (Load javascripts at bottom, this will reduce page load time) -->
-<!-- BEGIN CORE PLUGINS -->
-<!--[if lt IE 9]>
-<script src="/SSL/admin/assets/global/plugins/respond.min.js"></script>
-<script src="/SSL/admin/assets/global/plugins/excanvas.min.js"></script>
-<![endif]-->
-<script src="/SSL/admin/assets/global/plugins/jquery.min.js" type="text/javascript"></script>
-<script src="/SSL/admin/assets/global/plugins/jquery-migrate.min.js" type="text/javascript"></script>
-<!-- IMPORTANT! Load jquery-ui.min.js before bootstrap.min.js to fix bootstrap tooltip conflict with jquery ui tooltip -->
-<script src="/SSL/admin/assets/global/plugins/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
-<script src="/SSL/admin/assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
-<script src="/SSL/admin/assets/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js" type="text/javascript"></script>
-<script src="/SSL/admin/assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
-<script src="/SSL/admin/assets/global/plugins/jquery.cokie.min.js" type="text/javascript"></script>
-<script src="/SSL/admin/assets/global/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
-<!-- END CORE PLUGINS -->
-<!-- BEGIN PAGE LEVEL PLUGINS -->
-<script type="text/javascript" src="/SSL/admin/assets/global/plugins/select2/select2.min.js"></script>
-<script type="text/javascript" src="/SSL/admin/assets/global/plugins/datatables/media/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="/SSL/admin/assets/global/plugins/datatables/extensions/TableTools/js/dataTables.tableTools.min.js"></script>
-<script type="text/javascript" src="/SSL/admin/assets/global/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js"></script>
-<script type="text/javascript" src="/SSL/admin/assets/global/plugins/datatables/extensions/Scroller/js/dataTables.scroller.min.js"></script>
-<script type="text/javascript" src="/SSL/admin/assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.js"></script>
-<!-- END PAGE LEVEL PLUGINS -->
-<!-- BEGIN PAGE LEVEL SCRIPTS -->
-<script src="/SSL/admin/assets/global/scripts/metronic.js" type="text/javascript"></script>
-<script src="/SSL/admin/assets/admin/layout3/scripts/layout.js" type="text/javascript"></script>
-<script src="/SSL/admin/assets/admin/layout3/scripts/demo.js" type="text/javascript"></script>
-<script src="/SSL/admin/assets/admin/pages/scripts/table-advanced.js"></script>
 <script type='text/javascript'>
     var app = angular.module("sampleApp", ["firebase"]);
     var initialized = false;
@@ -1082,7 +851,19 @@
 
                         $scope.ds_data.$loaded(function(data){
                             $scope.ds_employees.$loaded(function(data){
-                                $scope.reInitialize();
+                                //DEFAULT VALUES
+                                if (!$scope.ds_data.ds_date)
+                                    $scope.ds_data.ds_date = date_now;
+                                if (!$scope.ds_data.ds_branch)
+                                    $scope.ds_data.ds_branch = admin_branch;
+                                $scope.ds_data.add_branch = $scope.ds_data.ds_branch;
+                                $scope.ds_data.add_employee_id = 0;
+                                $scope.ds_data.add_job_branch = $scope.ds_data.ds_branch;
+                                $scope.ds_data.add_job_job_id = 0;
+                                last_crew_leader_id = $scope.ds_data.crew_leader_id;
+
+                                $scope.save();
+
                                 initialize();
                             });
                         });
@@ -1100,7 +881,7 @@
                                 });
                                 console.log('added '+employee_id);
                             });
-                        };
+                        }
 
                         $scope.removeEmployee = function(employee){
                             if (!confirm('Remove '+employees[employee.id].full_name+' from this Daily Sheet?')) return;
@@ -1130,7 +911,7 @@
 
                                 $scope.save();
                             });
-                        };
+                        }
 
                         $scope.addCrewLeader = function(){
                             if ($scope.ds_employees.length > 0)
@@ -1153,7 +934,7 @@
                                     $scope.ds_jobs.$save(i);
                                 }
                             });
-                        };
+                        }
 
                         $scope.editEmployeeStartEndTimes = function(employee){
                             $scope.ds_temp = {};
@@ -1163,7 +944,7 @@
                             $scope.ds_temp.editing_startendtimes_options = buildStartEndTimesOptions();
 
                             showPopup('div_popupStartEndTimes');
-                        };
+                        }
 
                         $scope.addStartEndTime = function(){
                             if (!$scope.ds_temp.editing_startendtimes)
@@ -1191,15 +972,14 @@
                             totalminutes = 0;
                             for(var i=0; i<employee.startendtimes.length; i++)
                             {
-                                employee.startendtimes[i].starttime_display = getTimeDisplay(employee.startendtimes[i].starttime);
-                                employee.startendtimes[i].endtime_display = getTimeDisplay(employee.startendtimes[i].endtime);
+                                employee.startendtimes[i].display = getTimeDisplay(employee.startendtimes[i].starttime)+' - '+getTimeDisplay(employee.startendtimes[i].endtime);
                                 totalminutes += getTotalTime(employee.startendtimes[i].starttime, employee.startendtimes[i].endtime);
                             }
                             var totalhours = Math.floor(totalminutes / 60);
                             var totalminutes = totalminutes % 60;
                             employee.totalTime = (totalhours<10?'0'+totalhours:totalhours)+':'+(totalminutes<10?'0'+totalminutes:totalminutes);
                             $scope.ds_employees.$save(employee);
-                        };
+                        }
 
                         $scope.saveStartEndTimesToAllEmployees = function(){
                             if (!confirm('Are you sure you want to overwrite ALL employee times?')) return;
@@ -1227,7 +1007,7 @@
                                  $scope.ds_jobs.$add({ 'id': job_id });
                                  console.log('added '+job_id);
                              });
-                        };
+                        }
                         
                         $scope.removeJob = function(job){
                             if (!confirm('Remove '+jobs[job.id].name+' from this Daily Sheet?')) return;
@@ -1237,7 +1017,7 @@
                                 console.log(job);
                                 $scope.save();
                             });
-                        };
+                        }
 
                         $scope.editJobTimes = function(job){
                             $scope.ds_temp = {};
@@ -1286,15 +1066,14 @@
                                 var totalminutes = getTotalTime(job.starttime, job.endtime);
                                 if (job.starttime_lunch && job.endtime_lunch)
                                    totalminutes -= getTotalTime(job.starttime_lunch, job.endtime_lunch);
-                                var totalhourscalc = Math.floor(totalminutes / 60);
-                                var totalminutescalc = totalminutes % 60;
-                                job.totalTime = (totalhourscalc<10?'0'+totalhourscalc:totalhourscalc)+':'+(totalminutescalc<10?'0'+totalminutescalc:totalminutescalc);
-                                job.totalTimeDisplay = job.totalTime+' ('+totalminutes+' min)';
+                                var totalhours = Math.floor(totalminutes / 60);
+                                var totalminutes = totalminutes % 60;
+                                job.totalTime = (totalhours<10?'0'+totalhours:totalhours)+':'+(totalminutes<10?'0'+totalminutes:totalminutes);
 
                                 $scope.ds_jobs[key] = job;
                                 $scope.ds_jobs.$save(key);
                             });
-                        };
+                        }
 
                         $scope.cancelJobTimes = function(){
                             hidePopup('div_popupJobTimes');
@@ -1318,7 +1097,7 @@
 
                         $scope.removeJobMaterial = function(key){
                             $scope.ds_temp.editing_materials.splice(key, 1);
-                        };
+                        }
 
                         $scope.saveMaterials = function(){
                             $scope.saveMaterialsToJob();
@@ -1347,7 +1126,7 @@
                                 $scope.ds_jobs[key] = job;
                                 $scope.ds_jobs.$save(key);
                             });
-                        };
+                        }
 
                         $scope.saveNoMaterialsToJob = function(job, nomaterials){
                             var job_id = job.id;
@@ -1371,7 +1150,7 @@
                                 $scope.ds_jobs[key] = job;
                                 $scope.ds_jobs.$save(key);
                             });
-                        };
+                        }
 
                         $scope.cancelMaterials = function(){
                             hidePopup('div_popupMaterials');
@@ -1408,7 +1187,7 @@
                                 $scope.ds_jobs[key] = data;
                                 $scope.ds_jobs.$save(key);
                             });
-                        };
+                        }
 
                         $scope.addAllEmployeesToJob = function(job_id){
                             if ($scope.ds_employees.length > 0)
@@ -1428,7 +1207,7 @@
                                     $scope.addEmployeeToJob(employee.id, job.id);
                                 }
                             }
-                        };
+                        }
 
                         $scope.removeEmployeeFromJob = function(employee, job){
                             if (!confirm('Remove '+employees[employee.id].full_name+' from '+jobs[job.id].name+'?')) return;
@@ -1450,7 +1229,7 @@
                             $scope.ds_jobs[key] = job;
                             console.log($scope.ds_jobs);
                             $scope.ds_jobs.$save(key);
-                        };
+                        }
                         
                         $scope.editEmployeeServiceCodes = function(employee, job_id){
                             $scope.ds_temp = {};
@@ -1483,27 +1262,11 @@
                             var employee = $scope.ds_temp.editing_employee;
                             var job_id = $scope.ds_temp.editing_job_id;
                             employee.servicecodes = $scope.ds_temp.editing_servicecodes;
-                            employee.servicecodeparents = {};
-                            employee.servicecodeparentsdisplay = {};
                             totalminutes = 0;
                             for(var i=0; i<employee.servicecodes.length; i++)
                             {
-                                //employee.servicecodes[i].display = employee.servicecodes[i].id+' ['+employee.servicecodes[i].time+' min]';
-                                var servicecodeparent = Math.floor(getIdFromServiceCode(employee.servicecodes[i].id) / 100)*100;
-                                var servicetime = employee.servicecodes[i].time*1;
-                                if (!employee.servicecodeparents[servicecodeparent])
-                                    employee.servicecodeparents[servicecodeparent] = 0;
-                                employee.servicecodeparents[servicecodeparent] += servicetime;
-                                totalminutes += servicetime;
-                            }
-                            if (employee.servicecodeparents)
-                            {
-                                for(var i in employee.servicecodeparents)
-                                {
-                                    var totalhourscalc = Math.floor(employee.servicecodeparents[i] / 60);
-                                    var totalminutescalc = employee.servicecodeparents[i] % 60;
-                                    employee.servicecodeparentsdisplay[i] = (totalhourscalc<10?'0'+totalhourscalc:totalhourscalc)+':'+(totalminutescalc<10?'0'+totalminutescalc:totalminutescalc);
-                                }
+                                employee.servicecodes[i].display = employee.servicecodes[i].id+' ['+employee.servicecodes[i].time+' min]';
+                                totalminutes += employee.servicecodes[i].time*1;
                             }
                             var totalhours = Math.floor(totalminutes / 60);
                             var totalminutes = totalminutes % 60;
@@ -1511,7 +1274,6 @@
 
                             var key = -1;
                             var totalminutes = 0;
-                            var totalcrewminutes = 0;
                             var job;
                             for(var i=0; i<$scope.ds_jobs.length; i++)
                             {
@@ -1522,18 +1284,15 @@
                                 {
                                     for(var ii=0; ii<job.ds_employees.length; ii++)
                                     {
-                                        var emp = job.ds_employees[ii];
-                                        if (emp.servicecodes)
+                                        if (job.ds_employees[ii].id == employee.id)
                                         {
-                                            for(var iii=0; iii<emp.servicecodes.length; iii++)
+                                            var emp = job.ds_employees[ii];
+                                            if (emp.servicecodes)
                                             {
-                                                var servicetime = emp.servicecodes[iii].time*1;
-                                                if (job.ds_employees[ii].id == employee.id)
+                                                for(var iii=0; iii<emp.servicecodes.length; iii++)
                                                 {
-                                                    totalminutes += servicetime;
+                                                    totalminutes += emp.servicecodes[iii].time*1;
                                                 }
-                                                if (job.id == job_id)
-                                                    totalcrewminutes += servicetime;
                                             }
                                         }
                                     }
@@ -1551,10 +1310,6 @@
                             if (ekey == -1) return;
 
                             $scope.ds_jobs[key].ds_employees[ekey] = employee;
-                            $scope.ds_jobs[key].totalTimeCrew = totalcrewminutes;
-                            var totalhours = Math.floor(totalcrewminutes / 60);
-                            var totalminutes = totalcrewminutes % 60;
-                            $scope.ds_jobs[key].totalTimeCrewDisplay = (totalhours<10?'0'+totalhours:totalhours)+':'+(totalminutes<10?'0'+totalminutes:totalminutes);
                             $scope.ds_jobs.$save(key);
 
                             key = -1;
@@ -1570,7 +1325,7 @@
                             var totalminutes = totalminutes % 60;
                             employee.jobTime = (totalhours<10?'0'+totalhours:totalhours)+':'+(totalminutes<10?'0'+totalminutes:totalminutes);;
                             $scope.ds_employees.$save(employee);
-                        };
+                        }
 
                         $scope.saveServiceCodesToAllEmployees = function(){
                             if (!confirm('Are you sure you want to overwrite ALL employee service code times?')) return;
@@ -1587,23 +1342,6 @@
                             hidePopup('div_popupServiceCodes');
                         };
 
-                        $scope.reInitialize = function(){
-                            //DEFAULT VALUES
-                            if (!$scope.ds_data.ds_date)
-                                $scope.ds_data.ds_date = date_now;
-                            if (!$scope.ds_data.ds_branch)
-                                $scope.ds_data.ds_branch = admin_branch;
-                            $scope.ds_data.add_branch = $scope.ds_data.ds_branch;
-                            $scope.ds_data.add_employee_id = 0;
-                            $scope.ds_data.add_job_branch = $scope.ds_data.ds_branch;
-                            $scope.ds_data.add_job_job_id = 0;
-                            if (!$scope.ds_data.crew_leader_id)
-                                $scope.ds_data.crew_leader_id = 0;
-                            last_crew_leader_id = $scope.ds_data.crew_leader_id;
-
-                            $scope.save();
-                        };
-
                         $scope.save = function(){
                             $scope.ds_data.crew_leader_id = last_crew_leader_id;
                             if ($scope.ds_data.crew_leader_id && $scope.ds_employees.length == 0)
@@ -1618,13 +1356,6 @@
                                 }
                             }
 
-                            if (!$scope.ds_data.crew_leader_id)
-                            {
-                                //change branch for employee and job default adding for convenience until crew leader is chosen
-                                $scope.ds_data.add_branch = $scope.ds_data.ds_branch;
-                                $scope.ds_data.add_job_branch = $scope.ds_data.ds_branch;
-                            }
-
                             $scope.employees_cached = [];
                             for(var i=0; i<$scope.ds_employees.length; i++)
                             {
@@ -1633,7 +1364,6 @@
                             }
                             $scope.ds_data.$save();
                             console.log('saved');
-                            console.log($scope.ds_data);
                         };
 
                         $scope.syncPostData = function(){
@@ -1642,14 +1372,6 @@
 
                                 $('#ds_post_data').val(JSON.stringify(snap.val()));
                                 $('#form_saveds').submit();
-                            });
-                        };
-
-                        $scope.resetEverything = function(){
-                            if (!confirm('Are you SURE you want to start over from scratch?  This action cannot be undone.')) return;
-
-                            DBModel(db_root).remove().then(function(){
-                                reInitialize();
                             });
                         };
 
@@ -1719,15 +1441,6 @@
     {
         $('#div_loading').hide();
         $('#div_main').show();
-    }
-
-    function reInitialize()
-    {
-        $('#div_loading').show();
-        $('#div_main').hide();
-        $('#span_loading').html('Re-initializing... please wait.');
-
-        setTimeout('window.location.reload()', 100);
     }
 </script>
 <!----------------------------->
@@ -1831,14 +1544,6 @@
         //console.log(army_hour);
         //console.log(minute);
         return army_hour*60 + minute*1;
-    }
-
-    function getIdFromServiceCode(str)
-    {
-        if (!str) return '';
-
-        var spl = str.split(' - ');
-        return spl[0];
     }
 </script>
 </body>
