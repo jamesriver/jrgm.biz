@@ -1,5 +1,7 @@
+<cfinclude template="#APPLICATION.basePath#include/init.cfm">
 <cfset is_admin = 0>
-<cfquery name="get_is_admin" datasource="jrgm">
+
+<cfquery name="get_is_admin" datasource="#CONFIG_DATABASENAME#">
     SELECT is_admin FROM access_roles WHERE access_role_id=#SESSION.access_role#
 </cfquery>
 <cfloop query="get_is_admin">
@@ -10,7 +12,272 @@
 </cfif>
 
 <cfset todayDate = Now()>
-<cfquery name="get_all_employees" datasource="jrgm">
+<cfif IsDefined('form.ds_post_data') AND IsDefined('form.ds_id')>
+    <cfscript>
+        function getTimeSQL(str)
+        {
+            if (str EQ '') return '';
+
+            var spl = str.split(':');
+            var hour = spl[1];
+            var minute = spl[2];
+
+            return (hour<10?'0' & hour:hour) & ':' & (minute<10?'0' & minute:minute) & ':00.000';
+        }
+
+        function getTotalTime(starttime, endtime)
+        {
+            var startminutes = getTotalTimeFromString(starttime);
+            var endminutes = getTotalTimeFromString(endtime);
+            var totalminutes = Abs(startminutes - endminutes);
+            if (endminutes LT startminutes) totalminutes = 24*60-totalminutes;
+            return totalminutes;
+        }
+
+        function getTotalTimeFromString(str)
+        {
+            if (str EQ '') return 0;
+
+            var spl = str.split(':');
+            var army_hour = spl[1];
+            var minute = spl[2];
+            return army_hour*60 + minute*1;
+        }
+
+        function getIdFromServiceCode(str)
+        {
+            if (str EQ '') return '';
+
+            var spl = str.split(' - ');
+            return spl[1];
+        }
+    </cfscript>
+
+    <!--- SANITIZE DATA AND PERFORM SANITY CHECKS --->
+    <cfset post_data = deserializeJSON(form.ds_post_data)>
+    <!---cfdump var="#post_data#">
+    <cfabort--->
+    <cfset ds_data = post_data.ds_data>
+    <cfset ds_date = DateFormat(ds_data.ds_date, 'yyyy-mm-dd')>
+    <cfset ds_employees = post_data.ds_employees>
+    <cfset ds_jobs = post_data.ds_jobs>
+
+    <cfquery name="get_branch_code" datasource="#CONFIG_DATABASENAME#">
+        SELECT branch_code FROM branches
+        WHERE branch_name=<cfqueryparam value="#ds_data.ds_branch#" CFSQLType="CF_SQL_TEXT">
+    </cfquery>
+    <cfset ds_branch_code = get_branch_code.branch_code>
+
+    <cfloop collection=#ds_employees# item="index">
+        <cfset ds_employee = ds_employees[index]>
+        <cfif StructKeyExists(ds_employee, 'startendtimes')>
+            <cfloop from="1" to="#arrayLen(ds_employee.startendtimes)#" index="i">
+                <cfset startendtime = ds_employee.startendtimes[i]>
+                <cfset starttime = getTimeSQL(startendtime.starttime)>
+                <cfset endtime = getTimeSQL(startendtime.endtime)>
+                <cfif endtime LT starttime>
+                    <cfset endtime = DateFormat(DateAdd('d', 1, ds_date), 'yyyy-mm-dd') & ' ' & getTimeSQL(startendtime.endtime)>
+                <cfelse>
+                    <cfset endtime = ds_date & ' ' & getTimeSQL(startendtime.endtime)>
+                </cfif>
+                <cfset starttime = ds_date & ' ' & getTimeSQL(startendtime.starttime)>
+                <cfset totalTime = getTotalTime(startendtime.starttime, startendtime.endtime)>
+
+                <cfset ds_employees[index].startendtimes[i].starttime = starttime>
+                <cfset ds_employees[index].startendtimes[i].endtime = endtime>
+                <cfset ds_employees[index].startendtimes[i].totalTime = totalTime>
+            </cfloop>
+        </cfif>
+    </cfloop>
+
+    <cfloop collection=#ds_jobs# item="job_index">
+        <cfset ds_job = ds_jobs[job_index]>
+        <cfif StructKeyExists(ds_job, 'ds_employees')>
+            <cfloop from="1" to="#arrayLen(ds_job.ds_employees)#" index="index">
+                <cfset ds_employee = ds_job.ds_employees[index]>
+                <cfif StructKeyExists(ds_employee, 'servicecodes')>
+                    <cfloop from="1" to="#arrayLen(ds_employee.servicecodes)#" index="i">
+                        <cfset servicecode = ds_employee.servicecodes[i]>
+                        <cfset ds_jobs[job_index].ds_employees[index].servicecodes[i].id = getIdFromServiceCode(servicecode.id)>
+                    </cfloop>
+                </cfif>
+            </cfloop>
+        </cfif>
+        <cfif StructKeyExists(ds_job, 'ds_materials')>
+            <cfloop from="1" to="#arrayLen(ds_job.ds_materials)#" index="index">
+                <cfset ds_material = ds_job.ds_materials[index]>
+            </cfloop>
+        <cfelseif ds_job.nomaterials EQ 'YES'>
+        <cfelse>
+        </cfif>        
+        <cfset starttime = getTimeSQL(ds_job.starttime)>
+        <cfset endtime = getTimeSQL(ds_job.endtime)>
+        <cfif endtime LT starttime>
+            <cfset endtime = DateFormat(DateAdd('d', 1, ds_date), 'yyyy-mm-dd') & ' ' & getTimeSQL(ds_job.endtime)>
+        <cfelse>
+            <cfset endtime = ds_date & ' ' & getTimeSQL(ds_job.endtime)>
+        </cfif>
+        <cfset starttime = ds_date & ' ' & getTimeSQL(ds_job.starttime)>
+        <cfset totalTime = getTotalTime(ds_job.starttime, ds_job.endtime)>
+        
+        <cfif ds_job.starttime_lunch NEQ '' AND ds_job.endtime_lunch NEQ ''>
+            <cfset starttime_lunch = getTimeSQL(ds_job.starttime_lunch)>
+            <cfset endtime_lunch = getTimeSQL(ds_job.endtime_lunch)>
+            <cfif endtime_lunch LT starttime_lunch>
+                <cfset endtime_lunch = DateFormat(DateAdd('d', 1, ds_date), 'yyyy-mm-dd') & ' ' & getTimeSQL(ds_job.endtime_lunch)>
+            <cfelse>
+                <cfset endtime_lunch = ds_date & ' ' & getTimeSQL(ds_job.endtime_lunch)>
+            </cfif>
+            <cfset starttime_lunch = ds_date & ' ' & getTimeSQL(ds_job.starttime_lunch)>
+            <cfset totalTime_lunch = getTotalTime(ds_job.starttime_lunch, ds_job.endtime_lunch)>
+
+            <cfset ds_jobs[job_index].starttime_lunch = starttime_lunch>
+            <cfset ds_jobs[job_index].endtime_lunch = endtime_lunch>
+            <cfset ds_jobs[job_index].totalTime_lunch = totalTime_lunch>
+        </cfif>
+
+        <cfset ds_jobs[job_index].starttime = starttime>
+        <cfset ds_jobs[job_index].endtime = endtime>
+        <cfset ds_jobs[job_index].totalTime = totalTime>
+    </cfloop>
+    <!---cfdump var="#ds_jobs#">
+    <cfabort--->
+
+    <cfif form.ds_id GT 0>
+        <!--- SAVE EXISTING DAILY SHEET --->
+    <cfelse>
+        <!--- CREATE NEW DAILY SHEET --->
+        <cfquery name="insert_ds" datasource="#CONFIG_DATABASENAME#" result="result_insert_ds">
+            INSERT INTO app_daily_sheets
+            (Supervisor_ID, Crew_Leader_ID, DS_Date, record_created, entry_method, branch_code)
+            VALUES (
+                <cfqueryparam value="#ds_data.supervisor_id#" CFSQLType="CF_SQL_TEXT">,
+                <cfqueryparam value="#ds_data.crew_leader_id#" CFSQLType="CF_SQL_TEXT">,
+                <cfqueryparam value="#ds_date#" CFSQLType="CF_SQL_TEXT">,
+                GETUTCDATE(),
+                2,
+                <cfqueryparam value="#ds_branch_code#" CFSQLType="CF_SQL_TEXT">
+            )
+        </cfquery>
+        <cfset ds_id = result_insert_ds["GENERATEDKEY"]>
+    </cfif>
+
+    <!--- CREATE EMPLOYEE PAYROLL TIMES --->
+    <cfloop collection=#ds_employees# item="index">
+        <cfset ds_employee = ds_employees[index]>
+        <cfif StructKeyExists(ds_employee, 'startendtimes')>
+            <cfloop from="1" to="#arrayLen(ds_employee.startendtimes)#" index="i">
+                <cfset startendtime = ds_employee.startendtimes[i]>
+                <cfquery name="insert_ds_employee" datasource="#CONFIG_DATABASENAME#" result="result_insert_ds_employee">
+                    INSERT INTO app_employee_payroll_clock
+                    (Employee_ID, ds_id, crew_leader, ds_date, supervisor, time_in, time_out, time_worked, entry_method, In_Out_Status)
+                    VALUES (
+                        <cfqueryparam value="#ds_employee.id#" CFSQLType="CF_SQL_TEXT">,
+                        <cfqueryparam value="#ds_id#" CFSQLType="CF_SQL_TEXT">,
+                        <cfqueryparam value="#ds_data.crew_leader_id#" CFSQLType="CF_SQL_TEXT">,
+                        <cfqueryparam value="#ds_date#" CFSQLType="CF_SQL_TEXT">,
+                        <cfqueryparam value="#ds_data.supervisor_id#" CFSQLType="CF_SQL_TEXT">,
+                        <cfqueryparam value="#startendtime.starttime#" CFSQLType="CF_SQL_TEXT">,
+                        <cfqueryparam value="#startendtime.endtime#" CFSQLType="CF_SQL_TEXT">,
+                        <cfqueryparam value="#startendtime.totalTime#" CFSQLType="CF_SQL_TEXT">,
+                        2,
+                        2
+                    )
+                </cfquery>
+            </cfloop>
+        </cfif>
+    </cfloop>
+
+    <!--- COLLECT EXISTING EMPLOYEE AND JOB INFORMATION TO DETERMINE IF IT SHOULD BE CREATED, UPDATED, OR DELETED --->
+
+    <!--- UPDATE OR CREATE JOBS --->
+    <cfloop collection=#ds_jobs# item="job_index">
+        <cfset ds_job = ds_jobs[job_index]>
+        <cfquery name="insert_app_job_clock" datasource="#CONFIG_DATABASENAME#" result="result_insert_app_job_clock">
+            INSERT INTO app_job_clock
+            (Job_ID, Job_Time_In, Job_Time_Out, In_Out_Status, Crew_Leader_ID, ds_id)
+            VALUES (
+                <cfqueryparam value="#ds_job.id#" CFSQLType="CF_SQL_TEXT">,
+                <cfqueryparam value="#ds_job.starttime#" CFSQLType="CF_SQL_TEXT">,
+                <cfqueryparam value="#ds_job.endtime#" CFSQLType="CF_SQL_TEXT">,
+                1,
+                <cfqueryparam value="#ds_data.crew_leader_id#" CFSQLType="CF_SQL_TEXT">,
+                <cfqueryparam value="#ds_id#" CFSQLType="CF_SQL_TEXT">
+            )
+        </cfquery>
+        <cfset job_clock_id = result_insert_app_job_clock["GENERATEDKEY"]>
+
+        <!--- ADD LUNCH IF APPLICABLE --->
+        <cfif ds_job.starttime_lunch NEQ '' AND ds_job.endtime_lunch NEQ ''>
+            <cfquery name="insert_app_job_clock" datasource="#CONFIG_DATABASENAME#" result="result_insert_app_job_clock">
+                INSERT INTO app_lunch
+                (ds_id, Job_ID, Crew_Leader_ID, Lunch_Time_In, Lunch_Time_Out, job_clock_id)
+                VALUES (
+                    <cfqueryparam value="#ds_id#" CFSQLType="CF_SQL_TEXT">,
+                    <cfqueryparam value="#ds_job.id#" CFSQLType="CF_SQL_TEXT">,
+                    <cfqueryparam value="#ds_data.crew_leader_id#" CFSQLType="CF_SQL_TEXT">,
+                    <cfqueryparam value="#ds_job.starttime_lunch#" CFSQLType="CF_SQL_TEXT">,
+                    <cfqueryparam value="#ds_job.endtime_lunch#" CFSQLType="CF_SQL_TEXT">,
+                    <cfqueryparam value="#job_clock_id#" CFSQLType="CF_SQL_TEXT">
+                )
+            </cfquery>
+        </cfif>
+
+        <!--- UPDATE OR CREATE EMPLOYEE SERVICE CODES --->
+        <cfif StructKeyExists(ds_job, 'ds_employees')>
+            <cfloop from="1" to="#arrayLen(ds_job.ds_employees)#" index="index">
+                <cfset ds_employee = ds_job.ds_employees[index]>
+                <cfif StructKeyExists(ds_employee, 'servicecodes')>
+                    <cfloop from="1" to="#arrayLen(ds_employee.servicecodes)#" index="i">
+                        <cfset servicecode = ds_employee.servicecodes[i]>
+                        <cfquery name="insert_app_job_services_actual_employee" datasource="#CONFIG_DATABASENAME#">
+                            INSERT INTO app_job_services_actual_employee
+                            (Employee_ID, Job_ID, Service_ID, Total_Time, ds_id, crew_leader, job_clock_id)
+                            VALUES
+                            (
+                                <cfqueryparam value="#ds_employee.id#" CFSQLType="CF_SQL_TEXT">,
+                                <cfqueryparam value="#ds_job.id#" CFSQLType="CF_SQL_TEXT">,
+                                <cfqueryparam value="#servicecode.id#" CFSQLType="CF_SQL_TEXT">,
+                                <cfqueryparam value="#servicecode.time#" CFSQLType="CF_SQL_TEXT">,
+                                <cfqueryparam value="#ds_id#" CFSQLType="CF_SQL_TEXT">,
+                                <cfqueryparam value="#ds_data.crew_leader_id#" CFSQLType="CF_SQL_TEXT">,
+                                <cfqueryparam value="#job_clock_id#" CFSQLType="CF_SQL_TEXT">
+                            )
+                        </cfquery>
+                    </cfloop>
+                </cfif>
+            </cfloop>
+        </cfif>
+        <!--- UPDATE OR CREATE MATERIALS --->
+        <cfif StructKeyExists(ds_job, 'ds_materials')>
+            <cfloop from="1" to="#arrayLen(ds_job.ds_materials)#" index="index">
+                <cfset ds_material = ds_job.ds_materials[index]>
+                <cfquery name="insert_app_job_materials_actual" datasource="#CONFIG_DATABASENAME#">
+                    INSERT INTO app_job_materials_actual
+                    (Job_ID, ds_id, Item_ID, Quantity_used, crew_leader, job_clock_id, Service_Date)
+                    VALUES
+                    (
+                        <cfqueryparam value="#ds_job.id#" CFSQLType="CF_SQL_TEXT">,
+                        <cfqueryparam value="#ds_id#" CFSQLType="CF_SQL_TEXT">,
+                        <cfqueryparam value="#ds_material.id#" CFSQLType="CF_SQL_TEXT">,
+                        <cfqueryparam value="#ds_material.quantity#" CFSQLType="CF_SQL_TEXT">,
+                        <cfqueryparam value="#ds_data.crew_leader_id#" CFSQLType="CF_SQL_TEXT">,
+                        <cfqueryparam value="#job_clock_id#" CFSQLType="CF_SQL_TEXT">,
+                        <cfqueryparam value="#ds_date#" CFSQLType="CF_SQL_TEXT">
+                    )
+                </cfquery>
+            </cfloop>
+        </cfif>
+        <!--- SET JOB START, END, LUNCH TIMES --->
+    </cfloop>
+
+
+    <!--- DELETE ANYTHING THAT WAS NOT CREATED OR UPDATED --->
+    <cfoutput>Done, ID=#ds_id#</cfoutput>
+    <cfabort>
+</cfif>
+
+<cfquery name="get_all_employees" datasource="#CONFIG_DATABASENAME#">
   SELECT ae.[Employee ID] as employee_id, ae.[Name FirstLast] as full_name, ae.first_name, ae.last_name, CASE WHEN ac.employee_position_id IS NULL OR ac.employee_position_id=2 THEN 0 ELSE CASE WHEN ar.is_admin > 0 THEN 1 ELSE ac.employee_position_id END END as access_role, ac.crew_leader_id, ae.branch FROM app_employees ae
   INNER JOIN app_crews ac ON ac.employee_id=ae.[Employee ID]
   LEFT JOIN access_roles ar ON ar.access_role_id=ac.employee_position_id
@@ -28,25 +295,25 @@
     </cfif>
 </cfloop>
 
-<cfquery name="get_branches" datasource="jrgm">
+<cfquery name="get_branches" datasource="#CONFIG_DATABASENAME#">
   SELECT * FROM branches
   WHERE branch_active=1
   AND branch_visible_to_select=1
   ORDER BY branch_name
 </cfquery>
 
-<cfquery name="get_all_branch_jobs" datasource="jrgm">
+<cfquery name="get_all_branch_jobs" datasource="#CONFIG_DATABASENAME#">
     SELECT [Wk Location Name] AS work_loc_name ,[job id] AS job_id, branch FROM APP_jobs
     ORDER by [Wk Location Name] ASC
 </cfquery>
 
-<cfquery name="get_all_service_codes" datasource="jrgm">
+<cfquery name="get_all_service_codes" datasource="#CONFIG_DATABASENAME#">
     SELECT asca.Service_Group_ID, asca.Service_Group_name, ase.Service_ID, ase.Service_Name FROM app_services_catg asca
     INNER JOIN app_services ase ON ase.Service_Group_ID=asca.Service_Group_ID
     ORDER BY asca.Service_Group_ID, ase.Service_ID
 </cfquery>
 
-<cfquery name="get_all_materials" datasource="jrgm">
+<cfquery name="get_all_materials" datasource="#CONFIG_DATABASENAME#">
     SELECT * FROM app_materials_list
     ORDER BY sortid
 </cfquery>
@@ -95,6 +362,11 @@
 
 <!--ANGULARFIRE SPECIFIC CODE-->
 <div ng-app="sampleApp" ng-controller="SampleCtrl">
+    <form id="form_saveds" method="post">
+        <input type="hidden" id="ds_id" name="ds_id" value="0">
+        <input type="hidden" id="ds_post_data" name="ds_post_data" value="">
+    </form>
+
     <div style="display: none">
       <button id="btn_initialize" ng-click="initialize()" style="display: none">Initialize</button>
       <button id="btn_signIn" ng-click="signIn()" style="display: none">Sign In</button>
@@ -133,6 +405,15 @@
                         <select id="ds_crew_leader_id" name="ds_crew_leader_id" ng-model="ds_data.crew_leader_id" ng-options="employee[0] as employee[1] for employee in employees_select[ds_data.ds_branch][0]" class="form-control" ng-change="addCrewLeader();"></select>
                     </div>
                 </div>
+            </div>
+            <div class="col-lg-6 col-sm-12">
+                <div class="visible-xs visible-sm visible-md"><hr /></div>
+                <div class="form-inline">
+                    <div class="form-group">
+                        <a class="btn btn-success btn-lg" ng-click="syncPostData()">Save Daily Sheet</a>
+                    </div>
+                </div>
+                <div class="visible-xs visible-sm visible-md"><hr /></div>
             </div>
         </div>
         <br />
@@ -238,10 +519,9 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <br />
                         <table id="table_job" class="table table-striped">
                             <thead>
-                                <th style="padding: 5px">Employee</th>
+                                <th style="padding: 5px">Job Employee</th>
                                 <th style="padding: 5px">Time by Service Codes</th>
                                 <th style="padding: 5px">Total Time</th>
                                 <th style="padding: 5px">Remove</th>
@@ -492,7 +772,7 @@
     <cfoutput>
     <cfloop from="1" to="#arrayLen(employees)#" index="i">
         <cfset employee = employees[i]>
-        var employee = { full_name: '#employee.id# - #Replace(employee.name, "'", "\\'", "ALL")#', first_name: '#Replace(employee.first_name, "'", "\\'", "ALL")#', last_name: '#Replace(employee.last_name, "'", "\\'", "ALL")#', employee_id: '#employee.id#', branch: '#employee.branch#', 'access_role': '#employee.access_role#', 'crew_leader_id': #employee.crew_leader_id# };
+        var employee = { full_name: '#employee.id# - #Replace(employee.name, "'", "\\'", "ALL")#', first_name: '#Replace(employee.first_name, "'", "\\'", "ALL")#', last_name: '#Replace(employee.last_name, "'", "\\'", "ALL")#', employee_id: '#employee.id#', branch: '#employee.branch#', 'access_role': '#employee.access_role#', 'crew_leader_id': '#employee.crew_leader_id#' };
         employees[#employee.id#] = employee;
         if (!employees_select[employee.branch])
             employees_select[employee.branch] = {};
@@ -1086,6 +1366,15 @@
                             console.log('saved');
                         };
 
+                        $scope.syncPostData = function(){
+                            firebase.database().ref(db_root).once('value', function(snap){
+                                if (!confirm('Save this daily sheet?')) return;
+
+                                $('#ds_post_data').val(JSON.stringify(snap.val()));
+                                $('#form_saveds').submit();
+                            });
+                        };
+
                     } else {
                         // No user is signed in.
                     }
@@ -1240,7 +1529,9 @@
     {
         var startminutes = getTotalTimeFromString(starttime);
         var endminutes = getTotalTimeFromString(endtime);
-        return Math.abs(startminutes - endminutes);
+        var totalminutes = Math.abs(startminutes - endminutes);
+        if (endminutes < startminutes) totalminutes = 24*60-totalminutes;
+        return totalminutes;
     }
 
     function getTotalTimeFromString(str)
