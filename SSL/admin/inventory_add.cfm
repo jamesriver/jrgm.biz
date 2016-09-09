@@ -218,6 +218,7 @@ li {
                 <option value="Trailers" >Trailers</option>
                 <option value="Vehicles" >Vehicles</option>
                 <option value="Weedeaters" >Weedeaters</option>
+                <option value="IT" >IT</option>
               </select></td>
               <td align="right" nowrap="nowrap" class="dstableno">Status</td>
               <td align="left" nowrap="nowrap" class="dstableno">

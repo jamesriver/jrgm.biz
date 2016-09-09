@@ -187,6 +187,7 @@ li {
         <option value="Trailers" >Trailers</option>
         <option value="Vehicles" >Vehicles</option>
         <option value="Weedeaters" >Weedeaters</option>
+        <option value="IT" >IT</option>
         </select>
       &nbsp; &nbsp;&nbsp; &nbsp; Branch:
       <select name="BRANCH_NAME"   tabindex="5">
