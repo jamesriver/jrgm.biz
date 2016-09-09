@@ -1,15 +1,16 @@
-<CFSET request.dsn = 'jrgm'>
+<cfinclude template="#APPLICATION.basePath#include/init.cfm">
+
 <!---<cfif IsDefined("url.unapprove")>
-  <cfquery name="approve_ds" datasource="#request.dsn#">
+  <cfquery name="approve_ds" datasource="#CONFIG_DATABASENAME#">
  UPDATE  app_daily_sheets SET ds_approved =NULL, ds_approved_date=NULL,ds_approved_by = NULL,ds_date_last=CURRENT_TIMESTAMP,  ds_last_by =#SESSION.userid#  WHERE ID = #dsid#
  </cfquery>
   <cfelseif IsDefined("url.approve")>
-  <cfquery name="approve_ds" datasource="#request.dsn#">
+  <cfquery name="approve_ds" datasource="#CONFIG_DATABASENAME#">
  UPDATE  app_daily_sheets SET ds_approved =1, ds_approved_date=CURRENT_TIMESTAMP,ds_approved_by = #SESSION.userid#,ds_date_last=CURRENT_TIMESTAMP,  ds_last_by =#SESSION.userid#    WHERE ID = #dsid#
  </cfquery>
   <cflocation url="dailysheet_select.cfm">
 </cfif>--->
-<cfquery name="get_open_workers" datasource="#request.dsn#" >
+<cfquery name="get_open_workers" datasource="#CONFIG_DATABASENAME#" >
  SELECT   ds_id, supervisor FROM APP_Employee_Payroll_Clock  
  WHERE in_out_status=1 AND time_out IS NULL AND ds_id = #url.dsid# AND CAST(Time_In as date) = '#DateFormat(now(), 'yyyy-mm-dd')#'
  </cfquery>
@@ -19,7 +20,7 @@
 <cfset d = day(now())>
 <cfset today_3PM = createDatetime(y,m,d,15,0,0)>
 <cfset timenow = Now()>
-<cfquery name="get_ds" datasource="#request.dsn#">
+<cfquery name="get_ds" datasource="#CONFIG_DATABASENAME#">
 SELECT   * FROM app_daily_sheets  WHERE ID=#url.dsid#    
 </cfquery>
 <!---<cfdump var="#get_ds#">
@@ -44,28 +45,28 @@ SELECT   * FROM app_daily_sheets  WHERE ID=#url.dsid#
 
 <!---   Get Daily Sheet for Crew Leader --->
 <CFSET dsid= get_ds.id>
-<cfquery name="get_supervisor" datasource="#request.dsn#">
+<cfquery name="get_supervisor" datasource="#CONFIG_DATABASENAME#">
 SELECT   [Employee ID], [Name FirstLast] AS employeename FROM APP_employees WHERE [Employee ID]=  #get_ds.supervisor_id# <!---  AND active_record =1 --->
 </cfquery>
-<cfquery name="get_crew_leader" datasource="#request.dsn#">
+<cfquery name="get_crew_leader" datasource="#CONFIG_DATABASENAME#">
 SELECT   [Employee ID], [Name FirstLast] AS employeename FROM APP_employees WHERE [Employee ID]=    #crew_leader_id#   
 </cfquery>
 <!------------------- Get in progress time ---------------------->
-<cfquery name="calculate_time" datasource="#request.dsn#">
+<cfquery name="calculate_time" datasource="#CONFIG_DATABASENAME#">
     SELECT ID,DATEDIFF(mi,time_in,#Now_Time#) AS 'Duration'  
     from APP_Employee_Payroll_Clock 
     WHERE in_out_status = 1 AND crew_leader =#crew_leader_id#
     </cfquery>
 <cfif calculate_time.recordcount GT 0>
   <cfoutput query="calculate_time">
-    <cfquery name="update_time" datasource="#request.dsn#">
+    <cfquery name="update_time" datasource="#CONFIG_DATABASENAME#">
     UPDATE APP_Employee_Payroll_Clock SET time_worked_current = #calculate_time.Duration#  WHERE ID =#calculate_time.ID#
     </cfquery>
   </cfoutput>
 </cfif>
 <!------------------- END get in progress time ---------------------->
 
-<cfquery name="get_service_names" datasource="#request.dsn#">
+<cfquery name="get_service_names" datasource="#CONFIG_DATABASENAME#">
     SELECT    ID, Service_Name, Service_ID
 FROM         dbo.app_services
     </cfquery>
@@ -198,7 +199,7 @@ FROM         dbo.app_services
               </tr>
             </thead>
             <tbody>
-              <cfquery name="get_employees_for_Crew_Leader" datasource="#request.dsn#">
+              <cfquery name="get_employees_for_Crew_Leader" datasource="#CONFIG_DATABASENAME#">
 SELECT DISTINCT [Employee ID] As employee_id,[Name FirstLast] AS employee_name, position,last_name FROM APP_employees
 WHERE [Employee ID] IN 
 (SELECT Employee_ID FROM  app_employee_payroll_clock WHERE crew_leader =#crew_leader_id# 
@@ -207,11 +208,11 @@ WHERE [Employee ID] IN
 </cfquery>
               <cfoutput query="get_employees_for_Crew_Leader">
                 <tr>
-                  <cfquery name="get_employees_CompleteHours" datasource="#request.dsn#">
+                  <cfquery name="get_employees_CompleteHours" datasource="#CONFIG_DATABASENAME#">
         SELECT CompleteHours FROM 
        app_employee_payroll_clock WHERE CompleteHours =0  AND   Employee_ID =#get_employees_for_Crew_Leader.Employee_ID# AND ds_id = #dsid#
            </cfquery>
-                  <cfquery name="get_employees_injury" datasource="#request.dsn#">
+                  <cfquery name="get_employees_injury" datasource="#CONFIG_DATABASENAME#">
         SELECT IsEmpInjury  FROM 
        app_employee_payroll_clock WHERE IsEmpInjury =0 AND   Employee_ID =#get_employees_for_Crew_Leader.Employee_ID# AND ds_id = #dsid#
            </cfquery>
@@ -222,17 +223,17 @@ WHERE [Employee ID] IN
                     <cfif get_employees_injury.IsEmpInjury EQ 0>
                       &nbsp; &nbsp; <span class="text-danger">(Injury Disagreed)</span>
                     </cfif></td>
-                  <cfquery name="get_number_of_times" datasource="#request.dsn#">
+                  <cfquery name="get_number_of_times" datasource="#CONFIG_DATABASENAME#">
  				 SELECT Employee_ID,COUNT(Employee_ID) AS cid FROM  app_employee_payroll_clock WHERE Employee_ID				=#get_employees_for_Crew_Leader.Employee_ID# AND ds_id = #dsid#
                  GROUP by Employee_ID
  				 </cfquery>
                   <td><div align="center" ><a href="daily_sheet_view_employee_time.cfm?ds_id=#dsid#&Employee_ID=#Employee_ID#">#get_number_of_times.cid#</a></div></td>
-                  <cfquery name="get_employee_time_am" datasource="#request.dsn#" maxrows="1">
+                  <cfquery name="get_employee_time_am" datasource="#CONFIG_DATABASENAME#" maxrows="1">
 SELECT  ID,time_In, ISNULL(time_Out,#Now_Time#)  AS time_Out FROM  app_employee_payroll_clock WHERE Employee_ID =#get_employees_for_Crew_Leader.Employee_ID# 
 AND ds_id = #dsid#
 ORDER by time_In ASC
                 </cfquery>
-                  <cfquery name="get_employee_time_am_current" datasource="#request.dsn#" maxrows="1">
+                  <cfquery name="get_employee_time_am_current" datasource="#CONFIG_DATABASENAME#" maxrows="1">
 SELECT     time_Out FROM  app_employee_payroll_clock WHERE Employee_ID =#get_employees_for_Crew_Leader.Employee_ID# 
 AND ds_id = #dsid#
 ORDER by time_In ASC
@@ -243,12 +244,12 @@ ORDER by time_In ASC
                         *
                       </cfif>
                     </div></td>
-                  <cfquery name="get_employee_time_pm" datasource="#request.dsn#" maxrows="1">
+                  <cfquery name="get_employee_time_pm" datasource="#CONFIG_DATABASENAME#" maxrows="1">
 SELECT time_In,ISNULL(time_Out,#Now_Time#)  AS time_Out FROM  app_employee_payroll_clock WHERE Employee_ID =#get_employees_for_Crew_Leader.Employee_ID# 
 AND ID  <> #get_employee_time_am.ID# AND ds_id = #dsid#
 ORDER by time_In DESC
                 </cfquery>
-                  <cfquery name="get_employee_time_pm_current" datasource="#request.dsn#" maxrows="1">
+                  <cfquery name="get_employee_time_pm_current" datasource="#CONFIG_DATABASENAME#" maxrows="1">
 SELECT     time_Out FROM  app_employee_payroll_clock WHERE Employee_ID =#get_employees_for_Crew_Leader.Employee_ID# 
 AND ds_id = #dsid#
 ORDER by time_In DESC
@@ -261,11 +262,11 @@ ORDER by time_In DESC
                         *
                       </cfif>
                     </div></td>
-                  <cfquery name="get_employee_minutes_for_day" datasource="#request.dsn#" maxrows="1">
+                  <cfquery name="get_employee_minutes_for_day" datasource="#CONFIG_DATABASENAME#" maxrows="1">
 SELECT Sum(time_worked) AS  minutes_worked_day FROM  app_employee_payroll_clock WHERE Employee_ID =#get_employees_for_Crew_Leader.Employee_ID# AND ds_id = #dsid#
                 </cfquery>
                   <!---  <cfdump var="#get_employee_minutes_for_day#"> --->
-                  <cfquery name="get_employee_minutes_for_day_inprogress" datasource="#request.dsn#" maxrows="1">
+                  <cfquery name="get_employee_minutes_for_day_inprogress" datasource="#CONFIG_DATABASENAME#" maxrows="1">
 SELECT Sum(time_worked_current) AS  minutes_worked_day_inprogress FROM  app_employee_payroll_clock WHERE Employee_ID =#get_employees_for_Crew_Leader.Employee_ID# AND in_out_status =1  AND ds_id = #dsid#
                 </cfquery>
                   <!---  <cfdump var="#get_employee_minutes_for_day_inprogress#"> --->
@@ -295,18 +296,18 @@ SELECT Sum(time_worked_current) AS  minutes_worked_day_inprogress FROM  app_empl
       <div class="portlet box green">
         <div class="portlet-title">Jobs Worked</a></div>
         <div class="portlet-body">
-          <CFQUERY name="get_this_job" datasource="#request.dsn#">
+          <CFQUERY name="get_this_job" datasource="#CONFIG_DATABASENAME#">
   SELECT * FROM APP_job_clock   
   WHERE Crew_Leader_ID =#crew_leader_id# AND ds_id = #dsid#    
   ORDER BY  Job_Time_Out ASC
           </CFQUERY>
           <!--- <cfdump var="#get_this_job#">    --->
           <cfloop query="get_this_job" >
-            <cfquery name="get_this_job_name" datasource="#request.dsn#">
+            <cfquery name="get_this_job_name" datasource="#CONFIG_DATABASENAME#">
 	SELECT [Wk Location Name] AS event_name FROM app_jobs
 			WHERE [Job ID] ='#get_this_job.job_id#'
  </cfquery>
-            <CFQUERY name="get_this_job_lunch" datasource="#request.dsn#">
+            <CFQUERY name="get_this_job_lunch" datasource="#CONFIG_DATABASENAME#">
 		  SELECT * FROM app_lunch   
  		 WHERE ds_id = #dsid# AND job_clock_id =#get_this_job.ID# ORDER BY  ID ASC
  		</CFQUERY>
@@ -346,7 +347,7 @@ SELECT Sum(time_worked_current) AS  minutes_worked_day_inprogress FROM  app_empl
                       <cfif get_this_job.job_time_worked GT 0>
                         <span class="text-cotime">&nbsp; &nbsp; Total Hours #hours_all_tj#:#NumberFormat(minutes_all_tj,"09")# &nbsp;&nbsp;(#totalminutes_this_job# min.)</span>
                       </cfif>
-                      <cfquery name="get_all_employee_minutes_for_job" datasource="#request.dsn#"  >
+                      <cfquery name="get_all_employee_minutes_for_job" datasource="#CONFIG_DATABASENAME#"  >
 					SELECT Sum(total_time) AS  minutes_worked_day_crew FROM APP_job_services_actual_employee  
 					WHERE job_clock_id=  '#get_this_job.ID#'
   					AND ds_id = #dsid#
@@ -400,7 +401,7 @@ SELECT Sum(time_worked_current) AS  minutes_worked_day_inprogress FROM  app_empl
                 
                 <!--- Its looping through the job_services and thus getting a new row for each service.
    It needs to loop through the each employee job_services  --->
-                <cfquery name="get_employee_time_services" datasource="#request.dsn#"   >
+                <cfquery name="get_employee_time_services" datasource="#CONFIG_DATABASENAME#"   >
 SELECT Employee_ID,SERVICE_ID,TOTAL_TIME FROM APP_job_services_actual_employee 
 WHERE   job_clock_id = #get_this_job.ID#
 AND ds_id = #dsid# 
@@ -409,7 +410,7 @@ AND ds_id = #dsid#
                 <cfoutput query="get_employee_time_services" >
                   <cfset hours_all_s= int(get_employee_time_services.total_time\60)>
                   <cfset minutes_all_s = int(get_employee_time_services.total_time mod 60)>
-                  <cfquery name="get_employee_name" datasource="#request.dsn#">
+                  <cfquery name="get_employee_name" datasource="#CONFIG_DATABASENAME#">
           SELECT [Employee ID] As employee_id,[Name FirstLast] AS employee_name FROM APP_employees WHERE [Employee ID] =  #get_employee_time_services.Employee_ID#
                 </cfquery>
                   <!--- <cfoutput> --->
@@ -473,7 +474,7 @@ AND ds_id = #dsid#
                       </div></td>
                   </tr>
                 </cfoutput>
-                <cfquery name="get_materials_used" datasource="#request.dsn#"  >
+                <cfquery name="get_materials_used" datasource="#CONFIG_DATABASENAME#"  >
 SELECT * FROM APP_job_materials_actual  
 WHERE   job_clock_id=  '#get_this_job.ID#'
   </cfquery>
@@ -506,11 +507,11 @@ WHERE   job_clock_id=  '#get_this_job.ID#'
           <div id="collapse_1" class="panel-collapse collapse">
             <div class="panel-body">
               <cfloop query="get_this_job" >
-                <cfquery name="get_this_job_name" datasource="#request.dsn#">
+                <cfquery name="get_this_job_name" datasource="#CONFIG_DATABASENAME#">
 	SELECT [Wk Location Name] AS event_name FROM app_jobs
 			WHERE [Job ID] ='#get_this_job.job_id#'
  </cfquery>
-                <CFQUERY name="get_this_job_lunch" datasource="#request.dsn#">
+                <CFQUERY name="get_this_job_lunch" datasource="#CONFIG_DATABASENAME#">
 		  SELECT * FROM app_lunch   
  		 WHERE ds_id = #dsid# AND job_clock_id =#get_this_job.ID# ORDER BY  ID ASC
  		</CFQUERY>
@@ -547,7 +548,7 @@ WHERE   job_clock_id=  '#get_this_job.ID#'
                           </cfif>
                           <cfset hours_all_tj= int(totalminutes_this_job\60)>
                           <cfset minutes_all_tj = int(totalminutes_this_job mod 60)>
-                          <cfquery name="get_all_employee_minutes_for_job" datasource="#request.dsn#"  >
+                          <cfquery name="get_all_employee_minutes_for_job" datasource="#CONFIG_DATABASENAME#"  >
 					SELECT Sum(total_time) AS  minutes_worked_day_crew FROM APP_job_services_actual_employee  
 					WHERE job_clock_id=  '#get_this_job.ID#'
   					AND ds_id = #dsid#
@@ -574,7 +575,7 @@ WHERE   job_clock_id=  '#get_this_job.ID#'
                   
                   <!--- Its looping through the job_services and thus getting a new row for each service.
    It needs to loop through the each employee job_services  --->
-                  <cfquery name="get_employee_time_services" datasource="#request.dsn#"   >
+                  <cfquery name="get_employee_time_services" datasource="#CONFIG_DATABASENAME#"   >
 SELECT Employee_ID,SERVICE_ID,TOTAL_TIME FROM APP_job_services_actual_employee 
 WHERE   job_clock_id = #get_this_job.ID#
 AND ds_id = #dsid# 
@@ -583,7 +584,7 @@ AND ds_id = #dsid#
                   <cfoutput query="get_employee_time_services" >
                     <cfset hours_all_s= int(get_employee_time_services.total_time\60)>
                     <cfset minutes_all_s = int(get_employee_time_services.total_time mod 60)>
-                    <cfquery name="get_employee_name" datasource="#request.dsn#">
+                    <cfquery name="get_employee_name" datasource="#CONFIG_DATABASENAME#">
           SELECT [Employee ID] As employee_id,[Name FirstLast] AS employee_name FROM APP_employees WHERE [Employee ID] =  #get_employee_time_services.Employee_ID#
                 </cfquery>
                     <cfquery name="get_service_name"  dbtype="query">
@@ -610,7 +611,7 @@ AND ds_id = #dsid#
           <div id="collapse_2" class="panel-collapse collapse">
             <div class="panel-body">
               <p>
-                <cfquery name="get_gps_info" datasource="#request.dsn#"  >
+                <cfquery name="get_gps_info" datasource="#CONFIG_DATABASENAME#"  >
 				SELECT * FROM app_gps
 				    WHERE DS_ID=#get_ds.ID#  
                     ORDER by DS_Date ASC

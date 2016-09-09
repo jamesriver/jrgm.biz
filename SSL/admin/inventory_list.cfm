@@ -86,6 +86,7 @@
                   <option value="Trailers"  <cfif session.categorysearch EQ 'Trailers'> selected="selected"</cfif>>Trailers</option>
                   <option value="Vehicles"  <cfif session.categorysearch EQ 'Vehicles'> selected="selected"</cfif>>Vehicles</option>
                   <option value="Weedeaters"  <cfif session.categorysearch EQ 'Weedeaters'> selected="selected"</cfif>>Weedeaters</option>
+                  <option value="IT"  <cfif session.categorysearch EQ 'IT'> selected="selected"</cfif>>IT</option>
                 </select>
                 &nbsp; &nbsp;&nbsp; &nbsp; Branch:
                 <select name="BRANCH_NAME"   tabindex="5" onchange='this.form.submit()'>

@@ -174,6 +174,7 @@ ORDER by  ID ASC
                       <option value="Trailers"  <cfif session.categorysearch EQ 'Trailers'> selected="selected"</cfif>>Trailers</option>
                       <option value="Vehicles"  <cfif session.categorysearch EQ 'Vehicles'> selected="selected"</cfif>>Vehicles</option>
                       <option value="Weedeaters"  <cfif session.categorysearch EQ 'Weedeaters'> selected="selected"</cfif>>Weedeaters</option>
+                      <option value="IT"  <cfif session.categorysearch EQ 'Weedeaters'> selected="selected"</cfif>>IT</option>
                     </select>
                     </strong></td>
                   <td><label class="control-label"><strong>Year:</strong></label>

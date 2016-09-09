@@ -237,6 +237,7 @@ li {
                 <option value="Trailers"  <cfif session.categorysearch EQ 'Trailers'> selected="selected"</cfif>>Trailers</option>
                 <option value="Vehicles"  <cfif session.categorysearch EQ 'Vehicles'> selected="selected"</cfif>>Vehicles</option>
                 <option value="Weedeaters"  <cfif session.categorysearch EQ 'Weedeaters'> selected="selected"</cfif>>Weedeaters</option>
+                <option value="IT"  <cfif session.categorysearch EQ 'IT'> selected="selected"</cfif>>IT</option>
               </select>
               &nbsp; &nbsp;&nbsp; &nbsp; Branch:
               <select name="BRANCH_NAME"   tabindex="5" onchange='this.form.submit()'>
@@ -362,6 +363,7 @@ SELECT * FROM equipment WHERE ID = #url.id#
                     <option value="Trailers" <cfif Category EQ 'Trailers'> selected="selected"</cfif>>Trailers</option>
                     <option value="Vehicles" <cfif Category EQ 'Vehicles'> selected="selected"</cfif>>Vehicles</option>
                     <option value="Weedeaters" <cfif Category EQ 'Weedeaters'> selected="selected"</cfif>>Weedeaters</option>
+                    <option value="IT" <cfif Category EQ 'IT'> selected="selected"</cfif>>IT</option>
                   </select></td>
                 <td align="right"><span class="dstableno">Status</span></td>
                 <td colspan="6" align="left" class="dstableno"><select name="inventory_status" id="inventory_status"   tabindex="5">
