@@ -511,6 +511,7 @@
                 <th><div align="center">Start</div></th>
                 <th><div align="center">End</div></th>
                 <th><div align="center">Total (H:M)</div></th>
+                <th><div align="center">Job Total (H:M)</div></th>
               </tr>
             </thead>
             <tbody>
@@ -520,7 +521,7 @@
                     </td>
                     <td>
                         {{ employees[ds_employee.id].full_name }} [{{ employees[ds_employee.id].branch }}]&nbsp;
-                        <a ng-if="ds_employee.id != ds_data.crew_leader_id" ng-click="removeEmployee(ds_employee)"><i class="fa-red fa-minus-square"></i></a>
+                        <a ng-click="removeEmployee(ds_employee)"><i class="fa-red fa-minus-square"></i></a>
                         <span ng-if="ds_employee.id == ds_data.crew_leader_id">&nbsp;</span>
                     </td>
                     <td align="center">{{ employees[ds_employee.id].startendtimes.length }}</td>
@@ -529,9 +530,10 @@
                     <td align="center">{{ ds_employee.startendtimes[1].starttime_display }}</td>
                     <td align="center">{{ ds_employee.startendtimes[1].endtime_display }}</td>
                     <td align="center">{{ ds_employee.totalTime }}</td>
+                    <td align="center">{{ ds_employee.jobTime }}</td>
                 </tr>
                 <tr>
-                    <td colspan="2">
+                    <td colspan="3">
                         <div class="form-inline">
                             <div class="form-group">
                                 <select id="add_branch" name="add_branch" ng-model="ds_data.add_branch" ng-options="branch[0] as branch[1] for branch in branches_select" class="form-control" ng-change="save()"></select>
@@ -1219,14 +1221,15 @@
                         $scope.addJob = function(job_id){
                              if (!job_id) return;
  
-                             var query = DBModel(db_root+'/ds_jobs').orderByChild("id").equalTo(job_id).limitToFirst(1);
+                             /*var query = DBModel(db_root+'/ds_jobs').orderByChild("id").equalTo(job_id).limitToFirst(1);
                              var result = $firebaseArray(query);
                              result.$loaded(function(data){
                                  if (data.length != 0) return;
  
                                  $scope.ds_jobs.$add({ 'id': job_id });
-                                 console.log('added '+job_id);
-                             });
+                             });*/
+
+                             $scope.ds_jobs.$add({ 'id': job_id });
                         };
                         
                         $scope.removeJob = function(job){
@@ -1283,16 +1286,10 @@
                                 job.starttime_lunch_display = getTimeDisplay(job.starttime_lunch);
                                 job.endtime_lunch_display = getTimeDisplay(job.endtime_lunch);
 
-                                var totalminutes = getTotalTime(job.starttime, job.endtime);
-                                if (job.starttime_lunch && job.endtime_lunch)
-                                   totalminutes -= getTotalTime(job.starttime_lunch, job.endtime_lunch);
-                                var totalhourscalc = Math.floor(totalminutes / 60);
-                                var totalminutescalc = totalminutes % 60;
-                                job.totalTime = (totalhourscalc<10?'0'+totalhourscalc:totalhourscalc)+':'+(totalminutescalc<10?'0'+totalminutescalc:totalminutescalc);
-                                job.totalTimeDisplay = job.totalTime+' ('+totalminutes+' min)';
-
                                 $scope.ds_jobs[key] = job;
                                 $scope.ds_jobs.$save(key);
+
+                                $scope.refreshJobCalculations(job.id);
                             });
                         };
 
@@ -1448,8 +1445,8 @@
                             if (key == -1) return;
 
                             $scope.ds_jobs[key] = job;
-                            console.log($scope.ds_jobs);
-                            $scope.ds_jobs.$save(key);
+                            $scope.refreshJobCalculations(job.id);
+                            $scope.refreshEmployeeCalculations(employee.id);
                         };
                         
                         $scope.editEmployeeServiceCodes = function(employee, job_id){
@@ -1510,34 +1507,12 @@
                             employee.totalServiceTime = (totalhours<10?'0'+totalhours:totalhours)+':'+(totalminutes<10?'0'+totalminutes:totalminutes);
 
                             var key = -1;
-                            var totalminutes = 0;
-                            var totalcrewminutes = 0;
                             var job;
                             for(var i=0; i<$scope.ds_jobs.length; i++)
                             {
                                 job = $scope.ds_jobs[i];
                                 if ($scope.ds_jobs[i].id == job_id)
                                     key = i;
-                                if (job.ds_employees)
-                                {
-                                    for(var ii=0; ii<job.ds_employees.length; ii++)
-                                    {
-                                        var emp = job.ds_employees[ii];
-                                        if (emp.servicecodes)
-                                        {
-                                            for(var iii=0; iii<emp.servicecodes.length; iii++)
-                                            {
-                                                var servicetime = emp.servicecodes[iii].time*1;
-                                                if (job.ds_employees[ii].id == employee.id)
-                                                {
-                                                    totalminutes += servicetime;
-                                                }
-                                                if (job.id == job_id)
-                                                    totalcrewminutes += servicetime;
-                                            }
-                                        }
-                                    }
-                                }
                             }
                             if (key == -1) return;
                             job = $scope.ds_jobs[key];
@@ -1551,25 +1526,11 @@
                             if (ekey == -1) return;
 
                             $scope.ds_jobs[key].ds_employees[ekey] = employee;
-                            $scope.ds_jobs[key].totalTimeCrew = totalcrewminutes;
-                            var totalhours = Math.floor(totalcrewminutes / 60);
-                            var totalminutes = totalcrewminutes % 60;
-                            $scope.ds_jobs[key].totalTimeCrewDisplay = (totalhours<10?'0'+totalhours:totalhours)+':'+(totalminutes<10?'0'+totalminutes:totalminutes);
                             $scope.ds_jobs.$save(key);
 
-                            key = -1;
-                            for(var i=0; i<$scope.ds_employees.length; i++)
-                            {
-                                if ($scope.ds_employees[i].id == employee.id)
-                                    key = i;
-                            }
-                            if (key == -1) return;
-
-                            var employee = $scope.ds_employees[key];
-                            var totalhours = Math.floor(totalminutes / 60);
-                            var totalminutes = totalminutes % 60;
-                            employee.jobTime = (totalhours<10?'0'+totalhours:totalhours)+':'+(totalminutes<10?'0'+totalminutes:totalminutes);;
-                            $scope.ds_employees.$save(employee);
+                            //keep things synced
+                            $scope.refreshJobCalculations(job_id);
+                            $scope.refreshEmployeeCalculations(employee.id);
                         };
 
                         $scope.saveServiceCodesToAllEmployees = function(){
@@ -1604,6 +1565,95 @@
                             $scope.save();
                         };
 
+                        $scope.refreshJobCalculations = function(job_id){
+                            var key = -1;
+                            var totalcrewminutes = 0;
+                            for(var i=0; i<$scope.ds_jobs.length; i++)
+                            {
+                                if ($scope.ds_jobs[i].id == job_id)
+                                {
+                                    key = i;
+                                    job = $scope.ds_jobs[i];
+                                    if (job.ds_employees)
+                                    {
+                                        for(var ii=0; ii<job.ds_employees.length; ii++)
+                                        {
+                                            var emp = job.ds_employees[ii];
+                                            if (emp.servicecodes)
+                                            {
+                                                for(var iii=0; iii<emp.servicecodes.length; iii++)
+                                                {
+                                                    var servicetime = emp.servicecodes[iii].time*1;
+                                                    totalcrewminutes += servicetime;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            if (key == -1) return;
+
+                            var totalminutes = getTotalTime($scope.ds_jobs[key].starttime, $scope.ds_jobs[key].endtime);
+                            console.log('total minutes: '+totalminutes);
+                            if ($scope.ds_jobs[key].starttime_lunch && $scope.ds_jobs[key].endtime_lunch)
+                            {
+                                var totallunchminutes = getTotalTime($scope.ds_jobs[key].starttime_lunch, $scope.ds_jobs[key].endtime_lunch);
+                                console.log('total lunch minutes: '+totallunchminutes);
+                                totalminutes -= totallunchminutes;
+                            }
+                            var totalhourscalc = Math.floor(totalminutes / 60);
+                            var totalminutescalc = totalminutes % 60;
+                            $scope.ds_jobs[key].totalTime = (totalhourscalc<10?'0'+totalhourscalc:totalhourscalc)+':'+(totalminutescalc<10?'0'+totalminutescalc:totalminutescalc);
+                            $scope.ds_jobs[key].totalTimeDisplay = $scope.ds_jobs[key].totalTime+' ('+totalminutes+' min)';
+
+                            $scope.ds_jobs[key].totalTimeCrew = totalcrewminutes;
+                            var totalcrewminutes = 1*$scope.ds_jobs[key].totalTimeCrew;
+                            var totalhours = Math.floor(totalcrewminutes / 60);
+                            var totalminutes = totalcrewminutes % 60;
+                            $scope.ds_jobs[key].totalTimeCrewDisplay = (totalhours<10?'0'+totalhours:totalhours)+':'+(totalminutes<10?'0'+totalminutes:totalminutes);
+                            $scope.ds_jobs.$save(key);
+                        }
+                        
+                        $scope.refreshEmployeeCalculations = function(employee_id){
+                            var key = -1;
+                            var totalminutes = 0;                            
+                            var employee;
+                            for(var i=0; i<$scope.ds_employees.length; i++)
+                            {
+                                employee = $scope.ds_employees[i];
+                                if ($scope.ds_employees[i].id == employee_id)
+                                {
+                                    key = i;
+                                    for(var ii=0; ii<$scope.ds_jobs.length; ii++)
+                                    {
+                                        var job = $scope.ds_jobs[ii];
+                                        if (job.ds_employees)
+                                        {
+                                            for(var iii=0; iii<job.ds_employees.length; iii++)
+                                            {
+                                                var emp = job.ds_employees[iii];
+                                                if (emp.id == employee.id && emp.servicecodes)
+                                                {
+                                                    for(var iiii=0; iiii<emp.servicecodes.length; iiii++)
+                                                    {
+                                                        var servicetime = emp.servicecodes[iiii].time*1;
+                                                        totalminutes += servicetime;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            if (key == -1) return;
+
+                            var employee = $scope.ds_employees[key];
+                            var totalhours = Math.floor(totalminutes / 60);
+                            var totalminutes = totalminutes % 60;
+                            employee.jobTime = (totalhours<10?'0'+totalhours:totalhours)+':'+(totalminutes<10?'0'+totalminutes:totalminutes);;
+                            $scope.ds_employees.$save(employee);
+                        }
+
                         $scope.save = function(){
                             $scope.ds_data.crew_leader_id = last_crew_leader_id;
                             if ($scope.ds_data.crew_leader_id && $scope.ds_employees.length == 0)
@@ -1623,6 +1673,16 @@
                                 //change branch for employee and job default adding for convenience until crew leader is chosen
                                 $scope.ds_data.add_branch = $scope.ds_data.ds_branch;
                                 $scope.ds_data.add_job_branch = $scope.ds_data.ds_branch;
+                            }
+
+                            for(var i=0; i<$scope.ds_jobs.length; i++)
+                            {
+                                $scope.refreshJobCalculations($scope.ds_jobs[i].id);
+                            }
+
+                            for(var i=0; i<$scope.ds_employees.length; i++)
+                            {
+                                $scope.refreshEmployeeCalculations($scope.ds_employees[i].id);
                             }
 
                             $scope.employees_cached = [];
