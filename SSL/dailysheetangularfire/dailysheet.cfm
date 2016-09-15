@@ -36,6 +36,13 @@
             return totalminutes;
         }
 
+        function getTotalTimeDisplay(totalminutes)
+        {
+            var totalhours = Int(totalminutes / 60);
+            totalminutes = totalminutes % 60;
+            return (totalhours LT 10?'0'&totalhours:totalhours)&':'&(totalminutes LT 10?'0'&totalminutes:totalminutes);
+        }
+
         function getTotalTimeFromString(str)
         {
             if (str EQ '') return 0;
@@ -388,6 +395,12 @@
     label {
         font-weight: bold;
     }
+    .class-error {
+        color: #d9534f;
+    }
+    .class-selecttype {
+        width: 90px;
+    }
 </style>
 <link href="/SSL/admin/css/styles_ds.css" rel="stylesheet" type="text/css" />
 </head>
@@ -444,6 +457,7 @@
                     <div class="form-group">
                         <label for="ds_date">Date:</label>
                         <input id="ds_date" name="ds_date" ng-model="ds_data.ds_date" class="form-control" style="width: 100px" datepicker>
+                        <span ng-if="!isDateValid()" class="class-error">Must be within current pay period</span>
                     </div>
                 </div>
               </td>
@@ -459,7 +473,7 @@
               <td  nowrap="nowrap">
                 <div class="form-inline">
                     <div class="form-group">
-                        <a class="btn btn-success btn-lg" ng-click="syncPostData()">Create Daily Sheet</a>
+                        <a class="btn btn-success btn-lg" ng-click="createDailySheet()">Create Daily Sheet</a>
                         &nbsp;&nbsp;&nbsp;<a class="btn btn-danger btn-lg" ng-click="resetEverything()">Start Over</a>
                     </div>
                 </div>
@@ -530,7 +544,10 @@
                     <td align="center">{{ ds_employee.startendtimes[1].starttime_display }}</td>
                     <td align="center">{{ ds_employee.startendtimes[1].endtime_display }}</td>
                     <td align="center">{{ ds_employee.totalTime }}</td>
-                    <td align="center">{{ ds_employee.jobTime }}</td>
+                    <td align="center">
+                        <span class="class-error" ng-if="getTotalTimeFromString(ds_employee.jobTime) != getTotalTimeFromString(ds_employee.totalTime)">{{ ds_employee.jobTime }}</span>
+                        <span ng-if="getTotalTimeFromString(ds_employee.jobTime) == getTotalTimeFromString(ds_employee.totalTime)">{{ ds_employee.jobTime }}</span>
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="3">
@@ -565,9 +582,9 @@
                             <span class="text-cotime">&nbsp; &nbsp; End&nbsp; {{ ds_job.endtime_display }}</span>
                             &nbsp;
                             <span class="text-cotime">&nbsp; &nbsp; Total Hours {{ ds_job.totalTimeDisplay }}</span>
-                            <!--span class="text-danger"><br>
-                            Please make sure all crew members service time is accounted for. You may still need to account for 205 employee minutes.
-                            </span-->
+                            &nbsp;
+                            <span class="class-error" ng-if="ds_job.totalTimeCrew % getTotalTimeFromString(ds_job.totalTime) != 0" class="text-cotime">Total Crew Hours {{ ds_job.totalTimeCrewDisplay }}</span>
+                            <span ng-if="ds_job.totalTimeCrew % getTotalTimeFromString(ds_job.totalTime) == 0" class="text-cotime">Total Crew Hours {{ ds_job.totalTimeCrewDisplay }}</span>
                           </th>
                         </tr>
                         <tr>
@@ -610,7 +627,7 @@
                             Snow</span></div></td>
                       </tr>
                         <tr ng-repeat="ds_employee in ds_job.ds_employees">
-                          <td width="25" align="center"  nowrap="nowrap"><a ng-click="editEmployeeServiceCodes(ds_employee, ds_job.id)"><i class="fa-orange fa-pencil-square"></i></a></td>
+                          <td width="25" align="center"  nowrap="nowrap"><a ng-click="editEmployeeServiceCodes(ds_employee, ds_job)"><i class="fa-orange fa-pencil-square"></i></a></td>
                           <td  nowrap="nowrap">
                             {{ employees[ds_employee.id].full_name }}
                             <a ng-click="removeEmployeeFromJob(ds_employee, ds_job)"><i class="fa-red fa-minus-square"></i></a>
@@ -655,8 +672,9 @@
                             <td colspan="15">
                                 <div class="form-inline">
                                     <div class="form-group">
-                                        <input type="checkbox" value="1" ng-model="ds_job.nomaterials" ng-change="saveNoMaterialsToJob(ds_job, ds_job.nomaterials)">
+                                        <input type="checkbox" value="1" class="checkbox-nomaterialsused" ng-model="ds_job.nomaterials" ng-change="saveNoMaterialsToJob(ds_job, ds_job.nomaterials)">
                                         Check this box if no materials were used
+                                        <span ng-if="!ds_job.nomaterials" class="span-nomaterialsused-error class-error" style="display: none">Please check off this box or add materials</span>
                                     </div>
                                 </div>
                             </td>
@@ -751,7 +769,7 @@
 <div id="div_popupStartEndTimes" style="background: no-repeat 50% 50% rgba(255, 255, 255, 1); left: 0; top: 0; width: 100%; height: 100%; text-align: center; display: none; position: fixed; z-index: 1001;">
     <div style="top: 50%; text-align: center; position: relative; transform: translatey(-50%); -webkit-transform: translatey(-50%); max-height: 80%; overflow: auto;">
         <center>
-            <table cellspacing="0" align="center" style="width: 50%; border: 1px solid black">
+            <table cellspacing="0" align="center" style="width: 50%; min-width: 750px; border: 1px solid black">
                 <tr>
                     <td align="center" style="padding: 10px; border-top: 1px solid black; border-bottom: 2px solid black; background-color: #999999; color: #FFFFFF">Start/End Times: {{ ds_data.editing_employee.name }}</td>
                 </tr>
@@ -767,12 +785,30 @@
                         <div class="form-inline">
                             <div class="form-group">
                                 <label for="starttime">Start Time:</label>
-                                <select ng-model="startendtime.starttime" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options"></select>
+                                <select class="class-selecttype" ng-model="startendtime.starttime" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options"></select>
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                 <label for="endtime">End Time:</label>
-                                <select ng-model="startendtime.endtime" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options"></select>
+                                <select class="class-selecttype" ng-model="startendtime.endtime" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options"></select>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <label for="endtime">Total Time:</label>
+                                <span ng-if="startendtime.totalTimeDisplay && isEmployeeStartTimeValid(startendtime.totalTime)">{{ startendtime.totalTimeDisplay }}</span>
+                                <span ng-if="!startendtime.totalTimeDisplay">00:00</span>
+                                <span class="class-error" ng-if="!isEmployeeStartTimeValid(startendtime.totalTime)">{{ startendtime.totalTimeDisplay }}</span>
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                 <a class="btn btn-danger btn-xs" ng-click="removeStartEndTime(index)">Remove</a>
+                            </div>
+                        </div>
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <label for="starttime">Or Type:</label>
+                                <input class="class-selecttype" ng-model="startendtime.starttime_typed" ng-change="updateTempEmployeeStartTimes()">
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <label for="endtime">Or Type:</label>
+                                <input class="class-selecttype" ng-model="startendtime.endtime_typed" ng-change="updateTempEmployeeStartTimes()">
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             </div>
                         </div>
                     </td>
@@ -780,7 +816,7 @@
                 <tr>
                     <td>
                         <center>
-                            <a class="btn btn-info btn-md" ng-click="saveStartEndTimes()">Save</a>
+                            <a class="btn btn-info btn-md" ng-click="saveStartEndTimes()">Save to This employee only</a>
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <a class="btn btn-primary btn-md" ng-click="saveStartEndTimesToAllEmployees()">Save to ALL employees</a>
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -802,7 +838,7 @@
 <div id="div_popupServiceCodes" style="background: no-repeat 50% 50% rgba(255, 255, 255, 1); left: 0; top: 0; width: 100%; height: 100%; text-align: center; display: none; position: fixed; z-index: 1001;">
     <div style="top: 50%; text-align: center; position: relative; transform: translatey(-50%); -webkit-transform: translatey(-50%); max-height: 80%; overflow: auto;">
         <center>
-            <table cellspacing="0" align="center" style="width: 50%; border: 1px solid black">
+            <table cellspacing="0" align="center" style="width: 50%; min-width: 750px; border: 1px solid black">
                 <tr>
                     <td align="center" style="padding: 10px; border-top: 1px solid black; border-bottom: 2px solid black; background-color: #999999; color: #FFFFFF">Service Codes: {{ ds_data.editing_employee.name }}</td>
                 </tr>
@@ -831,7 +867,17 @@
                 <tr>
                     <td>
                         <center>
-                            <a class="btn btn-info btn-md" ng-click="saveServiceCodes()">Save</a>
+                            Total Job Time:&nbsp;{{ getTempJobTime() }}
+                            <span class="class-error" ng-if="getTempJobTime() != getTempServiceTime()">&nbsp;&nbsp;&nbsp;&nbsp;Total Service Time:&nbsp;{{ getTempServiceTime() }}</span>
+                            <span ng-if="getTempJobTime() == getTempServiceTime()">&nbsp;&nbsp;&nbsp;&nbsp;Total Service Time:&nbsp;{{ getTempServiceTime() }}</span>
+                        </center>
+                        <br />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <center>
+                            <a class="btn btn-info btn-md" ng-click="saveServiceCodes()">Save to This employee only</a>
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <a class="btn btn-primary btn-md" ng-click="saveServiceCodesToAllEmployees()">Save to ALL employees</a>
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -848,7 +894,7 @@
 <div id="div_popupJobTimes" style="background: no-repeat 50% 50% rgba(255, 255, 255, 1); left: 0; top: 0; width: 100%; height: 100%; text-align: center; display: none; position: fixed; z-index: 1001;">
     <div style="top: 50%; text-align: center; position: relative; transform: translatey(-50%); -webkit-transform: translatey(-50%); max-height: 80%; overflow: auto;">
         <center>
-            <table cellspacing="0" align="center" style="width: 50%; border: 1px solid black">
+            <table cellspacing="0" align="center" style="width: 50%; min-width: 750px; border: 1px solid black">
                 <tr>
                     <td align="center" style="padding: 10px; border-top: 1px solid black; border-bottom: 2px solid black; background-color: #999999; color: #FFFFFF">Job Times: {{ ds_temp.editing_job_name }}</td>
                 </tr>
@@ -858,24 +904,32 @@
                         <div class="form-inline">
                             <div class="form-group">
                                 <label for="starttime">Start Time:</label>
-                                <select ng-model="ds_temp.editing_starttime" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options" class="form-control"></select>
+                                <select ng-model="ds_temp.editing_starttime" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options" class="form-control" ng-change="changeJobTimes()"></select>
                             </div>
                         </div>
                         <br />
                         <div class="form-inline">
                             <div class="form-group">
                                 <label for="starttime">Lunch Start:</label>
-                                <select ng-model="ds_temp.editing_starttime_lunch" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options" class="form-control"></select>
+                                <select ng-model="ds_temp.editing_starttime_lunch" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options" class="form-control" ng-change="changeJobTimes()"></select>
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                 <label for="starttime">Lunch End:</label>
-                                <select ng-model="ds_temp.editing_endtime_lunch" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options" class="form-control"></select>
+                                <select ng-model="ds_temp.editing_endtime_lunch" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options" class="form-control" ng-change="changeJobTimes()"></select>
                             </div>
                         </div>
                         <br />
                         <div class="form-inline">
                             <div class="form-group">
                                 <label for="starttime">End Time:</label>
-                                <select ng-model="ds_temp.editing_endtime" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options" class="form-control"></select>
+                                <select ng-model="ds_temp.editing_endtime" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options" class="form-control" ng-change="changeJobTimes()"></select>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <label for="starttime">Total Time:</label>
+                                <span ng-if="isJobStartTimeValid(ds_temp.editing_totalTime)">{{ ds_temp.editing_totalTimeDisplay }}</span>
+                                <span class="class-error" ng-if="!isJobStartTimeValid(ds_temp.editing_totalTime)">{{ ds_temp.editing_totalTimeDisplay }}</span>
                             </div>
                         </div>
                     </td>
@@ -903,7 +957,7 @@
 <div id="div_popupMaterials" style="background: no-repeat 50% 50% rgba(255, 255, 255, 1); left: 0; top: 0; width: 100%; height: 100%; text-align: center; display: none; position: fixed; z-index: 1001;">
     <div style="top: 50%; text-align: center; position: relative; transform: translatey(-50%); -webkit-transform: translatey(-50%); max-height: 80%; overflow: auto;">
         <center>
-            <table cellspacing="0" align="center" style="width: 50%; border: 1px solid black">
+            <table cellspacing="0" align="center" style="width: 50%; min-width: 750px; border: 1px solid black">
                 <tr>
                     <td align="center" style="padding: 10px; border-top: 1px solid black; border-bottom: 2px solid black; background-color: #999999; color: #FFFFFF">Materials: {{ ds_data.editing_job_name.name }}</td>
                 </tr>
@@ -997,6 +1051,8 @@
     var admin_password = 'firebase1!';
     var db_root = '<cfoutput>#Replace(CGI.REMOTE_ADDR, '.', '', 'ALL')#</cfoutput>/<cfoutput>#SESSION.userid#</cfoutput>/add';
     var date_now = '<cfoutput>#dateFormat(now(), 'mm/dd/yyyy')#</cfoutput>';
+    var date_now_raw = '<cfoutput>#dateFormat(now(), 'yyyy-mm-dd')#</cfoutput>';
+    var date_block_raw = '<cfoutput>#dateFormat(APPLICATION.blockdate, 'yyyy-mm-dd')#</cfoutput>';
     var admin_branch = '<cfoutput>#SESSION.branch#</cfoutput>';
     var last_crew_leader_id;
 
@@ -1081,6 +1137,8 @@
                         $scope.jobs = jobs;
                         $scope.servicecodes_select = servicecodes_select;
                         $scope.materials_select = materials_select;
+                        $scope.date_latest_raw = date_now_raw;
+                        $scope.date_earliest_raw = date_block_raw;
 
                         $scope.ds_data.$loaded(function(data){
                             $scope.ds_employees.$loaded(function(data){
@@ -1172,18 +1230,25 @@
                                 $scope.ds_temp.editing_startendtimes = [];
                             var starttime = '8:50';
                             if ($scope.ds_temp.editing_startendtimes[$scope.ds_temp.editing_startendtimes.length-1])
-                                starttime = $scope.ds_temp.editing_startendtimes[$scope.ds_temp.editing_startendtimes.length-1].endtime;
+                                starttime = addMinutesToTime($scope.ds_temp.editing_startendtimes[$scope.ds_temp.editing_startendtimes.length-1].endtime, 30);
                             var endtime = starttime;
-                            $scope.ds_temp.editing_startendtimes.push({ 'starttime': starttime, 'endtime': endtime });
+                            var totalTime = 0;
+                            $scope.ds_temp.editing_startendtimes.push({ 'starttime': starttime, 'endtime': endtime, 'totalTime': totalTime });
                             console.log($scope.ds_temp.editing_startendtimes);
                         };
+
+                        $scope.changeStartEndTime = function(index){
+                            $scope.ds_temp.editing_startendtimes[index].totalTime = getTotalTime($scope.ds_temp.editing_startendtimes[index].starttime, $scope.ds_temp.editing_startendtimes[index].endtime);
+                            $scope.ds_temp.editing_startendtimes[index].totalTimeDisplay = getTotalTimeDisplay($scope.ds_temp.editing_startendtimes[index].totalTime);
+                        }
 
                         $scope.removeStartEndTime = function(key){
                             $scope.ds_temp.editing_startendtimes.splice(key, 1);
                         }
 
                         $scope.saveStartEndTimes = function(){
-                            $scope.saveStartEndTime();
+                            if (!$scope.saveStartEndTime()) return;
+
                             hidePopup('div_popupStartEndTimes');
                         };
 
@@ -1193,14 +1258,21 @@
                             totalminutes = 0;
                             for(var i=0; i<employee.startendtimes.length; i++)
                             {
+                                var startendtime = employee.startendtimes[i];
+                                if (!$scope.isEmployeeStartTimeValid(startendtime.totalTime))
+                                {
+                                    alert('At least one start/time pair has an invalid Total Time.');
+                                    return false;
+                                }
+
                                 employee.startendtimes[i].starttime_display = getTimeDisplay(employee.startendtimes[i].starttime);
                                 employee.startendtimes[i].endtime_display = getTimeDisplay(employee.startendtimes[i].endtime);
-                                totalminutes += getTotalTime(employee.startendtimes[i].starttime, employee.startendtimes[i].endtime);
+                                var totalTime = getTotalTime(employee.startendtimes[i].starttime, employee.startendtimes[i].endtime);
+                                totalminutes += totalTime;
                             }
-                            var totalhours = Math.floor(totalminutes / 60);
-                            var totalminutes = totalminutes % 60;
-                            employee.totalTime = (totalhours<10?'0'+totalhours:totalhours)+':'+(totalminutes<10?'0'+totalminutes:totalminutes);
+                            employee.totalTime = getTotalTimeDisplay(totalminutes);
                             $scope.ds_employees.$save(employee);
+                            return true;
                         };
 
                         $scope.saveStartEndTimesToAllEmployees = function(){
@@ -1209,7 +1281,7 @@
                             for(var i=0; i<$scope.ds_employees.length; i++)
                             {
                                 $scope.ds_temp.editing_employee = $scope.ds_employees[i];
-                                $scope.saveStartEndTime();
+                                if (!$scope.saveStartEndTime()) return;
                             }
                             hidePopup('div_popupStartEndTimes');
                         };
@@ -1251,16 +1323,34 @@
                             $scope.ds_temp.editing_starttime_lunch = job.starttime_lunch;
                             $scope.ds_temp.editing_endtime_lunch = job.endtime_lunch;
                             $scope.ds_temp.editing_startendtimes_options = buildStartEndTimesOptions();
+                            $scope.changeJobTimes();
 
                             showPopup('div_popupJobTimes');
                         }
                         
+                        $scope.changeJobTimes = function(){
+                            var totalminutes = getTotalTime($scope.ds_temp.editing_starttime, $scope.ds_temp.editing_endtime);
+                            if ($scope.ds_temp.editing_starttime_lunch && $scope.ds_temp.editing_endtime_lunch)
+                            {
+                                var totallunchminutes = getTotalTime($scope.ds_temp.editing_starttime_lunch, $scope.ds_temp.editing_endtime_lunch);
+                                totalminutes -= totallunchminutes;
+                            }
+                            $scope.ds_temp.editing_totalTime = totalminutes;
+                            $scope.ds_temp.editing_totalTimeDisplay = getTotalTimeDisplay(totalminutes)+' ('+totalminutes+' min)';
+                        }
+                        
                         $scope.saveJobTimes = function(){
-                            $scope.saveJobTimesToJob();
+                            if (!$scope.saveJobTimesToJob()) return;
                             hidePopup('div_popupJobTimes');
                         };
 
                         $scope.saveJobTimesToJob = function(){
+                            if (!$scope.isJobStartTimeValid($scope.ds_temp.editing_totalTime))
+                            {
+                                alert('Please make sure all times are correct for this job.');
+                                return false;
+                            }
+
                             var job_id = $scope.ds_temp.editing_job.id;
 
                             var query = DBModel(db_root+'/ds_jobs').orderByChild("id").equalTo(job_id).limitToFirst(1);
@@ -1291,6 +1381,8 @@
 
                                 $scope.refreshJobCalculations(job.id);
                             });
+
+                            return true;
                         };
 
                         $scope.cancelJobTimes = function(){
@@ -1449,9 +1541,10 @@
                             $scope.refreshEmployeeCalculations(employee.id);
                         };
                         
-                        $scope.editEmployeeServiceCodes = function(employee, job_id){
+                        $scope.editEmployeeServiceCodes = function(employee, job){
                             $scope.ds_temp = {};
-                            $scope.ds_temp.editing_job_id = job_id;
+                            $scope.ds_temp.editing_job = job;
+                            $scope.ds_temp.editing_job_id = job.id;
                             $scope.ds_temp.editing_employee = employee;
                             $scope.ds_temp.editing_employee_name = employee.name;
                             $scope.ds_temp.editing_servicecodes = employee.servicecodes;
@@ -1497,14 +1590,10 @@
                             {
                                 for(var i in employee.servicecodeparents)
                                 {
-                                    var totalhourscalc = Math.floor(employee.servicecodeparents[i] / 60);
-                                    var totalminutescalc = employee.servicecodeparents[i] % 60;
-                                    employee.servicecodeparentsdisplay[i] = (totalhourscalc<10?'0'+totalhourscalc:totalhourscalc)+':'+(totalminutescalc<10?'0'+totalminutescalc:totalminutescalc);
+                                    employee.servicecodeparentsdisplay[i] = getTotalTimeDisplay(employee.servicecodeparents[i]);
                                 }
                             }
-                            var totalhours = Math.floor(totalminutes / 60);
-                            var totalminutes = totalminutes % 60;
-                            employee.totalServiceTime = (totalhours<10?'0'+totalhours:totalhours)+':'+(totalminutes<10?'0'+totalminutes:totalminutes);
+                            employee.totalServiceTime = getTotalTimeDisplay(totalminutes);
 
                             var key = -1;
                             var job;
@@ -1594,23 +1683,18 @@
                             if (key == -1) return;
 
                             var totalminutes = getTotalTime($scope.ds_jobs[key].starttime, $scope.ds_jobs[key].endtime);
-                            console.log('total minutes: '+totalminutes);
                             if ($scope.ds_jobs[key].starttime_lunch && $scope.ds_jobs[key].endtime_lunch)
                             {
                                 var totallunchminutes = getTotalTime($scope.ds_jobs[key].starttime_lunch, $scope.ds_jobs[key].endtime_lunch);
                                 console.log('total lunch minutes: '+totallunchminutes);
                                 totalminutes -= totallunchminutes;
                             }
-                            var totalhourscalc = Math.floor(totalminutes / 60);
-                            var totalminutescalc = totalminutes % 60;
-                            $scope.ds_jobs[key].totalTime = (totalhourscalc<10?'0'+totalhourscalc:totalhourscalc)+':'+(totalminutescalc<10?'0'+totalminutescalc:totalminutescalc);
+                            $scope.ds_jobs[key].totalTime = getTotalTimeDisplay(totalminutes);
                             $scope.ds_jobs[key].totalTimeDisplay = $scope.ds_jobs[key].totalTime+' ('+totalminutes+' min)';
 
                             $scope.ds_jobs[key].totalTimeCrew = totalcrewminutes;
                             var totalcrewminutes = 1*$scope.ds_jobs[key].totalTimeCrew;
-                            var totalhours = Math.floor(totalcrewminutes / 60);
-                            var totalminutes = totalcrewminutes % 60;
-                            $scope.ds_jobs[key].totalTimeCrewDisplay = (totalhours<10?'0'+totalhours:totalhours)+':'+(totalminutes<10?'0'+totalminutes:totalminutes);
+                            $scope.ds_jobs[key].totalTimeCrewDisplay = getTotalTimeDisplay(totalcrewminutes)+' ('+totalcrewminutes+' min)';
                             $scope.ds_jobs.$save(key);
                         }
                         
@@ -1648,9 +1732,7 @@
                             if (key == -1) return;
 
                             var employee = $scope.ds_employees[key];
-                            var totalhours = Math.floor(totalminutes / 60);
-                            var totalminutes = totalminutes % 60;
-                            employee.jobTime = (totalhours<10?'0'+totalhours:totalhours)+':'+(totalminutes<10?'0'+totalminutes:totalminutes);;
+                            employee.jobTime = getTotalTimeDisplay(totalminutes);
                             $scope.ds_employees.$save(employee);
                         }
 
@@ -1691,14 +1773,37 @@
                                 var employee = $scope.ds_employees[i];
                                 $scope.employees_cached.push([employee.id, employees[employee.id].full_name]);
                             }
+
+                            if ($scope.ds_data.ds_date)
+                                $scope.ds_data.ds_date_raw = $scope.ds_data.ds_date.substring(6, 10) + '-' + $scope.ds_data.ds_date.substring(0, 2) + '-' + $scope.ds_data.ds_date.substring(3, 5);
+
                             $scope.ds_data.$save();
                             console.log('saved');
                             console.log($scope.ds_data);
                         };
 
+                        $scope.createDailySheet = function(){
+                            var error_message = '';
+                            if (!$scope.isDateValid())
+                                error_message = 'Please correct this daily sheet\'s date.';
+                            else if (!$scope.areAllMaterialsEntered())
+                            {
+                                $('.span-nomaterialsused-error').show();
+                                error_message = 'Please check the box for all jobs with no materials.';
+                            }
+
+                            if (error_message)
+                            {
+                                alert(error_message);
+                                return;
+                            }
+
+                            $scope.syncPostData();
+                        }
+
                         $scope.syncPostData = function(){
                             firebase.database().ref(db_root).once('value', function(snap){
-                                if (!confirm('Save this daily sheet?')) return;
+                                if (!confirm('Create this daily sheet?')) return;
 
                                 $('#ds_post_data').val(JSON.stringify(snap.val()));
                                 $('#form_saveds').submit();
@@ -1712,6 +1817,83 @@
                                 reInitialize();
                             });
                         };
+
+                        //VALIDATION
+                        $scope.isDateValid = function(){
+                            return $scope.ds_data.ds_date_raw >= $scope.date_earliest_raw && $scope.ds_data.ds_date_raw <= $scope.date_latest_raw;
+                        }
+
+                        $scope.isEmployeeStartTimeValid = function(totalTime){
+                            return totalTime > 0 && totalTime < 15*60;
+                        }
+
+                        $scope.isJobStartTimeValid = function(totalTime){
+                            return totalTime > 0 && totalTime < 15*60;
+                        }
+
+                        $scope.getTempJobTime = function(){
+                            try
+                            {
+                                return $scope.ds_temp.editing_job.totalTimeDisplay;
+                            }
+                            catch(ob)
+                            {
+                                return '';
+                            }
+                        }
+
+                        $scope.getTempServiceTime = function(){
+                            try
+                            {
+                                var totalminutes = 0;
+                                for(var i=0; i<$scope.ds_temp.editing_servicecodes.length; i++)
+                                {
+                                    var servicecode = $scope.ds_temp.editing_servicecodes[i];
+                                    totalminutes += 1*servicecode.time;
+                                }
+                                return getTotalTimeDisplay(totalminutes)+' ('+totalminutes+' min)';
+                            }
+                            catch(ob)
+                            {
+                                return '00:00 (0 min)';
+                            }
+                        }
+
+                        $scope.updateTempEmployeeStartTimes = function(){
+                            try
+                            {
+                                for(var i=0; i<$scope.ds_temp.editing_startendtimes.length; i++)
+                                {
+                                    var startendtime = $scope.ds_temp.editing_startendtimes[i];
+                                    if (startendtime.starttime_typed)
+                                    {
+                                        startendtime.starttime = parseTypedTimeIntoValue(startendtime.starttime_typed);
+                                    }
+                                    if (startendtime.endtime_typed)
+                                    {
+                                        startendtime.endtime = parseTypedTimeIntoValue(startendtime.endtime_typed);
+                                    }
+                                    $scope.changeStartEndTime(i);
+                                }
+                            }
+                            catch(ob)
+                            {
+
+                            }
+                        }
+
+                        $scope.areAllMaterialsEntered = function(){
+                            var allchecked = true;
+                            $('.checkbox-nomaterialsused').each(function(){
+                                if ($(this).is(':visible') && !$(this).attr("checked")) {
+                                    allchecked = false;
+                                }
+                            });
+                            return allchecked;
+                        }
+
+                        //bind to JS functions for ng-if use
+                        $scope.getTotalTimeFromString = getTotalTimeFromString;
 
                     } else {
                         // No user is signed in.
@@ -1872,6 +2054,14 @@
         return (hour<10?'0'+hour:hour)+':'+(minute<10?'0'+minute:minute)+' '+ampm.toUpperCase();
     }
 
+    function getTotalTimeDisplay(totalminutes)
+    {
+        if (totalminutes < 0) return '';
+        var totalhours = Math.floor(totalminutes / 60);
+        totalminutes = totalminutes % 60;
+        return (totalhours<10?'0'+totalhours:totalhours)+':'+(totalminutes<10?'0'+totalminutes:totalminutes);
+    }
+
     function getTotalTime(starttime, endtime)
     {
         var startminutes = getTotalTimeFromString(starttime);
@@ -1899,6 +2089,54 @@
 
         var spl = str.split(' - ');
         return spl[0];
+    }
+
+    function parseTypedTimeIntoValue(time)
+    {
+        var numberPattern = /\d+/g;
+        var spl = time.split(':');
+        var hour = 0;
+        var minute = 0;
+        if (spl.length > 0)
+        {
+            hour = 1*spl[0].match(numberPattern)[0];
+            if (spl.length > 1)
+            {
+                minute = 1*spl[1].match(numberPattern)[0];
+            }
+        }
+
+        //make assumptions about times based on business hours
+        if (hour >= 6 && hour <= 11) //assume these are AM
+        {
+            if (time.toLowerCase().indexOf('pm') != -1)
+                hour += 12;
+        }
+        else if (hour >= 13) //army time
+        {
+        }
+        else //assume these are PM
+        {
+            if (hour == 12)
+            {
+                if (time.toLowerCase().indexOf('am') != -1)
+                    hour = 0;
+            }
+            else
+            {
+                hour += 12;
+                if (time.toLowerCase().indexOf('am') != -1)
+                    hour -= 12;
+            }
+        }
+        return hour+':'+minute;
+    }
+
+    function addMinutesToTime(time, minutes)
+    {
+        var totalminutes = getTotalTimeFromString(time);
+        totalminutes += minutes;
+        return getTotalTimeDisplay(totalminutes);
     }
 </script>
 </body>
