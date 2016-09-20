@@ -20,30 +20,6 @@ You get it?
 <cfset today_3PM = createDatetime(y,m,d,15,0,0)>
 <cfset timenow = Now()>
 
-<cfquery name="get_all_employees" datasource="#CONFIG_DATABASENAME#">
-  SELECT ae.[Employee ID] as employee_id, ae.[Name FirstLast] as full_name, ae.first_name, ae.last_name, CASE WHEN ac.employee_position_id IS NULL OR ac.employee_position_id=2 THEN 0 ELSE CASE WHEN ar.is_admin > 0 THEN 1 ELSE ac.employee_position_id END END as access_role, ac.crew_leader_id, ae.branch FROM app_employees ae
-  INNER JOIN app_crews ac ON ac.employee_id=ae.[Employee ID]
-  LEFT JOIN access_roles ar ON ar.access_role_id=ac.employee_position_id
-  WHERE ae.[Employee ID] < 9500
-  GROUP BY ae.[Employee ID], ae.[Name FirstLast], ae.first_name, ae.last_name, ac.crew_leader_id, ae.branch, ac.employee_position_id, ar.is_admin
-  ORDER BY ae.last_name
-</cfquery>
-<cfset employees = ArrayNew(1)>
-<cfset employees_used = StructNew()>
-<cfloop query="get_all_employees">
-    <cfif !StructKeyExists(employees_used, employee_id)>
-        <cfset StructInsert(employees_used, employee_id, 1)>
-        <cfset ArrayAppend(employees, { 'id': employee_id, 'name': full_name , 'first_name': first_name, 'last_name': last_name, 'access_role': access_role, 'crew_leader_id': crew_leader_id, 'branch': branch })>
-    </cfif>
-</cfloop>
-
-<cfquery name="get_branches" datasource="#CONFIG_DATABASENAME#">
-  SELECT * FROM branches
-  WHERE branch_active=1
-  AND branch_visible_to_select=1
-  ORDER BY branch_name
-</cfquery>
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -224,6 +200,10 @@ input {
     <cfset SESSION.production_manager = url.production_manager>
     <cfset SESSION.crew_leader = url.crew_leader>
     <cfset url.start = 1>
+  <cfelse>
+	<cfset SESSION.dailysheet_branch = ''>
+	<cfset SESSION.production_manager = ''>
+	<cfset SESSION.crew_leader = ''>
   </cfif>
   <cfset dailysheet_branch = SESSION.dailysheet_branch>
   <cfset production_manager = SESSION.production_manager>
@@ -400,6 +380,31 @@ AND Inspection_Type ='Evening'
 <!-- // <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap.min.js"></script> --> 
 <script scr="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/js/bootstrap.min.js"></script> 
 <script src="js/twitter-bootstrap-hover-dropdown.js"></script>
+
+<cfquery name="get_all_employees" datasource="#CONFIG_DATABASENAME#">
+  SELECT ae.[Employee ID] as employee_id, ae.[Name FirstLast] as full_name, ae.first_name, ae.last_name, CASE WHEN ac.employee_position_id IS NULL OR ac.employee_position_id=2 THEN 0 ELSE CASE WHEN ar.is_admin > 0 THEN 1 ELSE ac.employee_position_id END END as access_role, ac.crew_leader_id, ae.branch FROM app_employees ae
+  INNER JOIN app_crews ac ON ac.employee_id=ae.[Employee ID]
+  LEFT JOIN access_roles ar ON ar.access_role_id=ac.employee_position_id
+  WHERE ae.[Employee ID] < 9500
+  GROUP BY ae.[Employee ID], ae.[Name FirstLast], ae.first_name, ae.last_name, ac.crew_leader_id, ae.branch, ac.employee_position_id, ar.is_admin
+  ORDER BY ae.first_name, ae.last_name
+</cfquery>
+<cfset employees = ArrayNew(1)>
+<cfset employees_used = StructNew()>
+<cfloop query="get_all_employees">
+    <cfif !StructKeyExists(employees_used, employee_id)>
+        <cfset StructInsert(employees_used, employee_id, 1)>
+        <cfset ArrayAppend(employees, { 'id': employee_id, 'name': full_name , 'first_name': first_name, 'last_name': last_name, 'access_role': access_role, 'crew_leader_id': crew_leader_id, 'branch': branch })>
+    </cfif>
+</cfloop>
+
+<cfquery name="get_branches" datasource="#CONFIG_DATABASENAME#">
+  SELECT * FROM branches
+  WHERE branch_active=1
+  AND branch_visible_to_select=1
+  ORDER BY branch_name
+</cfquery>
+
 <script type='text/javascript'>
     <cfoutput>
     var dailysheet_branch = '#SESSION.dailysheet_branch#';
@@ -452,7 +457,7 @@ AND Inspection_Type ='Evening'
         {
             for(var i=0; i<employees_select[branch].length; i++) {
                 var e = employees[employees_select[branch][i][0]];
-                html += '<option value="'+e.employee_id+'"'+(e.employee_id==employee_id?' selected':'')+'>'+e.last_name+', '+e.first_name+'</option>';
+                html += '<option value="'+e.employee_id+'"'+(e.employee_id==employee_id?' selected':'')+'>'+e.first_name+' '+e.last_name+'</option>';
             }
         }
         html += '</select>';
