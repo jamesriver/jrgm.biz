@@ -1,5 +1,5 @@
-   <cfif  IsDefined("SESSION.access_role")  AND SESSION.access_role EQ  '94'    OR    SESSION.access_role EQ  '97' >
-   <cfset referringPage = #CGI.HTTP_REFERER#>
+<cfif  IsDefined("SESSION.access_role")  AND SESSION.access_role EQ  '94'    OR    SESSION.access_role EQ  '97' >
+<cfset referringPage = #CGI.HTTP_REFERER#>
 
 Click <a href="<cfoutput>#referringPage#</cfoutput>">Here</a> to go back to the page you just came from.
 <br />
@@ -9,6 +9,8 @@ You get it?
 <cflocation url="#referringPage#"> 
    
    <cfelse>
+   <cfinclude template="#APPLICATION.basePath#include/init.cfm">
+
    <cfparam name="dsid"     default="100">
 <cfparam name="form.dsid"     default="100">
 <CFSET todaydate_DS =  DateFormat(now(), "mm/dd/yyyy")>
@@ -17,6 +19,31 @@ You get it?
 <cfset d = day(now())>
 <cfset today_3PM = createDatetime(y,m,d,15,0,0)>
 <cfset timenow = Now()>
+
+<cfquery name="get_all_employees" datasource="#CONFIG_DATABASENAME#">
+  SELECT ae.[Employee ID] as employee_id, ae.[Name FirstLast] as full_name, ae.first_name, ae.last_name, CASE WHEN ac.employee_position_id IS NULL OR ac.employee_position_id=2 THEN 0 ELSE CASE WHEN ar.is_admin > 0 THEN 1 ELSE ac.employee_position_id END END as access_role, ac.crew_leader_id, ae.branch FROM app_employees ae
+  INNER JOIN app_crews ac ON ac.employee_id=ae.[Employee ID]
+  LEFT JOIN access_roles ar ON ar.access_role_id=ac.employee_position_id
+  WHERE ae.[Employee ID] < 9500
+  GROUP BY ae.[Employee ID], ae.[Name FirstLast], ae.first_name, ae.last_name, ac.crew_leader_id, ae.branch, ac.employee_position_id, ar.is_admin
+  ORDER BY ae.last_name
+</cfquery>
+<cfset employees = ArrayNew(1)>
+<cfset employees_used = StructNew()>
+<cfloop query="get_all_employees">
+    <cfif !StructKeyExists(employees_used, employee_id)>
+        <cfset StructInsert(employees_used, employee_id, 1)>
+        <cfset ArrayAppend(employees, { 'id': employee_id, 'name': full_name , 'first_name': first_name, 'last_name': last_name, 'access_role': access_role, 'crew_leader_id': crew_leader_id, 'branch': branch })>
+    </cfif>
+</cfloop>
+
+<cfquery name="get_branches" datasource="#CONFIG_DATABASENAME#">
+  SELECT * FROM branches
+  WHERE branch_active=1
+  AND branch_visible_to_select=1
+  ORDER BY branch_name
+</cfquery>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -172,34 +199,86 @@ input {
           <input type="submit" value="Daily Sheets" /></td>
       </tr>
     </table>
+    <br />
+    <table align="center">
+        <tr>
+          <td nowrap="nowrap" align="right">Branch:&nbsp;</td>
+          <td><span id="span_main_branch"></span></td>
+          <td>&nbsp;&nbsp;&nbsp;</td>
+          <td nowrap="nowrap" align="right">Production Manager:&nbsp;</td>
+          <td><span id="span_production_manager_employee"></span></td>
+          <td>&nbsp;&nbsp;&nbsp;</td>
+          <td nowrap="nowrap" align="right">Crew Leader:&nbsp;</td>
+          <td><span id="span_crew_leader_employee"></span></td>
+          <td>&nbsp;&nbsp;&nbsp;</td>
+          <td><input type="button" value="Apply Filters" onClick="applyFilters()"></td>
+        </tr>
+      </table>
     <input type="hidden"  name="submitted" value="yes"/>
   </form>
   <br />
-  <cfquery name="get_daily_sheets" datasource="jrgm"   >
- SELECT  * FROM app_daily_sheets 
-<cfif IsDefined("form.submitted")  AND form.dsid NEQ "" >WHERE ID = #form.dsid#</cfif>
-ORDER by ID DESC
- </cfquery>
+
+  <!--- GET FILTER VARIABLES --->
+  <cfif IsDefined('url.branch') AND IsDefined('url.production_manager') AND IsDefined('url.crew_leader')>
+    <cfset SESSION.dailysheet_branch = url.branch>
+    <cfset SESSION.production_manager = url.production_manager>
+    <cfset SESSION.crew_leader = url.crew_leader>
+    <cfset url.start = 1>
+  </cfif>
+  <cfset dailysheet_branch = SESSION.dailysheet_branch>
+  <cfset production_manager = SESSION.production_manager>
+  <cfset crew_leader = SESSION.crew_leader>
+  <cfif dailysheet_branch NEQ ''>
+      <cfquery name="get_daily_sheets" datasource="jrgm">
+        SELECT  * FROM app_daily_sheets ads
+        <cfif dailysheet_branch NEQ ''>
+            INNER JOIN branches b ON b.branch_code=ads.branch_code AND b.branch_name='#dailysheet_branch#'
+        </cfif>
+        WHERE 1=1
+        <cfif IsDefined("form.submitted")  AND form.dsid NEQ "" >
+            AND ads.ID = #form.dsid#
+        <cfelse>
+            <cfif production_manager NEQ ''>
+                AND ads.supervisor_id = '#production_manager#'
+            </cfif>
+            <cfif crew_leader NEQ ''>
+                AND ads.crew_leader_id = '#crew_leader#'
+            </cfif>
+        </cfif>
+        ORDER by ads.ID DESC
+      </cfquery>
+  <cfelse>
+      <cfquery name="get_daily_sheets" datasource="jrgm"   >
+        SELECT  * FROM app_daily_sheets
+        <cfif IsDefined("form.submitted")  AND form.dsid NEQ "" >WHERE ID = #form.dsid#</cfif>
+        ORDER by ID DESC
+      </cfquery>
+  </cfif>
   <cfset perpage = 50>
+  <cfif !IsDefined('url.start') AND IsDefined('SESSION.dailysheet_start')>
+    <cfset url.start = SESSION.dailysheet_start>
+  </cfif>
   <cfparam name="url.start" default="1">
   <cfif not isNumeric(url.start) or url.start lt 1 or url.start gt get_daily_sheets.recordCount or round(url.start) neq url.start>
     <cfset url.start = 1>
   </cfif>
+  <cfset SESSION.dailysheet_start = url.start>
+  <cfset pagestart = url.start>
   <cfset totalPages = ceiling(get_daily_sheets.recordCount / perpage)>
-  <cfset thisPage = ceiling(url.start / perpage)>
+  <cfset thisPage = ceiling(pagestart / perpage)>
   <cfif  NOT IsDefined("form.submitted") >
     <table width="100%" border="0" cellspacing="10" cellpadding="0">
       <tr class="arialfont">
         <td> [
-          <cfif url.start gt 1>
-            <cfset link = cgi.script_name & "?start=" & (url.start - perpage)>
+          <cfif pagestart gt 1>
+            <cfset link = cgi.script_name & "?start=" & (pagestart - perpage)>
             <cfoutput><a href="#link#">Newer Daily Sheets </a></cfoutput>
             <cfelse>
             Newer Daily Sheets
           </cfif>
           /
-          <cfif (url.start + perpage - 1) lt get_daily_sheets.recordCount>
-            <cfset link = cgi.script_name & "?start=" & (url.start + perpage)>
+          <cfif (pagestart + perpage - 1) lt get_daily_sheets.recordCount>
+            <cfset link = cgi.script_name & "?start=" & (pagestart + perpage)>
             <cfoutput><a href="#link#">Older Daily Sheets</a></cfoutput>
             <cfelse>
             Older Daily Sheets
@@ -230,13 +309,13 @@ ORDER by ID DESC
       </tr>
     </thead>
     <tbody>
-      <CFSET startrow = #url.start#>
+      <CFSET startrow = #pagestart#>
       <CFSET endrow = startrow+50>
       <CFSET mylist ="">
       <cfloop query="get_daily_sheets"  startrow="#startrow#" endrow="#endrow#">
         <cfset myList = ListAppend(mylist,ID)>
       </cfloop>
-      <cfoutput query="get_daily_sheets" startrow="#url.start#" maxrows="#perpage#">
+      <cfoutput query="get_daily_sheets" startrow="#pagestart#" maxrows="#perpage#">
         <cfquery name="get_info_CL" datasource="jrgm"  cachedwithin="#createTimespan(0,8,0,0)#">
 SELECT  [Name FirstLast] AS employee_name
 FROM   app_employees WHERE [Employee ID] =#get_daily_sheets.crew_leader_id#
@@ -321,6 +400,79 @@ AND Inspection_Type ='Evening'
 <!-- // <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap.min.js"></script> --> 
 <script scr="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/js/bootstrap.min.js"></script> 
 <script src="js/twitter-bootstrap-hover-dropdown.js"></script>
+<script type='text/javascript'>
+    <cfoutput>
+    var dailysheet_branch = '#SESSION.dailysheet_branch#';
+    var production_manager = '#SESSION.production_manager#';
+    var crew_leader = '#SESSION.crew_leader#';
+
+    var employees = {};
+    var employees_select = {};
+    <cfloop from="1" to="#arrayLen(employees)#" index="i">
+        <cfset employee = employees[i]>
+        var employee = { full_name: '#employee.id# - #Replace(employee.name, "'", "\\'", "ALL")#', first_name: '#Replace(employee.first_name, "'", "\\'", "ALL")#', last_name: '#Replace(employee.last_name, "'", "\\'", "ALL")#', employee_id: '#employee.id#', branch: '#employee.branch#', 'access_role': '#employee.access_role#', 'crew_leader_id': '#employee.crew_leader_id#' };
+        employees[#employee.id#] = employee;
+        if (!employees_select[employee.branch])
+            employees_select[employee.branch] = [];
+        employees_select[employee.branch].push([employee.employee_id, employee.full_name]);
+    </cfloop>
+    </cfoutput>
+
+    var branches = {};
+    var branches_select = [];
+    var jobs = {};
+    var jobs_select = [];
+    <cfoutput query="get_branches">
+        branches['#branch_name#'] = { name: '#branch_name#', branch_abbr: '#branch_abbr#'};
+        branches_select.push(['#branch_name#', '#branch_name#']);</cfoutput>
+
+    function populateBranchSelect(spanId, branch) {
+        var html = '';
+        user_branch = '';
+        html += '<select id="'+spanId+'_branch" class="bs-select form-control" onChange="populateEmployeeSelect(\'crew_leader\', this.value); populateEmployeeSelect(\'production_manager\', this.value)">';
+        html += '<option value="">[ All ]</option>';
+        for(var i=0; i<branches_select.length; i++) {
+            var b = branches[branches_select[i][0]];
+            if (b.name == branch)
+                user_branch = branch;
+            html += '<option value="'+b.name+'"'+(b.name == branch?' selected':'')+'>'+b.name+'</option>';
+        }
+        html += '</select>';
+        $('#span_'+spanId+'_branch').html(html);
+
+        populateEmployeeSelect('main', user_branch);
+    }
+
+    function populateEmployeeSelect(spanId, branch, employee_id)
+    {
+        var html = '';
+        html += '<select id="'+spanId+'_employee" class="bs-select form-control">';
+        html += '<option value="">[ All ]</option>';
+        if (employees_select[branch])
+        {
+            for(var i=0; i<employees_select[branch].length; i++) {
+                var e = employees[employees_select[branch][i][0]];
+                html += '<option value="'+e.employee_id+'"'+(e.employee_id==employee_id?' selected':'')+'>'+e.last_name+', '+e.first_name+'</option>';
+            }
+        }
+        html += '</select>';
+        $('#span_'+spanId+'_employee').html(html);
+    }
+
+    function applyFilters()
+    {
+        var url = 'daily_sheet_listing.cfm?branch='+$('#main_branch').val();
+        url += '&production_manager='+$('#production_manager_employee').val();
+        url += '&crew_leader='+$('#crew_leader_employee').val();
+        window.location = url;
+    }
+
+    $( document ).ready(function() {
+        populateBranchSelect('main', dailysheet_branch);
+        populateEmployeeSelect('production_manager', dailysheet_branch, production_manager);
+        populateEmployeeSelect('crew_leader', dailysheet_branch, crew_leader);
+    });
+</script>
 </body>
 </html>
 </cfif>

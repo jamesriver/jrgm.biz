@@ -401,9 +401,6 @@
     .class-selecttype {
         width: 90px;
     }
-    .class-selecttype2 {
-        width: 120px !important;
-    }
 </style>
 <link href="/SSL/admin/css/styles_ds.css" rel="stylesheet" type="text/css" />
 </head>
@@ -415,7 +412,7 @@
       <td width="57"><img src="/SSL/admin/images/logosm.png" width="57" height="36" alt="James River Grounds Management" /></td>
       <td class="subbartxt">Welcome: #SESSION.screenname#</td>
       <td ><!--<a href="supervisors/setting.cfm" class="first"><img src="/SSL/admin/images/icon_settings.png" width="42" height="36" alt="Settings" /></a>--></td>
-     <td class="subbartxt" width="200" align="right">  <a href="default.cfm">Home</a><img src="/SSL/admin/images/clear.gif" width="20" height="2" alt="" /></td>
+     <td class="subbartxt" width="200" align="right">  <a href="#APPLICATION.homedirectory##APPLICATION.homepage#">Home</a><img src="/SSL/admin/images/clear.gif" width="20" height="2" alt="" /></td>
     </tr>
   </table>
 </div>
@@ -910,12 +907,6 @@
                                 <select ng-model="ds_temp.editing_starttime" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options" class="form-control" ng-change="changeJobTimes()"></select>
                             </div>
                         </div>
-                        <div class="form-inline">
-                            <div class="form-group">
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label for="starttime">Or Type:</label>
-                                <input class="class-selecttype2 form-control" ng-model="ds_temp.editing_starttime_typed" ng-change="updateTempJobTimes()">
-                            </div>
-                        </div>
                         <br />
                         <div class="form-inline">
                             <div class="form-group">
@@ -926,26 +917,11 @@
                                 <select ng-model="ds_temp.editing_endtime_lunch" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options" class="form-control" ng-change="changeJobTimes()"></select>
                             </div>
                         </div>
-                        <div class="form-inline">
-                            <div class="form-group">
-                                <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><label for="starttime">Or Type:</label>
-                                <input class="class-selecttype2 form-control" ng-model="ds_temp.editing_starttime_lunch_typed" ng-change="updateTempJobTimes()">
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <label for="starttime">Or Type:</label>
-                                <input class="class-selecttype2 form-control" ng-model="ds_temp.editing_endtime_lunch_typed" ng-change="updateTempJobTimes()">
-                            </div>
-                        </div>
                         <br />
                         <div class="form-inline">
                             <div class="form-group">
                                 <label for="starttime">End Time:</label>
                                 <select ng-model="ds_temp.editing_endtime" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options" class="form-control" ng-change="changeJobTimes()"></select>
-                            </div>
-                        </div>
-                        <div class="form-inline">
-                            <div class="form-group">
-                                &nbsp;&nbsp;&nbsp;<label for="starttime">Or Type:</label>
-                                <input class="class-selecttype2 form-control" ng-model="ds_temp.editing_endtime_typed" ng-change="updateTempJobTimes()">
                             </div>
                         </div>
                         <br />
@@ -1903,33 +1879,6 @@
                             catch(ob)
                             {
 
-                            }
-                        }
-                        
-                        $scope.updateTempJobTimes = function(){
-                            try
-                            {
-                                if ($scope.ds_temp.editing_starttime_typed)
-                                {
-                                    $scope.ds_temp.editing_starttime = parseTypedTimeIntoValue($scope.ds_temp.editing_starttime_typed);
-                                }
-                                if ($scope.ds_temp.editing_endtime_typed)
-                                {
-                                    $scope.ds_temp.editing_endtime = parseTypedTimeIntoValue($scope.ds_temp.editing_endtime_typed);
-                                }
-                                if ($scope.ds_temp.editing_starttime_lunch_typed)
-                                {
-                                    $scope.ds_temp.editing_starttime_lunch = parseTypedTimeIntoValue($scope.ds_temp.editing_starttime_lunch_typed);
-                                }
-                                if ($scope.ds_temp.editing_endtime_lunch_typed)
-                                {
-                                    $scope.ds_temp.editing_endtime_lunch = parseTypedTimeIntoValue($scope.ds_temp.editing_endtime_lunch_typed);
-                                }
-                                $scope.changeJobTimes();
-                            }
-                            catch(ob)
-                            {
-                            
                             }
                         }
 
