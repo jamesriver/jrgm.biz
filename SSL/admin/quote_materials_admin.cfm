@@ -1,5 +1,17 @@
 <cfinclude template="../quoting-new/include_cffunctions.cfm">
 
+<cfif IsDefined('form.item_0_name') AND IsDefined('form.item_0_price')>
+    <cfquery name="get_quote_materials_cost" datasource="jrgm">
+        INSERT INTO quote_materials_cost
+        (Item_ID, Item_Cost)
+        VALUES ('#Replace(form.item_0_name, "'", "''", "ALL")#', '#form.item_0_price#')
+    </cfquery>
+    <cfoutput>
+        <script>alert('#Replace(form.item_0_name, "'", "\'", "ALL")# @ $#form.item_0_price# was added.'); window.location='quote_materials_admin.cfm';</script>
+    </cfoutput>
+    <cfabort>
+</cfif>
+
 <cfquery name="get_quote_data_entry_row" datasource="jrgm">
     SELECT row_defaultvalue FROM quote_data_entry_row WHERE quote_data_entry_headers_ID=8 AND row_defaultvalue IS NOT NULL
 </cfquery>
@@ -49,20 +61,22 @@
         <thead>
             <th>Material Item ID</th>
             <th>Cost per Unit</th>
-            <!---th></th--->
         </thead>
         <tbody>
+            <form method="post">
+            <tr style="background-color: ##0000AA; color: ##FFFFFF">
+                <td><input id="item_0_name" name="item_0_name" style="width: 100%" placeholder="Spelling must be EXACT"></td>
+                <td>$<input id="item_0_price" name="item_0_price" size="4" placeholder="X.XX">
+                    <input type="submit" value="Add Material">
+                </td>
+            </tr>
+            </form>
             <cfset alternator = 0>
             <cfloop query="get_quote_materials_cost">
                 <cfset alternator = 1 - alternator>
                 <tr<cfif alternator EQ 1> bgcolor="##e5e5e5"</cfif><cfif Item_Cost EQ 0> style="color: ##AA0000"</cfif>>
                     <td>#Item_ID#</td>
                     <td>$<input id="item_#ID#" size="4" value="#NumberFormat(Item_Cost, ".__")#" onChange="saveInput(this.id, this.value)"></td>
-                    <!---td>
-                        <cfif StructKeyExists(materials_in_quoting, Item_ID)>
-                            If changed, please also update Quoting Calculations and Versions <a href="quote_data_entry_row_maria.cfm" target="_blank">(click to open in new tab)</a>
-                        </cfif>
-                    </td--->
                 </tr>
             </cfloop>
         </tbody>
