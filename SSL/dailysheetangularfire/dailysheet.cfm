@@ -287,7 +287,7 @@
 </cfif>
 
 <cfquery name="get_all_employees" datasource="#CONFIG_DATABASENAME#">
-  SELECT ae.[Employee ID] as employee_id, ae.[Name FirstLast] as full_name, ae.first_name, ae.last_name, CASE WHEN ac.employee_position_id IS NULL OR ac.employee_position_id=2 THEN 0 ELSE CASE WHEN ar.is_admin > 0 THEN 1 ELSE ac.employee_position_id END END as access_role, ac.crew_leader_id, ae.branch FROM app_employees ae
+  SELECT ae.[Employee ID] as employee_id, ae.[Name FirstLast] as full_name, ae.first_name, ae.last_name, CASE WHEN ac.employee_position_id IS NULL OR ac.employee_position_id IN (2,6,7) THEN 0 ELSE CASE WHEN ar.is_admin > 0 THEN 1 ELSE ac.employee_position_id END END as access_role, ac.crew_leader_id, ae.branch FROM app_employees ae
   INNER JOIN app_crews ac ON ac.employee_id=ae.[Employee ID]
   LEFT JOIN access_roles ar ON ar.access_role_id=ac.employee_position_id
   WHERE ae.active_record=1
@@ -785,10 +785,10 @@
                         <div class="form-inline">
                             <div class="form-group">
                                 <label for="starttime">Start Time:</label>
-                                <select class="class-selecttype" ng-model="startendtime.starttime" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options"></select>
+                                <select class="class-selecttype" ng-model="startendtime.starttime" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options" ng-change="changeStartEndTime(index)"></select>
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                 <label for="endtime">End Time:</label>
-                                <select class="class-selecttype" ng-model="startendtime.endtime" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options"></select>
+                                <select class="class-selecttype" ng-model="startendtime.endtime" ng-options="option[0] as option[1] for option in ds_temp.editing_startendtimes_options" ng-change="changeStartEndTime(index)"></select>
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                 <label for="endtime">Total Time:</label>
                                 <span ng-if="startendtime.totalTimeDisplay && isEmployeeStartTimeValid(startendtime.totalTime)">{{ startendtime.totalTimeDisplay }}</span>
@@ -854,12 +854,26 @@
                         <div class="form-inline">
                             <div class="form-group">
                                 <label for="servicecode">Enter Service Code:</label>
-                                <input ng-model="servicecode.id" list="datalist_servicecodes" class="form-control" style="width: 150px">
+                                <select ng-model="servicecode.id" class="form-control" style="width: 150px">
+                                    <cfoutput query="get_all_service_codes">
+                                        <option value="#Service_Name#">#Service_Name#</option>
+                                    </cfoutput>
+                                </select>
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                 <label for="servicecodetime">Time:</label>
                                 <input ng-model="servicecode.time" class="form-control" style="width: 60px">&nbsp;minutes
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                 <a class="btn btn-danger btn-xs" ng-click="removeServiceCode(index)">Remove</a>
+                            </div>
+                        </div>
+                        <div class="form-inline">
+                            <div class="form-group">
+                                <label for="servicecode">Or Type:</label>
+                                <input ng-model="servicecode.id_typed" class="form-control" style="width: 150px" ng-change="changeServiceCode(index)">
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                &nbsp;&nbsp;
                             </div>
                         </div>
                     </td>
@@ -1562,6 +1576,22 @@
 
                         $scope.removeServiceCode = function(key){
                             $scope.ds_temp.editing_servicecodes.splice(key, 1);
+                        }
+
+                        $scope.changeServiceCode = function(index){
+                            var dl = document.getElementById('datalist_servicecodes');
+                            var bestmatch = null;
+                            for(var i=0; i<dl.options.length; i++)
+                            {
+                                if (!bestmatch)
+                                {
+                                    var opt = dl.options[i].value;
+                                    if (opt.substring(0, 1) == $scope.ds_temp.editing_servicecodes[index].id_typed.substring(0, 1) && opt.indexOf($scope.ds_temp.editing_servicecodes[index].id_typed) != -1)
+                                        bestmatch = opt;
+                                }
+                            }
+                            if (bestmatch)
+                                $scope.ds_temp.editing_servicecodes[index].id = bestmatch;
                         }
 
                         $scope.saveServiceCodes = function(){
