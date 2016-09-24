@@ -112,7 +112,7 @@
         var grounds_maintenance_contract_total = adjusted_contract_price - irrigation_contract_total;
         $('#grounds_maintenance_contract_formatted').html(formatDollars(grounds_maintenance_contract_total));
         $('#Grounds_Maintenance_Contract').val(grounds_maintenance_contract_total);
-        
+
         var seasonal_hours_total = 0;
         $('.totaltype_seasonal').each(function(){
             var single_value = 1*unformatValueByIdentity('#'+$(this).attr('id'));
@@ -151,6 +151,9 @@
         $('#total_contract_price').val(unformatValueByIdentity('.total20'));
 
         $('.total17').html(formatNumber(unformatValueByIdentity('.total17')/2));
+
+        apply_turf_sq_footage();
+        apply_bed_sq_footage();
     }
 
     function formatDollars(value_raw) {
@@ -210,6 +213,7 @@
         var value_raw;
         var value_rounded;
         var value_formatted;
+        var quote_row_index = <cfoutput>#quote_row_index#</cfoutput>;
 
         rowcol_element_ids = {};
         <cfloop from="1" to="#arrayLen(quote_rows[quote_row_index])#" index="i">
@@ -293,9 +297,32 @@
     }
     </cfloop>
 
+    function apply_turf_sq_footage()
+    {
+        var current_val = 0;
+        var field = ['turf_preg_qty', 'turf_prel_qty', 'turf_post_qty', 'turf_fert_qty', 'turf_lime_qty', 'turf_aer_h_qty', 'turf_aer_t_qty', 'turf_seed_qty'];
+
+        for(var i=0; i<field.length; i++)
+        {
+            current_val = Math.max(current_val, $('#'+field[i]).val()*1);
+        }
+        $('#turf_sqft').val(current_val);
+    }
+
+    function apply_bed_sq_footage()
+    {
+        var current_val = 0;
+        if ($('#Mulch_s_dyed_qty').val() || $('#Mulch_S_Reg_qty').val())
+            current_val = Math.max($('#Mulch_s_dyed_qty').val()*1, $('#Mulch_S_Reg_qty').val()*1);
+        else if ($('#Mulch_f_dyed_qty').val() || $('#Mulch_F_Reg_qty').val())
+            current_val = Math.max($('#Mulch_f_dyed_qty').val()*1, $('#Mulch_F_Reg_qty').val()*1);
+        $('#bed_sqft').val(current_val);
+    }
+
     function apply_profit_margin(value) {
         value = 1*value;
         if (isNaN(value)) value = 0;
+        if (!value) return;
         //if (value < 50) return;
         $('.column18').each(function(){
             if (!$(this).is('span') && $(this).attr('type') != 'hidden' && !$(this).prop('disabled'))
