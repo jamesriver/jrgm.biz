@@ -26,6 +26,21 @@
     ORDER BY Item_ID
 </cfquery>
 
+<cfquery name="get_app_materials_list" datasource="jrgm">
+    SELECT * FROM app_materials_list
+    ORDER BY sortid
+</cfquery>
+<cfoutput query="get_app_materials_list">
+    <cfset max_sortid = sortid>
+</cfoutput>
+<cfset max_sortid++>
+
+<cfquery name="get_missing_materials_cost" datasource="jrgm">
+    SELECT TOP 1 * FROM app_materials_list a
+    LEFT JOIN quote_materials_cost q ON q.Item_ID=a.Item_ID
+    WHERE q.Item_ID IS NULL
+</cfquery>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -57,30 +72,67 @@
 <i>NOTE: Job Costing calculations will immediately be affected as soon as any values are changed here.</i><br /><br />
 
 <cfoutput>
-    <table cellspacing="0" cellpadding="3">
-        <thead>
-            <th>Material Item ID</th>
-            <th>Cost per Unit</th>
-        </thead>
-        <tbody>
-            <form method="post">
-            <tr style="background-color: ##0000AA; color: ##FFFFFF">
-                <td><input id="item_0_name" name="item_0_name" style="width: 100%" placeholder="Spelling must be EXACT"></td>
-                <td>$<input id="item_0_price" name="item_0_price" size="4" placeholder="X.XX">
-                    <input type="submit" value="Add Material">
-                </td>
-            </tr>
-            </form>
-            <cfset alternator = 0>
-            <cfloop query="get_quote_materials_cost">
-                <cfset alternator = 1 - alternator>
-                <tr<cfif alternator EQ 1> bgcolor="##e5e5e5"</cfif><cfif Item_Cost EQ 0> style="color: ##AA0000"</cfif>>
-                    <td>#Item_ID#</td>
-                    <td>$<input id="item_#ID#" size="4" value="#NumberFormat(Item_Cost, ".__")#" onChange="saveInput(this.id, this.value)"></td>
+    <div style="float: right">
+        <table cellspacing="0" cellpadding="3">
+            <thead>
+                <th>Material Item ID</th>
+                <th>Description</th>
+                <th>Sort Order</th>
+            </thead>
+            <tbody>                
+                <form method="post">
+                <tr style="background-color: ##0000AA; color: ##FFFFFF">
+                    <td style="pointer-events: none"><input id="mat_0_name" name="mat_0_name" style="width: 100%"></td>
+                    <td width="350"><input id="mat_0_description" name="mat_0_price" style="width: 100%" placeholder="description here"></td>
+                    <td><input id="mat_0_sortorder" name="mat_0_sortorder" size="5" placeholder="#max_sortid#">
+                        <input type="submit" value="Add Material to Daily Sheet">
+                    </td>
                 </tr>
-            </cfloop>
-        </tbody>
-    </table>
+                </form>
+                <script>document.getElementById('mat_0_name').focus()</script>
+                <cfset alternator = 0>
+                <cfloop query="get_app_materials_list">
+                    <cfset alternator = 1 - alternator>
+                    <tr<cfif alternator EQ 1> bgcolor="##e5e5e5"</cfif>>
+                        <td>#Item_ID#</td>
+                        <td><input id="mat_#ID#_description" style="width: 100%" value="#Replace(Item_description, '"', '\\"', "ALL")#"></td>
+                        <td><input id="mat_#ID#_sortorder" size="5" placeholder="#sortid#">
+                    </tr>
+                </cfloop>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="float: left">
+        <table cellspacing="0" cellpadding="3">
+            <thead>
+                <th>Material Item ID</th>
+                <th>Cost per Unit</th>
+            </thead>
+            <tbody>
+                <cfif get_missing_materials_cost.recordcount GT 0>
+                    <form method="post">
+                    <tr style="background-color: ##0000AA; color: ##FFFFFF">
+                        <td style="pointer-events: none"><input id="item_0_name" name="item_0_name" style="width: 100%" value="<cfoutput>#Replace(get_missing_materials_cost.Item_ID, '"', '&quot;', "ALL")#</cfoutput>"></td>
+                        <td>$<input id="item_0_price" name="item_0_price" size="4" placeholder="cost/unit">
+                            <input type="submit" value="Add Material Cost">
+                            &nbsp;<-- Fill this in as soon as possible so these materials will appear in Job Costing!
+                        </td>
+                    </tr>
+                    </form>
+                    <script>document.getElementById('item_0_price').focus()</script>
+                </cfif>
+                <cfset alternator = 0>
+                <cfloop query="get_quote_materials_cost">
+                    <cfset alternator = 1 - alternator>
+                    <tr<cfif alternator EQ 1> bgcolor="##e5e5e5"</cfif><cfif Item_Cost EQ 0> style="color: ##AA0000"</cfif>>
+                        <td>#Item_ID#</td>
+                        <td>$<input id="item_#ID#" size="4" value="#NumberFormat(Item_Cost, ".__")#" onChange="saveInput(this.id, this.value)"></td>
+                    </tr>
+                </cfloop>
+            </tbody>
+        </table>
+    </div>
 </cfoutput>
 
 <script>
