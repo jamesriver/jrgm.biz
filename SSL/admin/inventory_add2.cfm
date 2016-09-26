@@ -321,7 +321,7 @@ SELECT * FROM equipment WHERE ID = #new_ID#
     <td><strong><span class="dstableno">
       #COLOR# 
       </span></strong></td>
-    <td width="130" align="left" nowrap="nowrap"><span class="dstableno">Measurement:</span></td>
+    <td width="130" align="left" nowrap="nowrap"><span class="dstableno">Alt. ID:</span></td>
     <td><span class="dstableno">
       #MEASUREMENT# 
       </span></td>

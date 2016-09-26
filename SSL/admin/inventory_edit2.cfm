@@ -300,7 +300,7 @@ textarea {
           <tr>
             <td width="130" align="left" nowrap="nowrap"><span class="dstableno">Color:</span></td>
             <td><strong><span class="dstableno"> #COLOR# </span></strong></td>
-            <td width="130" align="left" nowrap="nowrap"><span class="dstableno">Measurement:</span></td>
+            <td width="130" align="left" nowrap="nowrap"><span class="dstableno">Alt. ID:</span></td>
             <td><strong><span class="dstableno"> #MEASUREMENT# </span></strong></td>
             <td width="150" align="left" nowrap="nowrap"><span class="dstableno">Snow:</span></td>
             <td width="150" colspan="3" align="left"><strong><span class="dstableno"> #Snow# </span></strong></td>
