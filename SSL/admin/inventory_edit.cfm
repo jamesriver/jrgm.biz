@@ -410,7 +410,7 @@ SELECT * FROM equipment WHERE ID = #url.id#
                 <td><strong><span class="dstableno">
                   <input name="COLOR" type="text"   tabindex="5" maxlength="50" value="#COLOR#" />
                   </span></strong></td>
-                <td align="right" nowrap="nowrap" class="dstableno">Measurement</td>
+                <td align="right" nowrap="nowrap" class="dstableno">Alt. ID</td>
                 <td class="dstableno"><input name="MEASUREMENT" type="text"   tabindex="5" maxlength="50" value="#MEASUREMENT#" /></td>
                 <td align="right" nowrap="nowrap" class="dstableno">Snow</td>
                 <td colspan="4"><strong><span class="dstableno">

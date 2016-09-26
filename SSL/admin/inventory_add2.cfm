@@ -98,6 +98,24 @@ SELECT @@identity AS newid SET NOCOUNT OFF
   </cfquery>
   
  <CFSET new_ID= #add_equipment_insert.newid#>
+
+ <cfif IsDefined("form.branch_employee_id")>
+     <cfquery name="update_eq_table" datasource="jrgm"  >
+     UPDATE equipment SET  crew_assignment_last = #form.branch_employee_id#
+      WHERE ID=#new_ID#
+     </cfquery>
+
+     <cfquery name="update_allocation_history" datasource="jrgm"  >
+     INSERT INTO equipment_allocation_history
+     (equipment_id, assign_date, employee_id, modified_by_employee_id)
+     VALUES
+     (#new_ID#, GetUTCDate(), #form.branch_employee_id#, #SESSION.userid#)
+     </cfquery>
+
+     <cfset SESSION.lastequipment_branch = form.BRANCH_NAME>
+     <cfset SESSION.lastequipment_employee_id = form.branch_employee_id>
+ </cfif>
+
    
 <!--- <cfabort> --->
  
@@ -220,8 +238,10 @@ SELECT * FROM equipment WHERE ID = #new_ID#
   <table width="100%" border="0" cellspacing="10" cellpadding="0">
     <tr>
         <td> <div class="header"> <strong>#PRODUCT_NAME# </strong></div></td>
+        <td align="center"><strong> <a href="inventory_add.cfm" class="jobstart">Add Another</a> </strong></td>
         <td align="center" nowrap="nowrap"><strong> <a href="inventory_edit.cfm?ID=#new_ID#" class="jobstop">Edit this Record</a> </strong></td>
     <td align="center"><strong> <a href="inventory_list.cfm" class="jobstart">Back to Equipment List</a> </strong></td>
+
       </tr>
     <tr>
       <td>&nbsp;</td>
@@ -301,7 +321,7 @@ SELECT * FROM equipment WHERE ID = #new_ID#
     <td><strong><span class="dstableno">
       #COLOR# 
       </span></strong></td>
-    <td width="130" align="left" nowrap="nowrap"><span class="dstableno">Measurement:</span></td>
+    <td width="130" align="left" nowrap="nowrap"><span class="dstableno">Alt. ID:</span></td>
     <td><span class="dstableno">
       #MEASUREMENT# 
       </span></td>

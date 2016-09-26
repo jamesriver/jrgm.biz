@@ -29,6 +29,28 @@
  <cfparam  name="Session.last_oil_change_date" default=""  >
   <cfparam  name="Session.hours_mileage" default=""  >
  
+<cfquery name="get_all_employees" datasource="jrgm"  >
+SELECT first_name,last_name,branch,position,[Employee ID] As employee_id,  [Name FirstLast] AS full_name  FROM APP_employees
+WHERE active_record = 1
+ ORDER by  Last_name ASC,first_name ASC
+</cfquery>
+<cfset employees = ArrayNew(1)>
+<cfset employees_used = StructNew()>
+<cfloop query="get_all_employees">
+    <cfif !StructKeyExists(employees_used, employee_id)>
+        <cfset StructInsert(employees_used, employee_id, 1)>
+        <cfset ArrayAppend(employees, { 'id': employee_id, 'name': full_name , 'first_name': first_name, 'last_name': last_name, 'branch': branch })>
+    </cfif>
+</cfloop>
+
+<cfset current_branch = ''>
+<cfif IsDefined('SESSION.lastequipment_branch')>
+    <cfset current_branch = SESSION.lastequipment_branch>
+</cfif>
+<cfset current_employee_id = ''>
+<cfif IsDefined('SESSION.lastequipment_employee_id')>
+    <cfset current_employee_id = SESSION.lastequipment_employee_id>
+</cfif>
 
 <CFIF IsDefined("url.work_date")>
   <cfset todayDate = #url.work_date#>
@@ -47,7 +69,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>James River Grounds Management Inventory</title>
-<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;target-densitydpi=low-dpi;"/>
+<!---meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;target-densitydpi=low-dpi;"/--->
 <link href="css/styles.css" rel="stylesheet" type="text/css" />
 <link href="css/buttons.css" rel="stylesheet" type="text/css" />
 <link href="css/bootstrap.css" rel="stylesheet" />
@@ -196,7 +218,7 @@ li {
         </table>
         <br />
       
-       <form method="post" action="inventory_add2.cfm">
+       <form method="post" action="inventory_add2.cfm" onSubmit="return validate()">
         <table width="95%" border="1" cellpadding="4" cellspacing="0"    bordercolor="#F3F3F3" bordercolorlight="White">
           <tbody>
             <tr>
@@ -282,7 +304,7 @@ li {
              
                     <input name="COLOR" type="text"    tabindex="11" maxlength="50"  <cfoutput>value="#Session.COLOR#"</cfoutput>>
                 </span></strong></td>
-              <td align="right" nowrap="nowrap" class="dstableno">Measurement</td>
+              <td align="right" nowrap="nowrap" class="dstableno">Alt. ID</td>
               <td class="dstableno">
               
                     <input name="MEASUREMENT" type="text"    tabindex="13" maxlength="50"  <cfoutput>value="#Session.MEASUREMENT#"</cfoutput>>
@@ -348,7 +370,7 @@ li {
             <tr>
               <td align="right" nowrap="nowrap" class="dstableno">Branch Name</td>
               <td><strong><span class="dstableno">
-                 <select name="BRANCH_NAME"   tabindex="32">
+                 <select id="BRANCH_NAME" name="BRANCH_NAME"   tabindex="32" onChange="populateEmployeeSelect('branch', this.value, 0)">
          <option value="Charlottesville"  >Charlottesville</option>
          <option value="Chesterfield">Chesterfield</option>
          <option value="Corporate" selected="selected">Corporate</option>
@@ -383,8 +405,10 @@ li {
               <td align="right" nowrap="nowrap" class="dstableno">&nbsp;  </td>
               <td><strong><span class="dstableno"> </span></strong></td>
               <td align="right" nowrap="nowrap" class="dstableno">&nbsp;   </td>
-              <td colspan="3" class="dstableno">&nbsp;
-              
+              <td colspan="3" class="dstableno">
+                Allocate To:&nbsp;
+                <span id="span_branch_employee"  bgcolor="#FFDECE">
+                </span>
               </td>
               <td nowrap="nowrap"> <input type="submit" name="submit"   value="SUBMIT" class="bluebutton" /></td>
             </tr>
@@ -404,5 +428,58 @@ li {
 <!-- // <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap.min.js"></script> -->
 <script scr="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/js/bootstrap.min.js"></script>
 <script src="js/twitter-bootstrap-hover-dropdown.js"></script>
+<cfoutput>
+<script>
+    var current_branch = '#current_branch#';
+    if (!current_branch) current_branch = 'Corporate';
+    var current_employee_id = '#current_employee_id#';
+
+    var employees = {};
+    var employees_select = {};
+    <cfloop from="1" to="#arrayLen(employees)#" index="i">
+        <cfset employee = employees[i]>
+        var employee = { full_name: '#employee.id# - #Replace(employee.name, "'", "\\'", "ALL")#', first_name: '#Replace(employee.first_name, "'", "\\'", "ALL")#', last_name: '#Replace(employee.last_name, "'", "\\'", "ALL")#', employee_id: '#employee.id#', branch: '#employee.branch#' };
+        employees[#employee.id#] = employee;
+        if (!employees_select[employee.branch])
+            employees_select[employee.branch] = [];
+        employees_select[employee.branch].push([employee.employee_id, employee.full_name]);
+    </cfloop>
+    </cfoutput>
+
+    window.onload = function(){
+        document.getElementById('BRANCH_NAME').value = current_branch;
+        populateEmployeeSelect('branch', current_branch, current_employee_id);
+    }
+
+    function populateEmployeeSelect(spanId, branch, employee_id)
+    {
+        var html = '';
+        html += '<select id="'+spanId+'_employee_id" name="'+spanId+'_employee_id" class="bs-select form-control">';
+        html += '<option   value="" selected="selected">Please Choose</option>';
+        html += '<option   value ="3">Spare</option>';
+        html += '<option   value ="5">Seasonal</option>';
+        html += '<option   value ="6">Lost</option>';
+        if (employees_select[branch])
+        {
+            for(var i=0; i<employees_select[branch].length; i++) {
+                var e = employees[employees_select[branch][i][0]];
+                html += '<option value="'+e.employee_id+'"'+(e.employee_id==employee_id?' selected':'')+'>'+e.first_name+' '+e.last_name+'</option>';
+            }
+        }
+        html += '</select>';
+        document.getElementById('span_'+spanId+'_employee').innerHTML = html;
+    }
+
+    function validate()
+    {
+        if (document.getElementById('branch_employee_id').value == '')
+        {
+            alert('Please allocate to a user first.');
+            return false;
+        }
+
+        return true;
+    }
+</script>
 </body>
 </html>

@@ -223,7 +223,7 @@ SELECT * FROM equipment WHERE ID = #url.id#
             <tr>
               <td align="right" nowrap="nowrap" class="dstableno">Color</td>
               <td><strong><span class="dstableno"> #COLOR# </span></strong></td>
-              <td align="right" nowrap="nowrap" class="dstableno">Measurement</td>
+              <td align="right" nowrap="nowrap" class="dstableno">Alt. ID</td>
               <td class="dstableno">#MEASUREMENT# </td>
               <td align="right" nowrap="nowrap" class="dstableno">Snow</td>
               <td colspan="2"><strong><span class="dstableno">#snow#
