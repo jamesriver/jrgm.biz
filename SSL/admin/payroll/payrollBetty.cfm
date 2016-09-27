@@ -2,7 +2,7 @@
 <CFSET pay_period_week_week1  =  pay_period_week-1>
 <CFSET pay_period_end_week  =  pay_period_number>
 <!---<CFSET pay_period_number = "47">
- <CFSET pay_period_week = "93"> ---> 
+ <CFSET pay_period_week = "93"> --->
 <cfquery name="app_payroll_periods_W" datasource="jrgm">
  SELECT  pay_period_start  as pay_period_start,  pay_period_end  AS pay_period_end
  FROM app_pay_periods WHERE pay_period_week = #pay_period_week#
