@@ -272,8 +272,25 @@ varchar
 <!-----------------  This is the end of step 1 ---------------------->
 <!-----------------  This is the end of step 1 ---------------------->
 <cfquery name="get_modified_records"   datasource="jrgm" >
-  SELECT [Employee ID] AS employee_id, branch,active_record,[Name FirstLast] AS employee_name,employee_rehire_date,fww,regular_pay_rate FROM app_employees_test
-  WHERE   (POSITION_EFFECTIVE_DATE > '#checkdate#' OR employee_rehire_date > '#checkdate#') AND  [Employee ID] > 0
+  SELECT aet.[Employee ID] AS employee_id,
+  ae.branch as old_branch, aet.branch as branch,
+  aet.active_record,
+  ae.[Name FirstLast] as old_employee_name,
+  aet.[Name FirstLast] AS employee_name,
+  ae.employee_rehire_date as old_employee_rehire_date,
+  aet.employee_rehire_date,
+  ae.fww as old_fww,
+  aet.fww,aet.regular_pay_rate
+  FROM app_employees_test aet
+  INNER JOIN app_employees ae ON ae.[Employee ID]=aet.[Employee ID] AND (
+  ae.branch != aet.branch
+  OR ae.[Name FirstLast] != aet.[Name FirstLast]
+  OR ae.employee_rehire_date != aet.employee_rehire_date
+  OR ae.fww != aet.fww
+  )
+    WHERE   aet.[Employee ID] > 0
+    AND aet.[Employee ID] != 4020
+    ORDER BY aet.[Name FirstLast]
   </cfquery>
 <cfloop query="get_modified_records">
   <cfquery name="get_modified_records_was"   datasource="jrgm">
