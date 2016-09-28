@@ -1,5 +1,6 @@
 <!--- AUTHENTICATE USER SESSION --->
 <cfset APPLICATION.homepage = "index.cfm">
+<cftry>
 <cfif SESSION.access_role EQ ACCESSROLE_PRODUCTIONMANAGER>
     <cfset APPLICATION.homedirectory = "/ssl/supervisors-new/">
 <cfelseif SESSION.access_role EQ ACCESSROLE_SUPERVISORCREWLEADER>
@@ -32,3 +33,6 @@
     <cfset APPLICATION.homedirectory = "/ssl/admin/">
     <cfset APPLICATION.homepage = "default.cfm">
 </cfif>
+<cfcatch>
+</cfcatch>
+</cftry>
