@@ -151,7 +151,7 @@ SELECT * FROM equipment WHERE ID = #url.id#
             <tr>
               <td nowrap="nowrap">Color</td>
               <td>#COLOR#</td>
-              <td nowrap="nowrap">Measurement</td>
+              <td nowrap="nowrap">Alt. ID</td>
               <td>#MEASUREMENT#</td>
               <td nowrap="nowrap">Snow</td>
               <td>#snow#</td>

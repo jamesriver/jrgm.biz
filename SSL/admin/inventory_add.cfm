@@ -304,7 +304,7 @@ li {
              
                     <input name="COLOR" type="text"    tabindex="11" maxlength="50"  <cfoutput>value="#Session.COLOR#"</cfoutput>>
                 </span></strong></td>
-              <td align="right" nowrap="nowrap" class="dstableno">Measurement</td>
+              <td align="right" nowrap="nowrap" class="dstableno">Alt. ID</td>
               <td class="dstableno">
               
                     <input name="MEASUREMENT" type="text"    tabindex="13" maxlength="50"  <cfoutput>value="#Session.MEASUREMENT#"</cfoutput>>

@@ -320,3 +320,4 @@ Done -Data loaded in app_employees_test
 <cfinclude template="../../scheduler/flatten_app_crews.cfm">
 <cfinclude template="../../scheduler/fix_app_job_materials_actual.cfm">
 <cfinclude template="../../scheduler/allocate_inactive_equipment_to_spare.cfm">
+<cfinclude template="../../scheduler/add_app_pay_periods.cfm">

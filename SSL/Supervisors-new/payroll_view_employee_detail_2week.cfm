@@ -11,7 +11,7 @@
  
  <CFSET pay_period_start = #app_payroll_periods.pay_period_start#>
  <CFSET pay_period_end = #app_payroll_periods.pay_period_end#>
- <CFSET MIDPLUS1_DATE =  dateadd("d",7,app_payroll_periods.pay_period_start)>
+ <CFSET MIDPLUS1_DATE =  dateadd("d",8,app_payroll_periods.pay_period_start)>
  <CFSET MIDPLUS1_DATE =  dateadd("s",-1,MIDPLUS1_DATE)>
  <CFSET pay_period_endPLUS1_DATE =  dateadd("d",1,pay_period_end)>
 
