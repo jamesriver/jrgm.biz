@@ -194,20 +194,39 @@ input {
   </form>
   <br />
 
+  <!--- GET EMPLOYEES --->
+  <cfquery name="get_all_employees" datasource="#CONFIG_DATABASENAME#">
+    SELECT ae.[Employee ID] as employee_id, ae.[Name FirstLast] as full_name, ae.first_name, ae.last_name, CASE WHEN ac.employee_position_id IS NULL OR ac.employee_position_id=2 THEN 0 ELSE CASE WHEN ar.is_admin > 0 THEN 1 ELSE ac.employee_position_id END END as access_role, ac.crew_leader_id, ae.branch FROM app_employees ae
+    INNER JOIN app_crews ac ON ac.employee_id=ae.[Employee ID]
+    LEFT JOIN access_roles ar ON ar.access_role_id=ac.employee_position_id
+    WHERE ae.branch <> 'Test'
+    GROUP BY ae.[Employee ID], ae.[Name FirstLast], ae.first_name, ae.last_name, ac.crew_leader_id, ae.branch, ac.employee_position_id, ar.is_admin
+    ORDER BY ae.first_name, ae.last_name
+  </cfquery>
+  <cfset employee_assoc = StructNew()>
+  <cfloop query="get_all_employees">
+    <cfset employee = StructNew()>
+    <cfset employee.employee_name = full_name>
+    <cfset employee.branch = branch>
+    <cfset StructInsert(employee_assoc, employee_id, employee)>
+  </cfloop>
+
   <!--- GET FILTER VARIABLES --->
   <cfif IsDefined('url.branch') AND IsDefined('url.production_manager') AND IsDefined('url.crew_leader')>
+    <cfif SESSION.dailysheet_branch NEQ url.branch OR SESSION.dailysheet_production_manager NEQ url.production_manager OR SESSION.dailysheet_crew_leader NEQ url.crew_leader>
+        <cfset url.start = 1>
+    </cfif>
     <cfset SESSION.dailysheet_branch = url.branch>
-    <cfset SESSION.production_manager = url.production_manager>
-    <cfset SESSION.crew_leader = url.crew_leader>
-    <cfset url.start = 1>
+    <cfset SESSION.dailysheet_production_manager = url.production_manager>
+    <cfset SESSION.dailysheet_crew_leader = url.crew_leader>
   <cfelse>
 	<cfset SESSION.dailysheet_branch = ''>
-	<cfset SESSION.production_manager = ''>
-	<cfset SESSION.crew_leader = ''>
+	<cfset SESSION.dailysheet_production_manager = ''>
+	<cfset SESSION.dailysheet_crew_leader = ''>
   </cfif>
   <cfset dailysheet_branch = SESSION.dailysheet_branch>
-  <cfset production_manager = SESSION.production_manager>
-  <cfset crew_leader = SESSION.crew_leader>
+  <cfset production_manager = SESSION.dailysheet_production_manager>
+  <cfset crew_leader = SESSION.dailysheet_crew_leader>
   <cfif dailysheet_branch NEQ ''>
       <cfquery name="get_daily_sheets" datasource="jrgm">
         SELECT  * FROM app_daily_sheets ads
@@ -229,36 +248,37 @@ input {
       </cfquery>
   <cfelse>
       <cfquery name="get_daily_sheets" datasource="jrgm"   >
-        SELECT  * FROM app_daily_sheets
-        <cfif IsDefined("form.submitted")  AND form.dsid NEQ "" >WHERE ID = #form.dsid#</cfif>
-        ORDER by ID DESC
+        SELECT  * FROM app_daily_sheets ads
+        INNER JOIN branches b ON b.branch_code=ads.branch_code
+        <cfif IsDefined("form.submitted")  AND form.dsid NEQ "" >WHERE ads.ID = #form.dsid#</cfif>
+        ORDER by ads.ID DESC
       </cfquery>
   </cfif>
   <cfset perpage = 50>
-  <cfif !IsDefined('url.start') AND IsDefined('SESSION.dailysheet_start')>
-    <cfset url.start = SESSION.dailysheet_start>
+  <cfif IsDefined('url.start')>
+    <cfset SESSION.dailysheet_start = url.start>
   </cfif>
   <cfparam name="url.start" default="1">
   <cfif not isNumeric(url.start) or url.start lt 1 or url.start gt get_daily_sheets.recordCount or round(url.start) neq url.start>
-    <cfset url.start = 1>
+    <cfset SESSION.dailysheet_start = 1>
   </cfif>
-  <cfset SESSION.dailysheet_start = url.start>
-  <cfset pagestart = url.start>
+  <cfset pagestart = SESSION.dailysheet_start>
   <cfset totalPages = ceiling(get_daily_sheets.recordCount / perpage)>
   <cfset thisPage = ceiling(pagestart / perpage)>
   <cfif  NOT IsDefined("form.submitted") >
     <table width="100%" border="0" cellspacing="10" cellpadding="0">
       <tr class="arialfont">
         <td> [
+          <cfset xtra = '&branch=' & SESSION.dailysheet_branch & '&production_manager=' & SESSION.dailysheet_production_manager & '&crew_leader=' & SESSION.dailysheet_crew_leader>
           <cfif pagestart gt 1>
-            <cfset link = cgi.script_name & "?start=" & (pagestart - perpage)>
+            <cfset link = cgi.script_name & "?start=" & (pagestart - perpage) & xtra>
             <cfoutput><a href="#link#">Newer Daily Sheets </a></cfoutput>
             <cfelse>
             Newer Daily Sheets
           </cfif>
           /
           <cfif (pagestart + perpage - 1) lt get_daily_sheets.recordCount>
-            <cfset link = cgi.script_name & "?start=" & (pagestart + perpage)>
+            <cfset link = cgi.script_name & "?start=" & (pagestart + perpage) & xtra>
             <cfoutput><a href="#link#">Older Daily Sheets</a></cfoutput>
             <cfelse>
             Older Daily Sheets
@@ -296,31 +316,23 @@ input {
         <cfset myList = ListAppend(mylist,ID)>
       </cfloop>
       <cfoutput query="get_daily_sheets" startrow="#pagestart#" maxrows="#perpage#">
-        <cfquery name="get_info_CL" datasource="jrgm"  cachedwithin="#createTimespan(0,8,0,0)#">
-SELECT  [Name FirstLast] AS employee_name
-FROM   app_employees WHERE [Employee ID] =#get_daily_sheets.crew_leader_id#
-        </cfquery>
-        <cfquery name="get_info_S" datasource="jrgm" cachedwithin="#createTimespan(0,8,0,0)#">
-SELECT  [Name FirstLast] AS employee_name,branch
-FROM   app_employees WHERE [Employee ID] =#get_daily_sheets.supervisor_id#
-        </cfquery>
         <tr>
-          <td><a href="daily_sheet.cfm?dsid=#get_daily_sheets.ID#">#get_daily_sheets.ID#</a></td>
+          <td><a href="daily_sheet.cfm?dsid=#get_daily_sheets.ID#" target="_blank">#get_daily_sheets.ID#</a></td>
           <td nowrap="nowrap">#dateformat(ds_date,"mm/dd/yyyy")#</td>
-          <td align="left">#get_info_S.branch#</td>
-          <td>#get_info_S.employee_name#</td>
-          <td>#get_info_CL.employee_name#</td>
+          <td align="left">#get_daily_sheets.branch_name#</td>
+          <td>#employee_assoc[get_daily_sheets.supervisor_id].employee_name#</td>
+          <td>#employee_assoc[get_daily_sheets.crew_leader_id].employee_name#</td>
          <td><a href="daily_sheet2_print.cfm?dsid=#get_daily_sheets.ID#" target="_blank">Print</a></td>
-          <td><a href="daily_sheet.cfm?dsid=#get_daily_sheets.ID#">View</a></td>
+          <td><a href="daily_sheet.cfm?dsid=#get_daily_sheets.ID#" target="_blank">View</a></td>
           <cfif ((ds_date LTE  yesterday) OR  ((ds_date EQ  todaydate_DS)  AND timenow GT today_3PM))  AND  ds_approved NEQ 1 <!--- AND get_open_workers.recordcount  EQ 0 --->>
-            <td><a href="daily_sheet_edit2.cfm?dsid=#ID#&email=yes">Edit</a></td>
+            <td><a href="daily_sheet_edit2.cfm?dsid=#ID#&email=yes" target="_blank">Edit</a></td>
             <cfelse>
             <td> -</td>
           </cfif>
           <cfif get_daily_sheets.ds_approved EQ 1>
-            <td><a href="daily_sheet.cfm?dsid=#ID#" class="redtype">Approved</a></td>
+            <td><a href="daily_sheet.cfm?dsid=#ID#" class="redtype" target="_blank">Approved</a></td>
             <cfelse>
-            <td><a href="daily_sheet.cfm?dsid=#ID#&amp;email=yes">-</a></td>
+            <td><a href="daily_sheet.cfm?dsid=#ID#&amp;email=yes" target="_blank">-</a></td>
           </cfif>
           <cfif ((ds_date LTE  yesterday) OR  ((ds_date EQ  todaydate_DS)  AND timenow GT today_3PM))  >
             <td><a href="daily_sheet_listing.cfm?delete=yes&dsid=#get_daily_sheets.ID#">Delete</a></td>
@@ -345,7 +357,7 @@ FROM         app_Inspection_Master WHERE Crew_LeaderID =#get_daily_sheets.crew_l
 AND Inspection_Type ='Morning'
         </cfquery>
             <cfif get_MI.recordcount EQ 1>
-              <td><a href="Morning_Inspection_Form.cfm?INSPECTION_ID=#get_MI.INSPECTION_ID#">Morning</a></td>
+              <td><a href="Morning_Inspection_Form.cfm?INSPECTION_ID=#get_MI.INSPECTION_ID#" target="_blank">Morning</a></td>
               <cfelseif get_MI.recordcount GT 1>
               <td>See Admin</td>
               <cfelse>
@@ -361,7 +373,7 @@ FROM         app_Inspection_Master WHERE Crew_LeaderID =#get_daily_sheets.crew_l
 AND Inspection_Type ='Evening'
         </cfquery>
             <cfif get_EI.recordcount EQ 1>
-              <td><a href="Evening_Inspection_Form.cfm?INSPECTION_ID=#get_EI.INSPECTION_ID#">Evening</a></td>
+              <td><a href="Evening_Inspection_Form.cfm?INSPECTION_ID=#get_EI.INSPECTION_ID#" target="_blank">Evening</a></td>
               <cfelseif get_EI.recordcount GT 1>
               <td>See Admin</td>
               <cfelse>
@@ -381,14 +393,6 @@ AND Inspection_Type ='Evening'
 <script scr="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/js/bootstrap.min.js"></script> 
 <script src="js/twitter-bootstrap-hover-dropdown.js"></script>
 
-<cfquery name="get_all_employees" datasource="#CONFIG_DATABASENAME#">
-  SELECT ae.[Employee ID] as employee_id, ae.[Name FirstLast] as full_name, ae.first_name, ae.last_name, CASE WHEN ac.employee_position_id IS NULL OR ac.employee_position_id=2 THEN 0 ELSE CASE WHEN ar.is_admin > 0 THEN 1 ELSE ac.employee_position_id END END as access_role, ac.crew_leader_id, ae.branch FROM app_employees ae
-  INNER JOIN app_crews ac ON ac.employee_id=ae.[Employee ID]
-  LEFT JOIN access_roles ar ON ar.access_role_id=ac.employee_position_id
-  WHERE ae.[Employee ID] < 9500
-  GROUP BY ae.[Employee ID], ae.[Name FirstLast], ae.first_name, ae.last_name, ac.crew_leader_id, ae.branch, ac.employee_position_id, ar.is_admin
-  ORDER BY ae.first_name, ae.last_name
-</cfquery>
 <cfset employees = ArrayNew(1)>
 <cfset employees_used = StructNew()>
 <cfloop query="get_all_employees">
@@ -408,8 +412,8 @@ AND Inspection_Type ='Evening'
 <script type='text/javascript'>
     <cfoutput>
     var dailysheet_branch = '#SESSION.dailysheet_branch#';
-    var production_manager = '#SESSION.production_manager#';
-    var crew_leader = '#SESSION.crew_leader#';
+    var production_manager = '#SESSION.dailysheet_production_manager#';
+    var crew_leader = '#SESSION.dailysheet_crew_leader#';
 
     var employees = {};
     var employees_select = {};
