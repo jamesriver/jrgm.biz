@@ -1,6 +1,15 @@
 <cfinclude template="../quoting-new/include_cffunctions.cfm">
 
-<cfif IsDefined('form.item_0_name') AND IsDefined('form.item_0_price')>
+<cfif IsDefined('form.delete_id') AND IsDefined('form.delete_name')>
+    <cfquery name="get_quote_materials_cost" datasource="jrgm">
+        DELETE FROM app_materials_list
+        WHERE ID=#form.delete_id#
+    </cfquery>
+    <cfoutput>
+        <script>alert('#Replace(form.delete_name, "'", "\'", "ALL")# was deleted.'); window.location='quote_materials_admin.cfm';</script>
+    </cfoutput>
+    <cfabort>
+<cfelseif IsDefined('form.item_0_name') AND IsDefined('form.item_0_price')>
     <cfquery name="get_quote_materials_cost" datasource="jrgm">
         INSERT INTO quote_materials_cost
         (Item_ID, Item_Cost)
@@ -8,6 +17,16 @@
     </cfquery>
     <cfoutput>
         <script>alert('#Replace(form.item_0_name, "'", "\'", "ALL")# @ $#form.item_0_price# was added.'); window.location='quote_materials_admin.cfm';</script>
+    </cfoutput>
+    <cfabort>
+<cfelseif IsDefined('form.mat_0_name') AND IsDefined('form.mat_0_description') AND IsDefined('form.mat_0_sortorder')>
+    <cfquery name="get_app_materials_list" datasource="jrgm">
+      INSERT INTO app_materials_list
+      (Item_ID, Item_description, sortid)
+      VALUES ('#Replace(form.mat_0_name, "'", "''", "ALL")#', '#Replace(form.mat_0_description, "'", "''", "ALL")#', '#form.mat_0_sortorder#')
+    </cfquery>
+    <cfoutput>
+      <script>alert('#Replace(form.mat_0_name, "'", "\'", "ALL")# was added.'); window.location='quote_materials_admin.cfm';</script>
     </cfoutput>
     <cfabort>
 </cfif>
@@ -29,11 +48,11 @@
 <cfquery name="get_app_materials_list" datasource="jrgm">
     SELECT * FROM app_materials_list
     ORDER BY sortid
-</cfquery>
+</cfquer
 <cfoutput query="get_app_materials_list">
     <cfset max_sortid = sortid>
 </cfoutput>
-<cfset max_sortid++>
+<cfset max_sortid+=10>
 
 <cfquery name="get_missing_materials_cost" datasource="jrgm">
     SELECT TOP 1 * FROM app_materials_list a
@@ -71,38 +90,12 @@
 <b>INSTRUCTIONS</b>: Change a value, then click outside the box to tell the system to save it.  Refresh the screen periodically to make sure changes have been saved.<br /><br />
 <i>NOTE: Job Costing calculations will immediately be affected as soon as any values are changed here.</i><br /><br />
 
-<cfoutput>
-    <div style="float: right">
-        <table cellspacing="0" cellpadding="3">
-            <thead>
-                <th>Material Item ID</th>
-                <th>Description</th>
-                <th>Sort Order</th>
-            </thead>
-            <tbody>                
-                <form method="post">
-                <tr style="background-color: ##0000AA; color: ##FFFFFF">
-                    <td style="pointer-events: none"><input id="mat_0_name" name="mat_0_name" style="width: 100%"></td>
-                    <td width="350"><input id="mat_0_description" name="mat_0_price" style="width: 100%" placeholder="description here"></td>
-                    <td><input id="mat_0_sortorder" name="mat_0_sortorder" size="5" placeholder="#max_sortid#">
-                        <input type="submit" value="Add Material to Daily Sheet">
-                    </td>
-                </tr>
-                </form>
-                <script>document.getElementById('mat_0_name').focus()</script>
-                <cfset alternator = 0>
-                <cfloop query="get_app_materials_list">
-                    <cfset alternator = 1 - alternator>
-                    <tr<cfif alternator EQ 1> bgcolor="##e5e5e5"</cfif>>
-                        <td>#Item_ID#</td>
-                        <td><input id="mat_#ID#_description" style="width: 100%" value="#Replace(Item_description, '"', '\\"', "ALL")#"></td>
-                        <td><input id="mat_#ID#_sortorder" size="5" placeholder="#sortid#">
-                    </tr>
-                </cfloop>
-            </tbody>
-        </table>
-    </div>
+<form id="form_delete_material" method="post">
+    <input type="hidden" id="delete_id" name="delete_id">
+    <input type="hidden" id="delete_name" name="delete_name">
+</form>
 
+<cfoutput>
     <div style="float: left">
         <table cellspacing="0" cellpadding="3">
             <thead>
@@ -127,7 +120,39 @@
                     <cfset alternator = 1 - alternator>
                     <tr<cfif alternator EQ 1> bgcolor="##e5e5e5"</cfif><cfif Item_Cost EQ 0> style="color: ##AA0000"</cfif>>
                         <td>#Item_ID#</td>
-                        <td>$<input id="item_#ID#" size="4" value="#NumberFormat(Item_Cost, ".__")#" onChange="saveInput(this.id, this.value)"></td>
+                        <td>$<input id="item_#ID#_cost" size="4" value="#NumberFormat(Item_Cost, ".__")#" onChange="saveInput('item', 'Item_Cost', this.id, this.value)"></td>
+                    </tr>
+                </cfloop>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="float: right">
+        <table cellspacing="0" cellpadding="3">
+            <thead>
+                <th>Material Item ID</th>
+                <th>Description</th>
+                <th>Order</th>
+                <th>Action</th>
+            </thead>
+            <tbody>                
+                <form method="post">
+                <tr style="background-color: ##0000AA; color: ##FFFFFF">
+                    <td><input id="mat_0_name" name="mat_0_name" style="width: 100%"></td>
+                    <td width="350"><input id="mat_0_description" name="mat_0_description" style="width: 100%" placeholder="description here"></td>
+                    <td><input id="mat_0_sortorder" name="mat_0_sortorder" size="5" placeholder="#max_sortid#"></td>
+                    <td><input type="submit" value="Add Material to Daily Sheet"></td>
+                </tr>
+                </form>
+                <script>document.getElementById('mat_0_name').focus()</script>
+                <cfset alternator = 0>
+                <cfloop query="get_app_materials_list">
+                    <cfset alternator = 1 - alternator>
+                    <tr<cfif alternator EQ 1> bgcolor="##e5e5e5"</cfif>>
+                        <td>#Item_ID#</td>
+                        <td><input id="mat_#ID#_description" style="width: 100%" value="#Replace(Item_description, '"', '\\"', "ALL")#" onChange="saveInput('mat', 'Item_Description', this.id, this.value)"></td>
+                        <td><input id="mat_#ID#_sortorder" size="5" placeholder="#sortid#" onChange="saveInput('mat', 'sortid', this.id, this.value)">
+                        <td><input type="button" value="DELETE" onClick="deleteMaterial('#Replace(Item_ID, '"', '\\"', "ALL")#', #ID#)"></td>
                     </tr>
                 </cfloop>
             </tbody>
@@ -136,16 +161,29 @@
 </cfoutput>
 
 <script>
-    function saveInput(full_id, value)
+    function saveInput(action, field, full_id, value)
     {
-        var id = full_id.replace('item_', '');
+        var str = full_id.replace(action+'_', '');
+        var spl = str.split('_');
+        id = spl[0];
+
         $.ajax({
             url: 'quote_materials_admin_save.cfm',
             type: 'post',
-            data: { 'id': id, 'value': value },
+            data: { 'action': action, 'field': field, 'id': id, 'value': value },
             success: function(data) {
             }
         });
+    }
+
+    function deleteMaterial(name, id)
+    {
+        if (!confirm('PERMANENTLY delete '+name+'?  (Job costing will still include it, but it will no longer appear as a material option.)'))
+            return;
+
+        document.getElementById('delete_id').value = id;
+        document.getElementById('delete_name').value = name;
+        document.getElementById('form_delete_material').submit();
     }
   </script>
 
