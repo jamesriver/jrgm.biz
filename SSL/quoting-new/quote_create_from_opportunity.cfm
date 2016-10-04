@@ -1,3 +1,5 @@
+<cfinclude template="#APPLICATION.basePath#include/init.cfm">
+
 <CFIF IsDefined("url.work_date")>
   <cfset todayDate = #url.work_date#>
   <cfelse>
@@ -276,7 +278,7 @@ $(document).ready(function() {
             <cfif IsDefined('form.opportunity_id')>
                 <cfset current_opportunity_id = form.opportunity_id>
             </cfif>
-            <cfhttp url="http://api.jrgm.com/external_api/insightly.php?auth=jrgmAPI!&type=opportunity&opportunity_id=#current_opportunity_id#&lowercasevariables=1" method="get" result="httpResp" timeout="30">
+            <cfhttp url="http://#CONFIG_APISERVER_URL#external_api/insightly.php?auth=jrgmAPI!&type=opportunity&opportunity_id=#current_opportunity_id#&lowercasevariables=1" method="get" result="httpResp" timeout="30">
                 <cfhttpparam type="header" name="Content-Type" value="application/json" />
             </cfhttp>
             <cfset insightly_response=DeserializeJSON(httpResp.filecontent)>

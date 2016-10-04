@@ -1,3 +1,5 @@
+<cfinclude template="#APPLICATION.basePath#include/init.cfm">
+
 <cfif !IsDefined('url.ID')>
     FAILED - no ID detected
     <cfabort>
@@ -7,10 +9,10 @@
     <cfabort>
 </cfif>
 
-<cfinclude template="../quoting-new/include_cffunctions.cfm">
+<!---cfinclude template="../quoting-new/include_cffunctions.cfm"--->
 <cfinclude template="../quoting-new/include_sql_quote_data_entry_calculations.cfm">
 
-<cfhttp url="http://api.jrgm.com/external_api/insightly.php?auth=jrgmAPI!&type=contractapproved&quote_id=#get_quote_start.ID#&preview=1" method="get" result="httpResp" timeout="30">
+<cfhttp url="http://#CONFIG_APISERVER_URL#external_api/insightly.php?auth=jrgmAPI!&type=contractapproved&quote_id=#get_quote_start.ID#&preview=1" method="get" result="httpResp" timeout="30">
 </cfhttp>
 <!---cfdump var="#httpResp.filecontent#">
 <cfabort--->

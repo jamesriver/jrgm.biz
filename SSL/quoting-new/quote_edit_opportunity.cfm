@@ -1,3 +1,5 @@
+<cfinclude template="#APPLICATION.basePath#include/init.cfm">
+
 <CFIF IsDefined("url.work_date")>
   <cfset todayDate = #url.work_date#>
   <cfelse>
@@ -155,7 +157,7 @@ $(document).ready(function() {
             </cfquery>
 
             <!--- ==================== Sync changes up to Insightly ================== --->
-            <cfhttp url="http://api.jrgm.com/external_api/insightly.php?auth=jrgmAPI!&type=syncopportunity&quote_id=#get_quote_start.ID#" method="get" result="httpResp" timeout="30">
+            <cfhttp url="http://#CONFIG_APISERVER_URL#external_api/insightly.php?auth=jrgmAPI!&type=syncopportunity&quote_id=#get_quote_start.ID#" method="get" result="httpResp" timeout="30">
             </cfhttp>
 
             <!--- ===================== now redirect to quote main page to edit this quote ======================= --->
@@ -248,7 +250,7 @@ $(document).ready(function() {
             <cfset ArrayAppend(categories, ['1416005', 'Residential'])>
             <cfset ArrayAppend(categories, ['1310517', 'Retail'])>
 
-            <cfinclude template="../quoting-new/include_cffunctions.cfm">
+            <!---cfinclude template="../quoting-new/include_cffunctions.cfm"--->
 
             <!--- GET CURRENT QUOTE START --->
             <cfquery name="get_quote_start" datasource="jrgm">

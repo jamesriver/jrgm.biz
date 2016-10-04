@@ -1,3 +1,5 @@
+<cfinclude template="#APPLICATION.basePath#include/init.cfm">
+
 <CFIF IsDefined("url.work_date")>
   <cfset todayDate1 = #url.work_date#>
   <cfset todaydate =#DateFormat("#todayDate1#", "yyyy-mm-dd")#>
@@ -14,7 +16,7 @@
     <cfset pay_period_number_visible = url.pay_period>
 </cfif>
 
-<cfset intacct_url = 'http://api.jrgm.com/external_api/intacct.php?auth=jrgmAPI!&type=invoicelineitems_missing_projectid'>
+<cfset intacct_url = 'http://' & CONFIG_APISERVER_URL & 'external_api/intacct.php?auth=jrgmAPI!&type=invoicelineitems_missing_projectid'>
 <cfif IsDefined('url.all')>
     <cfset intacct_url &= '&all'>
 </cfif>

@@ -1,4 +1,5 @@
 <!--- contract_installments, last_quote_id--->
+<cfinclude template="#APPLICATION.basePath#include/init.cfm">
 
 <cfset is_admin = 0>
 <cfif SESSION.userid EQ 1001 OR  SESSION.userid EQ 1870>
@@ -99,7 +100,7 @@ billing_state =   <cfqueryparam value="#Form.billing_state#"     CFSQLType="CF_S
  last_quote_id = #form.last_quote_id#
     WHERE  [Job ID]  = '#form.ProjectID#'
     </CFQUERY>
- <cfhttp url="http://api.jrgm.com/external_api/insightly.php?auth=jrgmAPI!&type=syncbiz&insightly_id=#form.insightly_id#" method="get" result="httpResp" timeout="30">
+ <cfhttp url="http://#CONFIG_APISERVER_URL#external_api/insightly.php?auth=jrgmAPI!&type=syncbiz&insightly_id=#form.insightly_id#" method="get" result="httpResp" timeout="30">
      <cfhttpparam type="header" name="Content-Type" value="application/json" />
  </cfhttp>
  <cflocation url="project_Edit_Project_Information.cfm?ProjectID=#ProjectID#&insightly_id=#form.insightly_id#" />
@@ -148,7 +149,7 @@ SELECT  [Employee ID] as employee_id, [Name FirstLast] AS CL_Name FROM app_emplo
 </cfloop>
 
 <!--- ================== Check for an existing Intacct project, then if found lock the form's billing and customer info fields as read-only =================== --->
-<cfhttp url="http://api.jrgm.com/external_api/intacct.php?auth=jrgmAPI!&type=project&insightly_id=#get_project_info.insightly_id#&start_date=#DateFormat(get_project_info.project_start_date, "yyyy-mm-dd")#&end_date=#DateFormat(get_project_info.project_end_date, "yyyy-mm-dd")#" method="get" result="httpResp" timeout="30">
+<cfhttp url="http://#CONFIG_APISERVER_URL#external_api/intacct.php?auth=jrgmAPI!&type=project&insightly_id=#get_project_info.insightly_id#&start_date=#DateFormat(get_project_info.project_start_date, "yyyy-mm-dd")#&end_date=#DateFormat(get_project_info.project_end_date, "yyyy-mm-dd")#" method="get" result="httpResp" timeout="30">
     <cfhttpparam type="header" name="Content-Type" value="application/json" />
 </cfhttp>
 <cfset intacct_response=DeserializeJSON(httpResp.filecontent)>
@@ -666,8 +667,7 @@ input {
           <table width="90%" border="1">
             <tbody>
               <tr>
-                <td colspan="2" nowrap="nowrap"  class="blue-madison"> STAFF ASSIGNMENTS&nbsp;<br />
-                  (Will these be branch level positions be edited here or at the Branch Level with the new scheduler?)</td>
+                <td colspan="2" nowrap="nowrap"  class="blue-madison"> STAFF ASSIGNMENTS</td>
               </tr>
               <tr>
                   <td>Sales Contact</td>
@@ -750,6 +750,7 @@ input {
             <input name="submit_button" id="submit_button" type="submit" class="btn btn-primary"  value="Submit" />
             &nbsp;</p>
             <input type="hidden" name="submitted" value="1">
+            <!---http://#CONFIG_APISERVER_URL#external_api/insightly.php?auth=jrgmAPI!&type=syncbiz&insightly_id=#url.insightly_id#--->
         </cfoutput>
       </form>
       </td>

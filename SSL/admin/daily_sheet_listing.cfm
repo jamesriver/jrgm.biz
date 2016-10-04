@@ -257,6 +257,8 @@ input {
   <cfset perpage = 50>
   <cfif IsDefined('url.start')>
     <cfset SESSION.dailysheet_start = url.start>
+  <cfelseif !IsDefined('SESSION.dailysheet_start')>
+    <cfset SESSION.dailysheet_start = 1>
   </cfif>
   <cfparam name="url.start" default="1">
   <cfif not isNumeric(url.start) or url.start lt 1 or url.start gt get_daily_sheets.recordCount or round(url.start) neq url.start>

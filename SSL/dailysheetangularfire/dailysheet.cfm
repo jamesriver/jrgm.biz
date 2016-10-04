@@ -108,6 +108,7 @@
                     <cfloop from="1" to="#arrayLen(ds_employee.servicecodes)#" index="i">
                         <cfset servicecode = ds_employee.servicecodes[i]>
                         <cfset ds_jobs[job_index].ds_employees[index].servicecodes[i].id = getIdFromServiceCode(servicecode.id)>
+                        <cfset ds_jobs[job_index].ds_employees[index].servicecodes[i].starttime = ds_date & ' ' & getTimeSQL('0:0')>
                     </cfloop>
                 </cfif>
             </cfloop>
@@ -241,13 +242,14 @@
                         <cfset servicecode = ds_employee.servicecodes[i]>
                         <cfquery name="insert_app_job_services_actual_employee" datasource="#CONFIG_DATABASENAME#">
                             INSERT INTO app_job_services_actual_employee
-                            (Employee_ID, Job_ID, Service_ID, Total_Time, ds_id, crew_leader, job_clock_id)
+                            (Employee_ID, Job_ID, Service_ID, Total_Time, Service_Time_In, ds_id, crew_leader, job_clock_id)
                             VALUES
                             (
                                 <cfqueryparam value="#ds_employee.id#" CFSQLType="CF_SQL_TEXT">,
                                 <cfqueryparam value="#ds_job.id#" CFSQLType="CF_SQL_TEXT">,
                                 <cfqueryparam value="#servicecode.id#" CFSQLType="CF_SQL_TEXT">,
                                 <cfqueryparam value="#servicecode.time#" CFSQLType="CF_SQL_TEXT">,
+                                <cfqueryparam value="#servicecode.starttime#" CFSQLType="CF_SQL_TEXT">,
                                 <cfqueryparam value="#ds_id#" CFSQLType="CF_SQL_TEXT">,
                                 <cfqueryparam value="#ds_data.crew_leader_id#" CFSQLType="CF_SQL_TEXT">,
                                 <cfqueryparam value="#job_clock_id#" CFSQLType="CF_SQL_TEXT">
