@@ -1,18 +1,18 @@
 
 <cfquery name="get_equipment" datasource="jrgm"  >
-SELECT e.ID as equipment_id, e.product_name as equipment_name, e.product_description as equipment_description, e.branch_name as branch, ae.[Name FirstLast] as allocated_to, mileage_eq, hours_eq, oil_change_criteria, oil_change_date_due, oil_change_hours_due, oil_change_mileage_due, DATEADD(year, 1, last_inspection_date) as state_inspection_due, Tags_expire,
+SELECT e.equipment_id, e.Category, e.product_name as equipment_name, e.product_description as equipment_description, e.branch_name as branch, ae.[Name FirstLast] as allocated_to, mileage_eq, hours_eq, oil_change_criteria, oil_change_date_due, oil_change_hours_due, oil_change_mileage_due, DATEADD(year, 1, last_inspection_date) as state_inspection_due, Tags_expire,
 CASE WHEN oil_change_criteria IN (1,5) AND oil_change_hours_due IS NOT NULL AND oil_change_hours_due < hours_eq THEN 1 ELSE 0 END as oil_change_hours_overdue,
 CASE WHEN oil_change_criteria IN (2,3) AND oil_change_mileage_due IS NOT NULL AND oil_change_mileage_due < mileage_eq THEN 1 ELSE 0 END as oil_change_mileage_overdue,
 CASE WHEN oil_change_criteria IN (4) AND oil_change_date_due IS NOT NULL AND oil_change_date_due < CONVERT(date, getDate()) THEN 1 ELSE 0 END as oil_change_date_overdue,
-CASE WHEN last_inspection_date IS NOT NULL AND last_inspection_date < CONVERT(date, DATEADD(year,-1,getDate())) THEN 1 ELSE 0 END as state_inspection_overdue,
-CASE WHEN tags_expire IS NOT NULL AND tags_expire < CONVERT(date, getDate()) THEN 1 ELSE 0 END as tags_overdue
+CASE WHEN last_inspection_date IS NOT NULL AND last_inspection_date < CONVERT(date, DATEADD(year,-1,getDate())) AND Category IN ('Trailers', 'Vehicles') THEN 1 ELSE 0 END as state_inspection_overdue,
+CASE WHEN tags_expire IS NOT NULL AND tags_expire < CONVERT(date, getDate()) AND Category IN ('Vehicles') THEN 1 ELSE 0 END as tags_overdue
 FROM equipment e
 LEFT JOIN app_employees ae ON ae.[Employee ID]=e.crew_assignment_last
 WHERE ((oil_change_criteria IN (1,5) AND oil_change_hours_due IS NOT NULL AND oil_change_hours_due < hours_eq)
 OR (oil_change_criteria IN (2,3) AND oil_change_mileage_due IS NOT NULL AND oil_change_mileage_due < mileage_eq)
 OR (oil_change_criteria IN (4) AND oil_change_date_due IS NOT NULL AND oil_change_date_due < CONVERT(date, getDate()))
-OR (last_inspection_date IS NOT NULL AND last_inspection_date < CONVERT(date, DATEADD(year,-1,getDate())))
-OR (tags_expire IS NOT NULL AND tags_expire < CONVERT(date, getDate()))
+OR (last_inspection_date IS NOT NULL AND last_inspection_date < CONVERT(date, DATEADD(year,-1,getDate())) AND Category IN ('Trailers', 'Vehicles'))
+OR (tags_expire IS NOT NULL AND tags_expire < CONVERT(date, getDate()) AND Category IN ('Vehicles'))
 )
 </cfquery>
 
@@ -80,8 +80,9 @@ li {
        <table width="100%" class="table table-striped table-hover" id="sample_3">
         <thead>
          <tr>
-           <th>ID</th>
+           <th>Equip ID</th>
            <th>Equipment</th>
+           <th>Category</th>
            <th>Branch</th>
            <th>Allocated To</th>
            <th>Hours/Mileage</th>
@@ -130,6 +131,7 @@ li {
          <tr>
            <td><a href="/ssl/admin/inventory_edit.cfm?ID=#equipment_id#" target="_blank">#equipment_id#</a></td>
            <td>#equipment_name & '<br /><span style="font-size: 8pt"><i>' & equipment_description#</i></span></td>
+           <td>#Category#</td>
            <td>#branch#</td>
            <td>#allocated_to#</td>
            <td>#hours_mileage_eq#</td>
